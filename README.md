@@ -18,7 +18,13 @@ Features are still being built and optimized. While functional in it's current s
 
 ## Starting Development
 
-Start the app in the `dev` environment:
+Start the app in `dev` mode:
+
+```bash
+yarn dev
+```
+
+Start the app in `prod` mode:
 
 ```bash
 yarn start
