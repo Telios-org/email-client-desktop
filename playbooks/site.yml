@@ -1,0 +1,62 @@
+---
+- hosts: localhost
+  vars:
+    spaces_access_key: "{{ lookup('env','SPACES_ACCESS_KEY') }}"
+    spaces_secret_key: "{{ lookup('env','SPACES_SECRET_KEY') }}"
+    spaces_endpoint: https://nyc3.digitaloceanspaces.com
+    spaces_region: nyc3
+    space_name: downloads-telios
+    space_name_old: www.telios
+    package_json: "{{ lookup('file','../package.json') | from_json }}"
+    TELIOS_VERSION: '{{ package_json.version }}'
+    #TELIOS_VERSION: "{{ lookup('env', 'TELIOS_VERSION') }}"
+  tasks:
+    - name: Creating Space
+      aws_s3:
+        aws_access_key: '{{ spaces_access_key }}'
+        aws_secret_key: '{{ spaces_secret_key }}'
+        s3_url: '{{ spaces_endpoint }}'
+        bucket: '{{ space_name }}'
+        mode: create
+        rgw: True
+
+    - name: Local file mods
+      import_tasks: tasks/local/main.yml
+
+    - name: Uploading builds
+      s3_sync:
+        aws_access_key: '{{ spaces_access_key }}'
+        aws_secret_key: '{{ spaces_secret_key }}'
+        ec2_url: '{{ spaces_endpoint }}'
+        bucket: '{{ space_name }}'
+        key_prefix: desktop/
+        file_root: ../public/desktop
+        mode: push
+        file_change_strategy: date_size #force
+        permission: public-read
+        region: '{{ spaces_region }}'
+      tags:
+        - upload
+
+    - name: Uploading index.html
+      s3_sync:
+        aws_access_key: '{{ spaces_access_key }}'
+        aws_secret_key: '{{ spaces_secret_key }}'
+        ec2_url: '{{ spaces_endpoint }}'
+        bucket: '{{ space_name }}'
+        key_prefix: index.html
+        file_root: ../public/index.html
+        mode: push
+        file_change_strategy: date_size #force
+        permission: public-read
+        region: '{{ spaces_region }}'
+      tags:
+        - upload
+
+    - name: Historic download link generation
+      import_tasks: tasks/history/main.yml
+
+    - name: debug logic
+      import_tasks: tasks/debug/main.yml
+      tags:
+        - debug

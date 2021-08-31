@@ -1,0 +1,58 @@
+---
+- name: Create local directories
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: '0755'
+  with_items:
+    - ../public/desktop/{{ TELIOS_VERSION }}
+    - ../public/desktop/latest
+  tags:
+    - upload
+    - update
+
+- name: get all build files in release directory
+  find:
+    paths: '../release'
+    pattern: 'latest*.yml'
+    file_type: file
+  register: manifest_files
+  tags:
+    - upload
+
+- name: copy build manifest file
+  copy:
+    src: '{{ item.path }}'
+    dest: ../public/desktop/{{ TELIOS_VERSION }}/{{ item.path | basename }}
+    directory_mode: true
+  loop: '{{ manifest_files.files }}'
+  tags:
+    - upload
+
+- name: copy builds
+  copy:
+    src: ../release/
+    dest: '{{ item }}'
+    directory_mode: true
+  with_items:
+    - ../public/desktop
+  tags:
+    - upload
+
+- name: get all build files in release directory
+  find:
+    paths: '../release'
+    recurse: yes
+    file_type: file
+    excludes: 'latest.yml,latest-mac.yml,latest-linux.yml'
+  register: release_files
+  tags:
+    - upload
+
+- name: create a latest set of downloadable files
+  copy:
+    src: '{{ item.path }}'
+    dest: "../public/desktop/latest/{{ item.path | basename | regex_replace('-\\d*\\.\\d*\\.\\d*', '') }}"
+  loop: '{{ release_files.files }}'
+  tags:
+    - upload

@@ -1,0 +1,40 @@
+{
+  "name": "Telios",
+  "productName": "Telios",
+  "version": "0.6.0",
+  "description": "An offline-capabale e2e encrypted email service that uses a peer-to-peer network for sending and receiving emails.",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Telios Technologies, Inc",
+    "email": "dev@telios.io",
+    "url": "https://telios.io"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "api": {
+    "prod": "https://devapiv1.telios.io"
+  },
+  "license": "CC-BY-NC-4.0",
+  "dependencies": {
+    "@journeyapps/sqlcipher": "^4.0.0",
+    "@telios2/client-sdk": "^3.3.8",
+    "@types/prismjs": "^1.16.1",
+    "file-type": "^16.1.0",
+    "leveldown": "^5.6.0",
+    "levelup": "^4.4.0",
+    "memorystream": "^0.3.1",
+    "mime-types": "^2.1.27",
+    "node-notifier": "^9.0.0",
+    "react-portal-frame": "^1.0.6",
+    "remove-markdown": "^0.3.0",
+    "sequelize": "^5.21.2",
+    "sqlite3": "^4.1.0",
+    "umzug": "^2.3.0",
+    "uuid": "^8.3.2"
+  },
+  "resolutions": {
+    "hypertrie": "https://github.com/Telios-org/hypertrie.git"
+  }
+}

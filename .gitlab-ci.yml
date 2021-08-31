@@ -1,0 +1,167 @@
+stages:
+  - version
+  - build
+  - deploy
+  - test
+  - ci_status
+
+include:
+  - project: telios2/telios-devops
+    ref: master
+    file: ".gitlab-ci.DiscordWebhook.yml"
+  - template: Code-Quality.gitlab-ci.yml
+
+code_quality:
+  needs: []
+
+.code_quality_html:
+  extends: code_quality
+  variables:
+    REPORT_FORMAT: html
+  artifacts:
+    paths: [gl-code-quality-report.html]
+  needs: []
+
+#TODO disable tests for now
+.test-app:
+  stage: test
+  image: registry.gitlab.com/telios2/telios-devops/electronbuilder:wine
+  script:
+    - yarn install
+    - yarn build-main
+    - yarn build-renderer
+    - yarn lint
+    - yarn test
+  allow_failure: true
+
+version:
+  tags:
+    - docker
+  stage: version
+  image: alpine:latest
+  script:
+    - sed -i "s/\(.version.:..[0-9]*.[0-9]*.\)[0-9]*/\1${CI_PIPELINE_IID}/g" package.json
+    - sed -i "s/\(.version.:..[0-9]*.[0-9]*.\)[0-9]*/\1${CI_PIPELINE_IID}/g" app/package.json
+    - echo ${CI_PIPELINE_IID}
+  artifacts:
+    untracked: false
+    expire_in: 1 hour
+    paths:
+      - 'package.json'
+      - 'app/package.json'
+
+.electron-release-build:
+  #  only:
+  #    - master
+  stage: build
+  image: registry.gitlab.com/telios2/telios-devops/electronbuilder:wine
+  script:
+    - yarn install
+    - yarn package-${PLATFORM}
+    - git status
+  artifacts:
+    paths:
+      - release/*.exe*
+      - release/*.msi
+      - release/*.dmg*
+      - release/*.deb
+      - release/*.rpm
+      - release/*.AppImage
+      - release/*.yml
+      - release/*.zip
+    expire_in: 1 month
+
+filesystemFix:win:
+  tags:
+    - electron-win
+  stage: version
+  variables:
+    PLATFORM: win
+    GIT_STRATEGY: none
+  before_script:
+    - $ENV:PATH="$ENV:PATH;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin"
+  script:
+    - docker run -v $PWD":/repo/" -w /repo/ registry.gitlab.com/telios2/telios-devops/bash/prd rm -rf ./release
+
+electron-build:win:
+  tags:
+    - electron-win
+  extends: .electron-release-build
+  variables:
+    PLATFORM: win
+    GIT_STRATEGY: fetch
+    VCINSTALLDIR: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\"
+  before_script:
+    #- choco install nodejs -y --version=12.13.0
+    #- choco install python -y --version=3.8.3
+    #- choco install yarn -y
+    #- $ENV:PATH="$ENV:PATH;C:\Users\gitlab_runner\AppData\Roaming\npm\;C:\Python38"
+    #- $env:path -split ";"
+    #- npm install yarn -g
+    #- npm install --global --production windows-build-tools
+    #- choco install visualstudio2019buildtools visualstudio2019-workload-vctools
+    - npm config set msvs_version 2019
+    - $ENV:PATH="$ENV:PATH;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Python38\Scripts\;C:\Python38\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files\nodejs\;C:\Users\aaron\AppData\Local\Microsoft\WindowsApps;;C:\Users\aaron\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\aaron\AppData\Roaming\npm"
+  after_script:
+    - dir release
+
+electron-build:linux:
+  tags:
+    - docker
+  extends: .electron-release-build
+  variables:
+    PLATFORM: linux
+  after_script:
+    - ls -la release/
+
+electron-build:mac:
+  tags:
+    - electron-osx
+  extends: .electron-release-build
+  variables:
+    PLATFORM: mac
+    GIT_STRATEGY: fetch
+  before_script:
+    - PATH="/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+    - source $HOME/.bash_profile
+  after_script:
+    - ls -la release/
+
+.spaces:
+  tags:
+    - docker
+  stage: deploy
+  only:
+    - master
+  image:
+    name: registry.gitlab.com/telios2/telios-devops/ansible/prd:latest
+    entrypoint: ['/bin/bash', '-c', '/bin/bash']
+#  before_script:
+#    - export TELIOS_VERSION="Telios-$(cat package.json | grep "version.:" | sed "s/.*version.:..\([0-9]*.[0-9]*.\)[0-9]*../\1.${CI_PIPELINE_IID}/g")"
+
+spaces:win:
+  extends:
+    - .spaces
+  needs:
+    - version
+    - electron-build:win
+  script:
+    - ansible-playbook playbooks/site.yml --tags update,upload,win
+
+spaces:mac:
+  extends:
+    - .spaces
+  needs:
+    - version
+    - electron-build:mac
+  script:
+    - ansible-playbook playbooks/site.yml --tags update,upload,mac
+
+spaces:linux:
+  extends:
+    - .spaces
+  needs:
+    - version
+    - electron-build:linux
+  script:
+    - ansible-playbook playbooks/site.yml --tags update,upload,linux

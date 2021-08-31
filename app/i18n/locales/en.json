@@ -1,0 +1,89 @@
+{
+  "translation": {
+    "global": {
+      "email": "Email",
+      "masterPass": "Master Password",
+      "recoveryEmail": "Recovery Email",
+      "login": "Login",
+      "register": "Register",
+      "code": "Code",
+      "edit": "Edit",
+      "delete": "Delete",
+      "submit": "Submit",
+      "cancel": "Cancel",
+      "update": "Update",
+      "updateFolder": "Update Folder",
+      "createFolder": "Create a New Folder"
+    },
+    "firstScreen": {
+      "register": "Create Your Account"
+    },
+    "login": {
+      "text": "Welcome back! Please enter your master password to unlock your account.",
+      "register": "Register Instead",
+      "incorrectPass": "Your password is invalid."
+    },
+    "register": {
+      "steps": {
+        "0": {
+          "header": "Beta Access",
+          "description": "Enter your Beta Access Code. You can find your code in your invitation email."
+        },
+        "1": {
+          "header": "Create Account",
+          "description": "Choose your email address. This will be your primary identifier on the Telios your network choose it wisely."
+        },
+        "2": {
+          "header": "Master Password",
+          "description": ""
+        },
+        "3": {
+          "header": "Recovery Email",
+          "description": "If you choose to store your encrypted data on our servers, this email address will be the only way for you to retrieve your data should something happen to your device."
+        },
+        "4": {
+          "header": "Recovery Phrase",
+          "description": "In the event you lose your password or device, this phrase can be used to restore your account. Be sure to memorize this phrase or keep it somewhere secure like a safe."
+        }
+      },
+      "confirmPass": "Confirm Password",
+      "login": "Login Instead",
+      "passTitle": "Create a Master Password",
+      "passInstructions": "This password will be the only password you’ll ever need to enter any Telios services. Upon creation of your password a private encryption key will be generated on your local computer and be known only to you.",
+      "strength": "Strength",
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "strong": "Strong",
+      "strongDesc": "Not bad, but you can do better...",
+      "veryStrong": "Very Strong",
+      "veryStrongDesc": "This is a very unguessable password!",
+      "timeDescription": "Is roughly how long it would take to crack this password at 10k guesses per second",
+      "tooWeakErr": "This password is too weak to safely use.",
+      "emailNotAvailable": "This email is not available.",
+      "betaCodeNotValid": "Invalid Beta Access Code.",
+      "connecting": "Connecting to peer network..."
+    },
+    "mailbox": {
+      "newMsg": "New Message",
+      "inbox": "Inbox",
+      "drafts": "Drafts",
+      "sent": "Sent",
+      "spam": "Spam",
+      "trash": "Trash",
+      "noMessages": "No Messages",
+      "folders": "Folders",
+      "folderName": "Folder Name",
+      "syncingInProgress": "Syncing new messages..."
+    },
+    "form": {
+      "emailRequired": "Email is required.",
+      "recoveryRequired": "Recovery Email is required.",
+      "recoveryEmailInvalid": "Recovery email is invalid.",
+      "masterPassRequired": "Master password is required.",
+      "weakPass": "Password is too weak.",
+      "passMismatch": "Passwords do not match.",
+      "confirmRequired": "Confirm password is required.",
+      "betaCodeRequired": "Access Code Required to Register"
+    }
+  }
+}

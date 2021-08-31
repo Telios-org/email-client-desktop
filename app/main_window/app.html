@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <base href="" />
+    <script>
+      (() => {
+        // const { nativeTheme } = require('electron').remote;
+        // const mode = nativeTheme.shouldUseDarkColors ? 'dark':'light';
+        // if(mode === 'dark'){
+        //   document.querySelector('html').classList.add('dark');
+        // }
+        // else {
+        //     document.querySelector('html').classList.remove('dark')
+        // }
+
+        if (
+          typeof process !== 'object' ||
+          (typeof process === 'object' && !process.env.START_HOT)
+        ) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = '../dist/main.css';
+          // HACK: Writing the script path should be done with webpack
+          document.getElementsByTagName('head')[0].appendChild(link);
+        }
+        // else{
+        //   const link = document.createElement('link');
+        //   link.setAttribute('data-theme', mode);
+        //   link.rel = 'stylesheet';
+        //   // const port = process.env.PORT || 1212;
+        //   // link.href = `http://localhost:${port}/dist/login.css`;
+        //   link.href = `../dist/main-${mode}.css`;
+        //   // HACK: Writing the script path should be done with webpack
+        //   document.getElementsByTagName('head')[0].appendChild(link);
+        // }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      if (typeof process === 'object') {
+        const scripts = [];
+
+        if (process.env.NODE_ENV === 'development') {
+          // Dynamically insert the DLL script in development env in the
+          // renderer process
+          scripts.push('../dll/renderer.dev.dll.js');
+        }
+        if (process.env.START_HOT) {
+          // Dynamically insert the bundled app script in the renderer process
+          const port = process.env.PORT || 1212;
+          scripts.push(`http://localhost:${port}/dist/main.renderer.dev.js`);
+        } else {
+          scripts.push('../dist/main.renderer.prod.js');
+        }
+
+        if (scripts.length) {
+          document.write(
+            scripts
+              .map(script => `<script defer src="${script}"><\/script>`)
+              .join('')
+          );
+        }
+      }
+    </script>
+  </body>
+</html>

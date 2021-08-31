@@ -1,0 +1,29 @@
+---
+- name: List objects in Old Space
+  aws_s3:
+    aws_access_key: '{{ spaces_access_key }}'
+    aws_secret_key: '{{ spaces_secret_key }}'
+    s3_url: '{{ spaces_endpoint }}'
+    bucket: '{{ space_name_old }}'
+    mode: list
+    rgw: true
+  register: spaces_items_old
+
+- name: Create local directories
+  file:
+    path: ../public/{{ item | regex_replace('downloads/', '') | dirname }}
+    state: directory
+    mode: '0755'
+  loop: '{{ spaces_items_old.s3_keys }}'
+
+- name: Download all objects in Old Space
+  aws_s3:
+    aws_access_key: '{{ spaces_access_key }}'
+    aws_secret_key: '{{ spaces_secret_key }}'
+    s3_url: '{{ spaces_endpoint }}'
+    bucket: '{{ space_name_old }}'
+    object: '/{{ item }}'
+    dest: ../public/{{ item | regex_replace('downloads/', '') }}
+    mode: get
+    rgw: true
+  loop: '{{ spaces_items_old.s3_keys }}'

@@ -1,0 +1,16 @@
+---
+- name: List objects in Space
+  aws_s3:
+    aws_access_key: '{{ spaces_access_key }}'
+    aws_secret_key: '{{ spaces_secret_key }}'
+    s3_url: '{{ spaces_endpoint }}'
+    bucket: '{{ space_name }}'
+    mode: list
+    rgw: true
+  register: spaces_items_all
+
+- debug:
+    msg: 'Contents of {{ space_name }}: {{ spaces_items_all.s3_keys }}'
+#    - debug:
+#        msg: 'Contents of {{ space_name }}: {{ spaces_items_all.s3_keys }}'
+#      loop: "{{ spaces_items.s3_keys | select('search','latest.yml') | list }}"

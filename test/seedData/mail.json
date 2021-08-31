@@ -1,0 +1,556 @@
+{
+    mailboxes: {
+      byId: {
+        '1': {
+          id: 1,
+          name: null,
+          address: 'leo@telios.io',
+          folders: [
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      },
+      allIds: [
+        1
+      ]
+    },
+    folders: {
+      byId: {
+        '1': {
+          id: 1,
+          mailboxId: 1,
+          name: 'Inbox',
+          messages: [
+            99,
+            98,
+            97,
+            96,
+            95,
+            94,
+            93,
+            92,
+            91,
+            90,
+            89,
+            88,
+            87,
+            86,
+            85,
+            84,
+            83,
+            82,
+            81,
+            80,
+            79,
+            78,
+            77,
+            76,
+            75,
+            74,
+            73,
+            72,
+            71,
+            70,
+            69,
+            68,
+            67,
+            66,
+            65,
+            64,
+            63,
+            62,
+            61,
+            60,
+            59,
+            58,
+            57,
+            56,
+            55,
+          ]
+        },
+        '2': {
+          id: 2,
+          mailboxId: 1,
+          name: 'Sent',
+          messages: []
+        },
+        '3': {
+          id: 3,
+          mailboxId: 1,
+          name: 'Spam',
+          messages: []
+        },
+        '4': {
+          id: 4,
+          mailboxId: 1,
+          name: 'Trash',
+          messages: []
+        }
+      },
+      allIds: [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    messages: {
+      byId: {
+        '55': {
+          id: 55,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '56': {
+          id: 56,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '57': {
+          id: 57,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '58': {
+          id: 58,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '59': {
+          id: 59,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '60': {
+          id: 60,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '61': {
+          id: 61,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '62': {
+          id: 62,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '63': {
+          id: 63,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '64': {
+          id: 64,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '65': {
+          id: 65,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '66': {
+          id: 66,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '67': {
+          id: 67,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '68': {
+          id: 68,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '69': {
+          id: 69,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '70': {
+          id: 70,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '71': {
+          id: 71,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '72': {
+          id: 72,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '73': {
+          id: 73,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '74': {
+          id: 74,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '75': {
+          id: 75,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '76': {
+          id: 76,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '77': {
+          id: 77,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '78': {
+          id: 78,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '79': {
+          id: 79,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '80': {
+          id: 80,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '81': {
+          id: 81,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '82': {
+          id: 82,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '83': {
+          id: 83,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '84': {
+          id: 84,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '85': {
+          id: 85,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '86': {
+          id: 86,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '87': {
+          id: 87,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '88': {
+          id: 88,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '89': {
+          id: 89,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '90': {
+          id: 90,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '91': {
+          id: 91,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '92': {
+          id: 92,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '93': {
+          id: 93,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '94': {
+          id: 94,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '95': {
+          id: 95,
+          folderId: 1,
+          subject: 'Test',
+          date: '2020-07-02T16:25:41.000Z',
+          fromJSON: '{"value":[{"address":"bmpitzen@icloud.com","name":"Brandon"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Brandon</span> &lt;<a href=\\"mailto:bmpitzen@icloud.com\\" class=\\"mp_address_email\\">bmpitzen@icloud.com</a>&gt;</span>","text":"Brandon <bmpitzen@icloud.com>"}',
+          bodyPreview: 'Hey bébé\n',
+          isPreview: true
+        },
+        '96': {
+          id: 96,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '97': {
+          id: 97,
+          folderId: 1,
+          subject: 'Once Upon a Time',
+          date: '2020-06-29T00:52:14.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Aliquam sem et tortor\nconsequat id porta nibh. Neque aliquam vestibulum morb...',
+          isPreview: true
+        },
+        '98': {
+          id: 98,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        },
+        '99': {
+          id: 99,
+          folderId: 1,
+          subject: 'Je te garde cette adresse email ma fille',
+          date: '2020-06-23T03:28:01.000Z',
+          fromJSON: '{"value":[{"address":"youri.nelson@gmail.com","name":"Youri Nelson"}],"html":"<span class=\\"mp_address_group\\"><span class=\\"mp_address_name\\">Youri Nelson</span> &lt;<a href=\\"mailto:youri.nelson@gmail.com\\" class=\\"mp_address_email\\">youri.nelson@gmail.com</a>&gt;</span>","text":"Youri Nelson <youri.nelson@gmail.com>"}',
+          bodyPreview: 'C\'est une adresse email pour toi ma fille!\n\nJe t\'aime.\nPapa\n',
+          isPreview: true
+        }
+      },
+      allIds: [
+        99,
+        98,
+        97,
+        96,
+        95,
+        94,
+        93,
+        92,
+        91,
+        90,
+        89,
+        88,
+        87,
+        86,
+        85,
+        84,
+        83,
+        82,
+        81,
+        80,
+        79,
+        78,
+        77,
+        76,
+        75,
+        74,
+        73,
+        72,
+        71,
+        70,
+        69,
+        68,
+        67,
+        66,
+        65,
+        64,
+        63,
+        62,
+        61,
+        60,
+        59,
+        58,
+        57,
+        56,
+        55
+      ]
+    }
+  }

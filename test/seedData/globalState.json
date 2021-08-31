@@ -1,0 +1,7 @@
+{
+    activeMsgId: 55,
+    activeMailboxIndex: 0,
+    activeFolderIndex: 0,
+    loading: false,
+    error: ''
+  }

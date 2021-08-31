@@ -1,0 +1,14 @@
+{
+  "translation": {
+    "global": {
+      "login": "S'identifier",
+      "masterPassword": "Mot de passe maître"
+    },
+    "login": {
+      "text":
+        "Nous saluons le retour! Veuillez entrer votre mot de passe principal pour déverrouiller votre compte.",
+      "register": "Inscrivez-vous plutôt"
+    },
+    "register": {}
+  }
+}

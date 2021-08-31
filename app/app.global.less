@@ -1,0 +1,141 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+/*@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import '~@fortawesome/fontawesome-free/css/all.css';
+@import '~rsuite/lib/styles/themes/default/index.less';
+/* @import './themes/default.less';*/
+@import '~draft-js/dist/Draft.css';
+ /* PRIMSJS Theme is for the codeblock for the editor. */
+@import '~prismjs/themes/prism-tomorrow.css';
+
+/* @reset-import: false;
+
+@base-color: #3498FF;*/
+
+/* open-sans-regular - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+    url('/resources/fonts/open-sans-v18-latin-regular.woff2') format('woff2'),
+    url('/resources/fonts/open-sans-v18-latin-regular.woff2') format('woff');
+}
+
+body {
+  font-family: 'Open Sans';
+  position: relative;
+  height: 100vh;
+  overflow-y: hidden;
+  font-size: 16px;
+}
+
+h1 {
+  font-size: 46px;
+  line-height: 62px;
+}
+
+h2 {
+  font-size: 36px;
+  line-height: 50px;
+}
+
+h3 {
+  font-size: 28px;
+  line-height: 42px;
+}
+
+
+
+p {
+  font-size: small;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  color: #1675e0;
+  /* opacity: 0.75; */
+  text-decoration: none;
+}
+
+a:hover {
+  opacity: 1;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.loading-indicator {
+  animation: spin 1s linear infinite;
+}
+
+/* The styling below is for the editors tool bar */
+code[class*="language-"],
+pre[class*="language-"] {
+  border-radius:5px;
+}
+
+.editorBlockquote {
+  border-left: 5px solid #eee;
+  color: #666;
+  font-family: 'Hoefler Text', 'Georgia', serif;
+  font-style: italic;
+  margin: 16px 0;
+  padding: 10px 20px;
+}
+/* End of CSS for editors toolbar */
+
+/* Styling for editor itself */
+/* .public-DraftEditor-content > div:first-child{
+  margin-bottom: 120px;
+} */
+/* End Styling for editor itself */
+
+/* @keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+} */
+
+
+/* The styling below is for the registration steps graphics */
+.rs-steps-item-status-finish .rs-steps-item-tail, 
+.rs-steps-item-status-finish .rs-steps-item-title::after {
+    border-color: #c5c6c7!important;
+}
+
+.rs-steps-item-status-process .rs-steps-item-icon-wrapper:not(.rs-steps-item-custom-icon) {
+  border-color: #AA96FF!important;
+  background: #fff!important;
+  color: #AA96FF!important;
+  font-weight: 700!important;
+}
+
+.rs-steps-item-status-finish .rs-steps-item-icon-wrapper:not(.rs-steps-item-custom-icon) .rs-steps-item-icon::before{
+  color: #9c9ea0!important;
+}
+
+.rs-steps-item-status-finish .rs-steps-item-icon-wrapper:not(.rs-steps-item-custom-icon) {
+  border-color: #94a3b8!important;
+}
+.rs-steps-item-status-wait, .rs-steps-item-status-finish, .rs-steps-item-content {
+  opacity:0.5!important;
+}
+
+.rs-steps-item-status-finish, .rs-steps-item-status-process {
+  cursor: pointer!important;
+}
+
+.rs-steps-item-status-wait {
+  cursor: not-allowed!important;
+}
+/* END The styling below is for the registration steps graphics */

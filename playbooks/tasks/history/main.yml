@@ -1,0 +1,102 @@
+---
+- name: List objects in Space
+  aws_s3:
+    aws_access_key: '{{ spaces_access_key }}'
+    aws_secret_key: '{{ spaces_secret_key }}'
+    s3_url: '{{ spaces_endpoint }}'
+    bucket: '{{ space_name }}'
+    prefix: desktop/
+    mode: list
+    rgw: true
+  register: spaces_items
+  tags:
+    - update
+
+- name: edit windows index.html
+  vars:
+    regex_pattern: 'Telios-.*.exe$'
+  replace:
+    path: ../public/win/index.html
+    regexp: '^$'
+    replace: "\n  <a href=\"https://downloads.telios.io/desktop/{{ item }}\" download>Client {{ item | splitext | first }}</a></br>"
+  loop: "{{ spaces_items.s3_keys | map('regex_search',regex_pattern) | select('string') | list }}"
+  tags:
+    - win
+
+- name: edit linux Debian index.html
+  vars:
+    regex_pattern: 'Telios-.*.deb$'
+  replace:
+    path: ../public/nix/debian/index.html
+    regexp: '^$'
+    replace: "\n  <a href=\"https://downloads.telios.io/desktop/{{ item }}\" download>Client {{ item | splitext | first }}</a></br>"
+  loop: "{{ spaces_items.s3_keys | map('regex_search',regex_pattern) | select('string') | list }}"
+  tags:
+    - linux
+
+- name: edit linux Rhel index.html
+  vars:
+    regex_pattern: 'Telios-.*.rpm$'
+  replace:
+    path: ../public/nix/rhel/index.html
+    regexp: '^$'
+    replace: "\n  <a href=\"https://downloads.telios.io/desktop/{{ item }}\" download>Client {{ item | splitext | first }}</a></br>"
+  loop: "{{ spaces_items.s3_keys | map('regex_search',regex_pattern) | select('string') | list }}"
+  tags:
+    - linux
+
+- name: edit mac index.html
+  vars:
+    regex_pattern: 'Telios-.*.dmg$'
+  replace:
+    path: ../public/mac/index.html
+    regexp: '^$'
+    replace: "\n  <a href=\"https://downloads.telios.io/desktop/{{ item }}\" download>Client {{ item | splitext | first }}</a></br>"
+  loop: "{{ spaces_items.s3_keys | map('regex_search',regex_pattern) | select('string') | list }}"
+  tags:
+    - mac
+
+- name: Uploading win history
+  s3_sync:
+    aws_access_key: '{{ spaces_access_key }}'
+    aws_secret_key: '{{ spaces_secret_key }}'
+    ec2_url: '{{ spaces_endpoint }}'
+    bucket: '{{ space_name }}'
+    key_prefix: win/
+    file_root: ../public/win
+    mode: push
+    file_change_strategy: date_size #force
+    permission: public-read
+    region: '{{ spaces_region }}'
+  tags:
+    - win
+
+- name: Uploading linux history
+  s3_sync:
+    aws_access_key: '{{ spaces_access_key }}'
+    aws_secret_key: '{{ spaces_secret_key }}'
+    ec2_url: '{{ spaces_endpoint }}'
+    bucket: '{{ space_name }}'
+    key_prefix: nix/
+    file_root: ../public/nix
+    mode: push
+    file_change_strategy: date_size #force
+    permission: public-read
+    region: '{{ spaces_region }}'
+  tags:
+    - linux
+
+- name: Uploading mac history
+  s3_sync:
+    aws_access_key: '{{ spaces_access_key }}'
+    aws_secret_key: '{{ spaces_secret_key }}'
+    ec2_url: '{{ spaces_endpoint }}'
+    bucket: '{{ space_name }}'
+    key_prefix: mac
+    file_root: ../public/mac
+    mode: push
+    file_change_strategy: date_size #force
+    permission: public-read
+    region: '{{ spaces_region }}'
+  tags:
+    - mac
