@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Sequelize = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
-const Telios = require('@telios2/client-sdk');
+const SDK = require('@telios/client-sdk');
 const { Mailbox } = require('../models/mailbox.model');
 const { Folder } = require('../models/folder.model');
 const { Email } = require('../models/email.model');
@@ -29,7 +29,7 @@ module.exports = env => {
         deviceId
       } = account;
 
-      const mailbox = new Telios.Mailbox({
+      const mailbox = new SDK.Mailbox({
         provider: env === 'production' ? pkg.api.prod : envAPI.dev,
         auth: {
           claims: {
@@ -486,7 +486,7 @@ module.exports = env => {
             where: { emailId: msg.emailId },
             individualHooks: true
           })
-            .then(res => {})
+            .then(res => { })
             .catch(e => {
               process.send({ event: 'removeMessages', error: e.message });
             });
@@ -496,7 +496,7 @@ module.exports = env => {
               where: { folderId: 4 },
               individualHooks: true
             })
-              .then(res => {})
+              .then(res => { })
               .catch(e => {
                 process.send({ event: 'removeMessages', error: e.message });
               });

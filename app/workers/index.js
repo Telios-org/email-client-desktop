@@ -1,7 +1,6 @@
 const userDataPath = process.argv[2];
 const isDev = process.argv[3];
 
-require('./HyperSession.worker')(userDataPath); // eslint-disable-line
 require('./Account.worker')(userDataPath); // eslint-disable-line
 require('./Contacts.worker')();
 require('./messageIngress.worker')(userDataPath);
