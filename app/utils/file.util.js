@@ -1,5 +1,5 @@
 const MemoryStream = require('memorystream');
-const { Crypto } = require('@telios2/client-sdk');
+const { Crypto } = require('@telios/client-sdk');
 const { File } = require('../models/file.model');
 
 module.exports.saveEmailToDrive = async opts => {
@@ -45,24 +45,24 @@ module.exports.saveFileToDrive = async opts => {
 
 module.exports.saveFileFromEncryptedStream = async (writeStream, opts) => {
   return new Promise((resolve, reject) => {
-      opts.drive.readFile(opts.path, { key: opts.key, header: opts.header })
-        .then(stream => {
-          stream.on('data', chunk => {
-            writeStream.write(chunk);
-          });
-
-          stream.on('end', (data) => {
-            writeStream.end();
-          });
-
-          writeStream.on('finish', () => {
-            resolve();
-          });
-        })
-        .catch(err => {
-          reject(err);
-          throw err;
+    opts.drive.readFile(opts.path, { key: opts.key, header: opts.header })
+      .then(stream => {
+        stream.on('data', chunk => {
+          writeStream.write(chunk);
         });
+
+        stream.on('end', (data) => {
+          writeStream.end();
+        });
+
+        writeStream.on('finish', () => {
+          resolve();
+        });
+      })
+      .catch(err => {
+        reject(err);
+        throw err;
+      });
   });
 };
 
@@ -71,26 +71,26 @@ module.exports.readFile = (path, { drive, type }) => {
     let content = '';
 
     drive.readFile(path)
-    .then(stream => {
-      stream.on('data', chunk => {
-        if(type === 'email') {
-          content += chunk.toString('utf8');
-        } else {
-          content += chunk.toString('base64');
-        }
-      });
+      .then(stream => {
+        stream.on('data', chunk => {
+          if (type === 'email') {
+            content += chunk.toString('utf8');
+          } else {
+            content += chunk.toString('base64');
+          }
+        });
 
-      stream.on('end', (data) => {
-        resolve(content);
-      });
+        stream.on('end', (data) => {
+          resolve(content);
+        });
 
-      stream.on('error', (err) => {
+        stream.on('error', (err) => {
+          reject(err);
+        });
+      })
+      .catch(err => {
         reject(err);
       });
-    })
-    .catch(err => {
-      reject(err);
-    });
   });
 }
 

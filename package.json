@@ -122,7 +122,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/telios2/email-client-desktop.git"
+    "url": "https://github.com/Telios-org/email-client-desktop"
   },
   "author": {
     "name": "Telios Technologies, Inc",
@@ -338,7 +338,7 @@
     "rsuite": "^4.8.1",
     "source-map-support": "^0.5.16",
     "styled-components": "^5.2.1",
-    "tailwindcss": "^2.0.1",
+    "tailwindcss": "2.2.7",
     "union-class-names": "^1.0.0",
     "uuid": "^8.0.0",
     "zxcvbn": "^4.4.2"

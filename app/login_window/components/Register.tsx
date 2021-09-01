@@ -22,7 +22,7 @@ import {
   Whisper,
   Tooltip
 } from 'rsuite';
-import { Mailbox } from '@telios2/client-sdk';
+import { Mailbox } from '@telios/client-sdk';
 import i18n from '../../i18n/i18n';
 
 const { ipcRenderer, remote } = require('electron');
@@ -620,16 +620,14 @@ class Register extends Component<Props, State> {
                   {!emailCheckLoading && !formSuccess.email && (
                     <FaRegEnvelope
                       className={`text-gray-400
-                    ${
-                      formError.email && !formSuccess.email
-                        ? 'text-red-600'
-                        : ''
-                    }
-                    ${
-                      formSuccess.email && !formError.email
-                        ? 'text-green-500'
-                        : ''
-                    }`}
+                    ${formError.email && !formSuccess.email
+                          ? 'text-red-600'
+                          : ''
+                        }
+                    ${formSuccess.email && !formError.email
+                          ? 'text-green-500'
+                          : ''
+                        }`}
                     />
                   )}
                   {emailCheckLoading &&
@@ -687,37 +685,32 @@ class Register extends Component<Props, State> {
               </FormGroup>
               <div className="flex flex-row h-1 w-full mt-1 mb-3 px-1">
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
-                  }`}
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
+                    }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null && passwordStrength >= 1
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 1
                       ? 'bg-red-400'
                       : 'bg-gray-300'
-                  }`}
+                    }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null && passwordStrength >= 2
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 2
                       ? 'bg-orange-400'
                       : 'bg-gray-300'
-                  }`}
+                    }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null && passwordStrength >= 3
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 3
                       ? 'bg-yellow-400'
                       : 'bg-gray-300'
-                  }`}
+                    }`}
                 />
                 <div
-                  className={`flex-1 rounded ${
-                    passwordStrength !== null && passwordStrength === 4
+                  className={`flex-1 rounded ${passwordStrength !== null && passwordStrength === 4
                       ? 'bg-green-400'
                       : 'bg-gray-300'
-                  }`}
+                    }`}
                 />
               </div>
 
@@ -740,9 +733,8 @@ class Register extends Component<Props, State> {
                   />
                 </InputGroup>
                 <div className="text-red-500">
-                  {`${formError.masterpass ? formError.masterpass : ''} ${
-                    formError.confirmpass ? formError.confirmpass : ''
-                  }`}
+                  {`${formError.masterpass ? formError.masterpass : ''} ${formError.confirmpass ? formError.confirmpass : ''
+                    }`}
                 </div>
               </FormGroup>
               <Whisper placement="top" trigger="hover" speaker={tooltip}>
