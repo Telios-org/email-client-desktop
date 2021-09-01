@@ -1,5 +1,7 @@
 # Telios Desktop Email Client
 
+[![build status](https://gitlab.com/telios2/client-desktop/badges/beta/pipeline.svg)](https://gitlab.com/telios2/client-desktop/commits/beta)
+
 <br>
 
 Telios is an offline-capabale e2e encrypted email service built on [hypercore-protocol](https://hypercore-protocol.org/) for sending and receiving emails.
