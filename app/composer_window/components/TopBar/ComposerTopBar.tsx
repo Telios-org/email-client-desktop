@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import WindowControls from '../../../main_window/components/Layout/Topbar/WindowControls/WindowControls';
+import WindowControls from '../../../global_components/WindowControls/WindowControls';
 import styles from './ComposerTopBar.less';
 
 type Props = {
