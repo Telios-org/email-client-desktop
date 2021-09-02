@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { MailboxType } from '../../../reducers/types';
 import Profile from './Profile--D';
 import SearchBar from './SearchBar';
-import WindowControls from './WindowControls/WindowControls';
+import WindowControls from '../../../../global_components/WindowControls/WindowControls';
 import styles from './GlobalTopBar.less';
 
 type Props = {
