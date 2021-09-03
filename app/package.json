@@ -14,7 +14,8 @@
     "postinstall": "yarn electron-rebuild"
   },
   "api": {
-    "prod": "https://devapiv1.telios.io"
+    "prod": "https://apiv1.telios.io",
+    "dev": "https://devapiv1.telios.io"
   },
   "license": "CC-BY-NC-4.0",
   "dependencies": {

@@ -181,6 +181,10 @@ function MessageDisplay(props: Props) {
       setHeight(contentRef?.contentWindow?.document?.body?.scrollHeight + 20 + "px");
     };
 
+    setTimeout(() => {
+      onLoad();
+    })
+
     return (
       <iframe
         {...props}
@@ -283,9 +287,6 @@ function MessageDisplay(props: Props) {
           <Scrollbars hideTracksWhenNotNeeded autoHide>
             <div className="h-full">
               <div className="px-6 mb-6 mt-4 h-full">
-                {!loaded && (
-                  <Loader size="lg" backdrop vertical />
-                )}
                 <IFrame className="w-full">
                   <div style={divStyle}>
                     {renderHTML(bodyAsHtml)}
