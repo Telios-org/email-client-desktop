@@ -4,8 +4,7 @@ const fs = require('fs');
 const { fork } = require('child_process');
 const { remote } = require('electron');
 
-const isDev =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDev = process.env.NODE_ENV === 'development';
 
 const appPath = remote.app.getAppPath();
 const userDataPath = remote.app.getPath('userData');
@@ -20,7 +19,7 @@ class MainWorker extends EventEmitter {
   constructor() {
     super();
 
-    this.process = fork(workerPath, [userDataPath, isDev], {
+    this.process = fork(workerPath, [userDataPath, process.env.NODE_ENV], {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       cwd
     });
