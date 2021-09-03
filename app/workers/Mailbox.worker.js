@@ -30,7 +30,6 @@ module.exports = env => {
       } = account;
 
       const mailbox = new SDK.Mailbox({
-
         provider: env === 'production' ? pkg.api.prod : envAPI.dev,
         auth: {
           claims: {
