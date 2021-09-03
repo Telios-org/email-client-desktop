@@ -1,24 +1,30 @@
 # Telios Desktop Email Client
 
-![client_screenshot.png](repo/client_screenshot.png)
-
 <br>
 
 Telios is an offline-capabale e2e encrypted email service built on [hypercore-protocol](https://hypercore-protocol.org/) for sending and receiving emails.
 
 <br>
 
-<div align="center">
-
-</div>
+![client_screenshot.png](repo/client_screenshot.png)
 
 ## ⚠️ This project is not production ready ⚠️
 
 Features are still being built and optimized. While functional in it's current state, it is not recommended for regular use.
 
+<div align="center">
+
+</div>
+
 ## Starting Development
 
-Start the app in the `dev` environment:
+Start the app in `dev` mode:
+
+```bash
+yarn dev
+```
+
+Start the app in `prod` mode:
 
 ```bash
 yarn start
@@ -34,7 +40,7 @@ yarn package
 
 ## Docs
 
-See our [docs here](https://telios2.gitlab.io/telios-docs/docs/intro)
+See our [docs here](https://docs.telios.io)
 
 ## License
 
