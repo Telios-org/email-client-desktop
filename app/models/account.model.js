@@ -1,7 +1,7 @@
+const fs = require('fs');
+const path = require('path');
 const Sequelize = require('sequelize');
 const { Model } = require('sequelize');
-const store = require('../Store');
-const drive = store.getDrive();
 
 const model = {
   accountId: {
@@ -39,7 +39,7 @@ const model = {
   }
 };
 
-class Account extends Model {}
+class Account extends Model { }
 
 module.exports.Account = Account;
 
@@ -51,6 +51,19 @@ module.exports.init = async (sequelize, opts) => {
     tableName: 'Account',
     freezeTableName: true,
     timestamps: false
+  });
+
+  const store = require('../Store');
+  const drive = store.getDrive();
+
+  Account.addHook('afterCreate', async (account, options) => {
+    try {
+      const readStream = fs.createReadStream(path.join(store.acctPath, '/app.db'));
+      await drive.writeFile('/backup/encrypted.db', readStream);
+    } catch (err) {
+      process.send({ event: 'afterCreate', error: err.message });
+      throw new Error(err);
+    }
   });
 
   return Account;

@@ -16,6 +16,7 @@ module.exports = userDataPath => {
       try {
         const Account = new SDK.Account(apiDomain);
         const acctPath = path.join(userDataPath, `/Accounts/${payload.email}`);
+        store.acctPath = acctPath;
 
         fs.mkdirSync(acctPath);
 
@@ -108,6 +109,8 @@ module.exports = userDataPath => {
 
     if (event === 'getAcct') {
       const acctPath = `${userDataPath}/Accounts/${payload.email}`;
+      store.acctPath = acctPath;
+
       let acct = {};
 
       let connection = store.getDBConnection(payload.email);
