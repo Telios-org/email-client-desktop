@@ -319,7 +319,7 @@ module.exports = env => {
       }
     }
 
-    if (event === 'saveMessageToDB') {
+    if (event === 'MAIL SERVICE::saveMessageToDB') {
       drive = store.getDrive();
 
       console.log('MAILBOX WORKER:: SAVE TO DB', payload);
@@ -442,11 +442,11 @@ module.exports = env => {
               msgArr.push(msg);
             }
           });
-          return process.send({ event: 'saveMessageToDB', data: msgArr });
+          return process.send({ event: 'MAILBOX WORKER::saveMessageToDB', data: msgArr });
         })
         .catch(e => {
           process.send({
-            event: 'saveMessageToDB',
+            event: 'MAILBOX WORKER::saveMessageToDB',
             error: {
               name: e.name,
               message: e.message,

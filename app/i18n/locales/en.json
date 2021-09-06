@@ -75,6 +75,15 @@
       "folderName": "Folder Name",
       "syncingInProgress": "Syncing new messages..."
     },
+    "messageToolbar":{
+      "saveDraft": "Save & Close",
+      "openWindow": "Pop Out",
+      "discardDraft": "Discard",
+      "delete": "Delete",
+      "move": "Move",
+      "unreadToggle": "Mark Unread",
+      "refresh": "Sync"
+    },
     "form": {
       "emailRequired": "Email is required.",
       "recoveryRequired": "Recovery Email is required.",

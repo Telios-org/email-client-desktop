@@ -70,13 +70,14 @@ class AccountService {
       }
     });
 
-    ipcRenderer.on('saveMessageToDB', async (evt, data) => {
+    ipcRenderer.on('IPC::saveMessageToDB', async (evt, data) => {
       try {
+        console.log('ACCOUNT SERVICE:: SaveMessageToDB', data);
         await MailService.save(data);
 
-        ipcRenderer.send('saveMessageToDBResponse', null);
+        ipcRenderer.send('ACCOUNT SERVICE::saveMessageToDBResponse', null);
       } catch (e) {
-        ipcRenderer.send('saveMessageToDBError', e);
+        ipcRenderer.send('ACCOUNT SERVICE::saveMessageToDBError', e);
       }
     });
 

@@ -414,7 +414,6 @@ class Composer extends Component<Props, State> {
       }
 
       try {
-        console.log('COMPOSER SEND EMAIL', email, isInline);
         await ComposerService.send(email, isInline);
 
         this.setState({ loading: false });
@@ -445,7 +444,6 @@ class Composer extends Component<Props, State> {
   attr = () => {
     const { email } = this.state;
     const from = JSON.parse(email.fromJSON)[0];
-    console.log('ATTR', email, from);
     const dt = DateTime.fromISO(email.date, {
       zone: 'utc'
     }).toLocal();

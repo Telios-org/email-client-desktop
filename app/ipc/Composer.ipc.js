@@ -14,16 +14,16 @@ module.exports = windowManager => {
     }
 
     console.log('SAVE MESSAGE::PAYLOAD', payload);
-    mainWindow.webContents.send('saveMessageToDB', payload);
+    mainWindow.webContents.send('IPC::saveMessageToDB', payload);
 
     return new Promise((resolve, reject) => {
       mainWindow.webContents.on('ipc-message', (e, channel, data) => {
-        if (channel === 'saveMessageToDBResponse') {
+        if (channel === 'ACCOUNT SERVICE::saveMessageToDBResponse') {
           mainWindow.webContents.send('initMailbox', { fullSync: false });
           resolve(data);
         }
 
-        if (channel === 'saveMessageToDBError') {
+        if (channel === 'ACCOUNT SERVICE::saveMessageToDBError') {
           reject(data);
         }
       });
@@ -73,11 +73,14 @@ module.exports = windowManager => {
     });
   });
 
-  ipcMain.handle('saveMessageToDB', async (event, payload) => {
-    return saveMessage(payload);
-  });
+  ipcMain.handle(
+    'COMPOSER SERVICE::saveMessageToDB',
+    async (event, payload) => {
+      return saveMessage(payload);
+    }
+  );
 
-  ipcMain.handle('uploadAttachments', async event => {
+  ipcMain.handle('SERVICE::uploadAttachments', async event => {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         const options = {
@@ -125,7 +128,9 @@ module.exports = windowManager => {
                 const stats = fs.statSync(filepath);
                 size = stats.size;
               } catch (error) {
-                reject(new Error(`Could not calculate attachment size ${error}`));
+                reject(
+                  new Error(`Could not calculate attachment size ${error}`)
+                );
               }
 
               const filename = path.basename(filepath);
@@ -192,7 +197,7 @@ module.exports = windowManager => {
     }
   });
 
-  ipcMain.on('closeComposerWindow', async (event, opts) => {
+  ipcMain.on('RENDERER::closeComposerWindow', async (event, opts) => {
     let action = null;
 
     if (opts) {
@@ -202,6 +207,8 @@ module.exports = windowManager => {
     const mainWindow = windowManager.getWindow('mainWindow');
     const draft = store.getNewDraft();
     const isDirty = store.getDraftDirty();
+
+    console.log('CLOSE COMPOSER WINDOW::DRAFT', draft, isDirty, action);
 
     if (isDirty && !action) {
       windowManager
@@ -222,7 +229,6 @@ module.exports = windowManager => {
           console.error(e);
         });
     } else if (isDirty && action === 'save') {
-      console.log('SAVE DRAFT', draft);
       saveMessage({ messages: [draft], type: 'Draft', sync: true });
     }
 

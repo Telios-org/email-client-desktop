@@ -4,20 +4,21 @@ const store = require('../Store');
 
 module.exports = (windowManager, createMainWindow, createLoginWindow) => {
   const saveDraft = payload => {
+    // Should this method be moved to the Composer IPC?
     const mainWindow = windowManager.getWindow('mainWindow');
 
-    mainWindow.webContents.send('saveMessageToDB', payload);
+    mainWindow.webContents.send('IPC::saveMessageToDB', payload);
 
     return new Promise((resolve, reject) => {
       mainWindow.webContents.on('ipc-message', (e, channel, data) => {
-        if (channel === 'saveMessageToDBResponse') {
+        if (channel === 'ACCOUNT SERVICE::saveMessageToDBResponse') {
           store.setNewDraft(null);
           store.setDraftDirty(false);
-          mainWindow.webContents.send('initMailbox', { fullSync: false });
+          // mainWindow.webContents.send('initMailbox', { fullSync: false });
           resolve(data);
         }
 
-        if (channel === 'saveMessageToDBError') {
+        if (channel === 'ACCOUNT SERVICE::saveMessageToDBError') {
           store.setNewDraft(null);
           store.setDraftDirty(false);
           reject(data);
@@ -97,7 +98,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     mainWindow.webContents.send('initMailbox', { fullSync: true });
   });
 
-  ipcMain.handle('showComposerWindow', async (event, content) => {
+  ipcMain.handle('RENDERER::showComposerWindow', async (event, content) => {
     const composerWinCnt = windowManager.windows.composers.length;
     const windowID = `composerWindow${composerWinCnt}`;
 
@@ -134,6 +135,8 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
     let composerContent = null;
 
+    console.log('RENDERER::showComposerWindow - LOG1', draftEmail, windowID);
+
     if (draftEmail) {
       composerContent = {
         ...content,
@@ -145,8 +148,8 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
           ccJSON: JSON.stringify(draftEmail.cc),
           bccJSON: JSON.stringify(draftEmail.bcc),
           subject: draftEmail.subject,
-          bodyAsText: draftEmail.text_body || draftEmail.bodyAsText,
-          bodyAsHtml: draftEmail.html_body || draftEmail.bodyAsHtml,
+          bodyAsText: draftEmail.bodyAsText || draftEmail.text_body,
+          bodyAsHtml: draftEmail.bodyAsHtml || draftEmail.html_body,
           attachments: draftEmail.attachments
         }
       };
@@ -154,12 +157,14 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
       composerContent = { ...content };
     }
 
-    // console.log('SHOWCOMPOSERWINDOW', composerContent);
+    console.log('RENDERER::showComposerWindow - LOG2', composerContent, windowID);
 
     win.on('close', event => {
       const draft = store.getNewDraft();
       const isDirty = store.getDraftDirty();
 
+    console.log('RENDERER::showComposerWindow - LOG23', draft, isDirty);
+      
       if (isDirty && draft) {
         windowManager
           .showMessageBox({ event, browserWindow: win, draft })
