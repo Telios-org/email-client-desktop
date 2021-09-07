@@ -181,13 +181,6 @@ function MessageDisplay(props: Props) {
       setLoaded(true);
     };
 
-    // setTimeout(() => {
-    //   console.log('HEIGHT', height);
-    //   if (height === '0px') {
-    //     onLoad();
-    //   }
-    // })
-
     return (
       <iframe
         {...props}
