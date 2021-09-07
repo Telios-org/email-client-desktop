@@ -173,17 +173,20 @@ function MessageDisplay(props: Props) {
 
   const IFrame = ({ children, ...props }) => {
     const [contentRef, setContentRef] = useState(null);
-    const [height, setHeight] = useState('0px');
+    const [height, setHeight] = useState('');
     const mountNode = contentRef?.contentWindow?.document?.body;
 
     const onLoad = () => {
-      setLoaded(true);
       setHeight(contentRef?.contentWindow?.document?.body?.scrollHeight + 20 + "px");
+      setLoaded(true);
     };
 
-    setTimeout(() => {
-      onLoad();
-    })
+    // setTimeout(() => {
+    //   console.log('HEIGHT', height);
+    //   if (height === '0px') {
+    //     onLoad();
+    //   }
+    // })
 
     return (
       <iframe
@@ -196,6 +199,7 @@ function MessageDisplay(props: Props) {
         frameBorder="0"
       >
         {mountNode && createPortal(children, mountNode)}
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
       </iframe>
     );
   }
