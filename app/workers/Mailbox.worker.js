@@ -303,7 +303,7 @@ module.exports = env => {
           dest: emailDest
         });
 
-        res = { name: emailFilename, ...res };
+        res = { name: emailFilename, email:payload.email , ...res };
 
         process.send({ event: 'sendEmail', data: res });
       } catch (e) {
@@ -408,8 +408,8 @@ module.exports = env => {
           date: msg.email.date,
           bccJSON: JSON.stringify(msg.email.bcc),
           ccJSON: JSON.stringify(msg.email.cc),
-          bodyAsText: msg.email.text_body,
-          bodyAsHtml: msg.email.html_body,
+          bodyAsText: msg.email.bodyAsText || msg.email.text_body,
+          bodyAsHtml: msg.email.bodyAsHtml || msg.email.html_body,
           attachments: JSON.stringify(attachments),
           encKey: msg.email.encKey,
           encHeader: msg.email.encHeader,
