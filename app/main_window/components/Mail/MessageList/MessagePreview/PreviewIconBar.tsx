@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // EXTERNAL LIBRAIRIES
 import { Tooltip, Whisper, Alert } from 'rsuite';
@@ -13,6 +13,9 @@ import { moveMessagesToFolder } from '../../../../actions/mailbox/folders';
 import { clearActiveMessage } from '../../../../actions/mailbox/messages';
 import { loadMailboxes } from '../../../../actions/mail';
 
+// REDUX STATE SELECTORS
+import { selectActiveFolder } from '../../../../selectors/mail';
+
 // SERVICE FUNCTIONS
 import Mail from '../../../../../services/mail.service';
 
@@ -25,6 +28,7 @@ type Props = {
 };
 
 function PreviewIconBar(props: Props) {
+  const currentFolder = useSelector(selectActiveFolder);
   const dispatch = useDispatch();
   const { attachment, isInNetwork, isHover, messageId, activeFolderId } = props;
 
@@ -40,7 +44,7 @@ function PreviewIconBar(props: Props) {
   // Handles Selection Movements including routing deletes
   const moveToFolder = async (toId: number, name: string) => {
     try {
-      if ((activeFolderId === 6 && toId === 6) || activeFolderId === 4) {
+      if ((currentFolder.name === 'Trash') || currentFolder.name === 'Drafts') {
         await deleteMessage();
         Alert.success(`Deleted 1 message.`);
       } else {
@@ -55,6 +59,7 @@ function PreviewIconBar(props: Props) {
             }
           }
         ];
+
         await dispatch(moveMessagesToFolder(messagesToMove));
 
         Alert.success(`Moved 1 message to ${name}.`);
@@ -91,25 +96,9 @@ function PreviewIconBar(props: Props) {
               set="broken"
               style={{ width: '1.25em', height: '1.25em', cursor: 'pointer' }}
               className="ml-0.5 text-trueGray-500 hover:text-trueGray-700"
-              onClick={() => moveToFolder(6, 'Trash')}
+              onClick={() => moveToFolder(5, 'Trash')}
             />
           </Whisper>
-          {/* DECISION WAS MADE TO REMOVE SPAM ALTOGETHER */}
-          {/* {activeFolderId !== 6 && (
-            <Whisper
-              trigger="hover"
-              placement="bottom"
-              delay={1000}
-              speaker={<Tooltip>Mark as Spam</Tooltip>}
-            >
-              <Danger
-                set="broken"
-                style={{ width: '1em', height: '1em', cursor: 'pointer' }}
-                className="ml-0.5 text-gray-500 hover:text-gray-700"
-                onClick={() => moveToFolder(6, 'Spam')}
-              />
-            </Whisper>
-          )} */}
         </>
       )}
     </div>
