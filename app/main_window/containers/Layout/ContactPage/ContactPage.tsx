@@ -198,7 +198,6 @@ class ContactPage extends React.Component<Props, State> {
 
   deleteContact(contactId: number) {
     const { removeContact } = this.props;
-    console.log(contactId, 'DELETE');
     removeContact(contactId);
   }
 
@@ -209,11 +208,9 @@ class ContactPage extends React.Component<Props, State> {
       const { contacts } = this.props;
       // Referencing the raw contact data since we
       // may have manipulated the data to display in the table
-      console.log(contacts);
       [rawData] = contacts.filter(c => c.id === data.id);
     }
 
-    console.log(data, rawData, this.state);
     this.setState({
       showModal: true,
       currentContact: rawData,

@@ -51,7 +51,7 @@ class ComposerService {
         });
     } else {
       ipcRenderer
-        .invoke('saveMessageToDB', {
+        .invoke('COMPOSER SERVICE::saveMessageToDB', {
           messages: [email],
           type: 'Sent',
           sync: true
@@ -68,7 +68,7 @@ class ComposerService {
   static async uploadAttachments() {
     return new Promise((resolve, reject) => {
       ipcRenderer
-        .invoke('uploadAttachments')
+        .invoke('SERVICE::uploadAttachments')
         .then(data => {
           return resolve(data);
         })

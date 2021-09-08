@@ -409,7 +409,6 @@ export const fetchMsg = (messageId: string) => {
     let email;
 
     try {
-      console.log('');
       email = await Mail.getMessagebyId(messageId);
     } catch (err) {
       dispatch(fetchMsgBodyFailure(err));

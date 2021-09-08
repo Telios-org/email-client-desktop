@@ -128,13 +128,13 @@ class MailService {
 
   static save(opts) {
     worker.send({
-      event: 'saveMessageToDB',
+      event: 'MAIL SERVICE::saveMessageToDB',
       payload: { messages: opts.messages, type: opts.type }
     });
 
     if (opts.sync) {
       return new Promise((resolve, reject) => {
-        worker.once('saveMessageToDB', m => {
+        worker.once('MAILBOX WORKER::saveMessageToDB', m => {
           const { data, error } = m;
 
           if (error) return reject(error);
