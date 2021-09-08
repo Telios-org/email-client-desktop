@@ -16,7 +16,7 @@ module.exports = windowManager => {
     mainWindow.webContents.send('IPC::saveMessageToDB', payload);
 
     return new Promise((resolve, reject) => {
-      mainWindow.webContents.on('ipc-message', (e, channel, data) => {
+      mainWindow.webContents.once('ipc-message', (e, channel, data) => {
         if (channel === 'ACCOUNT SERVICE::saveMessageToDBResponse') {
           mainWindow.webContents.send('initMailbox', { fullSync: false });
           resolve(data);
@@ -35,7 +35,7 @@ module.exports = windowManager => {
     mainWindow.webContents.send('updateEmail', payload);
 
     return new Promise((resolve, reject) => {
-      mainWindow.webContents.on('ipc-message', (e, channel, data) => {
+      mainWindow.webContents.once('ipc-message', (e, channel, data) => {
         if (channel === 'updateEmailResponse') {
           resolve(data);
         }
@@ -58,7 +58,7 @@ module.exports = windowManager => {
     mainWindow.webContents.send('sendEmail', payload);
 
     return new Promise((resolve, reject) => {
-      mainWindow.webContents.on('ipc-message', (e, channel, data) => {
+      mainWindow.webContents.once('ipc-message', (e, channel, data) => {
         if (channel === 'sendEmailResponse') {
           clearDraft();
           resolve(data);
@@ -147,7 +147,7 @@ module.exports = windowManager => {
     mainWindow.webContents.send('saveFiles', attachments);
 
     return new Promise((resolve, reject) => {
-      mainWindow.webContents.on('ipc-message', (e, channel, data) => {
+      mainWindow.webContents.once('ipc-message', (e, channel, data) => {
         if (channel === 'saveFilesResponse') {
           resolve(data);
         }
@@ -239,7 +239,7 @@ module.exports = windowManager => {
     mainWindow.webContents.send('createContacts', payload);
 
     return new Promise((resolve, reject) => {
-      mainWindow.webContents.on('ipc-message', (e, channel, data) => {
+      mainWindow.webContents.once('ipc-message', (e, channel, data) => {
         if (channel === 'createContactsResponse') {
           resolve(data);
         }
@@ -260,7 +260,7 @@ module.exports = windowManager => {
     mainWindow.webContents.send('searchContact', payload);
 
     return new Promise((resolve, reject) => {
-      mainWindow.webContents.on('ipc-message', (e, channel, data) => {
+      mainWindow.webContents.once('ipc-message', (e, channel, data) => {
         if (channel === 'searchContactResponse') {
           resolve(data);
         }
