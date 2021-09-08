@@ -17,7 +17,7 @@ class Store {
     };
 
     this.drive = null;
-    this.acctpath = null;
+    this.acctPath = null;
     this.accountSecrets = {};
     this.account = null;
     this.currentAccount = null;

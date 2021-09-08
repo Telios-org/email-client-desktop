@@ -110,7 +110,7 @@ export default function MessageToolbar(props: Props) {
   };
 
   const showComposerControls =
-    (composerControls || currentFolderId === 4) && selected.items.length <= 1;
+    (composerControls || currentFolderId === 3) && selected.items.length <= 1;
   // Buttons positioning
   const displacement = showComposerControls ? `${panelSize}px` : '0px';
 
@@ -145,7 +145,7 @@ export default function MessageToolbar(props: Props) {
   const moveToFolder = async (toId: number, name: string) => {
     setIsLoading(true);
     try {
-      if ((currentFolderId === 6 && toId === 6) || currentFolderId === 4) {
+      if ((currentFolderId === 5 && toId === 5) || currentFolderId === 3) {
         await deleteMessages();
         Alert.success(`Deleted ${selected.items.length} message(s).`);
       } else {
@@ -165,7 +165,6 @@ export default function MessageToolbar(props: Props) {
             }
           });
         });
-
         await dispatch(moveMessagesToFolder(messagesToMove));
 
         Alert.success(`Moved ${selected.items.length} message(s) to ${name}.`);
@@ -189,27 +188,13 @@ export default function MessageToolbar(props: Props) {
     });
   };
 
-  // POTENTIAL DEPRECATION OF THE BELOW
-  // const SelectDropdown = ({ ...props }) => (
-  //   <Dropdown {...props}>
-  //     <Dropdown.Item key="all" onClick={() => onSelectAction('all')}>
-  //       <span>All</span>
-  //     </Dropdown.Item>
-  //     <Dropdown.Item key="none" onClick={() => onSelectAction('none')}>
-  //       <span>None</span>
-  //     </Dropdown.Item>
-  //   </Dropdown>
-  // );
-
   // MOVE ACTION DROPDOWN
   const MoveDropdown = ({ ...props }) => (
     <Dropdown {...props} className="flex">
       {folders.allIds.map((fId: number) => {
         const folder = folders.byId[fId];
-        if (
-          !unmoveableToFolder.includes(folder.name) &&
-          folder.id !== currentFolderId
-        ) {
+
+        if (!unmoveableToFolder.includes(folder.name) && folder.id !== currentFolderId) {
           const IconTag = Icon.folder;
           return (
             <Dropdown.Item
@@ -251,9 +236,8 @@ export default function MessageToolbar(props: Props) {
         speaker={<Tooltip>{tpText}</Tooltip>}
       >
         <button
-          className={`disabled:opacity-50 ${
-            disabled ? 'cursor-not-allowed' : 'hover:bg-gray-200 cursor-pointer'
-          }  text-gray-500 rounded p-2 focus:outline-none  ${className} justify-center items-center tracking-wide flex flex-row h-full`}
+          className={`disabled:opacity-50 ${disabled ? 'cursor-not-allowed' : 'hover:bg-gray-200 cursor-pointer'
+            }  text-gray-500 rounded p-2 focus:outline-none  ${className} justify-center items-center tracking-wide flex flex-row h-full`}
           type="button"
           onClick={onClick}
           disabled={disabled}
@@ -287,7 +271,7 @@ export default function MessageToolbar(props: Props) {
         <>
           <CustomButton
             onClick={() => {
-              moveToFolder(6, 'Trash');
+              moveToFolder(5, 'Trash');
             }}
             icon="trash"
             disabled={isActionDisabled}
@@ -300,76 +284,57 @@ export default function MessageToolbar(props: Props) {
             {i18n.t('messageToolbar.delete')}
           </CustomButton>
 
-          {currentFolderId !== 4 && (
-            <>
-              <MoveDropdown
-                disabled={isMoveDisabled}
-                renderTitle={() => {
-                  return (
-                    <CustomButton
-                      icon="move"
-                      disabled={isMoveDisabled}
-                      className="mr-1"
-                      tpPlacement="bottom"
-                      tpTrigger="hover"
-                      tpText="Move Selection"
-                      set="iconly"
-                    >
-                      {i18n.t('messageToolbar.move')}
-                    </CustomButton>
-                  );
-                }}
-              />
-
-              {/* DECISON WAS MADE TO REMOVE SPAM FOR NOW */}
-              {/* {currentFolderId !== 6 && currentFolderId !== 5 && (
-                <CustomButton
-                  onClick={() => {
-                    moveToFolder(6, 'Spam');
-                  }}
-                  icon="spam"
-                  disabled={isActionDisabled}
-                  className="mr-1"
-                  tpPlacement="bottom"
-                  tpTrigger="hover"
-                  tpText="Move Selection to Spam"
-                  set="iconly"
-                >
-                  Spam
-                </CustomButton>
-              )} */}
-
-              {currentFolderId !== 5 && (
-                <CustomButton
-                  onClick={() => {
-                    unread();
-                  }}
-                  icon="unread"
-                  disabled={isActionDisabled}
-                  className="mr-1"
-                  tpPlacement="bottom"
-                  tpTrigger="hover"
-                  tpText="Change Status to Unread"
-                  set="iconly"
-                >
-                  {i18n.t('messageToolbar.unreadToggle')}
-                </CustomButton>
-              )}
-
-              <CustomButton
-                onClick={onRefreshMail}
-                icon="sync"
-                spinIcon={loading || isLoading}
-                className=""
-                tpPlacement="bottom"
-                tpTrigger="hover"
-                tpText="Manually Check for Updates"
-                set="bs"
-              >
-                {i18n.t('messageToolbar.refresh')}
-              </CustomButton>
-            </>
+          {currentFolderId !== 3 && currentFolderId !== 4 && (
+            <MoveDropdown
+              disabled={isMoveDisabled}
+              renderTitle={() => {
+                return (
+                  <CustomButton
+                    icon="move"
+                    disabled={isMoveDisabled}
+                    className="mr-1"
+                    tpPlacement="bottom"
+                    tpTrigger="hover"
+                    tpText="Move Selection"
+                    set="iconly"
+                  >
+                    {i18n.t('messageToolbar.move')}
+                  </CustomButton>
+                );
+              }}
+            />
           )}
+
+          {currentFolderId !== 3 && currentFolderId !== 4 && (
+            <CustomButton
+              onClick={() => {
+                unread();
+              }}
+              icon="unread"
+              disabled={isActionDisabled}
+              className="mr-1"
+              tpPlacement="bottom"
+              tpTrigger="hover"
+              tpText="Change Status to Unread"
+              set="iconly"
+            >
+              {i18n.t('messageToolbar.unreadToggle')}
+            </CustomButton>
+
+          )}
+
+          <CustomButton
+            onClick={onRefreshMail}
+            icon="sync"
+            spinIcon={loading || isLoading}
+            className=""
+            tpPlacement="bottom"
+            tpTrigger="hover"
+            tpText="Manually Check for Updates"
+            set="bs"
+          >
+            {i18n.t('messageToolbar.refresh')}
+          </CustomButton>
         </>
       )}
       {showComposerControls && (
@@ -424,18 +389,18 @@ type ButtonProps = {
   spinIcon?: boolean;
   disabled?: boolean;
   tpPlacement:
-    | 'top'
-    | 'bottom'
-    | 'left'
-    | 'right'
-    | 'topStart'
-    | 'topEnd'
-    | 'bottomStart'
-    | 'bottomEnd'
-    | 'leftStart'
-    | 'leftEnd'
-    | 'rightEnd'
-    | 'rightStart';
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
+  | 'topStart'
+  | 'topEnd'
+  | 'bottomStart'
+  | 'bottomEnd'
+  | 'leftStart'
+  | 'leftEnd'
+  | 'rightEnd'
+  | 'rightStart';
   tpTrigger: 'click' | 'hover' | 'focus' | 'active' | 'none';
   tpText: string;
   set: 'iconly' | 'bs';

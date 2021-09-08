@@ -2,6 +2,44 @@ const { DataTypes } = require('sequelize');
 const { Model } = require('sequelize');
 const store = require('../Store');
 
+module.exports.DefaultFolders = [
+  {
+    id: 1,
+    name: 'New',
+    type: 'default',
+    icon: 'inbox',
+    seq: 1
+  },
+  {
+    id: 2,
+    name: 'Read',
+    type: 'default',
+    icon: 'inbox',
+    seq: 2
+  },
+  {
+    id: 3,
+    name: 'Drafts',
+    type: 'default',
+    icon: 'pencil',
+    seq: 3
+  },
+  {
+    id: 4,
+    name: 'Sent',
+    type: 'default',
+    icon: 'send-o',
+    seq: 4
+  },
+  {
+    id: 5,
+    name: 'Trash',
+    type: 'default',
+    icon: 'trash-o',
+    seq: 5
+  },
+];
+
 const model = {
   folderId: {
     type: DataTypes.INTEGER,
@@ -33,7 +71,7 @@ const model = {
   }
 };
 
-class Folder extends Model {}
+class Folder extends Model { }
 
 module.exports.Folder = Folder;
 
@@ -72,11 +110,13 @@ module.exports.init = async (sequelize, opts) => {
     try {
       await collection.del(folder.folderId);
     } catch (err) {
-      process.send({ event: 'BeforeDestroy-deleteFolder', error: {
-        name: err.name,
-        message: err.message,
-        stacktrace: err.stack
-      } });
+      process.send({
+        event: 'BeforeDestroy-deleteFolder', error: {
+          name: err.name,
+          message: err.message,
+          stacktrace: err.stack
+        }
+      });
       throw new Error(err);
     }
   });
