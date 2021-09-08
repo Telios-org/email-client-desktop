@@ -135,8 +135,6 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
     let composerContent = null;
 
-    console.log('RENDERER::showComposerWindow - LOG1', draftEmail, windowID);
-
     if (draftEmail) {
       composerContent = {
         ...content,
@@ -157,13 +155,9 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
       composerContent = { ...content };
     }
 
-    console.log('RENDERER::showComposerWindow - LOG2', composerContent, windowID);
-
     win.on('close', event => {
       const draft = store.getNewDraft();
       const isDirty = store.getDraftDirty();
-
-    console.log('RENDERER::showComposerWindow - LOG23', draft, isDirty);
       
       if (isDirty && draft) {
         windowManager

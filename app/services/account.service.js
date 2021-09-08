@@ -72,7 +72,6 @@ class AccountService {
 
     ipcRenderer.on('IPC::saveMessageToDB', async (evt, data) => {
       try {
-        console.log('ACCOUNT SERVICE:: SaveMessageToDB', data);
         await MailService.save(data);
 
         ipcRenderer.send('ACCOUNT SERVICE::saveMessageToDBResponse', null);

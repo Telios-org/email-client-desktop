@@ -303,7 +303,7 @@ module.exports = env => {
           dest: emailDest
         });
 
-        res = { name: emailFilename, email:payload.email , ...res };
+        res = { name: emailFilename, email: payload.email , ...res };
 
         process.send({ event: 'sendEmail', data: res });
       } catch (e) {
@@ -321,8 +321,6 @@ module.exports = env => {
 
     if (event === 'MAIL SERVICE::saveMessageToDB') {
       drive = store.getDrive();
-
-      console.log('MAILBOX WORKER:: SAVE TO DB', payload);
 
       const { messages, type, newMessage } = payload;
 

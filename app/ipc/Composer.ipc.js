@@ -13,7 +13,6 @@ module.exports = windowManager => {
       mainWindow.webContents.send('createContacts', payload);
     }
 
-    console.log('SAVE MESSAGE::PAYLOAD', payload);
     mainWindow.webContents.send('IPC::saveMessageToDB', payload);
 
     return new Promise((resolve, reject) => {
@@ -207,8 +206,6 @@ module.exports = windowManager => {
     const mainWindow = windowManager.getWindow('mainWindow');
     const draft = store.getNewDraft();
     const isDirty = store.getDraftDirty();
-
-    console.log('CLOSE COMPOSER WINDOW::DRAFT', draft, isDirty, action);
 
     if (isDirty && !action) {
       windowManager

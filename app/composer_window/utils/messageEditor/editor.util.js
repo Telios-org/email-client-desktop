@@ -83,6 +83,6 @@ module.exports.editorStateFromHTML = htmlBody => {
   //     blocksFromHTML.contentBlocks,
   //     blocksFromHTML.entityMap
   //   );
-  console.log(JSON.stringify(convertToRaw(state)));
+  // console.log(JSON.stringify(convertToRaw(state)));
   return EditorState.createWithContent(state);
 };

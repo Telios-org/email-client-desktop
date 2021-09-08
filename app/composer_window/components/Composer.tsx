@@ -15,14 +15,14 @@ import { DebounceInput } from 'react-debounce-input';
 import { Notification, Divider } from 'rsuite';
 import { DateTime } from 'luxon';
 import createImagePlugin from 'draft-js-image-plugin';
-import { editorStateFromHTML } from '../../utils/editor.util';
+import { editorStateFromHTML } from '../utils/messageEditor/editor.util';
 import createToolbarPlugin from './editorPlugins/draft-js-toolbar';
 import MessageInputs from './MessageInputs';
 import Attachments from './Attachments/Attachments';
 import ComposerTopBar from './TopBar/ComposerTopBar';
 
 import { ISOtimestamp } from '../../main_window/utils/date.util';
-import editorHTMLexport from '../../main_window/utils/messageEditor/htmlExportOptions';
+import editorHTMLexport from '../utils/messageEditor/htmlExportOptions';
 
 import ComposerService from '../../services/composer.service';
 
