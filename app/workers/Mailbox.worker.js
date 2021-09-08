@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
 const SDK = require('@telios/client-sdk');
 const { Mailbox } = require('../models/mailbox.model');
-const { Folder } = require('../models/folder.model');
+const { Folder, DefaultFolders } = require('../models/folder.model');
 const { Email } = require('../models/email.model');
 const { File } = require('../models/file.model');
 const fileUtil = require('../utils/file.util');
@@ -227,9 +227,9 @@ module.exports = env => {
           );
 
           if (
+            email.folderId !== 3 &&
             email.folderId !== 4 &&
-            email.folderId !== 5 &&
-            email.folderId !== 6
+            email.folderId !== 5
           ) {
             await Folder.decrement(['count'], {
               where: { folderId: email.folderId },
@@ -343,7 +343,7 @@ module.exports = env => {
 
         if (
           (type === 'Sent' && msg.email.emailId) ||
-          (type === 'Draft' && msg.email.folderId !== 4)
+          (type === 'Draft' && msg.email.folderId !== 3)
         ) {
           msg.email.emailId = null;
         }
@@ -381,16 +381,16 @@ module.exports = env => {
             );
             break;
           case 'Sent':
-            folderId = 5; // Save message to Sent
+            folderId = 4; // Save message to Sent
             break;
           case 'Draft':
-            folderId = 4; // Save message to Drafts
+            folderId = 3; // Save message to Drafts
 
             // Don't increment folder count if this is
             // a draft being updated
             if (!msg.email.emailId) {
               asyncFolders.push(
-                Folder.increment(['count'], { where: { folderId: 4 } })
+                Folder.increment(['count'], { where: { folderId: 3 } })
               );
             }
             break;
@@ -491,9 +491,9 @@ module.exports = env => {
               process.send({ event: 'removeMessages', error: e.message });
             });
 
-          if (msg.folderId === 4) {
+          if (msg.folderId === 3) {
             Folder.decrement(['count'], {
-              where: { folderId: 4 },
+              where: { folderId: 3 },
               individualHooks: true
             })
               .then(res => { })
@@ -537,7 +537,7 @@ module.exports = env => {
           }
         );
 
-        if (fromFolder === 4 || fromFolder === 6) {
+        if (fromFolder === 3 || fromFolder === 5) {
           await Folder.decrement(['count'], {
             by: messages.length,
             where: { folderId: fromFolder },
@@ -545,7 +545,7 @@ module.exports = env => {
           });
         }
 
-        if (toFolder === 4 || toFolder === 6) {
+        if (toFolder === 3 || toFolder === 5) {
           await Folder.increment(['count'], {
             by: messages.length,
             where: { folderId: toFolder },
@@ -554,7 +554,7 @@ module.exports = env => {
         }
 
         if (unreadCount > 0) {
-          if (fromFolder !== 4 && fromFolder !== 6) {
+          if (fromFolder !== 4 && fromFolder !== 5) {
             await Folder.decrement(['count'], {
               by: unreadCount,
               where: { folderId: fromFolder },
@@ -562,7 +562,7 @@ module.exports = env => {
             });
           }
 
-          if (toFolder !== 4 && toFolder !== 6) {
+          if (toFolder !== 3 && toFolder !== 5) {
             await Folder.increment(['count'], {
               by: unreadCount,
               where: { folderId: toFolder },
@@ -589,56 +589,10 @@ module.exports = env => {
       try {
         const mailbox = await Mailbox.create({ address });
 
-        await Folder.create({
-          mailboxId: mailbox.mailboxId,
-          name: 'Inbox',
-          type: 'default',
-          icon: 'inbox',
-          seq: 1
-        });
-        await Folder.create({
-          mailboxId: mailbox.mailboxId,
-          name: 'Screened',
-          type: 'default',
-          icon: '',
-          seq: 2
-        });
-        await Folder.create({
-          mailboxId: mailbox.mailboxId,
-          name: 'Reply Later',
-          type: 'default',
-          icon: '',
-          seq: 3
-        }); // eslint-disable-line prettier/prettier
-        await Folder.create({
-          mailboxId: mailbox.mailboxId,
-          name: 'Drafts',
-          type: 'default',
-          icon: 'pencil',
-          seq: 4
-        });
-        await Folder.create({
-          mailboxId: mailbox.mailboxId,
-          name: 'Sent',
-          type: 'default',
-          icon: 'send-o',
-          seq: 5
-        });
-        // DECISION WAS MADE TO REMOVE SPAM FOR NOW
-        // await Folder.create({
-        //   mailboxId: mailbox.mailboxId,
-        //   name: 'Spam',
-        //   type: 'default',
-        //   icon: 'ban',
-        //   seq: 6
-        // });
-        await Folder.create({
-          mailboxId: mailbox.mailboxId,
-          name: 'Trash',
-          type: 'default',
-          icon: 'trash-o',
-          seq: 6
-        });
+        for (folder of DefaultFolders) {
+          folder.mailboxId = mailbox.mailboxId;
+          await Folder.create(folder);
+        }
 
         process.send({ event: 'saveMailbox', data: mailbox.dataValues });
       } catch (e) {

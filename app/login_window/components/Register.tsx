@@ -690,27 +690,27 @@ class Register extends Component<Props, State> {
                 />
                 <div
                   className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 1
-                      ? 'bg-red-400'
-                      : 'bg-gray-300'
-                    }`}
+                    ? 'bg-red-400'
+                    : 'bg-gray-300'
+                  }`}
                 />
                 <div
                   className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 2
-                      ? 'bg-orange-400'
-                      : 'bg-gray-300'
-                    }`}
+                    ? 'bg-orange-400'
+                    : 'bg-gray-300'
+                  }`}
                 />
                 <div
                   className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 3
-                      ? 'bg-yellow-400'
-                      : 'bg-gray-300'
-                    }`}
+                    ? 'bg-yellow-400'
+                    : 'bg-gray-300'
+                  }`}
                 />
                 <div
                   className={`flex-1 rounded ${passwordStrength !== null && passwordStrength === 4
-                      ? 'bg-green-400'
-                      : 'bg-gray-300'
-                    }`}
+                    ? 'bg-green-400'
+                    : 'bg-gray-300'
+                  }`}
                 />
               </div>
 
@@ -782,7 +782,7 @@ class Register extends Component<Props, State> {
 
           {step === 4 && (
             <div>
-              <div className="text-xs rounded p-4 mb-8 bg-gray-200 break-words">
+              <div className="text-sm text-gray-600 font-medium rounded p-4 mb-8 bg-gray-200 break-words">
                 {account.mnemonic}
               </div>
 

@@ -17,13 +17,12 @@ import log from 'electron-log';
 
 export default class AppUpdater {
   constructor() {
-    //
-    // if (process.env.NODE_ENV === 'production') {
-    //   log.transports.file.level = 'info';
-    //   autoUpdater.logger = log;
-    //   autoUpdater.allowDowngrade = true;
-    //   autoUpdater.checkForUpdatesAndNotify();
-    // }
+    if (process.env.NODE_ENV === 'production') {
+      log.transports.file.level = 'info';
+      autoUpdater.logger = log;
+      autoUpdater.allowDowngrade = true;
+      autoUpdater.checkForUpdatesAndNotify();
+    }
   }
 }
 
@@ -56,13 +55,13 @@ const createMainWindow = async () => {
       titleBarStyle: 'hiddenInset',
       webPreferences:
         process.env.NODE_ENV === 'development' ||
-        process.env.E2E_BUILD === 'true'
+          process.env.E2E_BUILD === 'true'
           ? {
-              nodeIntegration: true
-            }
+            nodeIntegration: true
+          }
           : {
-              preload: path.join(__dirname, 'dist/main.renderer.prod.js')
-            }
+            preload: path.join(__dirname, 'dist/main.renderer.prod.js')
+          }
     },
     clearWindowOnClose: true,
     hideWhenReady: true
@@ -87,13 +86,13 @@ const createLoginWindow = async () => {
       titleBarStyle: 'hiddenInset',
       webPreferences:
         process.env.NODE_ENV === 'development' ||
-        process.env.E2E_BUILD === 'true'
+          process.env.E2E_BUILD === 'true'
           ? {
-              nodeIntegration: true
-            }
+            nodeIntegration: true
+          }
           : {
-              preload: path.join(__dirname, 'dist/login.renderer.prod.js')
-            }
+            preload: path.join(__dirname, 'dist/login.renderer.prod.js')
+          }
     },
     clearWindowOnClose: false,
     hideWhenReady: false
@@ -124,8 +123,8 @@ app.on('ready', async () => {
 
   app.on('window-all-closed', app.quit);
   app.on('before-quit', () => {
-      mainWindow.removeAllListeners('close');
-      mainWindow.close();
+    mainWindow.removeAllListeners('close');
+    mainWindow.close();
   });
 
   require('./ipc/Account.ipc')(windowManager); // eslint-disable-line
