@@ -253,12 +253,15 @@ export default function MessagePreview(props: Props) {
                   id="sender"
                   className="flex-auto leading-tight line-clamp-1 break-all font-bold"
                 >
-                  {currentFolder.name === 'Sent'
+                  {currentFolder.name === 'Sent' ||
+                  currentFolder.name === 'Drafts'
                     ? parsedRecipient
                     : parsedSender}
                 </div>
 
-                <div className="ml-2 text-xs font-bold flex self-end text-trueGray-500">{parsedDate}</div>
+                <div className="ml-2 text-xs font-bold flex self-end text-trueGray-500">
+                  {parsedDate}
+                </div>
               </div>
 
               <div

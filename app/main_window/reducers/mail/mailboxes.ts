@@ -27,7 +27,6 @@ export default function mailboxes(
     case FETCH_MAIL_DATA_SUCCESS: {
       const newMailboxesObj = arrayToObject(action.mailboxes);
 
-      console.log('REDUCER', newMailboxesObj, action.activeMailboxId);
       return {
         byId: {
           ...newMailboxesObj,

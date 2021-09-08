@@ -61,7 +61,7 @@ function MessageDisplayRouter(props: Props) {
 
   const activeFolder = folders.byId[activeFolderId];
 
-  console.log(selectedItems, showComposer, message, activeFolderId, showComposerInline, 'DISPLAY ROUTER');
+  // console.log(selectedItems, showComposer, message, activeFolderId, showComposerInline, 'DISPLAY ROUTER');
 
   return (
     <>

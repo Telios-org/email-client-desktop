@@ -165,16 +165,25 @@ const editorHTMLexport = editorState => {
     <head>
     <meta charset=utf-8>
     <style type="text/css">
-      body {
-        font-size: small;
-      }
-      p {
-        margin:0px;
-      }
-      </style>
+    </style>
     </head>
     <body>${body}</body>
    </html>`;
 };
+
+// return `<html>
+// <head>
+// <meta charset=utf-8>
+// <style type="text/css">
+//   body {
+//     font-size: small;
+//   }
+//   p {
+//     margin:0px;
+//   }
+//   </style>
+// </head>
+// <body>${body}</body>
+// </html>`;
 
 export default editorHTMLexport;

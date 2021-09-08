@@ -271,19 +271,16 @@ class Register extends Component<Props, State> {
       const email = `${formValue.email}@${mailDomain}`;
 
       try {
-        console.log('CREATE ACCOUNT')
         const acct = await Login.createAccount({
           password: formValue.masterpass,
           email,
           recoveryEmail: formValue.recoveryemail,
           vcode: formValue.betacode
         });
-        console.log('ACCOUNT ', acct);
         this.setState({ account: acct, loading: false });
-        console.log('HANDLE NEXT STEP', step + 1);
         this.handleNextStep(step + 1);
       } catch (e) {
-        console.log('ERRR', e)
+        console.log('ERROR', e)
         this.setState({
           formError: {
             ...formError,
@@ -343,14 +340,11 @@ class Register extends Component<Props, State> {
   handleNextStep(nextStep: number) {
     const { step } = this.state;
 
-    console.log('NEXTSTEP', nextStep);
-
     if (nextStep === 5) {
       return this.showMainWindow();
     }
 
     const previousStepDisabled = this.isNextStepDisabled(nextStep - 1);
-    console.log('NEXTSTEP', previousStepDisabled);
     if (nextStep > step && previousStepDisabled && nextStep !== 4) {
       return true;
     }

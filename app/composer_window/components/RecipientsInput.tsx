@@ -174,7 +174,7 @@ class RecipientsInput extends Component {
         });
         this.setState({ options: contacts });
       } catch (err) {
-        console.log('queryContacts Method', err);
+        console.log('queryContacts Method ERROR', err);
       }
     }
   }

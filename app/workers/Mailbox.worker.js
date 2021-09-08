@@ -303,7 +303,7 @@ module.exports = env => {
           dest: emailDest
         });
 
-        res = { name: emailFilename, ...res };
+        res = { name: emailFilename, email: payload.email , ...res };
 
         process.send({ event: 'sendEmail', data: res });
       } catch (e) {
@@ -319,10 +319,8 @@ module.exports = env => {
       }
     }
 
-    if (event === 'saveMessageToDB') {
+    if (event === 'MAIL SERVICE::saveMessageToDB') {
       drive = store.getDrive();
-
-      console.log('MAILBOX WORKER:: SAVE TO DB', payload);
 
       const { messages, type, newMessage } = payload;
 
@@ -408,8 +406,8 @@ module.exports = env => {
           date: msg.email.date,
           bccJSON: JSON.stringify(msg.email.bcc),
           ccJSON: JSON.stringify(msg.email.cc),
-          bodyAsText: msg.email.text_body,
-          bodyAsHtml: msg.email.html_body,
+          bodyAsText: msg.email.bodyAsText || msg.email.text_body,
+          bodyAsHtml: msg.email.bodyAsHtml || msg.email.html_body,
           attachments: JSON.stringify(attachments),
           encKey: msg.email.encKey,
           encHeader: msg.email.encHeader,
@@ -442,11 +440,11 @@ module.exports = env => {
               msgArr.push(msg);
             }
           });
-          return process.send({ event: 'saveMessageToDB', data: msgArr });
+          return process.send({ event: 'MAILBOX WORKER::saveMessageToDB', data: msgArr });
         })
         .catch(e => {
           process.send({
-            event: 'saveMessageToDB',
+            event: 'MAILBOX WORKER::saveMessageToDB',
             error: {
               name: e.name,
               message: e.message,

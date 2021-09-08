@@ -281,7 +281,7 @@ export default function MessageToolbar(props: Props) {
             tpText="Delete Selection"
             set="iconly"
           >
-            Delete
+            {i18n.t('messageToolbar.delete')}
           </CustomButton>
 
           {currentFolderId !== 3 && currentFolderId !== 4 && (
@@ -298,7 +298,7 @@ export default function MessageToolbar(props: Props) {
                     tpText="Move Selection"
                     set="iconly"
                   >
-                    Move
+                    {i18n.t('messageToolbar.move')}
                   </CustomButton>
                 );
               }}
@@ -318,8 +318,9 @@ export default function MessageToolbar(props: Props) {
               tpText="Change Status to Unread"
               set="iconly"
             >
-              Mark Unread
+              {i18n.t('messageToolbar.unreadToggle')}
             </CustomButton>
+
           )}
 
           <CustomButton
@@ -332,7 +333,7 @@ export default function MessageToolbar(props: Props) {
             tpText="Manually Check for Updates"
             set="bs"
           >
-            Sync
+            {i18n.t('messageToolbar.refresh')}
           </CustomButton>
         </>
       )}
@@ -347,7 +348,7 @@ export default function MessageToolbar(props: Props) {
             tpText="Save & Close Draft"
             set="iconly"
           >
-            Save & Close
+            {i18n.t('messageToolbar.saveDraft')}
           </CustomButton>
 
           <CustomButton
@@ -356,10 +357,10 @@ export default function MessageToolbar(props: Props) {
             className="mr-1"
             tpPlacement="bottom"
             tpTrigger="hover"
-            tpText="Pop Window Out"
+            tpText="Open Separate Window"
             set="iconly"
           >
-            Pop Out
+            {i18n.t('messageToolbar.openWindow')}
           </CustomButton>
 
           <CustomButton
@@ -373,7 +374,7 @@ export default function MessageToolbar(props: Props) {
             tpText="Discard Draft"
             set="iconly"
           >
-            Discard
+            {i18n.t('messageToolbar.discardDraft')}
           </CustomButton>
         </>
       )}
