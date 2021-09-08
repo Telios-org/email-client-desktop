@@ -181,6 +181,10 @@ function MessageDisplay(props: Props) {
       setLoaded(true);
     };
 
+    setTimeout(() => {
+      onLoad();
+    })
+
     return (
       <iframe
         {...props}

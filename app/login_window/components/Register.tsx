@@ -692,25 +692,25 @@ class Register extends Component<Props, State> {
                   className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 1
                     ? 'bg-red-400'
                     : 'bg-gray-300'
-                    }`}
+                  }`}
                 />
                 <div
                   className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 2
                     ? 'bg-orange-400'
                     : 'bg-gray-300'
-                    }`}
+                  }`}
                 />
                 <div
                   className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 3
                     ? 'bg-yellow-400'
                     : 'bg-gray-300'
-                    }`}
+                  }`}
                 />
                 <div
                   className={`flex-1 rounded ${passwordStrength !== null && passwordStrength === 4
                     ? 'bg-green-400'
                     : 'bg-gray-300'
-                    }`}
+                  }`}
                 />
               </div>
 
