@@ -105,7 +105,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     const win = await windowManager.create(windowID, {
       url:
         process.env.NODE_ENV === 'development' ||
-        process.env.E2E_BUILD === 'true'
+          process.env.E2E_BUILD === 'true'
           ? `file://${path.join(__dirname, '..')}/composer_window/index.html`
           : `file://${__dirname}/composer_window/index.html`,
       window: {
@@ -117,13 +117,13 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
         titleBarStyle: 'hiddenInset',
         webPreferences:
           process.env.NODE_ENV === 'development' ||
-          process.env.E2E_BUILD === 'true'
+            process.env.E2E_BUILD === 'true'
             ? {
-                nodeIntegration: true
-              }
+              nodeIntegration: true
+            }
             : {
-                preload: path.join(__dirname, 'dist/composer.renderer.prod.js')
-              }
+              preload: path.join(__dirname, 'dist/composer.renderer.prod.js')
+            }
       },
       clearWindowOnClose: true,
       hideWhenReady: false,
@@ -158,7 +158,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     win.on('close', event => {
       const draft = store.getNewDraft();
       const isDirty = store.getDraftDirty();
-      
+
       if (isDirty && draft) {
         windowManager
           .showMessageBox({ event, browserWindow: win, draft })
