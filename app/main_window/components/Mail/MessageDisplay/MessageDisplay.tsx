@@ -173,12 +173,12 @@ function MessageDisplay(props: Props) {
 
   const IFrame = ({ children, ...props }) => {
     const [contentRef, setContentRef] = useState(null);
-    const [height, setHeight] = useState('0px');
+    const [height, setHeight] = useState('');
     const mountNode = contentRef?.contentWindow?.document?.body;
 
     const onLoad = () => {
-      setLoaded(true);
       setHeight(contentRef?.contentWindow?.document?.body?.scrollHeight + 20 + "px");
+      setLoaded(true);
     };
 
     return (
@@ -192,6 +192,7 @@ function MessageDisplay(props: Props) {
         frameBorder="0"
       >
         {mountNode && createPortal(children, mountNode)}
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
       </iframe>
     );
   }
@@ -283,9 +284,6 @@ function MessageDisplay(props: Props) {
           <Scrollbars hideTracksWhenNotNeeded autoHide>
             <div className="h-full">
               <div className="px-6 mb-6 mt-4 h-full">
-                {!loaded && (
-                  <Loader size="lg" backdrop vertical />
-                )}
                 <IFrame className="w-full">
                   <div style={divStyle}>
                     {renderHTML(bodyAsHtml)}

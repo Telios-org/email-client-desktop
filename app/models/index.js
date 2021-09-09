@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 const path = require('path');
 const { Sequelize } = require('sequelize');
-const { Hyperbee } = require('@telios2/client-sdk');
 const Corestore = require('corestore');
 const Umzug = require('umzug');
 const AccountModel = require('./account.model.js');
@@ -32,7 +31,7 @@ class Models {
       FileModel
     ];
 
-    if(!this.sparse) {
+    if (!this.sparse) {
       appModels.unshift(AccountModel);
     }
 
@@ -68,15 +67,15 @@ class Models {
       }).then(() => {
         resolve();
       })
-      .catch(err => {
-        reject(err);
-      })
+        .catch(err => {
+          reject(err);
+        })
     });
   }
 
   async sequelizeDB(opts) {
     return new Promise((resolve, reject) => {
-      setTimeout(async() => {
+      setTimeout(async () => {
         try {
           const asyncArr = [];
           const sequelize = await new Sequelize(null, null, opts.password, {
@@ -125,7 +124,7 @@ class Models {
           });
 
           resolve();
-        } catch(err) {
+        } catch (err) {
           reject(err);
         }
       });

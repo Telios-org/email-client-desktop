@@ -1,4 +1,4 @@
-const Telios = require('@telios2/client-sdk');
+const SDK = require('@telios/client-sdk');
 const fs = require('fs');
 const path = require('path');
 const Models = require('../models');
@@ -14,14 +14,15 @@ module.exports = userDataPath => {
 
     if (event === 'createAccount') {
       try {
-        const Account = new Telios.Account(apiDomain);
+        const Account = new SDK.Account(apiDomain);
         const acctPath = path.join(userDataPath, `/Accounts/${payload.email}`);
+        store.acctPath = acctPath;
 
         fs.mkdirSync(acctPath);
 
         // Generate account key bundle
-        const { secretBoxKeypair, signingKeypair, mnemonic } = Telios.Account.makeKeys();
-        const secret = Telios.Crypto.generateAEDKey();
+        const { secretBoxKeypair, signingKeypair, mnemonic } = SDK.Account.makeKeys();
+        const secret = SDK.Crypto.generateAEDKey();
 
         // Create account Nebula drive
         const drive = store.setDrive(
@@ -48,7 +49,7 @@ module.exports = userDataPath => {
         };
 
         // Create registration payload
-        const { account, sig: accountSig } = await Telios.Account.init(opts, signingKeypair.privateKey);
+        const { account, sig: accountSig } = await SDK.Account.init(opts, signingKeypair.privateKey);
 
         const registerPayload = {
           account,
@@ -108,6 +109,8 @@ module.exports = userDataPath => {
 
     if (event === 'getAcct') {
       const acctPath = `${userDataPath}/Accounts/${payload.email}`;
+      store.acctPath = acctPath;
+
       let acct = {};
 
       let connection = store.getDBConnection(payload.email);
@@ -187,11 +190,11 @@ async function handleDriveMessages(drive, account) {
   drive.on('message', (peerPubKey, data) => {
     const msg = JSON.parse(data.toString());
 
-    // Only connect to peers with the Telios priv/pub keypair
-    if(msg.type && peerPubKey === store.teliosPubKey) {
+    // Only connect to peers with the SDK priv/pub keypair
+    if (msg.type && peerPubKey === store.teliosPubKey) {
 
       // Service is telling client it has a new email to sync
-      if(msg.type === 'newMail') {
+      if (msg.type === 'newMail') {
         process.send({
           event: 'newMessage',
           data: { meta: msg.meta, account, async: true }

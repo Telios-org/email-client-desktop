@@ -4,20 +4,21 @@ const store = require('../Store');
 
 module.exports = (windowManager, createMainWindow, createLoginWindow) => {
   const saveDraft = payload => {
+    // Should this method be moved to the Composer IPC?
     const mainWindow = windowManager.getWindow('mainWindow');
 
-    mainWindow.webContents.send('saveMessageToDB', payload);
+    mainWindow.webContents.send('IPC::saveMessageToDB', payload);
 
     return new Promise((resolve, reject) => {
       mainWindow.webContents.on('ipc-message', (e, channel, data) => {
-        if (channel === 'saveMessageToDBResponse') {
+        if (channel === 'ACCOUNT SERVICE::saveMessageToDBResponse') {
           store.setNewDraft(null);
           store.setDraftDirty(false);
-          mainWindow.webContents.send('initMailbox', { fullSync: false });
+          // mainWindow.webContents.send('initMailbox', { fullSync: false });
           resolve(data);
         }
 
-        if (channel === 'saveMessageToDBError') {
+        if (channel === 'ACCOUNT SERVICE::saveMessageToDBError') {
           store.setNewDraft(null);
           store.setDraftDirty(false);
           reject(data);
@@ -97,14 +98,14 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     mainWindow.webContents.send('initMailbox', { fullSync: true });
   });
 
-  ipcMain.handle('showComposerWindow', async (event, content) => {
+  ipcMain.handle('RENDERER::showComposerWindow', async (event, content) => {
     const composerWinCnt = windowManager.windows.composers.length;
     const windowID = `composerWindow${composerWinCnt}`;
 
     const win = await windowManager.create(windowID, {
       url:
         process.env.NODE_ENV === 'development' ||
-        process.env.E2E_BUILD === 'true'
+          process.env.E2E_BUILD === 'true'
           ? `file://${path.join(__dirname, '..')}/composer_window/index.html`
           : `file://${__dirname}/composer_window/index.html`,
       window: {
@@ -116,13 +117,13 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
         titleBarStyle: 'hiddenInset',
         webPreferences:
           process.env.NODE_ENV === 'development' ||
-          process.env.E2E_BUILD === 'true'
+            process.env.E2E_BUILD === 'true'
             ? {
-                nodeIntegration: true
-              }
+              nodeIntegration: true
+            }
             : {
-                preload: path.join(__dirname, 'dist/composer.renderer.prod.js')
-              }
+              preload: path.join(__dirname, 'dist/composer.renderer.prod.js')
+            }
       },
       clearWindowOnClose: true,
       hideWhenReady: false,
@@ -145,16 +146,14 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
           ccJSON: JSON.stringify(draftEmail.cc),
           bccJSON: JSON.stringify(draftEmail.bcc),
           subject: draftEmail.subject,
-          bodyAsText: draftEmail.text_body || draftEmail.bodyAsText,
-          bodyAsHtml: draftEmail.html_body || draftEmail.bodyAsHtml,
+          bodyAsText: draftEmail.bodyAsText || draftEmail.text_body,
+          bodyAsHtml: draftEmail.bodyAsHtml || draftEmail.html_body,
           attachments: draftEmail.attachments
         }
       };
     } else {
       composerContent = { ...content };
     }
-
-    // console.log('SHOWCOMPOSERWINDOW', composerContent);
 
     win.on('close', event => {
       const draft = store.getNewDraft();

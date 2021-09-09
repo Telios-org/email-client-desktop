@@ -259,7 +259,7 @@ export class MailPage extends Component<Props, State> {
     };
 
     if (editorIsOpen) {
-      ipcRenderer.send('closeComposerWindow', { action: 'save' });
+      ipcRenderer.send('RENDERER::closeComposerWindow', { action: 'save' });
     }
 
     // If the editor is Open or if the message selected is not already the one open
@@ -278,7 +278,7 @@ export class MailPage extends Component<Props, State> {
     if (opts.action) {
       params = opts;
     }
-    ipcRenderer.send('closeComposerWindow', params);
+    ipcRenderer.send('RENDERER::closeComposerWindow', params);
     clearSelectedMessage(folderId);
   }
 
@@ -286,7 +286,7 @@ export class MailPage extends Component<Props, State> {
     const { mailbox, toggleEditorState } = this.props;
     // this.setState({ showComposerInline: false });
     toggleEditorState('composerMaximize', false);
-    await ipcRenderer.invoke('showComposerWindow', {
+    await ipcRenderer.invoke('RENDERER::showComposerWindow', {
       mailbox,
       editorAction: 'maximize'
     });

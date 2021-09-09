@@ -38,7 +38,6 @@ class LoginPage extends Component<Props, State> {
 
   componentDidMount() {
     ipcRenderer.on('dark-mode', (event, value) => {
-      console.log('EVENT THEME', value);
       if (value) {
         themeUtils.switchCss('dark');
       } else {

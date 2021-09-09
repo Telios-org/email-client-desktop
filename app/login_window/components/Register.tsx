@@ -22,7 +22,7 @@ import {
   Whisper,
   Tooltip
 } from 'rsuite';
-import { Mailbox } from '@telios2/client-sdk';
+import { Mailbox } from '@telios/client-sdk';
 import i18n from '../../i18n/i18n';
 
 const { ipcRenderer, remote } = require('electron');
@@ -271,19 +271,16 @@ class Register extends Component<Props, State> {
       const email = `${formValue.email}@${mailDomain}`;
 
       try {
-        console.log('CREATE ACCOUNT')
         const acct = await Login.createAccount({
           password: formValue.masterpass,
           email,
           recoveryEmail: formValue.recoveryemail,
           vcode: formValue.betacode
         });
-        console.log('ACCOUNT ', acct);
         this.setState({ account: acct, loading: false });
-        console.log('HANDLE NEXT STEP', step + 1);
         this.handleNextStep(step + 1);
       } catch (e) {
-        console.log('ERRR', e)
+        console.log('ERROR', e)
         this.setState({
           formError: {
             ...formError,
@@ -343,14 +340,11 @@ class Register extends Component<Props, State> {
   handleNextStep(nextStep: number) {
     const { step } = this.state;
 
-    console.log('NEXTSTEP', nextStep);
-
     if (nextStep === 5) {
       return this.showMainWindow();
     }
 
     const previousStepDisabled = this.isNextStepDisabled(nextStep - 1);
-    console.log('NEXTSTEP', previousStepDisabled);
     if (nextStep > step && previousStepDisabled && nextStep !== 4) {
       return true;
     }
@@ -620,16 +614,14 @@ class Register extends Component<Props, State> {
                   {!emailCheckLoading && !formSuccess.email && (
                     <FaRegEnvelope
                       className={`text-gray-400
-                    ${
-                      formError.email && !formSuccess.email
-                        ? 'text-red-600'
-                        : ''
-                    }
-                    ${
-                      formSuccess.email && !formError.email
-                        ? 'text-green-500'
-                        : ''
-                    }`}
+                    ${formError.email && !formSuccess.email
+                          ? 'text-red-600'
+                          : ''
+                        }
+                    ${formSuccess.email && !formError.email
+                          ? 'text-green-500'
+                          : ''
+                        }`}
                     />
                   )}
                   {emailCheckLoading &&
@@ -687,36 +679,31 @@ class Register extends Component<Props, State> {
               </FormGroup>
               <div className="flex flex-row h-1 w-full mt-1 mb-3 px-1">
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
+                    }`}
+                />
+                <div
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 1
+                    ? 'bg-red-400'
+                    : 'bg-gray-300'
                   }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null && passwordStrength >= 1
-                      ? 'bg-red-400'
-                      : 'bg-gray-300'
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 2
+                    ? 'bg-orange-400'
+                    : 'bg-gray-300'
                   }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null && passwordStrength >= 2
-                      ? 'bg-orange-400'
-                      : 'bg-gray-300'
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 3
+                    ? 'bg-yellow-400'
+                    : 'bg-gray-300'
                   }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null && passwordStrength >= 3
-                      ? 'bg-yellow-400'
-                      : 'bg-gray-300'
-                  }`}
-                />
-                <div
-                  className={`flex-1 rounded ${
-                    passwordStrength !== null && passwordStrength === 4
-                      ? 'bg-green-400'
-                      : 'bg-gray-300'
+                  className={`flex-1 rounded ${passwordStrength !== null && passwordStrength === 4
+                    ? 'bg-green-400'
+                    : 'bg-gray-300'
                   }`}
                 />
               </div>
@@ -740,9 +727,8 @@ class Register extends Component<Props, State> {
                   />
                 </InputGroup>
                 <div className="text-red-500">
-                  {`${formError.masterpass ? formError.masterpass : ''} ${
-                    formError.confirmpass ? formError.confirmpass : ''
-                  }`}
+                  {`${formError.masterpass ? formError.masterpass : ''} ${formError.confirmpass ? formError.confirmpass : ''
+                    }`}
                 </div>
               </FormGroup>
               <Whisper placement="top" trigger="hover" speaker={tooltip}>
@@ -790,7 +776,7 @@ class Register extends Component<Props, State> {
 
           {step === 4 && (
             <div>
-              <div className="text-xs rounded p-4 mb-8 bg-gray-200 break-words">
+              <div className="text-sm text-gray-600 font-medium rounded p-4 mb-8 bg-gray-200 break-words">
                 {account.mnemonic}
               </div>
 

@@ -11,7 +11,7 @@ import {
   SelectionRange
 } from '../reducers/types';
 
-import { activeMessageId } from '../selectors/mail';
+import { activeMessageId, selectAllFoldersById } from '../selectors/mail';
 
 import Mail from '../../services/mail.service';
 import MessageIngress from '../../services/messageIngress.service';
@@ -259,7 +259,7 @@ export const saveIncomingMessagesRequest = () => {
 
 export const SAVE_INCOMING_MESSAGES_SUCCESS =
   'MAILPAGE::SAVE_INCOMING_MESSAGES_SUCCESS';
-export const saveIncomingMessagesSuccess = function(
+export const saveIncomingMessagesSuccess = function (
   messages: MailMessageType[],
   activeFolderId: number
 ) {
@@ -409,7 +409,6 @@ export const fetchMsg = (messageId: string) => {
     let email;
 
     try {
-      console.log('');
       email = await Mail.getMessagebyId(messageId);
     } catch (err) {
       dispatch(fetchMsgBodyFailure(err));
@@ -479,9 +478,9 @@ export const messageSelection = (message: MailMessageType, action: string) => {
     try {
       if (
         message.unread &&
+        message.folderId !== 3 &&
         message.folderId !== 4 &&
-        message.folderId !== 5 &&
-        message.folderId !== 6
+        message.folderId !== 5
       ) {
         dispatch(updateFolderCount(message.folderId, -1));
       }

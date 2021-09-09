@@ -156,7 +156,6 @@ const globalState = (
       };
 
     case CLEAR_ACTIVE_MESSAGE:
-      console.log('GLOBAL::', state.activeMsgId, action.folderId);
       return {
         ...state,
         activeMsgId: {

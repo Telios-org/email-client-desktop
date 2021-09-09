@@ -15,14 +15,14 @@ import { DebounceInput } from 'react-debounce-input';
 import { Notification, Divider } from 'rsuite';
 import { DateTime } from 'luxon';
 import createImagePlugin from 'draft-js-image-plugin';
-import { editorStateFromHTML } from '../../utils/editor.util';
+import { editorStateFromHTML } from '../utils/messageEditor/editor.util';
 import createToolbarPlugin from './editorPlugins/draft-js-toolbar';
 import MessageInputs from './MessageInputs';
 import Attachments from './Attachments/Attachments';
 import ComposerTopBar from './TopBar/ComposerTopBar';
 
 import { ISOtimestamp } from '../../main_window/utils/date.util';
-import editorHTMLexport from '../../main_window/utils/messageEditor/htmlExportOptions';
+import editorHTMLexport from '../utils/messageEditor/htmlExportOptions';
 
 import ComposerService from '../../services/composer.service';
 
@@ -151,7 +151,7 @@ class Composer extends Component<Props, State> {
     this.setState({ mailbox });
 
     // When in the Draft folder do the below
-    if (isInline && message && message.ccJSON && folder.id === 4) {
+    if (isInline && message && message.ccJSON && folder.id === 3) {
       this.updateComposer(mailbox, message);
     }
 
@@ -198,7 +198,7 @@ class Composer extends Component<Props, State> {
     if (
       isInline &&
       message &&
-      folder.id === 4 &&
+      folder.id === 3 &&
       message.ccJSON &&
       JSON.stringify(prevProps.message) !== JSON.stringify(message)
     ) {
@@ -414,7 +414,6 @@ class Composer extends Component<Props, State> {
       }
 
       try {
-        console.log('COMPOSER SEND EMAIL', email, isInline);
         await ComposerService.send(email, isInline);
 
         this.setState({ loading: false });
@@ -445,7 +444,6 @@ class Composer extends Component<Props, State> {
   attr = () => {
     const { email } = this.state;
     const from = JSON.parse(email.fromJSON)[0];
-    console.log('ATTR', email, from);
     const dt = DateTime.fromISO(email.date, {
       zone: 'utc'
     }).toLocal();

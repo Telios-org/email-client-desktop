@@ -1,4 +1,5 @@
-const Telios = require('@telios2/client-sdk');
+const SDK = require('@telios/client-sdk');
+const Drive = require('@telios/nebula-drive');
 const fs = require('fs');
 const apiENV = require('./env_api.json');
 const pkg = require('./package.json');
@@ -7,7 +8,7 @@ class Store {
   constructor() {
     this.api = {
       account: () => {
-        return new Telios.Account({
+        return new SDK.Account({
           provider:
             process.env.NODE_ENV === 'production' ? pkg.api.prod : apiENV.dev
         });
@@ -16,7 +17,7 @@ class Store {
     };
 
     this.drive = null;
-    this.acctpath = null;
+    this.acctPath = null;
     this.accountSecrets = {};
     this.account = null;
     this.currentAccount = null;
@@ -33,7 +34,7 @@ class Store {
   }
 
   setDrive({ name, keyPair, secret, acl = [] }) {
-    this.drive = new Telios.Drive(name, null, {
+    this.drive = new Drive(name, null, {
       keyPair,
       secret,
       swarmOpts: {

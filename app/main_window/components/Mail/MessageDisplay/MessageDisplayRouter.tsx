@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 // SVG LOGO
 import teliosLogoSVG from '../../../../../resources/img/telios_logo.svg';
@@ -16,6 +17,9 @@ import MessageDisplay from './MessageDisplay';
 import Composer from '../../../../composer_window/components/Composer';
 import { Mailbox } from '../../../../models/mailbox.model';
 
+// REDUX STATE SELECTORS
+import { selectActiveFolder } from '../../../selectors/mail';
+
 type Props = {
   showComposerInline: boolean;
   message: Email | { id: null };
@@ -30,6 +34,8 @@ type Props = {
 };
 
 function MessageDisplayRouter(props: Props) {
+  const currentFolder = useSelector(selectActiveFolder);
+
   const {
     showComposerInline,
     message,
@@ -45,17 +51,17 @@ function MessageDisplayRouter(props: Props) {
 
   const showMessage =
     message.id !== null &&
-    activeFolderId !== 4 &&
+    currentFolder.name !== 'Drafts' &&
     !showComposerInline &&
     selectedItems.length === 1;
 
   const showComposer =
-    ((message.id && activeFolderId === 4) || showComposerInline) &&
+    ((message.id && currentFolder.name === 'Drafts') || showComposerInline) &&
     selectedItems.length <= 1;
 
   const activeFolder = folders.byId[activeFolderId];
 
-  console.log(selectedItems, showComposer, message, activeFolderId, showComposerInline, 'DISPLAY ROUTER');
+  // console.log(selectedItems, showComposer, message, activeFolderId, showComposerInline, 'DISPLAY ROUTER');
 
   return (
     <>
@@ -69,11 +75,11 @@ function MessageDisplayRouter(props: Props) {
           {selectedItems.length > 1 && (
             <div className="text-lg mt-2">
               You have
-{' '}
+              {' '}
               <span className="text-purple-600 text-bold">
                 {selectedItems.length}
               </span>
-{' '}
+              {' '}
               emails selected.
             </div>
           )}

@@ -91,13 +91,13 @@ export default function MessagePreview(props: Props) {
 
   const senderEmail = JSON.parse(fromJSON)[0].address;
 
-  if(senderEmail) {
+  if (senderEmail) {
     senderInNetwork = senderEmail.indexOf('@telios.io') > -1;
   }
 
   const parsedSender = JSON.parse(fromJSON)[0].name || senderEmail;
 
-  if(parsedSender) {
+  if (parsedSender) {
     senderArr = parsedSender.split(' ');
   }
 
@@ -110,14 +110,14 @@ export default function MessagePreview(props: Props) {
     senderInitials = senderArr[0][0].toUpperCase();
   }
 
-  const parsedRecipient = JSON.parse(toJSON).reduce(function(
+  const parsedRecipient = JSON.parse(toJSON).reduce(function (
     previous: string,
     current: { name: string; address: string }
   ) {
     const val = current.name || current.address;
     return `${previous + val} `;
   },
-  'To: ');
+    'To: ');
   const parsedDate = formatDateDisplay(date);
 
   // Determines if the platform specific toggle selection in group key was used
@@ -213,7 +213,7 @@ export default function MessagePreview(props: Props) {
         <div className="overflow-hidden" style={previewStyle}>
           <DragPreviewImage connect={preview} src={envelope} />
           <div
-            ref={message.folderId !== 4 ? drag : null}
+            ref={currentFolder.name !== 'Drafts' ? drag : null}
             role="option"
             onClick={handleClick}
             tabIndex="0"
@@ -253,19 +253,21 @@ export default function MessagePreview(props: Props) {
                   id="sender"
                   className="flex-auto leading-tight line-clamp-1 break-all font-bold"
                 >
-                  {currentFolder.name === 'Sent'
+                  {currentFolder.name === 'Sent' ||
+                  currentFolder.name === 'Drafts'
                     ? parsedRecipient
                     : parsedSender}
                 </div>
 
-                <div className="ml-2 text-xs font-bold flex self-end text-trueGray-500">{parsedDate}</div>
+                <div className="ml-2 text-xs font-bold flex self-end text-trueGray-500">
+                  {parsedDate}
+                </div>
               </div>
 
               <div
                 id="subject"
-                className={`flex flex-1 flex-row justify-between ${
-                  unread === 1 ? 'text-purple-600 font-bold' : ''
-                }`}
+                className={`flex flex-1 flex-row justify-between ${unread === 1 ? 'text-purple-600 font-bold' : ''
+                  }`}
               >
                 <div className="flex flex-1 leading-tight overflow-hidden text-sm break-all line-clamp-1">
                   {subject}
