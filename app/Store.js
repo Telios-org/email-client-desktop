@@ -1,8 +1,8 @@
 const SDK = require('@telios/client-sdk');
 const Drive = require('@telios/nebula-drive');
 const fs = require('fs');
-const apiENV = require('./env_api.json');
-const pkg = require('./package.json');
+const envAPI = require('./env_api.json');
+const Matomo = require('./utils/matomo.util');
 
 class Store {
   constructor() {
@@ -10,7 +10,7 @@ class Store {
       account: () => {
         return new SDK.Account({
           provider:
-            process.env.NODE_ENV === 'production' ? pkg.api.prod : apiENV.dev
+            process.env.NODE_ENV === 'production' ? envAPI.prod : envAPI.dev
         });
       },
       mailbox: null
@@ -29,6 +29,7 @@ class Store {
     this.initialDraft = null;
     this.newDraft = null;
     this.draftDirty = false;
+    this.matomo = null;
     // TODO: Retrieve this from remotely from server
     this.teliosPubKey = 'fa8932f0256a4233dde93195d24a6ae4d93cc133d966f3c9f223e555953c70c1';
   }
@@ -118,6 +119,11 @@ class Store {
   }
 
   setAccount(account) {
+    this.matomo = new Matomo(process.env.NODE_ENV, account);
+
+    this.matomo.event({});
+    this.matomo.heartBeat(30000);
+
     this.account = account;
   }
 

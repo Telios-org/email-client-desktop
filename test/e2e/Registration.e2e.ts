@@ -8,13 +8,13 @@ const assertNoConsoleErrors = async t => {
   await t.expect(error).eql([]);
 };
 
-const pkg = require('../../app/package.json');
+
 // const envAPI = require('../../app/env_api.json');
 
 // const params = window.location.search.replace('?', '');
 // const env = params.split('=')[1];
 
-const sdkUrl = pkg.api.prod;
+// const sdkUrl = envAPI.prod;
 
 // const r = `${sdkUrl}/mailbox/addresses/`.replace('/', '\/');
 // const serviceRegex = new RegExp(r, 'i');
