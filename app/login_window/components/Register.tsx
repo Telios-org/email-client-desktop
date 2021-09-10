@@ -23,6 +23,7 @@ import {
   Tooltip
 } from 'rsuite';
 import { Mailbox } from '@telios/client-sdk';
+import Store from 'electron-store';
 import i18n from '../../i18n/i18n';
 
 const { ipcRenderer, remote } = require('electron');
@@ -278,6 +279,9 @@ class Register extends Component<Props, State> {
         });
         this.setState({ account: acct, loading: false });
         this.handleNextStep(step + 1);
+
+        const store = new Store();
+        store.set('lastAccount', email);
       } catch (e) {
         console.log('ERROR', e)
         this.setState({
