@@ -83,20 +83,9 @@ export class MailPage extends Component<Props, State> {
 
   async componentDidMount() {
     const { syncMail, toggleEditorState } = this.props;
-    let interval;
 
     ipcRenderer.on('initMailbox', async (event, opts) => {
       await syncMail(opts);
-
-      if (interval) {
-        clearInterval(interval);
-      }
-
-      interval = setInterval(async () => {
-        if (!this.state.isSyncInProgress) {
-          // await syncMail({ fullSync: true });
-        }
-      }, 5000);
     });
 
     ipcRenderer.on('closeInlineComposer', async event => {
@@ -212,8 +201,7 @@ export class MailPage extends Component<Props, State> {
     clearSelectedMessage(folderId);
 
     Alert.success(
-      `Moved ${
-        selected.items.length ? selected.items.length : 1
+      `Moved ${selected.items.length ? selected.items.length : 1
       } message(s) to ${dropResult.name}.`
     );
   }
