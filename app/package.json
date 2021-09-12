@@ -13,10 +13,6 @@
     "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",
     "postinstall": "yarn electron-rebuild"
   },
-  "api": {
-    "prod": "https://apiv1.telios.io",
-    "dev": "https://devapiv1.telios.io"
-  },
   "license": "CC-BY-NC-4.0",
   "dependencies": {
     "@journeyapps/sqlcipher": "^4.0.0",

@@ -5,8 +5,9 @@ const Models = require('../models');
 const { Account: AccountModel } = require('../models/account.model');
 const store = require('../Store');
 const envAPI = require('../env_api.json');
-const pkg = require('../package.json');
-const apiDomain = process.env.NODE_ENV === 'production' ? pkg.api.prod : envAPI.dev;
+const { randomBytes } = require('crypto');
+
+const apiDomain = process.env.NODE_ENV === 'production' ? envAPI.prod : envAPI.dev;
 
 module.exports = userDataPath => {
   process.on('message', async data => {
@@ -69,6 +70,7 @@ module.exports = userDataPath => {
         store.setDBConnection(payload.email, connection);
 
         const acctDBPayload = {
+          uid: randomBytes(8).toString('hex'), // This is used as an anonymous ID that is sent to Matomo
           secretBoxPubKey: secretBoxKeypair.publicKey,
           secretBoxPrivKey: secretBoxKeypair.privateKey,
           hyperDBSecret: secret,
@@ -126,7 +128,7 @@ module.exports = userDataPath => {
         // Initialize Account table
         await connection.initAccount();
 
-        // Load account keys
+        // Load account
         acct = await AccountModel.findOne({ raw: true });
 
         drive.keyPair = {
@@ -141,11 +143,6 @@ module.exports = userDataPath => {
         await connection.initAll();
 
         handleDriveMessages(drive, acct);
-
-        process.send({
-          event: 'logInfo',
-          message: "CONNECTION INITED"
-        });
 
         // Store account and db connection info in global Store state
         store.setDBConnection(payload.email, connection);
