@@ -7,13 +7,14 @@ type Props = {
   parsedSender: string;
   displayLoader: boolean;
   loaderCount: number;
+  loaderCountUpdate: () => void;
   //   onLoaderCompletion: () => void;
 };
 
 const stringToHslColor = require('../../../../utils/avatar.util');
 
 const AvatarLoader = (props: Props) => {
-  const { parsedSender, displayLoader, loaderCount } = props;
+  const { parsedSender, displayLoader, loaderCount, loaderCountUpdate } = props;
 
   let senderArr: any[] = [];
 
@@ -32,7 +33,12 @@ const AvatarLoader = (props: Props) => {
 
   return (
     <div className="relative">
-      {displayLoader && <CircleLoader loaderCount={loaderCount} />}
+      {displayLoader && (
+        <CircleLoader
+          loaderCount={loaderCount}
+          loaderCountUpdate={loaderCountUpdate}
+        />
+      )}
       <Avatar
         size="sm"
         className="font-bold"

@@ -83,17 +83,13 @@ export default function MessageList(props: Props) {
   const messages = useSelector(state => state.mail.messages);
 
   const [listRef, setListRef] = useState();
-  const [loaderData, setLoaders] = useState(
-    messages.allIds.map(m => ({
-      id: m,
-      count: 0
-    }))
-  );
+  const [loaderData, setLoaders] = useState([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+
+  }, []);
 
   const updateCount = useCallback((ids, reset = false) => {
-    console.log('COunting', ids);
     setLoaders(prevData => {
       const idArr = prevData.map(m => m.id);
       const notIncluded = ids.filter(m => !idArr.includes(m));
@@ -109,7 +105,7 @@ export default function MessageList(props: Props) {
 
       if (notIncluded.length > 0) {
         notIncluded.forEach(m => {
-          const newObj = { id: m, count: 1 };
+          const newObj = { id: m, count: 0 };
           newArr.push(newObj);
         });
       }

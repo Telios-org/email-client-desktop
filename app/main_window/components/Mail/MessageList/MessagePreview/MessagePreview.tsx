@@ -62,7 +62,7 @@ export default function MessagePreview(props: Props) {
   const dispatch = useDispatch();
 
   const [isHover, setIsHover] = useState(false);
-  const [displayLoader, setLoader] = useState(true);
+  const [displayLoader, setLoader] = useState(false);
 
   const messages = useSelector(state => state.mail.messages);
   const currentFolderId = useSelector(activeFolderId);
@@ -82,23 +82,23 @@ export default function MessagePreview(props: Props) {
   const activeMessageId = useSelector(activeMsgId);
   const isActive = id === activeMessageId || selected.items.indexOf(index) > -1;
 
-  // useEffect(() => {
-  //   console.log('TRIGGER', id);
-  //   let isMounted = true;
-  //   if (
-  //     isMounted &&
-  //     unread !== 1 &&
-  //     currentFolder.name === 'New' &&
-  //     !isActive
-  //   ) {
-  //     console.log('CHANGING', id);
-  //     setLoader(true);
-  //   }
-  //   return () => {
-  //     console.log('unmounting...');
-  //     isMounted = false;
-  //   };
-  // }, [unread, isActive]);
+  useEffect(() => {
+    console.log('TRIGGER', id);
+    let isMounted = true;
+    if (
+      isMounted &&
+      unread !== 1 &&
+      currentFolder.name === 'New' &&
+      !isActive
+    ) {
+      console.log('CHANGING', id);
+      setLoader(true);
+    }
+    return () => {
+      console.log('unmounting...');
+      isMounted = false;
+    };
+  }, [unread, isActive]);
 
   const [{ opacity }, drag, preview] = useDrag({
     item: { id, unread, folderId, type: 'message' },
@@ -279,7 +279,7 @@ export default function MessagePreview(props: Props) {
       onMsgClick(message, index);
 
       if (currentFolder.name === 'New') {
-        loaderCountUpdate([message.id], false);
+        loaderCountUpdate([message.id], true);
       }
     }
   };
@@ -316,6 +316,7 @@ export default function MessagePreview(props: Props) {
                 parsedSender={parsedSender}
                 displayLoader={displayLoader}
                 loaderCount={loaderCount}
+                loaderCountUpdate={() => loaderCountUpdate([id], false)}
               />
             </div>
 
