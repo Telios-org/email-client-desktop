@@ -18,12 +18,10 @@ if (
   const exclude = ['sodium-native', 'utp-native', '.bin'];
   const modules = getModules(nodeModulesPath, exclude);
 
-  console.log('MODULES :: ', modules.toString());
-
   const electronRebuildCmd = `../node_modules/.bin/electron-rebuild --parallel --types prod,dev,optional --only ${modules.toString()} --module-dir .`;
 
   const cmd =
-    process.platform === 'win64'
+    process.platform === 'win32'
       ? electronRebuildCmd.replace(/\//g, '\\')
       : electronRebuildCmd;
   execSync(cmd, {
