@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useRef, memo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 // EXTERNAL LIBRARIES
-import { Button, Badge, Icon, Divider, Avatar } from 'rsuite';
+import { Badge } from 'rsuite';
 import { DragPreviewImage, useDrag, useDragLayer } from 'react-dnd';
 // import {CustomDragLayer} from './CustomDragLayer';
 
@@ -16,54 +16,89 @@ import styles from './MessagePreview.less';
 import { envelope } from '../../envelope';
 
 // REDUX STATE SELECTORS
-import { selectActiveFolder } from '../../../../selectors/mail';
+import {
+  selectActiveFolder,
+  activeFolderId,
+  selectMessageByIndex,
+  activeMessageId as activeMsgId,
+  activeMessageSelectedRange
+} from '../../../../selectors/mail';
+
+// REDUX ACTIONS
+import { msgRangeSelection } from '../../../../actions/mail';
 
 // TYPESCRIPT TYPES
 import { MailMessageType } from '../../../../reducers/types';
 
 // COMPONENTS
 import PreviewIconBar from './PreviewIconBar';
+import AvatarLoader from './AvatarLoader';
 
 // IMPORT UTILITY FUNCTIONS
+// import { useInterval } from '../../../../../utils/hooks.util';
+
 const { formatDateDisplay } = require('../../../../utils/date.util');
-const stringToHslColor = require('../../../../utils/avatar.util');
 
 type Props = {
-  message: MailMessageType;
-  isActive: boolean;
-  onMsgClick: () => void;
-  selected: {};
+  onMsgClick: (message: MailMessageType, id: number) => void;
   index: number;
-  onUpdateSelectedRange: () => void;
   onDropResult: () => void;
   previewStyle: any;
+  loaderCount: any;
+  loaderCountUpdate: (id: string[], reset: boolean) => void;
 };
 
 export default function MessagePreview(props: Props) {
   const currentFolder = useSelector(selectActiveFolder);
   const {
-    message,
-    message: {
-      id,
-      folderId,
-      subject,
-      fromJSON,
-      toJSON,
-      date,
-      bodyAsText,
-      attachments,
-      unread
-    },
     onMsgClick,
-    selected,
-    onUpdateSelectedRange,
     onDropResult,
     index,
-    isActive,
-    previewStyle
+    previewStyle,
+    loaderCount,
+    loaderCountUpdate
   } = props;
 
+  const dispatch = useDispatch();
+
   const [isHover, setIsHover] = useState(false);
+  const [displayLoader, setLoader] = useState(true);
+
+  const messages = useSelector(state => state.mail.messages);
+  const currentFolderId = useSelector(activeFolderId);
+  const selected = useSelector(activeMessageSelectedRange);
+  const message = useSelector(state => selectMessageByIndex(state, index));
+  const {
+    id,
+    folderId,
+    subject,
+    fromJSON,
+    toJSON,
+    date,
+    bodyAsText,
+    attachments,
+    unread
+  } = message;
+  const activeMessageId = useSelector(activeMsgId);
+  const isActive = id === activeMessageId || selected.items.indexOf(index) > -1;
+
+  // useEffect(() => {
+  //   console.log('TRIGGER', id);
+  //   let isMounted = true;
+  //   if (
+  //     isMounted &&
+  //     unread !== 1 &&
+  //     currentFolder.name === 'New' &&
+  //     !isActive
+  //   ) {
+  //     console.log('CHANGING', id);
+  //     setLoader(true);
+  //   }
+  //   return () => {
+  //     console.log('unmounting...');
+  //     isMounted = false;
+  //   };
+  // }, [unread, isActive]);
 
   const [{ opacity }, drag, preview] = useDrag({
     item: { id, unread, folderId, type: 'message' },
@@ -86,38 +121,24 @@ export default function MessagePreview(props: Props) {
     files = attachments;
   }
 
-  let senderInNetwork = false;
-  let senderArr = [];
-
   const senderEmail = JSON.parse(fromJSON)[0].address;
+  const parsedSender = JSON.parse(fromJSON)[0].name || senderEmail;
 
+  // Checking if Sender is in the Telios Network
+  let senderInNetwork = false;
   if (senderEmail) {
     senderInNetwork = senderEmail.indexOf('@telios.io') > -1;
   }
+  // ^^^^
 
-  const parsedSender = JSON.parse(fromJSON)[0].name || senderEmail;
-
-  if (parsedSender) {
-    senderArr = parsedSender.split(' ');
-  }
-
-  let senderInitials = null;
-
-  if (senderArr.length > 1) {
-    senderInitials = `${senderArr[0][0]}${senderArr[1][0]}`.toUpperCase();
-  } else {
-    // eslint-disable-next-line prefer-destructuring
-    senderInitials = senderArr[0][0].toUpperCase();
-  }
-
-  const parsedRecipient = JSON.parse(toJSON).reduce(function (
+  const parsedRecipient = JSON.parse(toJSON).reduce(function(
     previous: string,
     current: { name: string; address: string }
   ) {
     const val = current.name || current.address;
     return `${previous + val} `;
   },
-    'To: ');
+  'To: ');
   const parsedDate = formatDateDisplay(date);
 
   // Determines if the platform specific toggle selection in group key was used
@@ -134,6 +155,58 @@ export default function MessagePreview(props: Props) {
 
   const handleMouseLeave = () => {
     setIsHover(false);
+  };
+
+  const handleUpdateSelectedRange = userSelected => {
+    const newSelection = { ...userSelected };
+    const newLoaders: any[] = [];
+
+    if (
+      !newSelection.startIdx &&
+      !newSelection.endIdx &&
+      !newSelection.items.length
+    ) {
+      newSelection.items = [];
+    }
+
+    if (newSelection.endIdx !== null) {
+      messages.allIds.forEach((msg, index) => {
+        if (index === newSelection.startIdx && index === newSelection.endIdx) {
+          newSelection.items.push(index);
+          newLoaders.push(msg.id);
+        }
+
+        if (
+          index >= newSelection.startIdx &&
+          newSelection.startIdx < newSelection.endIdx &&
+          index <= newSelection.endIdx &&
+          newSelection.startIdx < newSelection.endIdx &&
+          newSelection.exclude.indexOf(index) === -1
+        ) {
+          newSelection.items.push(index);
+          newLoaders.push(msg.id);
+        }
+
+        if (
+          index <= newSelection.startIdx &&
+          newSelection.startIdx > newSelection.endIdx &&
+          index >= newSelection.endIdx &&
+          newSelection.startIdx > newSelection.endIdx &&
+          newSelection.exclude.indexOf(index) === -1
+        ) {
+          newSelection.items.push(index);
+          newLoaders.push(msg.id);
+        }
+      });
+      if (currentFolder.name === 'New') {
+        loaderCountUpdate(newLoaders, true);
+      }
+    }
+
+    // remove duplicated entry
+    newSelection.items = [...new Set(newSelection.items)];
+
+    dispatch(msgRangeSelection(newSelection, currentFolderId));
   };
 
   const handleClick = event => {
@@ -153,12 +226,12 @@ export default function MessagePreview(props: Props) {
           selection.exclude.push(index);
         }
         selection.items = selection.items.filter(item => item !== index);
-        return onUpdateSelectedRange(selection);
+        return handleUpdateSelectedRange(selection);
       }
 
       if (itemIdx === -1 && selection.items.indexOf(index) === -1) {
         selection.items.push(index);
-        return onUpdateSelectedRange(selection);
+        return handleUpdateSelectedRange(selection);
       }
 
       if (selection.exclude[itemIdx] === index) {
@@ -166,7 +239,7 @@ export default function MessagePreview(props: Props) {
           selection.exclude = selection.exclude.filter(item => item !== index);
         }
         selection.items.push(index);
-        return onUpdateSelectedRange(selection);
+        return handleUpdateSelectedRange(selection);
       }
 
       return true;
@@ -199,11 +272,15 @@ export default function MessagePreview(props: Props) {
         selection.endIdx = index;
       }
 
-      onUpdateSelectedRange(selection);
+      handleUpdateSelectedRange(selection);
     } else {
       // Regular click without holding shift or ctrl/cmd
       // will reset selection and select a single item.
       onMsgClick(message, index);
+
+      if (currentFolder.name === 'New') {
+        loaderCountUpdate([message.id], false);
+      }
     }
   };
 
@@ -235,16 +312,11 @@ export default function MessagePreview(props: Props) {
                 )}
             </div>
             <div className="pt-3 mr-3">
-              <Avatar
-                size="sm"
-                className="font-bold"
-                style={{
-                  backgroundColor: stringToHslColor(parsedSender, 45, 65)
-                }}
-                circle
-              >
-                {senderInitials}
-              </Avatar>
+              <AvatarLoader
+                parsedSender={parsedSender}
+                displayLoader={displayLoader}
+                loaderCount={loaderCount}
+              />
             </div>
 
             <div className="flex-auto flex-col py-2 pr-3 leading-tight">
@@ -266,8 +338,9 @@ export default function MessagePreview(props: Props) {
 
               <div
                 id="subject"
-                className={`flex flex-1 flex-row justify-between ${unread === 1 ? 'text-purple-600 font-bold' : ''
-                  }`}
+                className={`flex flex-1 flex-row justify-between ${
+                  unread === 1 ? 'text-purple-600 font-bold' : ''
+                }`}
               >
                 <div className="flex flex-1 leading-tight overflow-hidden text-sm break-all line-clamp-1">
                   {subject}

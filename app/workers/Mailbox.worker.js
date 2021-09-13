@@ -211,7 +211,7 @@ module.exports = env => {
       }
     }
 
-    if (event === 'getMessageById') {
+    if (event === 'MAIL_SERVICE::getMessageById') {
       try {
         const email = await Email.findByPk(payload.id, { raw: true });
         email.id = email.emailId;
@@ -219,7 +219,7 @@ module.exports = env => {
 
         if (email.unread) {
           await Email.update(
-            { unread: false },
+            { unread: 0 },
             {
               where: { emailId: email.id },
               individualHooks: true
@@ -238,10 +238,10 @@ module.exports = env => {
           }
           email.unread = 0;
         }
-        process.send({ event: 'getMessagebyId', data: email });
+        process.send({ event: 'MAIL_WORKER::getMessagebyId', data: email });
       } catch (e) {
         process.send({
-          event: 'getMessagebyId',
+          event: 'MAIL_WORKER::getMessagebyId',
           error: {
             name: e.name,
             message: e.message,

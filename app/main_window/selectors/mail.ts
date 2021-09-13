@@ -79,3 +79,12 @@ export const activeMessageObject = createSelector(
     return messages.byId[activeMsgId] || { id: null };
   }
 );
+
+export const selectMessageByIndex = createSelector(
+  selectAllMessages,
+  (_, index: number) => index,
+  (messages, index) => {
+    const msgId = messages.allIds[index];
+    return messages.byId[msgId];
+  }
+);

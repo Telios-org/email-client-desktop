@@ -77,9 +77,9 @@
   integrity sha512-nkalE/f1RvRGChwBnEIoBfSEYOXnCRdleKuv6+lePbMDrMZXeDQnqak5XDOeBgrPPyPfAdcCu/B5z+v3VhplGg==
 
 "@telios/client-sdk@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-1.0.1.tgz#d9b3b42c07a3a885c5ea2dd176b8ea6f13dffb41"
-  integrity sha512-xDErqSr51+ib19juHFVl8XpjG5XHi+VUiw+R0sRM5sODHMn75TIo+/udR94BLYH7ACR94nnQx7O1yPloA2LTlg==
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-1.0.2.tgz#e456f011e362ce6d25dc486026dd171bde7d435f"
+  integrity sha512-3Pv/kekVDyQKMf4wIWCzlehRMla+zIy0HkLJaJATod182VcWnyvW/JM5tTy6mnSrVD6CJ/z3rO4vm0ZRxUmekQ==
   dependencies:
     "@geut/hypercore-promise" "^2.1.1"
     "@hyperswarm/dht" "^5.0.0-rc.2"
@@ -104,7 +104,7 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
-"@telios/nebula-drive@^1.0.6":
+"@telios/nebula-drive@^1.0.4", "@telios/nebula-drive@^1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-1.0.6.tgz#640c51796f771f0b234a3044817db6a817e0730a"
   integrity sha512-l/X5i6fy6xcdUfFRe0uO/Kl/YaM69ajLTO1Pg7R8RpvFjZAe3j1YwD/IkKFf9I64+jzHIApe04wIyjwiLNFMig==
@@ -134,9 +134,9 @@
   integrity sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==
 
 "@types/node@*":
-  version "16.7.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.10.tgz#7aa732cc47341c12a16b7d562f519c2383b6d4fc"
-  integrity sha512-S63Dlv4zIPb8x6MMTgDq5WWRJQe56iBEY0O3SOFA9JrRienkOVDXSXBjjJw6HTNQYSE2JI6GMCR6LVbIMHJVvA==
+  version "16.9.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.9.1.tgz#0611b37db4246c937feef529ddcc018cf8e35708"
+  integrity sha512-QpLcX9ZSsq3YYUUnD3nFDY8H7wctAhQj/TFKL8Ya8v5fMm3CFXxo8zStsLAl780ltoYoo1WvKUVGBQK+1ifr7g==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -1151,14 +1151,6 @@ hyperswarm@^2.11.2:
     "@hyperswarm/dht" next
     shuffled-priority-queue "^2.1.0"
 
-"hyperswarm@git+https://github.com/Telios-org/hyperswarm.git#v3":
-  version "3.0.0-beta3"
-  uid bfbcf07f5f068d393907cf89258ced9e11b5390e
-  resolved "git+https://github.com/Telios-org/hyperswarm.git#bfbcf07f5f068d393907cf89258ced9e11b5390e"
-  dependencies:
-    "@hyperswarm/dht" next
-    shuffled-priority-queue "^2.1.0"
-
 hypertrie@^5.1.1, "hypertrie@https://github.com/Telios-org/hypertrie.git":
   version "5.1.1"
   resolved "https://github.com/Telios-org/hypertrie.git#3aab7cf80820d7d7d6a2645e683ba8aceca3f7ea"
@@ -1659,19 +1651,6 @@ ms@^2.1.1:
 
 "multi-hyperbee@git+https://github.com/Telios-org/multi-hyperbee.git":
   version "0.2.12"
-  resolved "git+https://github.com/Telios-org/multi-hyperbee.git#2d2915d65d7ff43c2f9447ebe2a5f6c2cda35e48"
-  dependencies:
-    automerge "^0.14.1"
-    hyperbee "1.5.3"
-    hypercore "^9.6.0"
-    hypercore-peer-auth "git+https://github.com/Telios-org/hypercore-peer-auth.git"
-    lodash "^4.17.20"
-    pump "^3.0.0"
-    sorted-union-stream "^3.0.1"
-
-"multi-hyperbee@git+https://github.com/Telios-org/multi-hyperbee.git":
-  version "0.2.12"
-  uid "2d2915d65d7ff43c2f9447ebe2a5f6c2cda35e48"
   resolved "git+https://github.com/Telios-org/multi-hyperbee.git#2d2915d65d7ff43c2f9447ebe2a5f6c2cda35e48"
   dependencies:
     automerge "^0.14.1"
