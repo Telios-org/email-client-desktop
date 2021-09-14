@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // EXTERNAL COMPONENT LIBRARIES
 import { Whisper, Tooltip, Dropdown, Alert } from 'rsuite';
@@ -33,6 +33,14 @@ import {
   markAsUnread
 } from '../../../actions/mailbox/messages';
 
+// SELECTORS
+import {
+  activeMessageSelectedRange,
+  selectAllFolders,
+  activeMessageObject,
+  activeFolderId
+} from '../../../selectors/mail';
+
 // SERVICE FUNCTIONS
 import Mail from '../../../../services/mail.service';
 
@@ -41,18 +49,7 @@ import i18n from '../../../../i18n/i18n';
 
 type Props = {
   loading: boolean;
-  selected: {
-    startIdx: number | null;
-    endIdx: number | null;
-    exclude: Array<number>;
-    items: Array<number>;
-  };
   panelSize: number;
-  composerControls: boolean;
-  messages: MailType;
-  folders: MailType;
-  currentFolderId: number;
-  activeMessage: Email;
   onRefreshMail: (full: any) => Promise<void>;
   onSelectAction: (action: string) => void;
   onComposerClose: (opts: any) => void;
@@ -66,17 +63,18 @@ export default function MessageToolbar(props: Props) {
   const {
     onRefreshMail,
     panelSize,
-    composerControls,
     loading,
-    selected,
-    messages,
-    folders,
-    currentFolderId,
-    activeMessage,
     onSelectAction,
     onComposerClose,
     onComposerMaximize
   } = props;
+
+  const editorIsOpen = useSelector(state => state.globalState.editorIsOpen);
+  const selected = useSelector(activeMessageSelectedRange);
+  const messages = useSelector(state => state.mail.messages);
+  const folders = useSelector(selectAllFolders);
+  const activeMessage = useSelector(activeMessageObject);
+  const currentFolderId = useSelector(activeFolderId);
 
   // List of folders to which selection cannot be moved
   const unmoveableToFolder = [
@@ -110,7 +108,7 @@ export default function MessageToolbar(props: Props) {
   };
 
   const showComposerControls =
-    (composerControls || currentFolderId === 3) && selected.items.length <= 1;
+    editorIsOpen || (currentFolderId === 3 && selected.items.length === 1);
   // Buttons positioning
   const displacement = showComposerControls ? `${panelSize}px` : '0px';
 
@@ -194,7 +192,10 @@ export default function MessageToolbar(props: Props) {
       {folders.allIds.map((fId: number) => {
         const folder = folders.byId[fId];
 
-        if (!unmoveableToFolder.includes(folder.name) && folder.id !== currentFolderId) {
+        if (
+          !unmoveableToFolder.includes(folder.name) &&
+          folder.id !== currentFolderId
+        ) {
           const IconTag = Icon.folder;
           return (
             <Dropdown.Item
@@ -320,7 +321,6 @@ export default function MessageToolbar(props: Props) {
             >
               {i18n.t('messageToolbar.unreadToggle')}
             </CustomButton>
-
           )}
 
           <CustomButton
