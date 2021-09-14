@@ -7,7 +7,7 @@ type Props = {
   parsedSender: string;
   displayLoader: boolean;
   loaderCount: number;
-  loaderCountUpdate: () => void;
+  loaderCountUpdate: (value: number | null) => void;
   //   onLoaderCompletion: () => void;
 };
 

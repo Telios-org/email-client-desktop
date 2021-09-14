@@ -45,7 +45,11 @@ type Props = {
   onDropResult: () => void;
   previewStyle: any;
   loaderCount: any;
-  loaderCountUpdate: (id: string[], reset: boolean) => void;
+  loaderCountUpdate: (
+    id: string[],
+    reset: boolean,
+    value: number | null
+  ) => void;
 };
 
 export default function MessagePreview(props: Props) {
@@ -83,7 +87,6 @@ export default function MessagePreview(props: Props) {
   const isActive = id === activeMessageId || selected.items.indexOf(index) > -1;
 
   useEffect(() => {
-    console.log('TRIGGER', id);
     let isMounted = true;
     if (
       isMounted &&
@@ -91,7 +94,6 @@ export default function MessagePreview(props: Props) {
       currentFolder.name === 'New' &&
       !isActive
     ) {
-      console.log('CHANGING', id);
       setLoader(true);
     }
     return () => {
@@ -199,7 +201,7 @@ export default function MessagePreview(props: Props) {
         }
       });
       if (currentFolder.name === 'New') {
-        loaderCountUpdate(newLoaders, true);
+        loaderCountUpdate(newLoaders, true, null);
       }
     }
 
@@ -279,7 +281,7 @@ export default function MessagePreview(props: Props) {
       onMsgClick(message, index);
 
       if (currentFolder.name === 'New') {
-        loaderCountUpdate([message.id], true);
+        loaderCountUpdate([message.id], true, null);
       }
     }
   };
@@ -316,7 +318,8 @@ export default function MessagePreview(props: Props) {
                 parsedSender={parsedSender}
                 displayLoader={displayLoader}
                 loaderCount={loaderCount}
-                loaderCountUpdate={() => loaderCountUpdate([id], false)}
+                loaderCountUpdate={value =>
+                  loaderCountUpdate([id], false, value)}
               />
             </div>
 

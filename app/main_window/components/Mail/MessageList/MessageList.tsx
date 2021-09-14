@@ -85,18 +85,20 @@ export default function MessageList(props: Props) {
   const [listRef, setListRef] = useState();
   const [loaderData, setLoaders] = useState([]);
 
-  useEffect(() => {
-
-  }, []);
-
-  const updateCount = useCallback((ids, reset = false) => {
+  const updateCount = useCallback((ids, reset = false, value = null) => {
+    console.log('UPDATECOUNT', ids, reset, value);
     setLoaders(prevData => {
       const idArr = prevData.map(m => m.id);
       const notIncluded = ids.filter(m => !idArr.includes(m));
       const newArr = prevData.map(item => {
-        if (ids.includes(item.id) && !reset) {
+        if (ids.includes(item.id) && !reset && value === null) {
           return { ...item, count: item.count + 1 };
         }
+
+        if (ids.includes(item.id) && !reset && value !== null) {
+          return { ...item, count: value };
+        }
+
         if (ids.includes(item.id) && reset) {
           return { ...item, count: 0 };
         }
@@ -105,14 +107,14 @@ export default function MessageList(props: Props) {
 
       if (notIncluded.length > 0) {
         notIncluded.forEach(m => {
-          const newObj = { id: m, count: 0 };
+          const newObj = { id: m, count: value === null ? 0 : value };
           newArr.push(newObj);
         });
       }
 
       return newArr;
     });
-  }, []);
+  },[]);
 
   const itemData = createItemData(
     messages,
