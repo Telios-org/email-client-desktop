@@ -68,7 +68,6 @@ export class MailPage extends Component<Props, State> {
       isSyncInProgress: false
     };
     this.handlePanelResizeEnd = this.handlePanelResizeEnd.bind(this);
-    this.showNewComposerWindow = this.showNewComposerWindow.bind(this);
     this.refresh = this.refresh.bind(this);
     this.handleUpdateSelectedRange = this.handleUpdateSelectedRange.bind(this);
     this.handleDropResult = this.handleDropResult.bind(this);
@@ -83,6 +82,7 @@ export class MailPage extends Component<Props, State> {
 
   async componentDidMount() {
     const { syncMail, toggleEditorState } = this.props;
+    let interval;
 
     ipcRenderer.on('initMailbox', async (event, opts) => {
       await syncMail(opts);
@@ -235,7 +235,7 @@ export class MailPage extends Component<Props, State> {
       editorIsOpen,
       activeMsgId,
       folderId,
-      folders,
+      activeSelectedRange,
       selectMessageRange
     } = this.props;
 
@@ -252,9 +252,13 @@ export class MailPage extends Component<Props, State> {
 
     // If the editor is Open or if the message selected is not already the one open
     // we dispatch the message selection action
-    if (editorIsOpen || activeMsgId !== message.id) {
-      await selectMessage(message);
-      selectMessageRange(selected, folderId);
+    if (
+      editorIsOpen ||
+      activeMsgId !== message.id || activeSelectedRange.items.length > 1
+    ) {
+      selectMessage(message).then(() => {
+        selectMessageRange(selected, folderId);
+      });
     }
   }
 
@@ -278,15 +282,6 @@ export class MailPage extends Component<Props, State> {
       mailbox,
       editorAction: 'maximize'
     });
-  }
-
-  async showNewComposerWindow() {
-    const { clearSelectedMessage, toggleEditorState, folderId } = this.props;
-    // const state = { ...this.state };
-    await clearSelectedMessage(folderId);
-    toggleEditorState('brandNewComposer', true);
-    // state.showComposerInline = true;
-    // this.setState(state);
   }
 
   // Alerts/Notification Handlers
@@ -324,12 +319,10 @@ export class MailPage extends Component<Props, State> {
       editorIsOpen,
       highlightText,
       messages,
-      activeMsgId,
       activeMessage,
       folderId,
       activeSelectedRange,
       showMaximizedMessageDisplay,
-      toggleEditorState,
       folders,
       syncMail
     } = this.props;
@@ -353,7 +346,6 @@ export class MailPage extends Component<Props, State> {
           <div className="w-full">
             <Navigation
               isLoading={isLoading}
-              newMessageAction={this.showNewComposerWindow}
               onRefreshData={() => {
                 this.refresh(true);
               }}
@@ -362,14 +354,8 @@ export class MailPage extends Component<Props, State> {
           <div className="flex flex-col w-full h-full">
             <MessageToolbar
               panelSize={msgList}
-              composerControls={editorIsOpen}
               onRefreshMail={this.refresh}
               loading={loading}
-              selected={activeSelectedRange}
-              messages={messages}
-              folders={folders}
-              activeMessage={activeMessage}
-              currentFolderId={folderId}
               onSelectAction={this.handleSelectAction}
               onComposerClose={this.handleComposerClose}
               onComposerMaximize={this.handleInlineComposerMaximize}
@@ -384,16 +370,9 @@ export class MailPage extends Component<Props, State> {
               ]}
             >
               <MessageList
-                messages={messages}
-                folders={folders}
-                currentFolderId={folderId}
-                selected={activeSelectedRange}
                 loading={isLoading || loading}
-                activeMessageId={activeMsgId}
                 onMsgClick={this.handleSelectMessage}
-                onUpdateSelectedRange={this.handleUpdateSelectedRange}
                 onDropResult={this.handleDropResult}
-                onSelectAction={this.handleSelectAction}
               />
               <div className="w-full h-full flex rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
                 <MessageDisplayRouter

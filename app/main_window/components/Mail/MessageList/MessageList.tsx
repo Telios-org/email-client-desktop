@@ -1,4 +1,5 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 // EXTERNAL UTILS LIBRAIRIES
 import memoize from 'memoize-one';
@@ -7,7 +8,6 @@ import memoize from 'memoize-one';
 import { VariableSizeList as List, areEqual } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { Icon, Divider } from 'rsuite';
 
 // INTERNATIONALIZATION
 import { BsInbox } from 'react-icons/bs';
@@ -17,7 +17,9 @@ import i18n from '../../../../i18n/i18n';
 // ICONSET ICONS
 
 // REDUX ACTIONS
-// import { loadMail, updateMailbox } from '../../actions/mail';
+
+// SELECTORS
+import { selectActiveFolder } from '../../../selectors/mail';
 
 // TS TYPES
 import {
@@ -35,61 +37,88 @@ import MessagePreviewLoading from './MessagePreviewLoading';
 import styles from './MessageList.less';
 
 type Props = {
-  messages: {
-    byId: { [index: number]: MailMessageType | FolderType | MailboxType };
-    allIds: number[];
-  };
-  folders: MailType;
-  currentFolderId: number;
-  activeMessageId: string | null;
   loading: boolean;
   onMsgClick: (message: MailMessageType, index: number) => Promise<void>;
-  selected: {};
-  onUpdateSelectedRange: (selected: any) => void;
   onDropResult: (item: any, dropResult: any) => Promise<void>;
-  onSelectAction: (action: string) => void; // SELECT ALL - SELECT NONE
 };
 
-const createItemData = memoize(items => ({ items }));
+const Row = memo(({ data, index, style }) => {
+  const {
+    onMsgClick,
+    onDropResult
+  } = data;
+
+  return (
+    <MessagePreview
+      index={index}
+      onMsgClick={onMsgClick}
+      onDropResult={onDropResult}
+      previewStyle={style}
+    />
+  );
+}, areEqual);
+Row.displayName = 'Row';
+
+const createItemData = memoize(
+  (messages, onMsgClick, onDropResult) => ({
+    messages,
+    onMsgClick,
+    onDropResult
+  })
+);
 
 export default function MessageList(props: Props) {
-  const {
-    messages,
-    folders,
-    currentFolderId,
-    activeMessageId,
-    onMsgClick,
-    loading,
-    selected,
-    onUpdateSelectedRange,
-    onDropResult,
-    onSelectAction
-  } = props;
+  const { onMsgClick, onDropResult } = props;
+
+  const currentFolder = useSelector(selectActiveFolder);
+  const messages = useSelector(state => state.mail.messages);
 
   const [listRef, setListRef] = useState();
+  const [loaderData, setLoaders] = useState([]);
 
-  const Row = memo(({ data, index, style }) => {
-    const { items } = data;
-    const item = items[index];
-
-    return (
-      <MessagePreview
-        message={messages.byId[item]}
-        isActive={
-          activeMessageId === item || selected.items.indexOf(index) > -1
+  const updateCount = useCallback((ids, reset = false, value = null) => {
+    console.log('UPDATECOUNT', ids, reset, value);
+    setLoaders(prevData => {
+      const idArr = prevData.map(m => m.id);
+      const notIncluded = ids.filter(m => !idArr.includes(m));
+      const newArr = prevData.map(item => {
+        if (ids.includes(item.id) && !reset && value === null) {
+          return { ...item, count: item.count + 1 };
         }
-        index={index}
-        selected={selected}
-        onUpdateSelectedRange={onUpdateSelectedRange}
-        onMsgClick={onMsgClick}
-        onDropResult={onDropResult}
-        previewStyle={style}
-      />
-    );
-  }, areEqual);
-  Row.displayName = 'Row';
 
-  const itemData = createItemData(messages.allIds);
+        if (ids.includes(item.id) && !reset && value !== null) {
+          return { ...item, count: value };
+        }
+
+        if (ids.includes(item.id) && reset) {
+          return { ...item, count: 0 };
+        }
+        return { ...item };
+      });
+
+      if (notIncluded.length > 0) {
+        notIncluded.forEach(m => {
+          const newObj = { id: m, count: value === null ? 0 : value };
+          newArr.push(newObj);
+        });
+      }
+
+      return newArr;
+    });
+  }, []);
+
+  const itemData = createItemData(
+    messages,
+    onMsgClick,
+    onDropResult,
+    loaderData,
+    updateCount
+  );
+
+  const itemKey = (index, data) => {
+    const msgId = data.messages.allIds[index];
+    return data.messages.byId[msgId].id;
+  };
 
   useEffect(() => {
     setListRef(React.createRef());
@@ -128,9 +157,7 @@ export default function MessageList(props: Props) {
     <div className="flex-1 flex w-full flex-col rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
       <div className="h-10 w-full text-lg font-semibold justify-center py-2 pl-4 pr-4 mb-2 text-gray-600 flex flex-row justify-between">
         <div className="flex-1 select-none">
-          {(folders.byId[currentFolderId] &&
-            folders.byId[currentFolderId].name) ||
-            ''}
+          {(currentFolder && currentFolder.name) || ''}
           <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
         </div>
         <div className="items-end flex">
@@ -145,22 +172,24 @@ export default function MessageList(props: Props) {
       </div>
       {messages.allIds.length > 0 && (
         <div className="flex-1 flex w-full">
+
           <AutoSizer>
             {({ height, width }) => (
               <List
                 ref={listRef || null}
                 className="List"
                 height={height}
+                itemKey={itemKey}
                 itemCount={messages.allIds.length}
                 itemData={itemData}
                 itemSize={() => 74}
                 width={width}
-                outerElementType={listRef ? CustomScrollbarsVirtualList : null}
               >
                 {Row}
               </List>
             )}
           </AutoSizer>
+
         </div>
       )}
 
