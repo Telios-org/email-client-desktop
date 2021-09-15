@@ -89,6 +89,7 @@ export default function MessagePreview(props: Props) {
       unread !== 1 &&
       currentFolder.name === 'New' &&
       !isActive
+
     ) {
       setLoader(true);
     } else {

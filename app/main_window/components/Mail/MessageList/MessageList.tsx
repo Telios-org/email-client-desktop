@@ -43,6 +43,7 @@ type Props = {
 };
 
 const Row = memo(({ data, index, style }) => {
+
   const { onMsgClick, onDropResult } = data;
 
   return (
@@ -56,11 +57,13 @@ const Row = memo(({ data, index, style }) => {
 }, areEqual);
 Row.displayName = 'Row';
 
-const createItemData = memoize((messages, onMsgClick, onDropResult) => ({
-  messages,
-  onMsgClick,
-  onDropResult
-}));
+const createItemData = memoize(
+  (messages, onMsgClick, onDropResult) => ({
+    messages,
+    onMsgClick,
+    onDropResult
+  })
+);
 
 export default function MessageList(props: Props) {
   const { onMsgClick, onDropResult } = props;
@@ -161,6 +164,7 @@ export default function MessageList(props: Props) {
       </div>
       {messages.allIds.length > 0 && (
         <div className="flex-1 flex w-full">
+
           <AutoSizer>
             {({ height, width }) => (
               <List
@@ -177,6 +181,7 @@ export default function MessageList(props: Props) {
               </List>
             )}
           </AutoSizer>
+
         </div>
       )}
 
