@@ -3,14 +3,14 @@ const envAPI = require('../env_api.json');
 const { Account } = require('@telios/client-sdk');
 
 class Matomo {
-  constructor(env, account) {
+  constructor(account, userAgent) {
+    const env = process.env.NODE_ENV;
     const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
     this.account = account;
     this.defaultData = {
       uid: account.uid,
-      e_c: 'App',
-      e_a: 'Init',
-      e_n: env
+      ua: userAgent,
+      url: `http://localhost?env=${process.env.NODE_ENV}`
     };
 
     this.options = {
@@ -51,7 +51,6 @@ class Matomo {
 
   async event(data) {
     const payload = {
-      new_visit: 1,
       ...this.defaultData,
       ...data
     };

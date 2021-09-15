@@ -133,6 +133,7 @@ app.on('ready', async () => {
   require('./ipc/Account.ipc')(windowManager); // eslint-disable-line
   require('./ipc/Composer.ipc')(windowManager); // eslint-disable-line
   require('./ipc/Notifier.ipc')(windowManager); // eslint-disable-line
+  require('./ipc/Matomo.ipc')(windowManager); // eslint-disable-line
   require('./ipc/Window.ipc')(
     windowManager,
     createMainWindow,
