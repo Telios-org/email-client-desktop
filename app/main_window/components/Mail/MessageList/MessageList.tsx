@@ -15,6 +15,7 @@ import { Filter2, Swap } from 'react-iconly';
 import i18n from '../../../../i18n/i18n';
 
 // ICONSET ICONS
+import SortIcon from './SortIcon';
 
 // REDUX ACTIONS
 
@@ -43,7 +44,6 @@ type Props = {
 };
 
 const Row = memo(({ data, index, style }) => {
-
   const { onMsgClick, onDropResult } = data;
 
   return (
@@ -68,42 +68,15 @@ const createItemData = memoize(
 export default function MessageList(props: Props) {
   const { onMsgClick, onDropResult } = props;
 
+  const [listRef, setListRef] = useState();
+  const [sort, setSort] = useState('');
+
+  useEffect(() => {
+    setListRef(React.createRef());
+  }, []);
+
   const currentFolder = useSelector(selectActiveFolder);
   const messages = useSelector(state => state.mail.messages);
-
-  const [listRef, setListRef] = useState();
-  const [loaderData, setLoaders] = useState([]);
-
-  const updateCount = useCallback((ids, reset = false, value = null) => {
-    console.log('UPDATECOUNT', ids, reset, value);
-    setLoaders(prevData => {
-      const idArr = prevData.map(m => m.id);
-      const notIncluded = ids.filter(m => !idArr.includes(m));
-      const newArr = prevData.map(item => {
-        if (ids.includes(item.id) && !reset && value === null) {
-          return { ...item, count: item.count + 1 };
-        }
-
-        if (ids.includes(item.id) && !reset && value !== null) {
-          return { ...item, count: value };
-        }
-
-        if (ids.includes(item.id) && reset) {
-          return { ...item, count: 0 };
-        }
-        return { ...item };
-      });
-
-      if (notIncluded.length > 0) {
-        notIncluded.forEach(m => {
-          const newObj = { id: m, count: value === null ? 0 : value };
-          newArr.push(newObj);
-        });
-      }
-
-      return newArr;
-    });
-  }, []);
 
   const itemData = createItemData(messages, onMsgClick, onDropResult);
 
@@ -112,38 +85,42 @@ export default function MessageList(props: Props) {
     return data.messages.byId[msgId].id;
   };
 
-  useEffect(() => {
-    setListRef(React.createRef());
-  }, []);
+  // const CustomScrollbars = ({ onScroll, forwardedRef, style, children }) => {
+  //   const refSetter = useCallback(scrollbarsRef => {
+  //     if (scrollbarsRef) {
+  //       if (listRef && listRef.current && listRef.current.state) {
+  //         scrollbarsRef.scrollTop(listRef.current.state.scrollOffset);
+  //         forwardedRef(scrollbarsRef.view);
+  //       }
+  //     } else {
+  //       forwardedRef(null);
+  //     }
+  //   }, []);
 
-  const CustomScrollbars = ({ onScroll, forwardedRef, style, children }) => {
-    const refSetter = useCallback(scrollbarsRef => {
-      if (scrollbarsRef) {
-        if (listRef && listRef.current && listRef.current.state) {
-          scrollbarsRef.scrollTop(listRef.current.state.scrollOffset);
-          forwardedRef(scrollbarsRef.view);
-        }
-      } else {
-        forwardedRef(null);
-      }
-    }, []);
+  //   return (
+  //     <Scrollbars
+  //       ref={refSetter}
+  //       onScroll={onScroll}
+  //       style={{ ...style, overflow: 'hidden' }}
+  //       hideTracksWhenNotNeeded
+  //       autoHide
+  //     >
+  //       {children}
+  //     </Scrollbars>
+  //   );
+  // };
 
-    return (
-      <Scrollbars
-        ref={refSetter}
-        onScroll={onScroll}
-        style={{ ...style, overflow: 'hidden' }}
-        hideTracksWhenNotNeeded
-        autoHide
-      >
-        {children}
-      </Scrollbars>
-    );
-  };
+  // const CustomScrollbarsVirtualList = React.forwardRef((props, ref) => (
+  //   <CustomScrollbars {...props} forwardedRef={ref} />
+  // ));
 
-  const CustomScrollbarsVirtualList = React.forwardRef((props, ref) => (
-    <CustomScrollbars {...props} forwardedRef={ref} />
-  ));
+  const toggleSort = () => {
+    if (!sort || sort === 'DESC') {
+      setSort('ASC');
+    } else {
+      setSort('DESC');
+    }
+  }
 
   return (
     <div className="flex-1 flex w-full flex-col rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
@@ -153,13 +130,10 @@ export default function MessageList(props: Props) {
           <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
         </div>
         <div className="items-end flex">
-          <Swap
-            set="broken"
-            size="small"
-            className="mr-2"
-            style={{ cursor: 'pointer' }}
-          />
-          <Filter2 set="broken" size="small" style={{ cursor: 'pointer' }} />
+          <div style={{ cursor: 'pointer' }} onClick={toggleSort}>
+            <SortIcon color="#9333ea" order={sort} />
+          </div>
+          {/* <Filter2 set="broken" size="small" style={{ cursor: 'pointer' }} /> */}
         </div>
       </div>
       {messages.allIds.length > 0 && (
