@@ -3,12 +3,14 @@ const envAPI = require('../env_api.json');
 const { Account } = require('@telios/client-sdk');
 
 class Matomo {
-  constructor(env, account, userAgent) {
+  constructor(account, userAgent) {
+    const env = process.env.NODE_ENV;
     const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
     this.account = account;
     this.defaultData = {
       uid: account.uid,
-      ua: userAgent
+      ua: userAgent,
+      url: `http://localhost?env=${process.env.NODE_ENV}`
     };
 
     this.options = {
@@ -30,7 +32,6 @@ class Matomo {
     };
 
     setInterval(async () => {
-      console.log('MATOMO HEARTBEAT', { payload, options: this.options });
       try {
         const options = {
           ...this.options,
@@ -53,8 +54,6 @@ class Matomo {
       ...this.defaultData,
       ...data
     };
-
-    console.log('MATOMO EVENT', { payload, options: this.options });
 
     const options = {
       ...this.options,

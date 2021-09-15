@@ -5,7 +5,7 @@ const Matomo = require('../utils/Matomo');
 module.exports = windowManager => {
   ipcMain.handle('MATOMO::init', async (event, data) => {
     const mainWindow = windowManager.getWindow('mainWindow');
-    store.matomo = new Matomo(process.env.NODE_ENV, data.account, mainWindow.webContents.userAgent);
+    store.matomo = new Matomo(data.account, mainWindow.webContents.userAgent);
 
     let params = {
       e_c: 'Account',
