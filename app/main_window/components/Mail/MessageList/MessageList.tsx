@@ -43,41 +43,27 @@ type Props = {
 };
 
 const Row = memo(({ data, index, style }) => {
-  const {
-    messages,
-    onMsgClick,
-    onDropResult,
-    loaderData,
-    loaderCountUpdate
-  } = data;
-  const msgId = data.messages.allIds[index];
-  const loader = loaderData.filter(m => m.id === msgId)[0];
+  const { onMsgClick, onDropResult } = data;
 
   return (
     <MessagePreview
       index={index}
       onMsgClick={onMsgClick}
       onDropResult={onDropResult}
-      loaderCount={(loader && loader.count) || 0}
-      loaderCountUpdate={loaderCountUpdate}
       previewStyle={style}
     />
   );
 }, areEqual);
 Row.displayName = 'Row';
 
-const createItemData = memoize(
-  (messages, onMsgClick, onDropResult, loaderData, loaderCountUpdate) => ({
-    messages,
-    onMsgClick,
-    onDropResult,
-    loaderData,
-    loaderCountUpdate
-  })
-);
+const createItemData = memoize((messages, onMsgClick, onDropResult) => ({
+  messages,
+  onMsgClick,
+  onDropResult
+}));
 
 export default function MessageList(props: Props) {
-  const { onMsgClick, loading, onDropResult } = props;
+  const { onMsgClick, onDropResult } = props;
 
   const currentFolder = useSelector(selectActiveFolder);
   const messages = useSelector(state => state.mail.messages);
@@ -114,15 +100,9 @@ export default function MessageList(props: Props) {
 
       return newArr;
     });
-  },[]);
+  }, []);
 
-  const itemData = createItemData(
-    messages,
-    onMsgClick,
-    onDropResult,
-    loaderData,
-    updateCount
-  );
+  const itemData = createItemData(messages, onMsgClick, onDropResult);
 
   const itemKey = (index, data) => {
     const msgId = data.messages.allIds[index];
@@ -192,7 +172,6 @@ export default function MessageList(props: Props) {
                 itemData={itemData}
                 itemSize={() => 74}
                 width={width}
-                outerElementType={listRef ? CustomScrollbarsVirtualList : null}
               >
                 {Row}
               </List>

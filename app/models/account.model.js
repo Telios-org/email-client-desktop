@@ -9,6 +9,10 @@ const model = {
     primaryKey: true,
     autoIncrement: true
   },
+  uid: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   hyperDBSecret: {
     type: Sequelize.STRING,
     allowNull: false

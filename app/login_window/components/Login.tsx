@@ -10,14 +10,12 @@ import {
   Button,
   Schema
 } from 'rsuite';
+import Store from 'electron-store';
 import i18n from '../../i18n/i18n';
 
 const { ipcRenderer } = require('electron');
-
 const LoginService = require('../../services/login.service');
-
 const { StringType } = Schema.Types;
-
 const errorStyles = errorVisible => {
   return {
     display: errorVisible ? 'block' : 'none',
@@ -79,8 +77,16 @@ class Login extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
+    this.store = new Store();
+
+    let lastAccount = this.store.get('lastAccount');
+
+    if (!lastAccount && props.accounts.length === 1) {
+      lastAccount = props.accounts[0].value;
+    }
+
     this.state = {
-      selectedAccount: null,
+      selectedAccount: lastAccount,
       formValue: {
         masterpass: ''
       },
@@ -94,15 +100,6 @@ class Login extends Component<Props, State> {
     this.clearState = this.clearState.bind(this);
   }
 
-  componentDidMount() {
-    const { accounts } = this.props;
-    if (accounts.length > 0) {
-      this.setState({
-        selectedAccount: accounts[0].value
-      });
-    }
-  }
-
   async handleLogin() {
     const {
       selectedAccount,
@@ -110,6 +107,7 @@ class Login extends Component<Props, State> {
     } = this.state;
 
     try {
+      this.store.set('lastAccount', selectedAccount);
       const account = await getAccount(selectedAccount, masterpass);
       await loadMailbox();
 
@@ -171,7 +169,7 @@ class Login extends Component<Props, State> {
   }
 
   render() {
-    const { formError, formValue, canSubmit, loading } = this.state;
+    const { selectedAccount, formError, formValue, canSubmit, loading } = this.state;
     const { accounts, onUpdateActive } = this.props;
 
     if (accounts.length > 0) {
@@ -187,7 +185,7 @@ class Login extends Component<Props, State> {
           <InputPicker
             data={accounts}
             disabled={loading}
-            defaultValue={accounts ? accounts[0].value : null}
+            defaultValue={selectedAccount}
             menuClassName="text-sm"
             cleanable={false}
             onChange={this.onChangeSelectedAccount}

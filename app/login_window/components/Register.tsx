@@ -23,6 +23,7 @@ import {
   Tooltip
 } from 'rsuite';
 import { Mailbox } from '@telios/client-sdk';
+import Store from 'electron-store';
 import i18n from '../../i18n/i18n';
 
 const { ipcRenderer, remote } = require('electron');
@@ -30,7 +31,6 @@ const { ipcRenderer, remote } = require('electron');
 const { dialog } = remote;
 const fs = require('fs');
 const zxcvbn = require('zxcvbn');
-const pkg = require('../../package.json');
 const envAPI = require('../../env_api.json');
 
 const Login = require('../../services/login.service');
@@ -38,7 +38,7 @@ const Login = require('../../services/login.service');
 const params = window.location.search.replace('?', '');
 const env = params.split('=')[1];
 
-const requestBase = env === 'production' ? pkg.api.prod : envAPI.dev;
+const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
 const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
 
 const mailbox = new Mailbox({
@@ -279,6 +279,9 @@ class Register extends Component<Props, State> {
         });
         this.setState({ account: acct, loading: false });
         this.handleNextStep(step + 1);
+
+        const store = new Store();
+        store.set('lastAccount', email);
       } catch (e) {
         console.log('ERROR', e)
         this.setState({
@@ -686,25 +689,25 @@ class Register extends Component<Props, State> {
                   className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 1
                     ? 'bg-red-400'
                     : 'bg-gray-300'
-                  }`}
+                    }`}
                 />
                 <div
                   className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 2
                     ? 'bg-orange-400'
                     : 'bg-gray-300'
-                  }`}
+                    }`}
                 />
                 <div
                   className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 3
                     ? 'bg-yellow-400'
                     : 'bg-gray-300'
-                  }`}
+                    }`}
                 />
                 <div
                   className={`flex-1 rounded ${passwordStrength !== null && passwordStrength === 4
                     ? 'bg-green-400'
                     : 'bg-gray-300'
-                  }`}
+                    }`}
                 />
               </div>
 

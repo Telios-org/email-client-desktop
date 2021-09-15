@@ -1,20 +1,17 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { memo } from 'react';
 import { Avatar } from 'rsuite';
 import CircleLoader from './CircleLoader';
-// import { useInterval, usePrevious } from '../../../../../utils/hooks.util';
 
 type Props = {
   parsedSender: string;
   displayLoader: boolean;
-  loaderCount: number;
-  loaderCountUpdate: (value: number | null) => void;
-  //   onLoaderCompletion: () => void;
+  onLoaderCompletion: () => void;
 };
 
 const stringToHslColor = require('../../../../utils/avatar.util');
 
 const AvatarLoader = (props: Props) => {
-  const { parsedSender, displayLoader, loaderCount, loaderCountUpdate } = props;
+  const { parsedSender, displayLoader, onLoaderCompletion } = props;
 
   let senderArr: any[] = [];
 
@@ -34,10 +31,7 @@ const AvatarLoader = (props: Props) => {
   return (
     <div className="relative">
       {displayLoader && (
-        <CircleLoader
-          loaderCount={loaderCount}
-          loaderCountUpdate={loaderCountUpdate}
-        />
+        <CircleLoader onLoaderCompletion={onLoaderCompletion} />
       )}
       <Avatar
         size="sm"

@@ -15,6 +15,9 @@ import { app, nativeTheme } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
+const Store = require('electron-store');
+const store = new Store();
+
 export default class AppUpdater {
   constructor() {
     if (process.env.NODE_ENV === 'production') {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 // EXTERNAL LIBRARIES
@@ -26,6 +26,7 @@ import {
 
 // REDUX ACTIONS
 import { msgRangeSelection } from '../../../../actions/mail';
+import { moveMessagesToFolder } from '../../../../actions/mailbox/folders';
 
 // TYPESCRIPT TYPES
 import { MailMessageType } from '../../../../reducers/types';
@@ -33,9 +34,6 @@ import { MailMessageType } from '../../../../reducers/types';
 // COMPONENTS
 import PreviewIconBar from './PreviewIconBar';
 import AvatarLoader from './AvatarLoader';
-
-// IMPORT UTILITY FUNCTIONS
-// import { useInterval } from '../../../../../utils/hooks.util';
 
 const { formatDateDisplay } = require('../../../../utils/date.util');
 
@@ -58,9 +56,7 @@ export default function MessagePreview(props: Props) {
     onMsgClick,
     onDropResult,
     index,
-    previewStyle,
-    loaderCount,
-    loaderCountUpdate
+    previewStyle
   } = props;
 
   const dispatch = useDispatch();
@@ -95,12 +91,14 @@ export default function MessagePreview(props: Props) {
       !isActive
     ) {
       setLoader(true);
+    } else {
+      setLoader(false);
     }
+
     return () => {
-      console.log('unmounting...');
       isMounted = false;
     };
-  }, [unread, isActive]);
+  }, [unread, activeMessageId, selected.items]);
 
   const [{ opacity }, drag, preview] = useDrag({
     item: { id, unread, folderId, type: 'message' },
@@ -133,7 +131,7 @@ export default function MessagePreview(props: Props) {
   }
   // ^^^^
 
-  const parsedRecipient = JSON.parse(toJSON).reduce(function(
+  const parsedRecipient = JSON.parse(toJSON).reduce(function (
     previous: string,
     current: { name: string; address: string }
   ) {
@@ -200,9 +198,6 @@ export default function MessagePreview(props: Props) {
           newLoaders.push(msg.id);
         }
       });
-      if (currentFolder.name === 'New') {
-        loaderCountUpdate(newLoaders, true, null);
-      }
     }
 
     // remove duplicated entry
@@ -279,12 +274,22 @@ export default function MessagePreview(props: Props) {
       // Regular click without holding shift or ctrl/cmd
       // will reset selection and select a single item.
       onMsgClick(message, index);
-
-      if (currentFolder.name === 'New') {
-        loaderCountUpdate([message.id], true, null);
-      }
+      setLoader(false);
     }
   };
+
+  const handleLoaderComplete = () => {
+    // console.log(`Move message to READ: ${message.id}`);
+    dispatch(moveMessagesToFolder([{
+      id: message.id,
+      unread: false,
+      folder: {
+        fromId: currentFolder.id,
+        toId: 2,
+        name: 'Read'
+      }
+    }]))
+  }
 
   return (
     <div>
@@ -317,9 +322,7 @@ export default function MessagePreview(props: Props) {
               <AvatarLoader
                 parsedSender={parsedSender}
                 displayLoader={displayLoader}
-                loaderCount={loaderCount}
-                loaderCountUpdate={value =>
-                  loaderCountUpdate([id], false, value)}
+                onLoaderCompletion={handleLoaderComplete}
               />
             </div>
 
@@ -330,7 +333,7 @@ export default function MessagePreview(props: Props) {
                   className="flex-auto leading-tight line-clamp-1 break-all font-bold"
                 >
                   {currentFolder.name === 'Sent' ||
-                  currentFolder.name === 'Drafts'
+                    currentFolder.name === 'Drafts'
                     ? parsedRecipient
                     : parsedSender}
                 </div>

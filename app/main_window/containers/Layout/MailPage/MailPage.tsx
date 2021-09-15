@@ -201,8 +201,7 @@ export class MailPage extends Component<Props, State> {
     clearSelectedMessage(folderId);
 
     Alert.success(
-      `Moved ${
-        selected.items.length ? selected.items.length : 1
+      `Moved ${selected.items.length ? selected.items.length : 1
       } message(s) to ${dropResult.name}.`
     );
   }
@@ -257,8 +256,9 @@ export class MailPage extends Component<Props, State> {
       editorIsOpen ||
       activeMsgId !== message.id || activeSelectedRange.items.length > 1
     ) {
-      await selectMessage(message);
-      selectMessageRange(selected, folderId);
+      selectMessage(message).then(() => {
+        selectMessageRange(selected, folderId);
+      });
     }
   }
 

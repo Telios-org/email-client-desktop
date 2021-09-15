@@ -8,7 +8,6 @@ const { Email } = require('../models/email.model');
 const { File } = require('../models/file.model');
 const fileUtil = require('../utils/file.util');
 const store = require('../Store');
-const pkg = require('../package.json');
 const envAPI = require('../env_api.json');
 
 const { Op } = Sequelize;
@@ -30,7 +29,7 @@ module.exports = env => {
       } = account;
 
       const mailbox = new SDK.Mailbox({
-        provider: env === 'production' ? pkg.api.prod : envAPI.dev,
+        provider: env === 'production' ? envAPI.prod : envAPI.dev,
         auth: {
           claims: {
             account_key: secretBoxPubKey,
@@ -303,7 +302,7 @@ module.exports = env => {
           dest: emailDest
         });
 
-        res = { name: emailFilename, email: payload.email , ...res };
+        res = { name: emailFilename, email: payload.email, ...res };
 
         process.send({ event: 'sendEmail', data: res });
       } catch (e) {

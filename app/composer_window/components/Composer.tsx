@@ -151,7 +151,7 @@ class Composer extends Component<Props, State> {
     this.setState({ mailbox });
 
     // When in the Draft folder do the below
-    if (isInline && message && message.ccJSON && folder.id === 4) {
+    if (isInline && message && message.ccJSON && folder.id === 3) {
       this.updateComposer(mailbox, message);
     }
 
@@ -198,7 +198,7 @@ class Composer extends Component<Props, State> {
     if (
       isInline &&
       message &&
-      folder.id === 4 &&
+      folder.id === 3 &&
       message.ccJSON &&
       JSON.stringify(prevProps.message) !== JSON.stringify(message)
     ) {

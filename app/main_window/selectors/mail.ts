@@ -88,3 +88,11 @@ export const selectMessageByIndex = createSelector(
     return messages.byId[msgId];
   }
 );
+
+export const selectIndexForMessageId = createSelector(
+  selectAllMessages,
+  (_, id: string) => id,
+  (messages, id) => {
+    return messages.allIds.indexOf(id);
+  }
+);
