@@ -13,6 +13,7 @@ import { useDrop } from 'react-dnd';
 import {
   EditSquare,
   Download,
+  Scan,
   Edit,
   Send,
   Danger,
@@ -20,7 +21,8 @@ import {
   Plus,
   ChevronDown,
   MoreSquare,
-  MoreCircle,
+  Star,
+  TickSquare,
   Bookmark
 } from 'react-iconly';
 
@@ -36,37 +38,45 @@ import i18n from '../../../../i18n/i18n';
 // STATE SELECTORS
 import {
   selectAllFoldersById,
-  selectActiveMailbox
+  selectActiveMailbox,
+  activeFolderId
 } from '../../../selectors/mail';
 
 // REDUX ACTION CREATORS
 import { folderSelection, createNewFolder } from '../../../actions/mail';
+import { clearActiveMessage } from '../../../actions/mailbox/messages';
+import { toggleEditor } from '../../../actions/global';
 
 // TYPESCRIPT TYPES
 import { StateType, FolderType } from '../../../reducers/types';
 
 type Props = {
   isLoading?: boolean; // eslint-disable-line react/no-unused-prop-types
-  newMessageAction: () => void;
   onRefreshData: () => void;
 };
 
 export default function Navigation(props: Props) {
   const mailbox = useSelector(selectActiveMailbox);
   const allFolders = useSelector(selectAllFoldersById);
-  // const displayFolders = useSelector(selectDisplayFolders);
+  const folderId = useSelector(activeFolderId);
   // const history = useHistory();
   const dispatch = useDispatch();
 
   // Dictionary of Icon Components used in this function
   const CustomIcon = {
-    inbox: Download,
+    new: Star,
+    read: TickSquare,
     pencil: Edit,
     'send-o': Send,
     'trash-o': Delete,
     'folder-o': Bookmark,
     ban: Danger
   };
+
+  const newMessageAction = async () => {
+    await dispatch(clearActiveMessage(folderId));
+    dispatch(toggleEditor('brandNewComposer', true));
+  }
 
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [showDeleteFolderModal, setShowDeleteFolderModal] = useState(false);
@@ -102,7 +112,7 @@ export default function Navigation(props: Props) {
     }
   };
 
-  const { newMessageAction, onRefreshData } = props;
+  const { onRefreshData } = props;
 
   const handleNewFolder = () => {
     setEditFolder(null);
@@ -201,10 +211,10 @@ export default function Navigation(props: Props) {
                   }`}
                 /> */}
                 <IconTag
-                  className={`flex-initial ml-3 mb-1 ${
+                  className={`flex-initial ml-3 mb-0.5 ${
                     active === index && !isDrop ? 'text-purple-700' : ''
                   }`}
-                  set={active === index && !isDrop ? 'bulk' : 'broken'}
+                  set={active === index && !isDrop ? 'light' : 'broken'}
                   size="small"
                 />
                 <span className="flex-auto pl-3 leading-loose align-middle text-sm self-center">
@@ -310,7 +320,13 @@ export default function Navigation(props: Props) {
                       size="xs"
                       placement="bottomEnd"
                       renderTitle={() => {
-                        return <MoreSquare set="broken" size="small" className="mt-0.5"/>;
+                        return (
+                          <MoreSquare
+                            set="broken"
+                            size="small"
+                            className="mt-0.5"
+                          />
+                        );
                       }}
                     >
                       <Dropdown.Item onClick={e => handleEditFolder(folder, e)}>

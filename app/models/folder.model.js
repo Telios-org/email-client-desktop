@@ -7,14 +7,14 @@ module.exports.DefaultFolders = [
     id: 1,
     name: 'New',
     type: 'default',
-    icon: 'inbox',
+    icon: 'new',
     seq: 1
   },
   {
     id: 2,
     name: 'Read',
     type: 'default',
-    icon: 'inbox',
+    icon: 'read',
     seq: 2
   },
   {

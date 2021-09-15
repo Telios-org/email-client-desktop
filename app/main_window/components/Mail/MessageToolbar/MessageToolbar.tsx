@@ -237,8 +237,9 @@ export default function MessageToolbar(props: Props) {
         speaker={<Tooltip>{tpText}</Tooltip>}
       >
         <button
-          className={`disabled:opacity-50 ${disabled ? 'cursor-not-allowed' : 'hover:bg-gray-200 cursor-pointer'
-            }  text-gray-500 rounded p-2 focus:outline-none  ${className} justify-center items-center tracking-wide flex flex-row h-full`}
+          className={`disabled:opacity-50 ${
+            disabled ? 'cursor-not-allowed' : 'hover:bg-gray-200 cursor-pointer'
+          }  text-gray-500 rounded p-2 focus:outline-none  ${className} justify-center items-center tracking-wide flex flex-row h-full`}
           type="button"
           onClick={onClick}
           disabled={disabled}
@@ -389,18 +390,18 @@ type ButtonProps = {
   spinIcon?: boolean;
   disabled?: boolean;
   tpPlacement:
-  | 'top'
-  | 'bottom'
-  | 'left'
-  | 'right'
-  | 'topStart'
-  | 'topEnd'
-  | 'bottomStart'
-  | 'bottomEnd'
-  | 'leftStart'
-  | 'leftEnd'
-  | 'rightEnd'
-  | 'rightStart';
+    | 'top'
+    | 'bottom'
+    | 'left'
+    | 'right'
+    | 'topStart'
+    | 'topEnd'
+    | 'bottomStart'
+    | 'bottomEnd'
+    | 'leftStart'
+    | 'leftEnd'
+    | 'rightEnd'
+    | 'rightStart';
   tpTrigger: 'click' | 'hover' | 'focus' | 'active' | 'none';
   tpText: string;
   set: 'iconly' | 'bs';

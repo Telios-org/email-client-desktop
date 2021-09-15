@@ -248,10 +248,10 @@ class MailService {
   }
 
   static getMessagebyId(id) {
-    worker.send({ event: 'getMessageById', payload: { id } });
+    worker.send({ event: 'MAIL_SERVICE::getMessageById', payload: { id } });
 
     return new Promise((resolve, reject) => {
-      worker.once('getMessagebyId', m => {
+      worker.once('MAIL_WORKER::getMessagebyId', m => {
         const { data, error } = m;
 
         if (error) return reject(error);

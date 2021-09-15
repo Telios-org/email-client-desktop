@@ -20,7 +20,6 @@ import {
   selectActiveFolder,
   activeFolderId,
   selectMessageByIndex,
-  selectIndexForMessageId,
   activeMessageId as activeMsgId,
   activeMessageSelectedRange
 } from '../../../../selectors/mail';
@@ -43,6 +42,12 @@ type Props = {
   index: number;
   onDropResult: () => void;
   previewStyle: any;
+  loaderCount: any;
+  loaderCountUpdate: (
+    id: string[],
+    reset: boolean,
+    value: number | null
+  ) => void;
 };
 
 export default function MessagePreview(props: Props) {
@@ -63,7 +68,6 @@ export default function MessagePreview(props: Props) {
   const currentFolderId = useSelector(activeFolderId);
   const selected = useSelector(activeMessageSelectedRange);
   const message = useSelector(state => selectMessageByIndex(state, index));
-  const messageIndex = useSelector(state => selectIndexForMessageId(state, message.id));
   const {
     id,
     folderId,
@@ -79,14 +83,13 @@ export default function MessagePreview(props: Props) {
   const isActive = id === activeMessageId || selected.items.indexOf(index) > -1;
 
   useEffect(() => {
-    const active = id === activeMessageId || selected.items.indexOf(messageIndex) > -1;
-
     let isMounted = true;
     if (
       isMounted &&
       unread !== 1 &&
       currentFolder.name === 'New' &&
-      !active
+      !isActive
+
     ) {
       setLoader(true);
     } else {
@@ -136,7 +139,7 @@ export default function MessagePreview(props: Props) {
     const val = current.name || current.address;
     return `${previous + val} `;
   },
-    'To: ');
+  'To: ');
   const parsedDate = formatDateDisplay(date);
 
   // Determines if the platform specific toggle selection in group key was used
@@ -343,8 +346,9 @@ export default function MessagePreview(props: Props) {
 
               <div
                 id="subject"
-                className={`flex flex-1 flex-row justify-between ${unread === 1 ? 'text-purple-600 font-bold' : ''
-                  }`}
+                className={`flex flex-1 flex-row justify-between ${
+                  unread === 1 ? 'text-purple-600 font-bold' : ''
+                }`}
               >
                 <div className="flex flex-1 leading-tight overflow-hidden text-sm break-all line-clamp-1">
                   {subject}

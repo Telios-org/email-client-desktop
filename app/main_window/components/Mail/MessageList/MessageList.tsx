@@ -43,10 +43,8 @@ type Props = {
 };
 
 const Row = memo(({ data, index, style }) => {
-  const {
-    onMsgClick,
-    onDropResult
-  } = data;
+
+  const { onMsgClick, onDropResult } = data;
 
   return (
     <MessagePreview
@@ -107,13 +105,7 @@ export default function MessageList(props: Props) {
     });
   }, []);
 
-  const itemData = createItemData(
-    messages,
-    onMsgClick,
-    onDropResult,
-    loaderData,
-    updateCount
-  );
+  const itemData = createItemData(messages, onMsgClick, onDropResult);
 
   const itemKey = (index, data) => {
     const msgId = data.messages.allIds[index];
