@@ -135,12 +135,12 @@ export default function MessageList(props: Props) {
           {(currentFolder && currentFolder.name) || ''}
           <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
         </div>
-        <div className="items-end flex">
+        {/* <div className="items-end flex">
           <div style={{ cursor: 'pointer' }} onClick={toggleSort}>
             <SortIcon color="#9333ea" order={sort} />
           </div>
-          {/* <Filter2 set="broken" size="small" style={{ cursor: 'pointer' }} /> */}
-        </div>
+          <Filter2 set="broken" size="small" style={{ cursor: 'pointer' }} />
+        </div> */}
       </div>
       {messages.allIds.length > 0 && (
         <div className="flex-1 flex w-full">
