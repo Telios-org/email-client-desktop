@@ -172,7 +172,8 @@ function MessageDisplay(props: Props) {
   };
 
   const IFrame = ({ children, ...props }) => {
-    const [contentRef, setContentRef] = useState(null);
+    const [contentRef, setContentRef] = useState();
+
     const [height, setHeight] = useState('');
     const mountNode = contentRef?.contentWindow?.document?.body;
 
@@ -192,7 +193,6 @@ function MessageDisplay(props: Props) {
         frameBorder="0"
       >
         {mountNode && createPortal(children, mountNode)}
-        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
       </iframe>
     );
   }
@@ -287,6 +287,7 @@ function MessageDisplay(props: Props) {
                 <IFrame className="w-full">
                   <div style={divStyle}>
                     {renderHTML(bodyAsHtml)}
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
                   </div>
                 </IFrame>
               </div>

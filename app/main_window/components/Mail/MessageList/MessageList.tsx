@@ -71,12 +71,16 @@ export default function MessageList(props: Props) {
   const [listRef, setListRef] = useState();
   const [sort, setSort] = useState('');
 
+  const currentFolder = useSelector(selectActiveFolder);
+  const messages = useSelector(state => state.mail.messages);
+
   useEffect(() => {
     setListRef(React.createRef());
   }, []);
 
-  const currentFolder = useSelector(selectActiveFolder);
-  const messages = useSelector(state => state.mail.messages);
+  useEffect(() => {
+    setSort('');
+  }, [currentFolder]);
 
   const itemData = createItemData(messages, onMsgClick, onDropResult);
 
@@ -84,6 +88,8 @@ export default function MessageList(props: Props) {
     const msgId = data.messages.allIds[index];
     return data.messages.byId[msgId].id;
   };
+
+  // TODO: Fix or find alternative scroll bar. Windows machines will continue to use the native scrollbar
 
   // const CustomScrollbars = ({ onScroll, forwardedRef, style, children }) => {
   //   const refSetter = useCallback(scrollbarsRef => {
