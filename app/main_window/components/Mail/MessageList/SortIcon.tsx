@@ -5,8 +5,6 @@ type Props = {
   order?: string;
 };
 
-
-
 export default function SortIcon(props: Props) {
   const { color, order } = props;
 
