@@ -159,6 +159,14 @@ export type MailMessageType = {
   attachments: Array<AttachmentType>;
 };
 
+export type NamespaceType = {
+  namespaceKey: string;
+  name: string;
+  mailboxId: number;
+  domain: string;
+  disabled: boolean;
+};
+
 export type FolderType = {
   id: number;
   name: string;

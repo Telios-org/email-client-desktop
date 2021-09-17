@@ -5,6 +5,7 @@ import {
   GetState,
   MailboxType,
   FolderType,
+  NamespaceType,
   MailMessageType,
   ExternalMailMessageType,
   Email,
@@ -246,6 +247,55 @@ export const fetchMailboxes = () => {
 };
 
 /*
+ *  Get Mailbox Namespaces
+ */
+
+export const GET_MAILBOX_NAMESPACES_REQUEST =
+  'MAILPAGE::GET_MAILBOX_NAMESPACES_REQUEST';
+export const getMailboxNamespacesRequest = () => {
+  return {
+    type: GET_MAILBOX_NAMESPACES_REQUEST
+  };
+};
+
+export const GET_MAILBOX_NAMESPACES_REQUEST_SUCCESS =
+  'MAILPAGE::GET_MAILBOX_NAMESPACES_REQUEST_SUCCESS';
+export const getMailboxNamespacesSuccess = (
+  id: number,
+  namespaces: NamespaceType[]
+) => {
+  return {
+    type: GET_MAILBOX_NAMESPACES_REQUEST_SUCCESS,
+    id,
+    namespaces
+  };
+};
+
+export const GET_MAILBOX_NAMESPACES_REQUEST_FAILURE =
+  'MAILPAGE::GET_MAILBOX_NAMESPACES_REQUEST_FAILURE';
+export const getMailboxNamespacesFailure = (error: Error) => {
+  return {
+    type: GET_MAILBOX_NAMESPACES_REQUEST_FAILURE,
+    error: error.message
+  };
+};
+
+export const fetchMailboxNamespaces = (id: number) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(getMailboxNamespacesRequest());
+    let namespaces;
+    try {
+      namespaces = await Mail.getMailboxNamespaces(id);
+    } catch (error) {
+      dispatch(getMailboxNamespacesFailure(error));
+      return error;
+    }
+    dispatch(getMailboxNamespacesSuccess(id, namespaces));
+    return namespaces;
+  };
+};
+
+/*
  *  Saving Emails to local DB and removing it from S3
  */
 
@@ -259,7 +309,7 @@ export const saveIncomingMessagesRequest = () => {
 
 export const SAVE_INCOMING_MESSAGES_SUCCESS =
   'MAILPAGE::SAVE_INCOMING_MESSAGES_SUCCESS';
-export const saveIncomingMessagesSuccess = function (
+export const saveIncomingMessagesSuccess = function(
   messages: MailMessageType[],
   activeFolderId: number
 ) {
@@ -419,7 +469,6 @@ export const fetchMsg = (messageId: string) => {
     return Promise.resolve(email);
   };
 };
-
 
 export const SHOW_MAXIMIZED_MESSAGE_DISPLAY =
   'MESSAGES::SHOW_MAXIMIZED_MESSAGE_DISPLAY';
@@ -590,6 +639,7 @@ export const fetchDataSuccess = (
   mailboxes: MailboxType[],
   activeMailboxId: number,
   folders: FolderType[],
+  namespaces: NamespaceType[],
   activeFolderId: number,
   messages: MailMessageType[]
 ) => {
@@ -598,6 +648,7 @@ export const fetchDataSuccess = (
     mailboxes,
     activeMailboxId,
     folders,
+    namespaces,
     activeFolderId,
     messages
   };
@@ -626,6 +677,8 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
 
   let mailboxes;
   let folders;
+  let aliases;
+  let namespaces;
   let messages;
   let activeMailboxId;
   let activeFolderId;
@@ -635,6 +688,7 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
 
     activeMailboxId = mailboxes[activeMailboxIndex].id;
     folders = await dispatch(fetchMailboxFolders(activeMailboxId));
+    namespaces = await dispatch(fetchMailboxNamespaces(activeMailboxId));
 
     activeFolderId = folders[activeFolderIndex].id;
     messages = await dispatch(fetchFolderMessages(activeFolderId));
@@ -660,6 +714,7 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
       mailboxes,
       activeMailboxId,
       folders,
+      namespaces
       activeFolderId,
       messages
     )

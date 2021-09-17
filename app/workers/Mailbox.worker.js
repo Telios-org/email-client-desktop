@@ -4,6 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const SDK = require('@telios/client-sdk');
 const { Mailbox } = require('../models/mailbox.model');
 const { Folder, DefaultFolders } = require('../models/folder.model');
+const { AliasesNamespace } = require('../models/aliasNamespaces.model');
+const { Aliases } = require('../models/aliases.model');
 const { Email } = require('../models/email.model');
 const { File } = require('../models/file.model');
 const fileUtil = require('../utils/file.util');
@@ -149,7 +151,7 @@ module.exports = env => {
       }
     }
 
-    if (event === 'getMailboxFolders') {
+    if (event === 'MAIL_SERVICE::getMailboxFolders') {
       try {
         const folders = await Folder.findAll({
           attributes: [
@@ -165,10 +167,44 @@ module.exports = env => {
           raw: true
         });
 
-        process.send({ event: 'getMailboxFolders', data: folders });
+        process.send({
+          event: 'MAIL_WORKER::getMailboxFolders',
+          data: folders
+        });
       } catch (e) {
         process.send({
-          event: 'getMailboxFolders',
+          event: 'MAIL_WORKER::getMailboxFolders',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    if (event === 'MAIL_SERVICE::getMailboxNamespaces') {
+      try {
+        const namespaces = await AliasesNamespace.findAll({
+          attributes: [
+            'namespaceKey',
+            'name',
+            'mailboxId',
+            'domain',
+            'disabled'
+          ],
+          where: { mailboxId: payload.id },
+          order: [['name', 'ASC']],
+          raw: true
+        });
+
+        process.send({
+          event: 'MAIL_WORKER::getMailboxNamespaces',
+          data: namespaces
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::getMailboxNamespaces',
           error: {
             name: e.name,
             message: e.message,
@@ -439,7 +475,10 @@ module.exports = env => {
               msgArr.push(msg);
             }
           });
-          return process.send({ event: 'MAILBOX WORKER::saveMessageToDB', data: msgArr });
+          return process.send({
+            event: 'MAILBOX WORKER::saveMessageToDB',
+            data: msgArr
+          });
         })
         .catch(e => {
           process.send({
@@ -483,7 +522,7 @@ module.exports = env => {
             where: { emailId: msg.emailId },
             individualHooks: true
           })
-            .then(res => { })
+            .then(res => {})
             .catch(e => {
               process.send({ event: 'removeMessages', error: e.message });
             });
@@ -493,7 +532,7 @@ module.exports = env => {
               where: { folderId: 3 },
               individualHooks: true
             })
-              .then(res => { })
+              .then(res => {})
               .catch(e => {
                 process.send({ event: 'removeMessages', error: e.message });
               });
