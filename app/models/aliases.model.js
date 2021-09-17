@@ -14,6 +14,10 @@ const model = {
     type: DataTypes.STRING,
     allowNull: false
   },
+  namespaceKey: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   count: {
     type: DataTypes.INTEGER,
     defaultValue: 0

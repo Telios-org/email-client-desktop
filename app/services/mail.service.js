@@ -320,6 +320,23 @@ class MailService {
     });
   }
 
+  static getMailboxAliases(namespaceKeys) {
+    worker.send({
+      event: 'MAIL_SERVICE::getMailboxAliases',
+      payload: { namespaceKeys }
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::getMailboxAliases', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
   static search(searchQuery) {
     worker.send({ event: 'searchMailbox', payload: { searchQuery } });
 

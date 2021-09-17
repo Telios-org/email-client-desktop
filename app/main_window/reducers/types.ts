@@ -167,6 +167,14 @@ export type NamespaceType = {
   disabled: boolean;
 };
 
+export type AliasesType = {
+  aliasId: string;
+  name: string;
+  namespaceKey: string;
+  count: number;
+  disabled: boolean;
+};
+
 export type FolderType = {
   id: number;
   name: string;

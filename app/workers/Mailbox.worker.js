@@ -214,6 +214,37 @@ module.exports = env => {
       }
     }
 
+    if (event === 'MAIL_SERVICE::getMailboxAliases') {
+      try {
+        const namespaces = await Aliases.findAll({
+          attributes: [
+            ['aliasId', 'id'],
+            'name',
+            'namespaceKey',
+            'count',
+            'disabled'
+          ],
+          where: { namespaceKey: { $in: payload.namespaceKeys } },
+          order: [['name', 'ASC']],
+          raw: true
+        });
+
+        process.send({
+          event: 'MAIL_WORKER::getMailboxAliases',
+          data: namespaces
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::getMailboxAliases',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
     if (event === 'getMessagesByFolderId') {
       try {
         const messages = await Email.findAll({

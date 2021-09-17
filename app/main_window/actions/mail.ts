@@ -6,6 +6,7 @@ import {
   MailboxType,
   FolderType,
   NamespaceType,
+  AliasesType,
   MailMessageType,
   ExternalMailMessageType,
   Email,
@@ -292,6 +293,55 @@ export const fetchMailboxNamespaces = (id: number) => {
     }
     dispatch(getMailboxNamespacesSuccess(id, namespaces));
     return namespaces;
+  };
+};
+
+/*
+ *  Get Mailbox Aliases
+ */
+
+export const GET_MAILBOX_ALIASES_REQUEST =
+  'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST';
+export const getMailboxAliasesRequest = () => {
+  return {
+    type: GET_MAILBOX_ALIASES_REQUEST
+  };
+};
+
+export const GET_MAILBOX_ALIASES_REQUEST_SUCCESS =
+  'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST_SUCCESS';
+export const getMailboxAliasesSuccess = (
+  namespaceKeys: number[],
+  aliases: AliasesType[]
+) => {
+  return {
+    type: GET_MAILBOX_ALIASES_REQUEST_SUCCESS,
+    namespaceKeys,
+    aliases
+  };
+};
+
+export const GET_MAILBOX_ALIASES_REQUEST_FAILURE =
+  'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST_FAILURE';
+export const getMailboxAliasesFailure = (error: Error) => {
+  return {
+    type: GET_MAILBOX_ALIASES_REQUEST_FAILURE,
+    error: error.message
+  };
+};
+
+export const fetchMailboxAliases = (namespaceKeys: number[]) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(getMailboxAliasesRequest());
+    let aliases;
+    try {
+      aliases = await Mail.getMailboxAliases(namespaceKeys);
+    } catch (error) {
+      dispatch(getMailboxAliasesFailure(error));
+      return error;
+    }
+    dispatch(getMailboxAliasesSuccess(namespaceKeys, aliases));
+    return aliases;
   };
 };
 
@@ -640,6 +690,7 @@ export const fetchDataSuccess = (
   activeMailboxId: number,
   folders: FolderType[],
   namespaces: NamespaceType[],
+  aliases: AliasesType[],
   activeFolderId: number,
   messages: MailMessageType[]
 ) => {
@@ -649,6 +700,7 @@ export const fetchDataSuccess = (
     activeMailboxId,
     folders,
     namespaces,
+    aliases,
     activeFolderId,
     messages
   };
@@ -690,6 +742,9 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
     folders = await dispatch(fetchMailboxFolders(activeMailboxId));
     namespaces = await dispatch(fetchMailboxNamespaces(activeMailboxId));
 
+    const namespaceKeys = namespaces.map(ns => ns.namespaceKey);
+    aliases = await dispatch(fetchMailboxAliases(namespaceKeys));
+
     activeFolderId = folders[activeFolderIndex].id;
     messages = await dispatch(fetchFolderMessages(activeFolderId));
 
@@ -714,7 +769,8 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
       mailboxes,
       activeMailboxId,
       folders,
-      namespaces
+      namespaces,
+      aliases,
       activeFolderId,
       messages
     )

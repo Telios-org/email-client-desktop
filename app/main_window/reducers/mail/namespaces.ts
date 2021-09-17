@@ -14,7 +14,7 @@ export default function namespaces(
     case FETCH_MAIL_DATA_SUCCESS:
       return {
         byId: {
-          ...arrayToObject(action.namespaces, 'id')
+          ...arrayToObject(action.namespaces, 'namespaceKey')
         },
         allIds: [...idFromArrayDict(action.namespaces)]
       };
