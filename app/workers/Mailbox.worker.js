@@ -216,7 +216,7 @@ module.exports = env => {
 
     if (event === 'MAIL_SERVICE::getMailboxAliases') {
       try {
-        const namespaces = await Aliases.findAll({
+        const aliases = await Aliases.findAll({
           attributes: [
             ['aliasId', 'id'],
             'name',
@@ -231,7 +231,7 @@ module.exports = env => {
 
         process.send({
           event: 'MAIL_WORKER::getMailboxAliases',
-          data: namespaces
+          data: aliases
         });
       } catch (e) {
         process.send({

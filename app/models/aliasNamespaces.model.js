@@ -35,35 +35,35 @@ module.exports.model = model;
 module.exports.init = async (sequelize, opts) => {
   AliasesNamespace.init(model, {
     sequelize,
-    tableName: 'AliasesNamespace',
+    tableName: 'Namespace',
     freezeTableName: true,
     timestamps: false
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('AliasesNamespace');
+  const collection = await drive.collection('Namespace');
 
-  AliasesNamespace.addHook('afterCreate', async (alias, options) => {
+  AliasesNamespace.addHook('afterCreate', async (ns, options) => {
     try {
-      await collection.put(alias.namespaceKey, alias.dataValues);
+      await collection.put(ns.namespaceKey, ns.dataValues);
     } catch (err) {
       console.log('Error saving AliasesNamespace to Hyperbee', err);
       throw new Error(err);
     }
   });
 
-  AliasesNamespace.addHook('afterUpdate', async (alias, options) => {
+  AliasesNamespace.addHook('afterUpdate', async (ns, options) => {
     try {
-      await collection.put(alias.namespaceKey, alias.dataValues);
+      await collection.put(ns.namespaceKey, ns.dataValues);
     } catch (err) {
       console.log('Error saving AliasesNamespace to Hyperbee', err);
       throw new Error(err);
     }
   });
 
-  AliasesNamespace.addHook('beforeDestroy', async (alias, options) => {
+  AliasesNamespace.addHook('beforeDestroy', async (ns, options) => {
     try {
-      await collection.del(alias.namespaceKey);
+      await collection.del(ns.namespaceKey);
     } catch (err) {
       process.send({
         event: 'BeforeDestroy-deleteAliasesNamespace',

@@ -743,7 +743,12 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
     namespaces = await dispatch(fetchMailboxNamespaces(activeMailboxId));
 
     const namespaceKeys = namespaces.map(ns => ns.namespaceKey);
-    aliases = await dispatch(fetchMailboxAliases(namespaceKeys));
+
+    if (namespaceKeys.length > 0) {
+      aliases = await dispatch(fetchMailboxAliases(namespaceKeys));
+    } else {
+      aliases = [];
+    }
 
     activeFolderId = folders[activeFolderIndex].id;
     messages = await dispatch(fetchFolderMessages(activeFolderId));
