@@ -28,9 +28,7 @@ import {
 
 // Selectors
 import {
-  selectFullClient,
   selectActiveMailbox,
-  selectAllFolders,
   activeMessageObject,
   activeMessageId,
   activeMessageSelectedRange,
@@ -112,13 +110,7 @@ export class MailPage extends Component<Props, State> {
 
   // Email Mouse Selection Method
   handleUpdateSelectedRange(userSelected) {
-    const {
-      messages,
-      selectMessageRange,
-      folderId,
-      activeSelectedRange,
-      folders
-    } = this.props;
+    const { messages, selectMessageRange, folderId } = this.props;
 
     const selected = { ...userSelected };
 
@@ -201,7 +193,8 @@ export class MailPage extends Component<Props, State> {
     clearSelectedMessage(folderId);
 
     Alert.success(
-      `Moved ${selected.items.length ? selected.items.length : 1
+      `Moved ${
+        selected.items.length ? selected.items.length : 1
       } message(s) to ${dropResult.name}.`
     );
   }
@@ -254,7 +247,8 @@ export class MailPage extends Component<Props, State> {
     // we dispatch the message selection action
     if (
       editorIsOpen ||
-      activeMsgId !== message.id || activeSelectedRange.items.length > 1
+      activeMsgId !== message.id ||
+      activeSelectedRange.items.length > 1
     ) {
       selectMessage(message).then(() => {
         selectMessageRange(selected, folderId);
@@ -313,19 +307,7 @@ export class MailPage extends Component<Props, State> {
   }
 
   render() {
-    const {
-      mailbox,
-      isLoading,
-      editorIsOpen,
-      highlightText,
-      messages,
-      activeMessage,
-      folderId,
-      activeSelectedRange,
-      showMaximizedMessageDisplay,
-      folders,
-      syncMail
-    } = this.props;
+    const { isLoading, highlightText, messages, syncMail } = this.props;
     const {
       panelWidths: { nav, msgList },
       loading
@@ -376,14 +358,8 @@ export class MailPage extends Component<Props, State> {
               />
               <div className="w-full h-full flex rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
                 <MessageDisplayRouter
-                  showComposerInline={editorIsOpen}
-                  activeFolderId={folderId}
-                  folders={folders}
-                  mailbox={mailbox}
                   highlight={highlightText}
-                  message={activeMessage}
                   loading={messages.loading}
-                  selectedItems={activeSelectedRange.items}
                   onComposerClose={this.handleComposerClose}
                   onComposerMaximize={this.handleInlineComposerMaximize}
                 />
@@ -404,13 +380,10 @@ export class MailPage extends Component<Props, State> {
 
 const mapStateToProps = (state: StateType) => {
   return {
-    client: selectFullClient(state),
     mailbox: selectActiveMailbox(state),
-    folders: selectAllFolders(state),
     messages: state.mail.messages,
     isLoading: state.globalState.loading,
     activeMsgId: activeMessageId(state),
-    activeMessage: activeMessageObject(state),
     activeSelectedRange: activeMessageSelectedRange(state),
     folderId: activeFolderId(state),
     showMaximizedMessageDisplay: state.globalState.showMaximizedMessageDisplay,

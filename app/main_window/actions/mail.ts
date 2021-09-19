@@ -781,7 +781,7 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
     )
   );
 
-  return { mailboxes, folders, messages };
+  return { mailboxes, folders, messages, namespaces, aliases };
 };
 
 // THIS MAY BE IN THE WRONG ACTION CREATOR FOLDER

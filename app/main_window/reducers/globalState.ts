@@ -42,6 +42,7 @@ const initialState = {
   // This denote the index of the allIds array in folders
   // NOT THE ID
   activeFolderIndex: 0,
+  activeAliasIndex: null,
   loading: false,
   status: 'online',
   error: '',

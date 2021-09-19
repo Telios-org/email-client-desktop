@@ -208,6 +208,7 @@ export type ClientType = {
 export type GlobalType = {
   activeMailboxIndex: number;
   activeFolderIndex: number;
+  activeAliasIndex: number;
   activeAccountIndex: number;
   activeMsgId: {
     [index: number]: {
@@ -242,6 +243,8 @@ export type StateType = {
     mailboxes: MailType;
     folders: MailType;
     messages: MailType;
+    aliases: MailType;
+    namespaces: MailType;
   };
   globalState: GlobalType;
   contacts: ContactsType;
