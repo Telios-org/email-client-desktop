@@ -96,3 +96,7 @@ export const selectIndexForMessageId = createSelector(
     return messages.allIds.indexOf(id);
   }
 );
+
+export const selectAllAliases = (state: StateType) => state.mail.aliases;
+export const selectAllAliasesById = (state: StateType) =>
+  state.mail.aliases.byId;

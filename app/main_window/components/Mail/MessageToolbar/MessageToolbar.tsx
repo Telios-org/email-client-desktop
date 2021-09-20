@@ -285,7 +285,7 @@ export default function MessageToolbar(props: Props) {
             {i18n.t('messageToolbar.delete')}
           </CustomButton>
 
-          {currentFolderId !== 3 && currentFolderId !== 4 && (
+          {/* {currentFolderId !== 3 && currentFolderId !== 4 && (
             <MoveDropdown
               disabled={isMoveDisabled}
               renderTitle={() => {
@@ -304,7 +304,7 @@ export default function MessageToolbar(props: Props) {
                 );
               }}
             />
-          )}
+          )} */}
 
           {currentFolderId !== 3 && currentFolderId !== 4 && (
             <CustomButton

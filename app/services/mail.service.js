@@ -220,10 +220,10 @@ class MailService {
   }
 
   static getMailboxFolders(id) {
-    worker.send({ event: 'getMailboxFolders', payload: { id } });
+    worker.send({ event: 'MAIL_SERVICE::getMailboxFolders', payload: { id } });
 
     return new Promise((resolve, reject) => {
-      worker.once('getMailboxFolders', m => {
+      worker.once('MAIL_WORKER::getMailboxFolders', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
@@ -248,10 +248,10 @@ class MailService {
   }
 
   static getMessagebyId(id) {
-    worker.send({ event: 'getMessageById', payload: { id } });
+    worker.send({ event: 'MAIL_SERVICE::getMessageById', payload: { id } });
 
     return new Promise((resolve, reject) => {
-      worker.once('getMessagebyId', m => {
+      worker.once('MAIL_WORKER::getMessagebyId', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
@@ -294,6 +294,40 @@ class MailService {
 
     return new Promise((resolve, reject) => {
       worker.once('registerMailbox', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static getMailboxNamespaces(id) {
+    worker.send({
+      event: 'MAIL_SERVICE::getMailboxNamespaces',
+      payload: { id }
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::getMailboxNamespaces', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static getMailboxAliases(namespaceKeys) {
+    worker.send({
+      event: 'MAIL_SERVICE::getMailboxAliases',
+      payload: { namespaceKeys }
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::getMailboxAliases', m => {
         const { data, error } = m;
 
         if (error) return reject(error);

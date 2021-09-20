@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron';
 import React, { useState } from 'react';
-import { createPortal } from 'react-dom'
+import { useSelector } from 'react-redux';
+import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
 
 // EXTERNAL LIBRAIRIES
@@ -37,17 +38,16 @@ import {
   forwardMessage
 } from '../../../actions/mailbox/messages';
 
-// TYPESCRIPT TYPES
+// REDUX STATE SELECTORS
 import {
-  MailMessageType,
-  MailboxType,
-  FolderType
-} from '../../../reducers/types';
+  selectActiveMailbox
+} from '../../../selectors/mail';
+
+// TYPESCRIPT TYPES
+import { MailMessageType, MailboxType } from '../../../reducers/types';
 
 type Props = {
   message: MailMessageType;
-  folders: FolderType;
-  mailbox: MailboxType;
   loading: boolean;
   highlight: string;
 };
@@ -68,10 +68,10 @@ function MessageDisplay(props: Props) {
       attachments
     },
     highlight,
-    mailbox,
     message
   } = props;
 
+  const mailbox = useSelector(selectActiveMailbox);
   const [loaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
 
@@ -100,7 +100,7 @@ function MessageDisplay(props: Props) {
     senderInitials = senderArr[0][0].toUpperCase();
   }
 
-  const parsedRecipientTo = JSON.parse(toJSON).reduce(function (
+  const parsedRecipientTo = JSON.parse(toJSON).reduce(function(
     previous: string,
     current: { name: string; address: string }
   ) {
@@ -109,9 +109,9 @@ function MessageDisplay(props: Props) {
     }
     return `${previous} ${current.address}; `;
   },
-    'To: ');
+  'To: ');
 
-  const parsedRecipientCC = JSON.parse(ccJSON).reduce(function (
+  const parsedRecipientCC = JSON.parse(ccJSON).reduce(function(
     previous: string,
     current: { name: string; address: string }
   ) {
@@ -120,7 +120,7 @@ function MessageDisplay(props: Props) {
     }
     return `${previous} ${current.address}; `;
   },
-    'Cc: ');
+  'Cc: ');
 
   const formattedDate = formatFullDate(date);
   const time = formatTimeOnly(date);
@@ -172,12 +172,15 @@ function MessageDisplay(props: Props) {
   };
 
   const IFrame = ({ children, ...props }) => {
-    const [contentRef, setContentRef] = useState(null);
+    const [contentRef, setContentRef] = useState();
+
     const [height, setHeight] = useState('');
     const mountNode = contentRef?.contentWindow?.document?.body;
 
     const onLoad = () => {
-      setHeight(contentRef?.contentWindow?.document?.body?.scrollHeight + 20 + "px");
+      setHeight(
+        `${contentRef?.contentWindow?.document?.body?.scrollHeight + 20}px`
+      );
       setLoaded(true);
     };
 
@@ -192,12 +195,11 @@ function MessageDisplay(props: Props) {
         frameBorder="0"
       >
         {mountNode && createPortal(children, mountNode)}
-        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
       </iframe>
     );
-  }
+  };
 
-  var divStyle = {
+  const divStyle = {
     fontFamily: 'Arial, sans-serif',
     WebkitFontSmoothing: 'antialiased',
     fontSize: '16px',
@@ -287,6 +289,7 @@ function MessageDisplay(props: Props) {
                 <IFrame className="w-full">
                   <div style={divStyle}>
                     {renderHTML(bodyAsHtml)}
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
                   </div>
                 </IFrame>
               </div>

@@ -17,6 +17,10 @@ const model = {
     type: Sequelize.INTEGER,
     allowNull: false
   },
+  aliasId: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
   subject: {
     type: Sequelize.STRING
   },

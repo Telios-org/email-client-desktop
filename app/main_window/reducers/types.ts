@@ -159,6 +159,22 @@ export type MailMessageType = {
   attachments: Array<AttachmentType>;
 };
 
+export type NamespaceType = {
+  namespaceKey: string;
+  name: string;
+  mailboxId: number;
+  domain: string;
+  disabled: boolean;
+};
+
+export type AliasesType = {
+  aliasId: string;
+  name: string;
+  namespaceKey: string;
+  count: number;
+  disabled: boolean;
+};
+
 export type FolderType = {
   id: number;
   name: string;
@@ -192,6 +208,7 @@ export type ClientType = {
 export type GlobalType = {
   activeMailboxIndex: number;
   activeFolderIndex: number;
+  activeAliasIndex: number;
   activeAccountIndex: number;
   activeMsgId: {
     [index: number]: {
@@ -226,6 +243,8 @@ export type StateType = {
     mailboxes: MailType;
     folders: MailType;
     messages: MailType;
+    aliases: MailType;
+    namespaces: MailType;
   };
   globalState: GlobalType;
   contacts: ContactsType;

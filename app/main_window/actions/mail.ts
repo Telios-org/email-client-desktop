@@ -5,6 +5,8 @@ import {
   GetState,
   MailboxType,
   FolderType,
+  NamespaceType,
+  AliasesType,
   MailMessageType,
   ExternalMailMessageType,
   Email,
@@ -246,6 +248,104 @@ export const fetchMailboxes = () => {
 };
 
 /*
+ *  Get Mailbox Namespaces
+ */
+
+export const GET_MAILBOX_NAMESPACES_REQUEST =
+  'MAILPAGE::GET_MAILBOX_NAMESPACES_REQUEST';
+export const getMailboxNamespacesRequest = () => {
+  return {
+    type: GET_MAILBOX_NAMESPACES_REQUEST
+  };
+};
+
+export const GET_MAILBOX_NAMESPACES_REQUEST_SUCCESS =
+  'MAILPAGE::GET_MAILBOX_NAMESPACES_REQUEST_SUCCESS';
+export const getMailboxNamespacesSuccess = (
+  id: number,
+  namespaces: NamespaceType[]
+) => {
+  return {
+    type: GET_MAILBOX_NAMESPACES_REQUEST_SUCCESS,
+    id,
+    namespaces
+  };
+};
+
+export const GET_MAILBOX_NAMESPACES_REQUEST_FAILURE =
+  'MAILPAGE::GET_MAILBOX_NAMESPACES_REQUEST_FAILURE';
+export const getMailboxNamespacesFailure = (error: Error) => {
+  return {
+    type: GET_MAILBOX_NAMESPACES_REQUEST_FAILURE,
+    error: error.message
+  };
+};
+
+export const fetchMailboxNamespaces = (id: number) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(getMailboxNamespacesRequest());
+    let namespaces;
+    try {
+      namespaces = await Mail.getMailboxNamespaces(id);
+    } catch (error) {
+      dispatch(getMailboxNamespacesFailure(error));
+      return error;
+    }
+    dispatch(getMailboxNamespacesSuccess(id, namespaces));
+    return namespaces;
+  };
+};
+
+/*
+ *  Get Mailbox Aliases
+ */
+
+export const GET_MAILBOX_ALIASES_REQUEST =
+  'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST';
+export const getMailboxAliasesRequest = () => {
+  return {
+    type: GET_MAILBOX_ALIASES_REQUEST
+  };
+};
+
+export const GET_MAILBOX_ALIASES_REQUEST_SUCCESS =
+  'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST_SUCCESS';
+export const getMailboxAliasesSuccess = (
+  namespaceKeys: number[],
+  aliases: AliasesType[]
+) => {
+  return {
+    type: GET_MAILBOX_ALIASES_REQUEST_SUCCESS,
+    namespaceKeys,
+    aliases
+  };
+};
+
+export const GET_MAILBOX_ALIASES_REQUEST_FAILURE =
+  'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST_FAILURE';
+export const getMailboxAliasesFailure = (error: Error) => {
+  return {
+    type: GET_MAILBOX_ALIASES_REQUEST_FAILURE,
+    error: error.message
+  };
+};
+
+export const fetchMailboxAliases = (namespaceKeys: number[]) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(getMailboxAliasesRequest());
+    let aliases;
+    try {
+      aliases = await Mail.getMailboxAliases(namespaceKeys);
+    } catch (error) {
+      dispatch(getMailboxAliasesFailure(error));
+      return error;
+    }
+    dispatch(getMailboxAliasesSuccess(namespaceKeys, aliases));
+    return aliases;
+  };
+};
+
+/*
  *  Saving Emails to local DB and removing it from S3
  */
 
@@ -259,7 +359,7 @@ export const saveIncomingMessagesRequest = () => {
 
 export const SAVE_INCOMING_MESSAGES_SUCCESS =
   'MAILPAGE::SAVE_INCOMING_MESSAGES_SUCCESS';
-export const saveIncomingMessagesSuccess = function (
+export const saveIncomingMessagesSuccess = function(
   messages: MailMessageType[],
   activeFolderId: number
 ) {
@@ -419,7 +519,6 @@ export const fetchMsg = (messageId: string) => {
     return Promise.resolve(email);
   };
 };
-
 
 export const SHOW_MAXIMIZED_MESSAGE_DISPLAY =
   'MESSAGES::SHOW_MAXIMIZED_MESSAGE_DISPLAY';
@@ -590,6 +689,8 @@ export const fetchDataSuccess = (
   mailboxes: MailboxType[],
   activeMailboxId: number,
   folders: FolderType[],
+  namespaces: NamespaceType[],
+  aliases: AliasesType[],
   activeFolderId: number,
   messages: MailMessageType[]
 ) => {
@@ -598,6 +699,8 @@ export const fetchDataSuccess = (
     mailboxes,
     activeMailboxId,
     folders,
+    namespaces,
+    aliases,
     activeFolderId,
     messages
   };
@@ -626,6 +729,8 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
 
   let mailboxes;
   let folders;
+  let aliases;
+  let namespaces;
   let messages;
   let activeMailboxId;
   let activeFolderId;
@@ -635,6 +740,15 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
 
     activeMailboxId = mailboxes[activeMailboxIndex].id;
     folders = await dispatch(fetchMailboxFolders(activeMailboxId));
+    namespaces = await dispatch(fetchMailboxNamespaces(activeMailboxId));
+
+    const namespaceKeys = namespaces.map(ns => ns.namespaceKey);
+
+    if (namespaceKeys.length > 0) {
+      aliases = await dispatch(fetchMailboxAliases(namespaceKeys));
+    } else {
+      aliases = [];
+    }
 
     activeFolderId = folders[activeFolderIndex].id;
     messages = await dispatch(fetchFolderMessages(activeFolderId));
@@ -660,12 +774,14 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
       mailboxes,
       activeMailboxId,
       folders,
+      namespaces,
+      aliases,
       activeFolderId,
       messages
     )
   );
 
-  return { mailboxes, folders, messages };
+  return { mailboxes, folders, messages, namespaces, aliases };
 };
 
 // THIS MAY BE IN THE WRONG ACTION CREATOR FOLDER

@@ -159,6 +159,8 @@ class AccountService {
           await MailService.registerMailbox(registerPayload);
           await MailService.saveMailbox(payload.email);
 
+          ipcRenderer.invoke('MATOMO::init', { account, isNew: true });
+
           resolve({
             secretBoxPubKey: secretBoxKeypair.publicKey,
             secretBoxPrivKey: secretBoxKeypair.privateKey,
@@ -185,6 +187,9 @@ class AccountService {
         const { data, error } = m;
 
         if (error) return reject(error);
+
+        ipcRenderer.invoke('MATOMO::init', { account: data, isNew: false });
+
         return resolve(data);
       });
     });

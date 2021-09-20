@@ -81,7 +81,7 @@ class Login extends Component<Props, State> {
 
     let lastAccount = this.store.get('lastAccount');
 
-    if (!lastAccount && accounts.length === 1) {
+    if (!lastAccount && props.accounts.length === 1) {
       lastAccount = props.accounts[0].value;
     }
 

@@ -4,31 +4,23 @@ import { useSelector } from 'react-redux';
 // SVG LOGO
 import teliosLogoSVG from '../../../../../resources/img/telios_logo.svg';
 
-// TYPESCRIPT TYPES
-import {
-  MailMessageType,
-  Email,
-  MailboxType,
-  MailType
-} from '../../../reducers/types';
-
 // COMPONENTS
 import MessageDisplay from './MessageDisplay';
 import Composer from '../../../../composer_window/components/Composer';
-import { Mailbox } from '../../../../models/mailbox.model';
 
 // REDUX STATE SELECTORS
-import { selectActiveFolder } from '../../../selectors/mail';
+import {
+  selectActiveFolder,
+  activeFolderId,
+  activeMessageObject,
+  activeMessageSelectedRange,
+  selectActiveMailbox,
+  selectAllFolders
+} from '../../../selectors/mail';
 
 type Props = {
-  showComposerInline: boolean;
-  message: Email | { id: null };
   loading: boolean;
-  activeFolderId: number;
   highlight: string;
-  mailbox: MailboxType;
-  folders: MailType;
-  selectedItems: number[];
   onComposerClose: (opts: any) => void;
   onComposerMaximize: () => void;
 };
@@ -36,18 +28,17 @@ type Props = {
 function MessageDisplayRouter(props: Props) {
   const currentFolder = useSelector(selectActiveFolder);
 
-  const {
-    showComposerInline,
-    message,
-    loading,
-    activeFolderId,
-    mailbox,
-    folders,
-    selectedItems,
-    onComposerClose,
-    onComposerMaximize,
-    highlight
-  } = props;
+  const { loading, onComposerClose, onComposerMaximize, highlight } = props;
+
+  const showComposerInline = useSelector(
+    state => state.globalState.editorIsOpen
+  );
+
+  const mailbox = useSelector(selectActiveMailbox);
+  const folderId = useSelector(activeFolderId);
+  const folders = useSelector(selectAllFolders);
+  const message = useSelector(activeMessageObject);
+  const selectedItems = useSelector(activeMessageSelectedRange).items;
 
   const showMessage =
     message.id !== null &&
@@ -59,9 +50,7 @@ function MessageDisplayRouter(props: Props) {
     ((message.id && currentFolder.name === 'Drafts') || showComposerInline) &&
     selectedItems.length <= 1;
 
-  const activeFolder = folders.byId[activeFolderId];
-
-  // console.log(selectedItems, showComposer, message, activeFolderId, showComposerInline, 'DISPLAY ROUTER');
+  const activeFolder = folders.byId[folderId];
 
   return (
     <>
@@ -75,11 +64,11 @@ function MessageDisplayRouter(props: Props) {
           {selectedItems.length > 1 && (
             <div className="text-lg mt-2">
               You have
-              {' '}
+{' '}
               <span className="text-purple-600 text-bold">
                 {selectedItems.length}
               </span>
-              {' '}
+{' '}
               emails selected.
             </div>
           )}
@@ -87,9 +76,7 @@ function MessageDisplayRouter(props: Props) {
       )}
       {showMessage && (
         <MessageDisplay
-          mailbox={mailbox}
           highlight={highlight}
-          folders={folders}
           message={message}
           loading={loading}
         />
