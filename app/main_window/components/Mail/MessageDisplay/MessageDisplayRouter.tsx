@@ -4,18 +4,9 @@ import { useSelector } from 'react-redux';
 // SVG LOGO
 import teliosLogoSVG from '../../../../../resources/img/telios_logo.svg';
 
-// TYPESCRIPT TYPES
-import {
-  MailMessageType,
-  Email,
-  MailboxType,
-  MailType
-} from '../../../reducers/types';
-
 // COMPONENTS
 import MessageDisplay from './MessageDisplay';
 import Composer from '../../../../composer_window/components/Composer';
-import { Mailbox } from '../../../../models/mailbox.model';
 
 // REDUX STATE SELECTORS
 import {
@@ -85,9 +76,7 @@ function MessageDisplayRouter(props: Props) {
       )}
       {showMessage && (
         <MessageDisplay
-          mailbox={mailbox}
           highlight={highlight}
-          folders={folders}
           message={message}
           loading={loading}
         />
