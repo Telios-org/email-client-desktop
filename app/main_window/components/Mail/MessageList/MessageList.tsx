@@ -180,7 +180,6 @@ export default function MessageList(props: Props) {
     return data.messages.byId[msgId].id
   };
 
-  // TODO: Fix or find alternative scroll bar. Windows machines will continue to use the native scrollbar
   const CustomScrollbars = ({ onScroll, forwardedRef, style, children }) => {
     const refSetter = useCallback(scrollbarsRef => {
       if (scrollbarsRef) {
