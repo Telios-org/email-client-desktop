@@ -27,7 +27,8 @@ import {
 } from 'react-iconly';
 
 // COMPONENT IMPORT
-import NewFolderModal from '../NewFolderModal';
+import NewFolderModal from './NewFolderModal';
+import NewAliasModal from './NewAliasModal';
 
 // CSS/LESS STYLES
 import styles from './Navigation.less';
@@ -154,8 +155,8 @@ export default function Navigation(props: Props) {
   };
 
   const handleNewAlias = () => {
-    setEditAliases(null);
-    setShowAliasesModal(true);
+    setEditAlias(null);
+    setShowAliasModal(true);
   };
 
   const handleEditAlias = (alias, e) => {
@@ -181,6 +182,10 @@ export default function Navigation(props: Props) {
   const handleHideFolderModal = () => {
     setShowFolderModal(false);
     setShowDeleteFolderModal(false);
+  };
+
+  const handleHideAliasModal = () => {
+    setShowAliasModal(false);
   };
 
   const handleCreateFolder = (folder: FolderType) => {
@@ -602,7 +607,7 @@ export default function Navigation(props: Props) {
           </div>
         </Scrollbars>
       </div>
-      <NewFolderModal
+      {/* <NewFolderModal
         show={showFolderModal}
         showDelete={showDeleteFolderModal}
         hide={handleHideFolderModal}
@@ -611,6 +616,10 @@ export default function Navigation(props: Props) {
         onCreateFolder={handleCreateFolder}
         folderCount={foldersArray.length}
         onRefresh={handleRefresh}
+      /> */}
+      <NewAliasModal
+        show={showAliasModal}
+        onHide={handleHideAliasModal}
       />
     </div>
   );

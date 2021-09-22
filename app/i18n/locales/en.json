@@ -73,7 +73,9 @@
       "noMessages": "No Messages",
       "folders": "Folders",
       "folderName": "Folder Name",
-      "syncingInProgress": "Syncing new messages..."
+      "syncingInProgress": "Syncing new messages...",
+      "aliases": "Aliases",
+      "accountNamespace": "Account Namespace"
     },
     "messageToolbar":{
       "saveDraft": "Save & Close",

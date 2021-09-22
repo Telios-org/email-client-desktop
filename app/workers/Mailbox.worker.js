@@ -214,6 +214,77 @@ module.exports = env => {
       }
     }
 
+    if (event === 'MAIL_SERVICE::registerAliasNamespace') {
+      try {
+        const { mailboxId, namespace } = payload;
+
+        const mailbox = store.getMailbox();
+        const domain = 'telios.io';
+        const { secretBoxKeypair } = SDK.Account.makeKeys();
+
+        const { registered, name, key } = await mailbox.registerAliasName({
+          alias_name: namespace,
+          domain,
+          key: secretBoxKeypair.publicKey
+        });
+
+        process.send({
+          event: 'MAIL_WORKER::registerAliasNamespaceConsole',
+          data: { registered, name, key }
+        });
+
+        let ns;
+        if (registered) {
+          const output = AliasesNamespace.create({
+            namespaceKey: key,
+            name: namespace,
+            mailboxId,
+            domain,
+            disabled: false
+          });
+
+          process.send({
+            event: 'MAIL_WORKER::registerAliasNamespaceConsole',
+            data: {
+              namespaceKey: key,
+              name: namespace,
+              mailboxId,
+              domain,
+              disabled: false
+            }
+          });
+
+          ns = {
+            ...output.dataValues,
+            registered
+          };
+        } else {
+          ns = {
+            namespaceKey: null,
+            name,
+            mailboxId,
+            domain,
+            disabled: false,
+            registered
+          };
+        }
+
+        process.send({
+          event: 'MAIL_WORKER::registerAliasNamespace',
+          data: ns
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::registerAliasNamespace',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
     if (event === 'MAIL_SERVICE::getMailboxAliases') {
       try {
         const aliases = await Aliases.findAll({
