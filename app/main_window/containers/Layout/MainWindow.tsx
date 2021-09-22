@@ -1,22 +1,6 @@
 import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import {
-  Nav,
-  Icon,
-  Container,
-  Sidebar,
-  Header,
-  Content,
-  FlexboxGrid,
-  Grid,
-  Row,
-  Col
-} from 'rsuite';
-
 import { ipcRenderer } from 'electron';
 
-import { StateType, Dispatch, Email } from '../../reducers/types';
-import { selectFullClient, selectActiveMailbox } from '../../selectors/mail';
 import NavStack from '../../components/Layout/Navigation/NavStack';
 import GlobalTopBar from '../../components/Layout/TopBar/GlobalTopBar';
 import MailPage from './MailPage/MailPage';
@@ -28,48 +12,6 @@ const account = new Account();
 const notifier = new Notifier();
 
 const themeUtils = require('../../../utils/themes.util');
-
-const CustomNav = ({ active, onSelect, ...props }) => {
-  return (
-    <Nav {...props} vertical activeKey={active} onSelect={onSelect}>
-      <Nav.Item
-        eventKey="mail"
-        style={{ textAlign: 'center', cursor: 'pointer'}}
-        icon={(
-          <Icon
-            style={{ fontSize: '24px', margin: 0 }}
-            icon={active === 'mail' ? 'envelope' : 'envelope-o'}
-          />
-        )}
-      />
-      <Nav.Item
-        eventKey="contacts"
-        style={{ textAlign: 'center', marginTop: '16px', cursor: 'pointer' }}
-        icon={(
-          <Icon
-            style={{ fontSize: '24px', margin: 0 }}
-            icon={active === 'contacts' ? 'user-circle' : 'user-circle-o'}
-          />
-        )}
-      />
-      {/* <Nav.Item
-        eventKey="files"
-        style={{ textAlign: 'center', marginTop: '16px' }}
-        icon={(
-          <Icon
-            style={{ fontSize: '24px', margin: 0 }}
-            icon={active === 'files' ? 'file' : 'file-o'}
-          />
-        )}
-      />
-      <Nav.Item
-        eventKey="settings"
-        style={{ textAlign: 'center', marginTop: '16px' }}
-        icon={<Icon style={{ fontSize: '24px', margin: 0 }} icon="sliders" />}
-      /> */}
-    </Nav>
-  );
-};
 
 class MainWindow extends React.Component {
   constructor(props) {
@@ -121,25 +63,4 @@ class MainWindow extends React.Component {
   }
 }
 
-const mapStateToProps = (state: StateType) => {
-  return {
-    client: selectFullClient(state),
-    mailbox: selectActiveMailbox(state),
-    messages: state.mail.messages,
-    isLoading: state.globalState.loading
-  };
-};
-
-// Functions that I want the component to be able to dispatch
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {};
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux & {
-  // this object would hold any props not coming from redux
-};
-
-export default connector(MainWindow);
+export default MainWindow;

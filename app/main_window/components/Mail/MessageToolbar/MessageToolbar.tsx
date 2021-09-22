@@ -21,12 +21,9 @@ import {
   ArrowUpSquare
 } from 'react-iconly';
 
-// Typescript Types
-import { MailType, Email } from '../../../reducers/types';
-
 // REDUX ACTIONS
-import { moveMessagesToFolder } from '../../../actions/mailbox/folders';
-import { loadMailboxes } from '../../../actions/mail';
+import { moveMessagesToFolder } from '../../../actions/mailbox/messages';
+import { loadMailboxes, msgRangeSelection } from '../../../actions/mail';
 
 import {
   clearActiveMessage,
@@ -51,10 +48,9 @@ type Props = {
   loading: boolean;
   panelSize: number;
   onRefreshMail: (full: any) => Promise<void>;
-  onSelectAction: (action: string) => void;
+  // onSelectAction: (action: string, allMsgIds: [String]) => void;
   onComposerClose: (opts: any) => void;
   onComposerMaximize: () => void;
-  // onClearSelected: () => void;
 };
 
 export default function MessageToolbar(props: Props) {
@@ -64,12 +60,12 @@ export default function MessageToolbar(props: Props) {
     onRefreshMail,
     panelSize,
     loading,
-    onSelectAction,
     onComposerClose,
     onComposerMaximize
   } = props;
 
   const editorIsOpen = useSelector(state => state.globalState.editorIsOpen);
+  const activeSelectedRange = useSelector(activeMessageSelectedRange);
   const selected = useSelector(activeMessageSelectedRange);
   const messages = useSelector(state => state.mail.messages);
   const folders = useSelector(selectAllFolders);
@@ -89,11 +85,6 @@ export default function MessageToolbar(props: Props) {
   const isActionDisabled = !(
     selected.items.length >= 0 && messages.allIds.length > 0
   );
-
-  const isMoveDisabled =
-    isActionDisabled ||
-    (currentFolderId === 1 &&
-      folders.allIds.length === unmoveableToFolder.length + 1);
 
   // Dictionary of Icon Components used in this function
   const Icon = {
@@ -139,6 +130,28 @@ export default function MessageToolbar(props: Props) {
     onComposerClose({ action: 'delete' });
   };
 
+  const selectMessageRange = async (selected: SelectionRange, folderId: number) => {
+    dispatch(msgRangeSelection(selected, folderId));
+  }
+
+  const handleSelectAction = (action: string, messages: any) => {
+    let selected = activeSelectedRange;
+
+    if (action === 'all') {
+      messages.forEach((id, index) => {
+        selected.items.push(index);
+      });
+    }
+
+    if (action === 'none') {
+      selected.items = [];
+      selected.endIdx = null;
+      selected.exclude = [];
+    }
+
+    selectMessageRange(selected, currentFolderId);
+  }
+
   // Handles Selection Movements including routing deletes
   const moveToFolder = async (toId: number, name: string) => {
     setIsLoading(true);
@@ -154,7 +167,7 @@ export default function MessageToolbar(props: Props) {
           const message = messages.byId[messageId];
 
           messagesToMove.push({
-            id: message.id,
+            id: messageId,
             unread: message.unread,
             folder: {
               fromId: currentFolderId,
@@ -167,7 +180,7 @@ export default function MessageToolbar(props: Props) {
 
         Alert.success(`Moved ${selected.items.length} message(s) to ${name}.`);
       }
-      onSelectAction('none');
+      handleSelectAction('none', messages.allIds);
     } catch (err) {
       console.log(err);
     }
@@ -176,12 +189,15 @@ export default function MessageToolbar(props: Props) {
   };
 
   const unread = async () => {
-    selected.items.forEach(msgIdx => {
-      const messageId = messages.allIds[msgIdx];
-      const message = messages.byId[messageId];
+    selected.items.forEach(id => {
+      const message = messages.byId[id];
       // Trigger if not already unread.
       if (!message.unread) {
-        dispatch(markAsUnread(messageId, currentFolderId));
+        dispatch(markAsUnread(id, currentFolderId));
+      }
+
+      if (currentFolderId === 2) {
+        dispatch(clearActiveMessage(currentFolderId));
       }
     });
   };

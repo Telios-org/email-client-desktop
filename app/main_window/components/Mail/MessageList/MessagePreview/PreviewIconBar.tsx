@@ -9,8 +9,7 @@ import { AiOutlinePaperClip } from 'react-icons/ai';
 import { Lock, Delete, Danger } from 'react-iconly';
 
 // REDUX ACTIONS
-import { moveMessagesToFolder } from '../../../../actions/mailbox/folders';
-import { clearActiveMessage } from '../../../../actions/mailbox/messages';
+import { clearActiveMessage, moveMessagesToFolder } from '../../../../actions/mailbox/messages';
 import { loadMailboxes } from '../../../../actions/mail';
 
 // REDUX STATE SELECTORS

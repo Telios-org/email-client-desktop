@@ -11,9 +11,8 @@ import {
   CREATE_LOCAL_MAILBOX_FAILURE,
   CREATE_LOCAL_MAILBOX_SUCCESS,
   FETCH_MAIL_DATA_SUCCESS,
-  // GET_FOLDER_MESSAGES_REQUEST_SUCCESS,
   FETCH_MAIL_DATA_FAILURE,
-  MSG_SELECTION_FLOW_SUCCESS,
+  MSG_SELECTION_FLOW,
   SHOW_MAXIMIZED_MESSAGE_DISPLAY,
   FOLDER_SELECTION_FLOW_SUCCESS,
   HIGHLIGHT_SEARCH_QUERY,
@@ -69,7 +68,6 @@ const globalState = (
       return {
         ...state,
         error: action.error,
-        loading: false,
         editorIsOpen: false
         // activeMsgId: null
       };
@@ -86,21 +84,14 @@ const globalState = (
           }
         }
       };
-
-    case MSG_SELECTION_FLOW_SUCCESS:
+    case MSG_SELECTION_FLOW:
       return {
         ...state,
-        editorIsOpen: false,
         activeMsgId: {
           ...state.activeMsgId,
           [action.folderId]: {
+            ...state.activeMsgId[action.folderId],
             id: action.id
-            // selected: {
-            //   startIdx: null,
-            //   endIdx: null,
-            //   exclude: [],
-            //   items: []
-            // }
           }
         }
       };
@@ -168,7 +159,6 @@ const globalState = (
         highlightText: '',
         showMaximizedMessageDisplay: false
       };
-
     case HIGHLIGHT_SEARCH_QUERY:
       return {
         ...state,

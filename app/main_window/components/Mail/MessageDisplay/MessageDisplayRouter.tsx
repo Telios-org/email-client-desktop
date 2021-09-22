@@ -14,13 +14,10 @@ import {
   activeFolderId,
   activeMessageObject,
   activeMessageSelectedRange,
-  selectActiveMailbox,
-  selectAllFolders
+  selectActiveMailbox
 } from '../../../selectors/mail';
 
 type Props = {
-  loading: boolean;
-  highlight: string;
   onComposerClose: (opts: any) => void;
   onComposerMaximize: () => void;
 };
@@ -28,29 +25,24 @@ type Props = {
 function MessageDisplayRouter(props: Props) {
   const currentFolder = useSelector(selectActiveFolder);
 
-  const { loading, onComposerClose, onComposerMaximize, highlight } = props;
+  const { onComposerClose, onComposerMaximize } = props;
 
   const showComposerInline = useSelector(
     state => state.globalState.editorIsOpen
   );
 
+  const highlight = useSelector(
+    state => state.globalState.highlightText
+  );
+
   const mailbox = useSelector(selectActiveMailbox);
   const folderId = useSelector(activeFolderId);
-  const folders = useSelector(selectAllFolders);
   const message = useSelector(activeMessageObject);
   const selectedItems = useSelector(activeMessageSelectedRange).items;
-
-  const showMessage =
-    message.id !== null &&
-    currentFolder.name !== 'Drafts' &&
-    !showComposerInline &&
-    selectedItems.length === 1;
 
   const showComposer =
     ((message.id && currentFolder.name === 'Drafts') || showComposerInline) &&
     selectedItems.length <= 1;
-
-  const activeFolder = folders.byId[folderId];
 
   return (
     <>
@@ -64,28 +56,27 @@ function MessageDisplayRouter(props: Props) {
           {selectedItems.length > 1 && (
             <div className="text-lg mt-2">
               You have
-{' '}
+              {' '}
               <span className="text-purple-600 text-bold">
                 {selectedItems.length}
               </span>
-{' '}
+              {' '}
               emails selected.
             </div>
           )}
         </div>
       )}
-      {showMessage && (
+      {message.id !== null && selectedItems.length < 2 && message.bodyAsHtml && message.fromJSON && (
         <MessageDisplay
           highlight={highlight}
           message={message}
-          loading={loading}
         />
       )}
       {showComposer && (
         <Composer
           onClose={onComposerClose}
           onMaximize={onComposerMaximize}
-          folder={activeFolder}
+          folder={currentFolder}
           mailbox={mailbox}
           message={message}
           isInline

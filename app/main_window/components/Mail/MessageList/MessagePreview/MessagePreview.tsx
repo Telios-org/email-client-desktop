@@ -26,7 +26,7 @@ import {
 
 // REDUX ACTIONS
 import { msgRangeSelection } from '../../../../actions/mail';
-import { moveMessagesToFolder } from '../../../../actions/mailbox/folders';
+import { moveMessagesToFolder } from '../../../../actions/mailbox/messages';
 
 // TYPESCRIPT TYPES
 import { MailMessageType } from '../../../../reducers/types';
@@ -42,12 +42,6 @@ type Props = {
   index: number;
   onDropResult: () => void;
   previewStyle: any;
-  loaderCount: any;
-  loaderCountUpdate: (
-    id: string[],
-    reset: boolean,
-    value: number | null
-  ) => void;
 };
 
 export default function MessagePreview(props: Props) {
@@ -56,7 +50,7 @@ export default function MessagePreview(props: Props) {
     onMsgClick,
     onDropResult,
     index,
-    previewStyle
+    previewStyle,
   } = props;
 
   const dispatch = useDispatch();
@@ -68,6 +62,7 @@ export default function MessagePreview(props: Props) {
   const currentFolderId = useSelector(activeFolderId);
   const selected = useSelector(activeMessageSelectedRange);
   const message = useSelector(state => selectMessageByIndex(state, index));
+
   const {
     id,
     folderId,
@@ -80,26 +75,8 @@ export default function MessagePreview(props: Props) {
     unread
   } = message;
   const activeMessageId = useSelector(activeMsgId);
-  const isActive = id === activeMessageId || selected.items.indexOf(index) > -1;
+  const isActive = id === activeMessageId || selected.items.indexOf(message.id) > -1;
 
-  useEffect(() => {
-    let isMounted = true;
-    if (
-      isMounted &&
-      unread !== 1 &&
-      currentFolder.name === 'New' &&
-      !isActive
-
-    ) {
-      setLoader(true);
-    } else {
-      setLoader(false);
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [unread, activeMessageId, selected.items]);
 
   const [{ opacity }, drag, preview] = useDrag({
     item: { id, unread, folderId, type: 'message' },
@@ -139,7 +116,7 @@ export default function MessagePreview(props: Props) {
     const val = current.name || current.address;
     return `${previous + val} `;
   },
-  'To: ');
+    'To: ');
   const parsedDate = formatDateDisplay(date);
 
   // Determines if the platform specific toggle selection in group key was used
@@ -173,7 +150,7 @@ export default function MessagePreview(props: Props) {
     if (newSelection.endIdx !== null) {
       messages.allIds.forEach((msg, index) => {
         if (index === newSelection.startIdx && index === newSelection.endIdx) {
-          newSelection.items.push(index);
+          newSelection.items.push(msg);
           newLoaders.push(msg.id);
         }
 
@@ -184,7 +161,7 @@ export default function MessagePreview(props: Props) {
           newSelection.startIdx < newSelection.endIdx &&
           newSelection.exclude.indexOf(index) === -1
         ) {
-          newSelection.items.push(index);
+          newSelection.items.push(msg);
           newLoaders.push(msg.id);
         }
 
@@ -195,8 +172,8 @@ export default function MessagePreview(props: Props) {
           newSelection.startIdx > newSelection.endIdx &&
           newSelection.exclude.indexOf(index) === -1
         ) {
-          newSelection.items.push(index);
-          newLoaders.push(msg.id);
+          newSelection.items.push(msg);
+          newLoaders.push(msg);
         }
       });
     }
@@ -280,16 +257,15 @@ export default function MessagePreview(props: Props) {
   };
 
   const handleLoaderComplete = () => {
-    // console.log(`Move message to READ: ${message.id}`);
     dispatch(moveMessagesToFolder([{
       id: message.id,
-      unread: false,
+      unread: 0,
       folder: {
         fromId: currentFolder.id,
         toId: 2,
         name: 'Read'
       }
-    }]))
+    }]));
   }
 
   return (
@@ -346,9 +322,8 @@ export default function MessagePreview(props: Props) {
 
               <div
                 id="subject"
-                className={`flex flex-1 flex-row justify-between ${
-                  unread === 1 ? 'text-purple-600 font-bold' : ''
-                }`}
+                className={`flex flex-1 flex-row justify-between ${unread === 1 ? 'text-purple-600 font-bold' : ''
+                  }`}
               >
                 <div className="flex flex-1 leading-tight overflow-hidden text-sm break-all line-clamp-1">
                   {subject}

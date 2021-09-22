@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
+import { debounce } from 'lodash';
 
 // EXTERNAL LIBRAIRIES
 import Highlighter from 'react-highlight-words';
@@ -48,23 +49,18 @@ import { MailMessageType, MailboxType } from '../../../reducers/types';
 
 type Props = {
   message: MailMessageType;
-  loading: boolean;
   highlight: string;
 };
 
 function MessageDisplay(props: Props) {
   const {
     message: {
-      id,
-      folderId,
       subject,
       fromJSON,
       toJSON,
       ccJSON,
-      bccJSON,
       date,
       bodyAsHtml,
-      bodyAsText,
       attachments
     },
     highlight,
@@ -73,6 +69,7 @@ function MessageDisplay(props: Props) {
 
   const mailbox = useSelector(selectActiveMailbox);
   const [loaded, setLoaded] = useState(false);
+
   const dispatch = useDispatch();
 
   let files = [];
@@ -100,7 +97,7 @@ function MessageDisplay(props: Props) {
     senderInitials = senderArr[0][0].toUpperCase();
   }
 
-  const parsedRecipientTo = JSON.parse(toJSON).reduce(function(
+  const parsedRecipientTo = JSON.parse(toJSON).reduce(function (
     previous: string,
     current: { name: string; address: string }
   ) {
@@ -109,9 +106,9 @@ function MessageDisplay(props: Props) {
     }
     return `${previous} ${current.address}; `;
   },
-  'To: ');
+    'To: ');
 
-  const parsedRecipientCC = JSON.parse(ccJSON).reduce(function(
+  const parsedRecipientCC = JSON.parse(ccJSON).reduce(function (
     previous: string,
     current: { name: string; address: string }
   ) {
@@ -120,7 +117,7 @@ function MessageDisplay(props: Props) {
     }
     return `${previous} ${current.address}; `;
   },
-  'Cc: ');
+    'Cc: ');
 
   const formattedDate = formatFullDate(date);
   const time = formatTimeOnly(date);
@@ -173,16 +170,15 @@ function MessageDisplay(props: Props) {
 
   const IFrame = ({ children, ...props }) => {
     const [contentRef, setContentRef] = useState();
-
-    const [height, setHeight] = useState('');
+    const [height, setHeight] = useState('0px');
     const mountNode = contentRef?.contentWindow?.document?.body;
 
-    const onLoad = () => {
+    const onLoad = debounce(() => {
       setHeight(
         `${contentRef?.contentWindow?.document?.body?.scrollHeight + 20}px`
       );
       setLoaded(true);
-    };
+    }, 100);
 
     return (
       <iframe
@@ -286,6 +282,9 @@ function MessageDisplay(props: Props) {
           <Scrollbars hideTracksWhenNotNeeded autoHide>
             <div className="h-full">
               <div className="px-6 mb-6 mt-4 h-full">
+                {!loaded && (
+                  <Loader size="lg" backdrop vertical />
+                )}
                 <IFrame className="w-full">
                   <div style={divStyle}>
                     {renderHTML(bodyAsHtml)}

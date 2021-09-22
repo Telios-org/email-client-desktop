@@ -359,7 +359,7 @@ export const saveIncomingMessagesRequest = () => {
 
 export const SAVE_INCOMING_MESSAGES_SUCCESS =
   'MAILPAGE::SAVE_INCOMING_MESSAGES_SUCCESS';
-export const saveIncomingMessagesSuccess = function(
+export const saveIncomingMessagesSuccess = function (
   messages: MailMessageType[],
   activeFolderId: number
 ) {
@@ -404,6 +404,7 @@ export const saveIncomingMessages = (messages: Email[]) => {
         dispatch(
           saveIncomingMessagesSuccess(msg, foldersArray[activeFolderIndex])
         );
+        dispatch(updateFolderCount(1, 1));
         return resolve('done');
       });
     });
@@ -510,6 +511,21 @@ export const fetchMsg = (messageId: string) => {
 
     try {
       email = await Mail.getMessagebyId(messageId);
+
+      if (email.folderId !== 2) {
+        Mail.moveMessages([{
+          id: email.id,
+          unread: 0,
+          folder: {
+            fromId: email.folderId,
+            toId: 2,
+            name: 'Read'
+          }
+        }]);
+
+        dispatch(updateFolderCount(1, -1));
+      }
+
     } catch (err) {
       dispatch(fetchMsgBodyFailure(err));
       return Promise.reject(err);
@@ -572,26 +588,15 @@ export const messageSelection = (message: MailMessageType, action: string) => {
       dispatch(showMaximizedMessageDisplay(true));
     }
 
-    let fullMsg;
-
-    try {
-      if (
-        message.unread &&
-        message.folderId !== 3 &&
-        message.folderId !== 4 &&
-        message.folderId !== 5
-      ) {
-        dispatch(updateFolderCount(message.folderId, -1));
-      }
-
-      fullMsg = await dispatch(fetchMsg(message.id));
-    } catch (err) {
-      dispatch(msgSelectionFlowFailure(err));
-      return Promise.reject(err);
-    }
-
-    dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
-    return Promise.resolve(message.id);
+    dispatch(fetchMsg(message.id))
+      .then(fullMsg => {
+        dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
+        return Promise.resolve(message.id);
+      })
+      .catch(err => {
+        dispatch(msgSelectionFlowFailure(err));
+        return Promise.reject(err);
+      });
   };
 };
 
@@ -784,12 +789,11 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
   return { mailboxes, folders, messages, namespaces, aliases };
 };
 
-// THIS MAY BE IN THE WRONG ACTION CREATOR FOLDER
-// CLEANUP TO FOLLOW SAME REDUX PATTERN
-export const moveMessagesToFolder = messages => {
-  return async (dispatch: Dispatch) => {
-    await Mail.moveMessages(messages);
-    await dispatch(loadMailboxes());
+export const HIGHLIGHT_SEARCH_QUERY = 'GLOBAL::HIGHLIGHT_SEARCH_QUERY';
+export const setHighlightValue = (query: string) => {
+  return {
+    type: HIGHLIGHT_SEARCH_QUERY,
+    searchQuery: query
   };
 };
 
@@ -808,13 +812,5 @@ export const sync = (opts: { fullSync: boolean }) => {
     }
     console.timeEnd('Sync Mailboxes');
     return true;
-  };
-};
-
-export const HIGHLIGHT_SEARCH_QUERY = 'GLOBAL::HIGHLIGHT_SEARCH_QUERY';
-export const setHighlightValue = (query: string) => {
-  return {
-    type: HIGHLIGHT_SEARCH_QUERY,
-    searchQuery: query
   };
 };

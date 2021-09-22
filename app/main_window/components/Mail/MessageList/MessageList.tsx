@@ -1,8 +1,12 @@
-import React, { memo, useCallback, useEffect, useState, useMemo } from 'react';
+import React, { memo, useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+// ELECTRON IPC IMPORT
+const { ipcRenderer } = require('electron');
 
 // EXTERNAL UTILS LIBRAIRIES
 import memoize from 'memoize-one';
+import { Alert } from 'rsuite';
 
 // EXTERNAL COMPONENT LIBRARIES
 import { VariableSizeList as List, areEqual } from 'react-window';
@@ -11,68 +15,66 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 // INTERNATIONALIZATION
 import { BsInbox } from 'react-icons/bs';
-import { Filter2, Swap } from 'react-iconly';
+// import { Filter2, Swap } from 'react-iconly';
 import i18n from '../../../../i18n/i18n';
 
-// ICONSET ICONS
-import SortIcon from './SortIcon';
-
 // REDUX ACTIONS
+import {
+  messageSelection,
+  msgRangeSelection
+} from '../../../actions/mail';
+
+import { clearActiveMessage, moveMessagesToFolder } from '../../../actions/mailbox/messages';
 
 // SELECTORS
-import { selectActiveFolder } from '../../../selectors/mail';
+import {
+  selectActiveFolder,
+  selectGlobalState,
+  selectMessages,
+  activeMessageId,
+  activeMessageSelectedRange,
+  activeFolderId
+} from '../../../selectors/mail';
 
 // TS TYPES
 import {
   MailMessageType,
-  FolderType,
-  MailboxType,
-  MailType
+  SelectionRange
 } from '../../../reducers/types';
 
 // COMPONENTS IMPORTS
 import MessagePreview from './MessagePreview/MessagePreview';
-import MessagePreviewLoading from './MessagePreviewLoading';
 
-// CSS STYLE IMPORTS
-import styles from './MessageList.less';
-
-type Props = {
-  loading: boolean;
-  onMsgClick: (message: MailMessageType, index: number) => Promise<void>;
-  onDropResult: (item: any, dropResult: any) => Promise<void>;
-};
-
-const Row = memo(({ data, index, style }) => {
-  const { onMsgClick, onDropResult } = data;
-
-  return (
-    <MessagePreview
-      index={index}
-      onMsgClick={onMsgClick}
-      onDropResult={onDropResult}
-      previewStyle={style}
-    />
-  );
-}, areEqual);
-Row.displayName = 'Row';
-
-const createItemData = memoize(
-  (messages, onMsgClick, onDropResult) => ({
-    messages,
-    onMsgClick,
-    onDropResult
-  })
-);
+type Props = {};
 
 export default function MessageList(props: Props) {
-  const { onMsgClick, onDropResult } = props;
+  const dispatch = useDispatch();
 
   const [listRef, setListRef] = useState();
   const [sort, setSort] = useState('');
 
   const currentFolder = useSelector(selectActiveFolder);
-  const messages = useSelector(state => state.mail.messages);
+  const messages = useSelector(selectMessages);
+  const activeMsgId = useSelector(activeMessageId);
+  const activeSelectedRange = useSelector(activeMessageSelectedRange);
+  const folderId = useSelector(activeFolderId);
+  const { editorIsOpen } = useSelector(selectGlobalState);
+
+  const selectMessage = (message: MailMessageType) => {
+    return dispatch(messageSelection(message, ''));
+  }
+
+  const selectMessageRange = async (selected: SelectionRange, folderId: number) => {
+    dispatch(msgRangeSelection(selected, folderId));
+  }
+
+  const moveMessages = async (messages: any) => {
+    dispatch(moveMessagesToFolder(messages));
+  }
+
+  const clearSelectedMessage = async (folderId: number) => {
+    dispatch(clearActiveMessage(folderId));
+  }
 
   useEffect(() => {
     setListRef(React.createRef());
@@ -82,43 +84,131 @@ export default function MessageList(props: Props) {
     setSort('');
   }, [currentFolder]);
 
-  const itemData = createItemData(messages, onMsgClick, onDropResult);
+  const handleDropResult = async (item, dropResult) => {
+    let selection = [];
+
+    if (activeSelectedRange.items.length > 0) {
+      selection = activeSelectedRange.items.map(id => {
+        let unread = messages.byId[id].unread;
+
+        return {
+          id: messages.byId[id].id,
+          unread: unread,
+          folder: {
+            fromId: messages.byId[id].folderId,
+            toId: dropResult.id,
+            name: dropResult.name
+          }
+        };
+      });
+    } else {
+      let unread = item.unread;
+
+      selection = [
+        {
+          id: item.id,
+          unread: unread,
+          folder: {
+            fromId: item.folderId,
+            toId: dropResult.id,
+            name: dropResult.name
+          }
+        }
+      ];
+    }
+
+    moveMessages(selection).then(() => {
+      clearSelectedMessage(folderId);
+
+      Alert.success(
+        `Moved ${activeSelectedRange.items.length ? activeSelectedRange.items.length : 1
+        } message(s) to ${dropResult.name}.`
+      );
+    });
+  }
+
+  const handleSelectMessage = async (message: MailMessageType, index: number) => {
+    const selected = {
+      startIdx: index,
+      endIdx: index,
+      exclude: [],
+      items: [message.id]
+    };
+
+    if (editorIsOpen) {
+      ipcRenderer.send('RENDERER::closeComposerWindow', { action: 'save' });
+    }
+
+    // If the editor is Open or if the message selected is not already the one open
+    // we dispatch the message selection action
+    if (
+      editorIsOpen ||
+      activeMsgId !== message.id ||
+      activeSelectedRange.items.length > 1
+    ) {
+      selectMessage(message).then(() => {
+        selectMessageRange(selected, folderId);
+      });
+    }
+  }
+
+  const Row = memo(({ data, index, style }) => {
+    return (
+      <MessagePreview
+        index={index}
+        onMsgClick={handleSelectMessage}
+        onDropResult={handleDropResult}
+        previewStyle={style}
+      />
+    );
+  }, areEqual);
+
+  Row.displayName = 'Row';
+
+  const createItemData = memoize(
+    (messages, onMsgClick, onDropResult) => ({
+      messages,
+      onMsgClick,
+      onDropResult
+    })
+  );
+
+  const itemData = createItemData(messages, handleSelectMessage, handleDropResult);
 
   const itemKey = (index, data) => {
     const msgId = data.messages.allIds[index];
-    return data.messages.byId[msgId].id;
+    return data.messages.byId[msgId].id
   };
 
   // TODO: Fix or find alternative scroll bar. Windows machines will continue to use the native scrollbar
+  const CustomScrollbars = ({ onScroll, forwardedRef, style, children }) => {
+    const refSetter = useCallback(scrollbarsRef => {
+      if (scrollbarsRef) {
+        if (listRef && listRef.current && listRef.current.state) {
+          scrollbarsRef.scrollTop(listRef.current.state.scrollOffset);
+          forwardedRef(scrollbarsRef.view);
+        }
+      } else {
+        forwardedRef(null);
+      }
+    }, []);
 
-  // const CustomScrollbars = ({ onScroll, forwardedRef, style, children }) => {
-  //   const refSetter = useCallback(scrollbarsRef => {
-  //     if (scrollbarsRef) {
-  //       if (listRef && listRef.current && listRef.current.state) {
-  //         scrollbarsRef.scrollTop(listRef.current.state.scrollOffset);
-  //         forwardedRef(scrollbarsRef.view);
-  //       }
-  //     } else {
-  //       forwardedRef(null);
-  //     }
-  //   }, []);
+    return (
+      <Scrollbars
+        ref={refSetter}
+        onScroll={onScroll}
+        style={{ ...style, overflow: 'hidden' }}
+        hideTracksWhenNotNeeded
+        autoHide
+      >
+        {children}
+      </Scrollbars>
+    );
+  };
 
-  //   return (
-  //     <Scrollbars
-  //       ref={refSetter}
-  //       onScroll={onScroll}
-  //       style={{ ...style, overflow: 'hidden' }}
-  //       hideTracksWhenNotNeeded
-  //       autoHide
-  //     >
-  //       {children}
-  //     </Scrollbars>
-  //   );
-  // };
-
-  // const CustomScrollbarsVirtualList = React.forwardRef((props, ref) => (
-  //   <CustomScrollbars {...props} forwardedRef={ref} />
-  // ));
+  const CustomScrollbarsVirtualList = React.forwardRef((props, ref) => (
+    <CustomScrollbars {...props} forwardedRef={ref} />
+  ));
 
   const toggleSort = () => {
     if (!sort || sort === 'DESC') {
@@ -156,6 +246,7 @@ export default function MessageList(props: Props) {
                 itemData={itemData}
                 itemSize={() => 74}
                 width={width}
+                outerElementType={listRef ? CustomScrollbarsVirtualList : null}
               >
                 {Row}
               </List>
