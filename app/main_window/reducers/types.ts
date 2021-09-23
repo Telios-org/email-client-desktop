@@ -231,8 +231,15 @@ export type GlobalType = {
 };
 
 export type MailType = {
-  byId: { [index: number]: MailMessageType | MailboxType | FolderType };
-  allIds: Array<number>;
+  byId: {
+    [index: number | string]:
+      | MailMessageType
+      | MailboxType
+      | FolderType
+      | NamespaceType
+      | AliasesType;
+  };
+  allIds: Array<number | string>;
   selected?: MailMessageType;
   loading: boolean;
 };

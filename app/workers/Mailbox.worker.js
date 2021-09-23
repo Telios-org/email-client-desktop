@@ -222,56 +222,23 @@ module.exports = env => {
         const domain = 'telios.io';
         const { secretBoxKeypair } = SDK.Account.makeKeys();
 
-        const { registered, name, key } = await mailbox.registerAliasName({
+        const { registered, key } = await mailbox.registerAliasName({
           alias_name: namespace,
           domain,
           key: secretBoxKeypair.publicKey
         });
 
-        process.send({
-          event: 'MAIL_WORKER::registerAliasNamespaceConsole',
-          data: { registered, name, key }
+        const output = await AliasesNamespace.create({
+          namespaceKey: key,
+          name: namespace,
+          mailboxId,
+          domain,
+          disabled: false
         });
-
-        let ns;
-        if (registered) {
-          const output = AliasesNamespace.create({
-            namespaceKey: key,
-            name: namespace,
-            mailboxId,
-            domain,
-            disabled: false
-          });
-
-          process.send({
-            event: 'MAIL_WORKER::registerAliasNamespaceConsole',
-            data: {
-              namespaceKey: key,
-              name: namespace,
-              mailboxId,
-              domain,
-              disabled: false
-            }
-          });
-
-          ns = {
-            ...output.dataValues,
-            registered
-          };
-        } else {
-          ns = {
-            namespaceKey: null,
-            name,
-            mailboxId,
-            domain,
-            disabled: false,
-            registered
-          };
-        }
 
         process.send({
           event: 'MAIL_WORKER::registerAliasNamespace',
-          data: ns
+          data: output.dataValues
         });
       } catch (e) {
         process.send({
@@ -295,7 +262,7 @@ module.exports = env => {
             'count',
             'disabled'
           ],
-          where: { namespaceKey: { $in: payload.namespaceKeys } },
+          where: { namespaceKey: { [Op.in]: payload.namespaceKeys } },
           order: [['name', 'ASC']],
           raw: true
         });

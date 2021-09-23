@@ -344,7 +344,7 @@ class MailService {
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('MAIL_WORKER::registerAliasNamespaceConsole', m => {
+      worker.once('MAIL_WORKER::registerAliasNamespace', m => {
         const { data, error } = m;
 
         if (error) return reject(error);

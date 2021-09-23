@@ -12,13 +12,13 @@ import {
 } from 'rsuite';
 
 // REDUX ACTION
-import { registerNamespace } from '../../../actions/mailbox/aliases';
+import { registerNamespace } from '../../../../actions/mailbox/aliases';
 
 // SELECTORS
-import { selectActiveMailbox } from '../../../selectors/mail';
+import { selectActiveMailbox } from '../../../../selectors/mail';
 
-import i18n from '../../../../i18n/i18n';
-import mail from '../../../reducers/mail';
+import i18n from '../../../../../i18n/i18n';
+import mail from '../../../../reducers/mail';
 
 const { StringType } = Schema.Types;
 
@@ -42,7 +42,7 @@ type Props = {
   onHide: () => void;
 };
 
-export default function NewFolderModal(props: Props) {
+export default function AliasModal(props: Props) {
   const dispatch = useDispatch();
   const mailbox = useSelector(selectActiveMailbox);
   const { show, onHide } = props;
@@ -50,13 +50,44 @@ export default function NewFolderModal(props: Props) {
     namespace: '',
     alias: ''
   });
+  const [errorBlock, setErrorBlock] = useState({
+    namespace: {
+      showError: false,
+      msg: ''
+    },
+    alias: {
+      showError: false,
+      msg: ''
+    }
+  });
   const formEl = useRef(null);
 
   const handleSubmit = async () => {
     const { id } = mailbox;
     const { namespace } = formValue;
-    console.log('ALIAS_MODAL::PAYLOAD', namespace, id);
-    await dispatch(registerNamespace(id, namespace));
+
+    // In case of retry clear out error block.
+    setErrorBlock({
+      ...errorBlock,
+      namespace: {
+        showError: false,
+        msg: ''
+      }
+    });
+
+    const { status, success } = await dispatch(
+      registerNamespace(id, namespace)
+    );
+
+    if (!success && status === 'already-registered') {
+      setErrorBlock({
+        ...errorBlock,
+        namespace: {
+          showError: true,
+          msg: 'Alias namespace is unavailable.'
+        }
+      });
+    }
   };
 
   return (
@@ -80,14 +111,20 @@ export default function NewFolderModal(props: Props) {
               <ControlLabel className="font-medium mb-2 text-gray-500">
                 {i18n.t('mailbox.accountNamespace')}
               </ControlLabel>
-
               <FormControl name="namespace" />
+              <div
+                className={`${
+                  errorBlock.namespace.showError ? 'text-red-500' : 'hidden'
+                }`}
+              >
+                {errorBlock.namespace.msg}
+              </div>
             </FormGroup>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button type="submit" appearance="primary" onClick={handleSubmit}>
-            {i18n.t('global.submit')}
+            {i18n.t('global.create')}
           </Button>
         </Modal.Footer>
       </Modal>

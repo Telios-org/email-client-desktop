@@ -9,7 +9,7 @@ export const startNamespaceRegistration = () => {
 };
 
 export const REGISTER_NAMESPACE_SUCCESS = 'ALIASES::REGISTER_NAMESPACE_SUCCESS';
-export const namespaceRegistrationSuccess = (payload) => {
+export const namespaceRegistrationSuccess = payload => {
   return {
     type: REGISTER_NAMESPACE_SUCCESS,
     payload
@@ -29,19 +29,17 @@ export const registerNamespace = (mailboxId: number, namespace: string) => {
     dispatch(startNamespaceRegistration());
     let ns;
     try {
-      console.log('ALIAS_ACTIONCREATOR::REGISTERNS', mailboxId, namespace);
       ns = await Mail.registerAliasNamespace({ mailboxId, namespace });
-
-      console.log('ALIASES::NS REGISTRATION', ns);
-      if (!ns.registered) {
-        throw new Error('already-registered');
-      }
     } catch (error) {
       dispatch(namespaceRegistrationFailure(error));
+
+      if (error.message.startsWith('E11000 duplicate key')) {
+        return { status: 'already-registered', success: false };
+      } 
       return error;
     }
 
     dispatch(namespaceRegistrationSuccess(ns));
-    return 'success';
+    return { status: 'registered', success: true };
   };
 };
