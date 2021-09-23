@@ -53,7 +53,15 @@ export const selectActiveFolder = createSelector(
 );
 
 const activeMsgIdObj = (state: StateType) => state.globalState.activeMsgId;
+export const hiddenMsgIds = (state: StateType) => state.globalState.hiddenMsgIds;
 export const selectAllMessages = (state: StateType) => state.mail.messages;
+
+export const selectMessages = createSelector(
+  [selectAllMessages],
+  (messages) => {
+    return messages;
+  }
+);
 
 export const activeMessageId = createSelector(
   [activeMsgIdObj, selectAllFolders, activeFolderIndex],

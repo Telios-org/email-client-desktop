@@ -58,7 +58,7 @@ const model = {
   }
 };
 
-class Email extends Model {}
+class Email extends Model { }
 
 module.exports.Email = Email;
 
@@ -93,7 +93,7 @@ module.exports.init = async (sequelize, opts) => {
           bodyAsText = bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
           const selection = bodyAsText.split(' ').slice(0, 20);
 
-          if(selection[selection.length-1] !== '...') {
+          if (selection[selection.length - 1] !== '...') {
             selection.push('...');
           }
 
@@ -112,8 +112,9 @@ module.exports.init = async (sequelize, opts) => {
       email.bodyAsText = removeMd(email.bodyAsText);
       email.bodyAsText = email.bodyAsText.replace(/\[(.*?)\]/g, '');
       email.bodyAsText = email.bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
+      email.unread = email.unread ? 1 : 0;
 
-      if(!email.path) {
+      if (!email.path) {
         email.path = `/email/${uuidv4()}.json`;
       }
 
@@ -123,7 +124,7 @@ module.exports.init = async (sequelize, opts) => {
 
       await collection.put(email.emailId,
         {
-          unread: email.unread,
+          unread: email.unread ? 1 : 0,
           folderId: email.folderId,
           path: email.path
         }
@@ -153,11 +154,13 @@ module.exports.init = async (sequelize, opts) => {
 
       process.send({ event: 'BeforeUpdate-saveMessageToDBLOG', data: email });
     } catch (err) {
-      process.send({ event: 'BeforeUpdate-saveMessageToDBLOG', error: {
-        name: e.name,
-        message: e.message,
-        stacktrace: e.stack
-      } });
+      process.send({
+        event: 'BeforeUpdate-saveMessageToDBLOG', error: {
+          name: e.name,
+          message: e.message,
+          stacktrace: e.stack
+        }
+      });
       throw err;
     }
   });

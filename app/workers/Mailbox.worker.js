@@ -296,6 +296,7 @@ module.exports = env => {
             'date',
             'toJSON',
             'fromJSON',
+            'ccJSON',
             'bodyAsText',
             'attachments'
           ],
@@ -330,16 +331,6 @@ module.exports = env => {
             }
           );
 
-          if (
-            email.folderId !== 3 &&
-            email.folderId !== 4 &&
-            email.folderId !== 5
-          ) {
-            await Folder.decrement(['count'], {
-              where: { folderId: email.folderId },
-              individualHooks: true
-            });
-          }
           email.unread = 0;
         }
         process.send({ event: 'MAIL_WORKER::getMessagebyId', data: email });
@@ -356,19 +347,17 @@ module.exports = env => {
     }
 
     if (event === 'markAsUnread') {
-      const { id, folderId } = payload;
+      const { id } = payload;
+
       try {
         await Email.update(
-          { unread: true },
+          { unread: 1 },
           {
             where: { emailId: id },
             individualHooks: true
           }
         );
-        await Folder.increment(['count'], {
-          where: { folderId },
-          individualHooks: true
-        });
+
         process.send({ event: 'markAsUnread', data: null });
       } catch (e) {
         process.send({
@@ -478,23 +467,12 @@ module.exports = env => {
         switch (type) {
           case 'Incoming':
             folderId = 1; // Save message to Inbox
-            asyncFolders.push(
-              Folder.increment(['count'], { where: { folderId: 1 } })
-            );
             break;
           case 'Sent':
             folderId = 4; // Save message to Sent
             break;
           case 'Draft':
             folderId = 3; // Save message to Drafts
-
-            // Don't increment folder count if this is
-            // a draft being updated
-            if (!msg.email.emailId) {
-              asyncFolders.push(
-                Folder.increment(['count'], { where: { folderId: 3 } })
-              );
-            }
             break;
           default:
             folderId = 0;
@@ -502,7 +480,7 @@ module.exports = env => {
 
         const msgObj = {
           emailId: msg.email.emailId || msg._id,
-          unread: !(folderId === 5 || folderId === 4),
+          unread: folderId === 2 || folderId === 4 || folderId === 5 ? 0 : 1,
           folderId,
           fromJSON: JSON.stringify(msg.email.from),
           toJSON: JSON.stringify(msg.email.to),
@@ -541,6 +519,7 @@ module.exports = env => {
               const msg = { ...item.dataValues };
 
               msg.id = msg.emailId;
+              msg.unread = msg.unread ? 1 : 0;
               msgArr.push(msg);
             }
           });
@@ -591,21 +570,10 @@ module.exports = env => {
             where: { emailId: msg.emailId },
             individualHooks: true
           })
-            .then(res => {})
+            .then(res => { })
             .catch(e => {
               process.send({ event: 'removeMessages', error: e.message });
             });
-
-          if (msg.folderId === 3) {
-            Folder.decrement(['count'], {
-              where: { folderId: 3 },
-              individualHooks: true
-            })
-              .then(res => {})
-              .catch(e => {
-                process.send({ event: 'removeMessages', error: e.message });
-              });
-          }
         });
 
         process.send({ event: 'removeMessages', data: null });
@@ -628,52 +596,20 @@ module.exports = env => {
         const ids = messages.map(msg => msg.id);
         const fromFolder = messages[0].folder.fromId;
         const toFolder = messages[0].folder.toId;
-        const unreadCount = messages.filter(msg => msg.unread === 1).length;
 
-        await Email.update(
-          { folderId: toFolder },
-          {
-            where: {
-              emailId: {
-                [Op.in]: ids
-              }
+        for (let email of messages) {
+          Email.update(
+            {
+              folderId: toFolder,
+              unread: email.unread
             },
-            individualHooks: true
-          }
-        );
-
-        if (fromFolder === 3 || fromFolder === 5) {
-          await Folder.decrement(['count'], {
-            by: messages.length,
-            where: { folderId: fromFolder },
-            individualHooks: true
-          });
-        }
-
-        if (toFolder === 3 || toFolder === 5) {
-          await Folder.increment(['count'], {
-            by: messages.length,
-            where: { folderId: toFolder },
-            individualHooks: true
-          });
-        }
-
-        if (unreadCount > 0) {
-          if (fromFolder !== 4 && fromFolder !== 5) {
-            await Folder.decrement(['count'], {
-              by: unreadCount,
-              where: { folderId: fromFolder },
+            {
+              where: {
+                emailId: email.id
+              },
               individualHooks: true
-            });
-          }
-
-          if (toFolder !== 3 && toFolder !== 5) {
-            await Folder.increment(['count'], {
-              by: unreadCount,
-              where: { folderId: toFolder },
-              individualHooks: true
-            });
-          }
+            }
+          );
         }
         process.send({ event: 'moveMessages', data: null });
       } catch (e) {
@@ -764,6 +700,7 @@ module.exports = env => {
                 'bodyAsText',
                 'fromJSON',
                 'toJSON',
+                'ccJSON',
                 'attachments'
               ],
               where: {
@@ -782,6 +719,7 @@ module.exports = env => {
                 'bodyAsText',
                 'fromJSON',
                 'toJSON',
+                'ccJSON',
                 'attachments'
               ],
               where: {
@@ -799,6 +737,7 @@ module.exports = env => {
               'bodyAsText',
               'fromJSON',
               'toJSON',
+              'ccJSON',
               'attachments'
             ],
             where: {
@@ -807,6 +746,7 @@ module.exports = env => {
                 { bodyAsText: { [Op.like]: `%${searchQuery}%` } },
                 { fromJSON: { [Op.like]: `%${searchQuery}%` } },
                 { toJSON: { [Op.like]: `%${searchQuery}%` } },
+                { ccJSON: { [Op.like]: `%${searchQuery}%` } },
                 { attachments: { [Op.like]: `%${searchQuery}%` } }
               ]
             },
@@ -864,6 +804,35 @@ module.exports = env => {
         );
 
         process.send({ event: 'updateFolder', data: folder.dataValues });
+      } catch (e) {
+        process.send({
+          event: 'updateFolder',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    if (event === 'updateFolderCount') {
+      try {
+        const { id, amount } = payload;
+
+        if (amount === 1) {
+          await Folder.increment(['count'], {
+            where: { folderId: id },
+            individualHooks: true
+          });
+        } else {
+          await Folder.decrement(['count'], {
+            where: { folderId: id },
+            individualHooks: true
+          });
+        }
+
+        process.send({ event: 'updateFolderCount', updated: true });
       } catch (e) {
         process.send({
           event: 'updateFolder',

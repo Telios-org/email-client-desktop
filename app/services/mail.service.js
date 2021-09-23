@@ -205,6 +205,20 @@ class MailService {
     });
   }
 
+  static updateFolderCount(opts) {
+    worker.send({ event: 'updateFolderCount', payload: opts });
+
+    return new Promise((resolve, reject) => {
+      worker.once('updateFolderCount', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
   static deleteFolder(opts) {
     worker.send({ event: 'deleteFolder', payload: opts });
 
@@ -255,7 +269,7 @@ class MailService {
         const { data, error } = m;
 
         if (error) return reject(error);
-        data.unread = false;
+
         return resolve(data);
       });
     });

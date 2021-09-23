@@ -23,7 +23,7 @@ class MessageIngressService extends EventEmitter {
     mainWorker.on('newMessage', async m => {
       const { data, error } = m;
 
-        this.msgBatchSize +=1;
+      this.msgBatchSize += 1;
 
       mainWorker.send({
         event: 'newMessage',
@@ -36,14 +36,10 @@ class MessageIngressService extends EventEmitter {
       if (!error) {
         const email = transformEmail(data);
 
-        MailService.save({
-          messages: [email],
-          type: 'Incoming',
-          sync: false
-        });
+        this.emit('saveIncoming', [email]);
       }
 
-      if(data._id) {
+      if (data._id) {
         this.syncIds.push(data._id);
       }
 
@@ -54,12 +50,12 @@ class MessageIngressService extends EventEmitter {
     mainWorker.on('fetchError', async m => {
       const { error } = m;
 
-      if(error.file && error.file.failed < this.MAX_RETRY) {
+      if (error.file && error.file.failed < this.MAX_RETRY) {
         this.retryQueue.push(error.file);
         this.handleDone();
       }
 
-      if(error.file && error.file.failed === this.MAX_RETRY) {
+      if (error.file && error.file.failed === this.MAX_RETRY) {
         console.log(`File ${error.file.hash} failed all attempts!`);
 
         // Goes into drive's dead letter queue
@@ -95,13 +91,13 @@ class MessageIngressService extends EventEmitter {
   }
 
   handleDone() {
-    if(this.syncIds.length > 4) {
+    if (this.syncIds.length > 4) {
       MailService.markAsSynced(this.syncIds, { sync: false });
       this.syncIds = [];
     }
 
     // Retry failed messages
-    if(this.finished + this.retryQueue.length === this.msgBatchSize) {
+    if (this.finished + this.retryQueue.length === this.msgBatchSize) {
       mainWorker.send({
         event: 'retryMessageBatch',
         payload: { batch: this.retryQueue }
@@ -120,7 +116,7 @@ class MessageIngressService extends EventEmitter {
     } else {
       this.getMailLocked = false;
 
-      if(this.syncIds.length) {
+      if (this.syncIds.length) {
         MailService.markAsSynced(this.syncIds, { sync: false });
         this.syncIds = [];
       }
@@ -146,6 +142,7 @@ function transformEmail(data) {
   let email = data.email.content;
 
   return {
+    unread: 1,
     fromJSON: JSON.stringify(email.from),
     toJSON: JSON.stringify(email.to),
     ccJSON: JSON.stringify(email.cc),
