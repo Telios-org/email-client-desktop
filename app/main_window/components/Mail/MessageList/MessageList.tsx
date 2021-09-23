@@ -146,9 +146,8 @@ export default function MessageList(props: Props) {
       activeMsgId !== message.id ||
       activeSelectedRange.items.length > 1
     ) {
-      selectMessage(message).then(() => {
-        selectMessageRange(selected, folderId);
-      });
+      selectMessage(message);
+      selectMessageRange(selected, folderId);
     }
   }
 

@@ -404,6 +404,7 @@ export const saveIncomingMessages = (messages: Email[]) => {
         dispatch(
           saveIncomingMessagesSuccess(msg, foldersArray[activeFolderIndex])
         );
+
         dispatch(updateFolderCount(1, 1));
         return resolve('done');
       });
@@ -584,19 +585,28 @@ export const msgSelectionFlowFailure = (error: Error) => {
 export const messageSelection = (message: MailMessageType, action: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(msgSelectionFlow(message.id, message.folderId));
+
     if (action === 'showMaxDisplay') {
       dispatch(showMaximizedMessageDisplay(true));
     }
 
-    dispatch(fetchMsg(message.id))
-      .then(fullMsg => {
-        dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
-        return Promise.resolve(message.id);
-      })
-      .catch(err => {
-        dispatch(msgSelectionFlowFailure(err));
-        return Promise.reject(err);
-      });
+    // dispatch(fetchMsg(message.id))
+    //   .then(fullMsg => {
+    //     dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
+    //     return Promise.resolve(message.id);
+    //   })
+    //   .catch(err => {
+    //     dispatch(msgSelectionFlowFailure(err));
+    //     return Promise.reject(err);
+    //   });
+
+    try {
+      const fullMsg = await dispatch(fetchMsg(message.id));
+      dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
+      return Promise.resolve(message.id);
+    } catch (err) {
+      return Promise.reject(err);
+    }
   };
 };
 

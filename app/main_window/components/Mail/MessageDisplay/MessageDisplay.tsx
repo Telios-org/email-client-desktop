@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
@@ -71,6 +71,10 @@ function MessageDisplay(props: Props) {
   const [loaded, setLoaded] = useState(false);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setLoaded(false);
+  }, [bodyAsHtml])
 
   let files = [];
 
@@ -272,7 +276,7 @@ function MessageDisplay(props: Props) {
           )}
         </div>
       </div>
-      {attachments && attachments.length > 0 && (
+      {bodyAsHtml && attachments && attachments.length > 0 && (
         <div className="px-6">
           <Attachments attachments={attachments} displayStatus="recipient" />
         </div>
@@ -286,10 +290,12 @@ function MessageDisplay(props: Props) {
                   <Loader size="lg" backdrop vertical />
                 )}
                 <IFrame className="w-full">
-                  <div style={divStyle}>
-                    {renderHTML(bodyAsHtml)}
-                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
-                  </div>
+                  {bodyAsHtml && (
+                    <div style={divStyle}>
+                      {renderHTML(bodyAsHtml)}
+                      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
+                    </div>
+                  )}
                 </IFrame>
               </div>
             </div>

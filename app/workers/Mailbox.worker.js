@@ -258,6 +258,7 @@ module.exports = env => {
             'date',
             'toJSON',
             'fromJSON',
+            'ccJSON',
             'bodyAsText',
             'attachments'
           ],
@@ -661,6 +662,7 @@ module.exports = env => {
                 'bodyAsText',
                 'fromJSON',
                 'toJSON',
+                'ccJSON',
                 'attachments'
               ],
               where: {
@@ -679,6 +681,7 @@ module.exports = env => {
                 'bodyAsText',
                 'fromJSON',
                 'toJSON',
+                'ccJSON',
                 'attachments'
               ],
               where: {
@@ -696,6 +699,7 @@ module.exports = env => {
               'bodyAsText',
               'fromJSON',
               'toJSON',
+              'ccJSON',
               'attachments'
             ],
             where: {
@@ -704,6 +708,7 @@ module.exports = env => {
                 { bodyAsText: { [Op.like]: `%${searchQuery}%` } },
                 { fromJSON: { [Op.like]: `%${searchQuery}%` } },
                 { toJSON: { [Op.like]: `%${searchQuery}%` } },
+                { ccJSON: { [Op.like]: `%${searchQuery}%` } },
                 { attachments: { [Op.like]: `%${searchQuery}%` } }
               ]
             },
