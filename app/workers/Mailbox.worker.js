@@ -255,13 +255,7 @@ module.exports = env => {
     if (event === 'MAIL_SERVICE::getMailboxAliases') {
       try {
         const aliases = await Aliases.findAll({
-          attributes: [
-            ['aliasId', 'id'],
-            'name',
-            'namespaceKey',
-            'count',
-            'disabled'
-          ],
+          attributes: ['aliasKey', 'name', 'namespaceKey', 'count', 'disabled'],
           where: { namespaceKey: { [Op.in]: payload.namespaceKeys } },
           order: [['name', 'ASC']],
           raw: true
@@ -282,6 +276,51 @@ module.exports = env => {
         });
       }
     }
+
+    if (event === 'MAIL_SERVICE::registerAliasAddress') {
+      try {
+        const {
+          namespaceName,
+          namespaceKey,
+          address,
+          forwardAddresses,
+          whitelisted
+        } = payload;
+
+        const mailbox = store.getMailbox();
+
+        const { registered, alias_key } = await mailbox.registerAliasAddress({
+          alias_address: `${namespaceName}#${address}`,
+          forwards_to: forwardAddresses,
+          whitelisted
+        });
+
+        const output = await AliasesNamespace.create({
+          aliasKey: alias_key,
+          name: address,
+          namespaceKey,
+          count: 0,
+          forwardAddresses,
+          disabled: false
+        });
+
+        process.send({
+          event: 'MAIL_WORKER::registerAliasAddress',
+          data: output.dataValues
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::registerAliasAddress',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    //ADD updateAliasAddress
 
     if (event === 'getMessagesByFolderId') {
       try {
@@ -570,7 +609,7 @@ module.exports = env => {
             where: { emailId: msg.emailId },
             individualHooks: true
           })
-            .then(res => { })
+            .then(res => {})
             .catch(e => {
               process.send({ event: 'removeMessages', error: e.message });
             });
@@ -597,7 +636,7 @@ module.exports = env => {
         const fromFolder = messages[0].folder.fromId;
         const toFolder = messages[0].folder.toId;
 
-        for (let email of messages) {
+        for (const email of messages) {
           Email.update(
             {
               folderId: toFolder,
