@@ -53,15 +53,13 @@ export const selectActiveFolder = createSelector(
 );
 
 const activeMsgIdObj = (state: StateType) => state.globalState.activeMsgId;
-export const hiddenMsgIds = (state: StateType) => state.globalState.hiddenMsgIds;
+export const hiddenMsgIds = (state: StateType) =>
+  state.globalState.hiddenMsgIds;
 export const selectAllMessages = (state: StateType) => state.mail.messages;
 
-export const selectMessages = createSelector(
-  [selectAllMessages],
-  (messages) => {
-    return messages;
-  }
-);
+export const selectMessages = createSelector([selectAllMessages], messages => {
+  return messages;
+});
 
 export const activeMessageId = createSelector(
   [activeMsgIdObj, selectAllFolders, activeFolderIndex],
@@ -108,3 +106,15 @@ export const selectIndexForMessageId = createSelector(
 export const selectAllAliases = (state: StateType) => state.mail.aliases;
 export const selectAllAliasesById = (state: StateType) =>
   state.mail.aliases.byId;
+
+export const selectAllNamespaces = (state: StateType) => state.mail.namespaces;
+export const selectFirstNamespace = createSelector(selectAllNamespaces, ns => {
+  const ids = ns.allIds;
+  const objs = ns.byId;
+
+  if (ids.length > 0) {
+    return objs[ids[0]];
+  }
+
+  return null;
+});

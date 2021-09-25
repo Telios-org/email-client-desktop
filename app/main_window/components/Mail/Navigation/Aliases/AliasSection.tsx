@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // COMPONENTS
-import AliasModal from './AliasModal';
+import AliasModal from './Modal/AliasModal';
 import NamespaceBlock from './NamespaceBlock';
 
 // INTERNATIONALIZATION
@@ -39,24 +39,10 @@ export default function AliasSection(props: Props) {
 
   return (
     <>
-      {namespaceKeys.length > 0 &&
-        namespaceKeys.map(ns => (
-          <NamespaceBlock
-            key={ns}
-            nsKey={ns}
-            handleNewAlias={handleNewAlias}
-            handleEditAlias={handleEditAlias}
-          />
-        ))}
-      {namespaceKeys.length === 0 && (
-        <NamespaceBlock
-          key="no-ns"
-          nsKey={null}
-          handleNewAlias={handleNewAlias}
-          handleEditAlias={handleEditAlias}
-        />
-      )}
-
+      <NamespaceBlock
+        handleNewAlias={handleNewAlias}
+        handleEditAlias={handleEditAlias}
+      />
       <AliasModal show={showAliasModal} onHide={handleHideAliasModal} />
     </>
   );

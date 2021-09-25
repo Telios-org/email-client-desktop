@@ -11,6 +11,7 @@ const model = {
   },
   name: {
     type: DataTypes.STRING,
+    unique: true,
     allowNull: false
   },
   namespaceKey: {
@@ -27,50 +28,53 @@ const model = {
   },
   disabled: {
     type: DataTypes.BOOLEAN
-  }
+  },
+  // Timestamps
+  createdAt: DataTypes.DATE,
+  updatedAt: DataTypes.DATE
 };
 
-class Aliases extends Model {}
+class Alias extends Model {}
 
-module.exports.Aliases = Aliases;
+module.exports.Alias = Alias;
 
 module.exports.model = model;
 
 module.exports.init = async (sequelize, opts) => {
-  Aliases.init(model, {
+  Alias.init(model, {
     sequelize,
-    tableName: 'Aliases',
+    tableName: 'Alias',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('Aliases');
+  const collection = await drive.collection('Alias');
 
-  Aliases.addHook('afterCreate', async (alias, options) => {
+  Alias.addHook('afterCreate', async (alias, options) => {
     try {
       await collection.put(alias.aliasKey, alias.dataValues);
     } catch (err) {
-      console.log('Error saving Aliases to Hyperbee', err);
+      console.log('Error saving Alias to Hyperbee', err);
       throw new Error(err);
     }
   });
 
-  Aliases.addHook('afterUpdate', async (alias, options) => {
+  Alias.addHook('afterUpdate', async (alias, options) => {
     try {
       await collection.put(alias.aliasKey, alias.dataValues);
     } catch (err) {
-      console.log('Error saving Aliases to Hyperbee', err);
+      console.log('Error saving Alias to Hyperbee', err);
       throw new Error(err);
     }
   });
 
-  Aliases.addHook('beforeDestroy', async (alias, options) => {
+  Alias.addHook('beforeDestroy', async (alias, options) => {
     try {
       await collection.del(alias.aliasKey);
     } catch (err) {
       process.send({
-        event: 'BeforeDestroy-deleteAliases',
+        event: 'BeforeDestroy-deleteAlias',
         error: {
           name: err.name,
           message: err.message,
@@ -81,5 +85,5 @@ module.exports.init = async (sequelize, opts) => {
     }
   });
 
-  return Aliases;
+  return Alias;
 };

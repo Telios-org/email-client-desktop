@@ -34,7 +34,6 @@ import { selectAllAliasesById } from '../../../../selectors/mail';
 import { StateType } from '../../../../reducers/types';
 
 type Props = {
-  nsKey: string | null;
   handleNewAlias: () => void;
   handleEditAlias: (alias, e) => void;
 };
@@ -42,7 +41,7 @@ type Props = {
 export default function NamespaceBlock(props: Props) {
   const dispatch = useDispatch();
 
-  const { handleNewAlias, handleEditAlias, nsKey } = props;
+  const { handleNewAlias, handleEditAlias } = props;
 
   const allAliases = useSelector(selectAllAliasesById);
   const [expandAliases, setExpandAliases] = useState(true);
@@ -53,9 +52,13 @@ export default function NamespaceBlock(props: Props) {
 
   const aliases = useSelector((state: StateType) => state.mail.aliases.allIds);
 
-  const namespaces = useSelector(
-    (state: StateType) => state.mail.namespaces.byId
-  );
+  // const namespaces = useSelector(
+  //   (state: StateType) => state.mail.namespaces.byId
+  // );
+
+  // const namespaceKeys = useSelector(
+  //   (state: StateType) => state.mail.namespaces.allIds
+  // );
 
   // Dictionary of Icon Components used in this function
   const CustomIcon = {
@@ -117,9 +120,7 @@ export default function NamespaceBlock(props: Props) {
             onKeyPress={() => {}}
             onClick={toggleAliases}
           >
-            {nsKey !== null
-              ? namespaces[nsKey] && namespaces[nsKey].name
-              : i18n.t('mailbox.aliases')}
+            {i18n.t('mailbox.aliases')}
           </div>
           <div className="group-hover:visible invisible flex-none mr-2 inline-block items-center flex hover:bg-gray-200 cursor-pointer text-gray-600 rounded p-1">
             <Icon

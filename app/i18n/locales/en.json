@@ -78,6 +78,10 @@
       "aliases": "Aliases",
       "accountNamespace": "Account Namespace"
     },
+    "aliasing":{
+      "ns_choose": "Choose your alias namespace",
+      "alias_management": "Alias Management"
+    },
     "messageToolbar":{
       "saveDraft": "Save & Close",
       "openWindow": "Pop Out",

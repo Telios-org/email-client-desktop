@@ -4,8 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const SDK = require('@telios/client-sdk');
 const { Mailbox } = require('../models/mailbox.model');
 const { Folder, DefaultFolders } = require('../models/folder.model');
-const { AliasesNamespace } = require('../models/aliasNamespaces.model');
-const { Aliases } = require('../models/aliases.model');
+const { AliasNamespace } = require('../models/aliasNamespace.model');
+const { Alias } = require('../models/alias.model');
 const { Email } = require('../models/email.model');
 const { File } = require('../models/file.model');
 const fileUtil = require('../utils/file.util');
@@ -185,7 +185,7 @@ module.exports = env => {
 
     if (event === 'MAIL_SERVICE::getMailboxNamespaces') {
       try {
-        const namespaces = await AliasesNamespace.findAll({
+        const namespaces = await AliasNamespace.findAll({
           attributes: [
             'namespaceKey',
             'name',
@@ -228,7 +228,7 @@ module.exports = env => {
           key: secretBoxKeypair.publicKey
         });
 
-        const output = await AliasesNamespace.create({
+        const output = await AliasNamespace.create({
           namespaceKey: key,
           name: namespace,
           mailboxId,
@@ -254,8 +254,16 @@ module.exports = env => {
 
     if (event === 'MAIL_SERVICE::getMailboxAliases') {
       try {
-        const aliases = await Aliases.findAll({
-          attributes: ['aliasKey', 'name', 'namespaceKey', 'count', 'disabled'],
+        const aliases = await Alias.findAll({
+          attributes: [
+            'aliasKey',
+            'name',
+            'namespaceKey',
+            'count',
+            'disabled',
+            'forwardAddresses',
+            'createdAt'
+          ],
           where: { namespaceKey: { [Op.in]: payload.namespaceKeys } },
           order: [['name', 'ASC']],
           raw: true
@@ -282,6 +290,7 @@ module.exports = env => {
         const {
           namespaceName,
           namespaceKey,
+          domain,
           address,
           forwardAddresses,
           whitelisted
@@ -290,18 +299,18 @@ module.exports = env => {
         const mailbox = store.getMailbox();
 
         const { registered, alias_key } = await mailbox.registerAliasAddress({
-          alias_address: `${namespaceName}#${address}`,
+          alias_address: `${namespaceName}#${address}@${domain}`,
           forwards_to: forwardAddresses,
           whitelisted
         });
 
-        const output = await AliasesNamespace.create({
+        const output = await Alias.create({
           aliasKey: alias_key,
           name: address,
           namespaceKey,
           count: 0,
           forwardAddresses,
-          disabled: false
+          disabled: whitelisted
         });
 
         process.send({
@@ -320,7 +329,50 @@ module.exports = env => {
       }
     }
 
-    //ADD updateAliasAddress
+    if (event === 'MAIL_SERVICE::updateAliasAddress') {
+      try {
+        const {
+          namespaceName,
+          domain,
+          address,
+          forwardAddresses,
+          whitelisted
+        } = payload;
+
+        const mailbox = store.getMailbox();
+
+        await mailbox.updateAliasAddress({
+          alias_address: `${namespaceName}#${address}@${domain}`,
+          forwards_to: forwardAddresses,
+          whitelisted
+        });
+
+        const output = await Alias.update(
+          {
+            forwardAddresses,
+            disabled: whitelisted
+          },
+          {
+            where: { name: address },
+            individualHooks: true
+          }
+        );
+
+        process.send({
+          event: 'MAIL_WORKER::registerAliasAddress',
+          data: output.dataValues
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::registerAliasAddress',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
 
     if (event === 'getMessagesByFolderId') {
       try {

@@ -68,7 +68,10 @@ const model = {
   },
   seq: {
     type: DataTypes.INTEGER
-  }
+  },
+  // Timestamps
+  createdAt: DataTypes.DATE,
+  updatedAt: DataTypes.DATE
 };
 
 class Folder extends Model { }
@@ -82,7 +85,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'Folder',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();

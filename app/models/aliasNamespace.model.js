@@ -23,50 +23,53 @@ const model = {
   },
   disabled: {
     type: DataTypes.BOOLEAN
-  }
+  },
+  // Timestamps
+  createdAt: DataTypes.DATE,
+  updatedAt: DataTypes.DATE
 };
 
-class AliasesNamespace extends Model {}
+class AliasNamespace extends Model {}
 
-module.exports.AliasesNamespace = AliasesNamespace;
+module.exports.AliasNamespace = AliasNamespace;
 
 module.exports.model = model;
 
 module.exports.init = async (sequelize, opts) => {
-  AliasesNamespace.init(model, {
+  AliasNamespace.init(model, {
     sequelize,
     tableName: 'Namespace',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();
   const collection = await drive.collection('Namespace');
 
-  AliasesNamespace.addHook('afterCreate', async (ns, options) => {
+  AliasNamespace.addHook('afterCreate', async (ns, options) => {
     try {
       await collection.put(ns.namespaceKey, ns.dataValues);
     } catch (err) {
-      console.log('Error saving AliasesNamespace to Hyperbee', err);
+      console.log('Error saving AliasNamespace to Hyperbee', err);
       throw new Error(err);
     }
   });
 
-  AliasesNamespace.addHook('afterUpdate', async (ns, options) => {
+  AliasNamespace.addHook('afterUpdate', async (ns, options) => {
     try {
       await collection.put(ns.namespaceKey, ns.dataValues);
     } catch (err) {
-      console.log('Error saving AliasesNamespace to Hyperbee', err);
+      console.log('Error saving AliasNamespace to Hyperbee', err);
       throw new Error(err);
     }
   });
 
-  AliasesNamespace.addHook('beforeDestroy', async (ns, options) => {
+  AliasNamespace.addHook('beforeDestroy', async (ns, options) => {
     try {
       await collection.del(ns.namespaceKey);
     } catch (err) {
       process.send({
-        event: 'BeforeDestroy-deleteAliasesNamespace',
+        event: 'BeforeDestroy-deleteAliasNamespace',
         error: {
           name: err.name,
           message: err.message,
@@ -77,5 +80,5 @@ module.exports.init = async (sequelize, opts) => {
     }
   });
 
-  return AliasesNamespace;
+  return AliasNamespace;
 };

@@ -159,7 +159,7 @@ class AccountService {
           await MailService.registerMailbox(registerPayload);
           await MailService.saveMailbox(payload.email);
 
-          ipcRenderer.invoke('MATOMO::init', { account, isNew: true });
+          // ipcRenderer.invoke('MATOMO::init', { account, isNew: true });
 
           resolve({
             secretBoxPubKey: secretBoxKeypair.publicKey,

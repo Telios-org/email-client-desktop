@@ -55,7 +55,10 @@ const model = {
   },
   path: {
     type: Sequelize.STRING
-  }
+  },
+  // Timestamps
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE
 };
 
 class Email extends Model { }
@@ -69,7 +72,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'Email',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();

@@ -14,11 +14,6 @@ export default function namespaces(
 ) {
   switch (action.type) {
     case FETCH_MAIL_DATA_SUCCESS:
-      console.log(
-        'DICT TO ARRAY',
-        action.namespaces,
-        idFromArrayDict(action.namespaces, 'namespaceKey')
-      );
       return {
         byId: {
           ...arrayToObject(action.namespaces, 'namespaceKey')
@@ -26,11 +21,6 @@ export default function namespaces(
         allIds: [...idFromArrayDict(action.namespaces, 'namespaceKey')]
       };
     case REGISTER_NAMESPACE_SUCCESS:
-      console.log(
-        'DICT TO ARRAY2',
-        action.paylod,
-        idFromArrayDict([action.payload], 'namespaceKey')
-      );
       return {
         byId: {
           ...state.byId,

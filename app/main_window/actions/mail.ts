@@ -302,9 +302,10 @@ export const fetchMailboxNamespaces = (id: number) => {
 
 export const GET_MAILBOX_ALIASES_REQUEST =
   'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST';
-export const getMailboxAliasesRequest = () => {
+export const getMailboxAliasesRequest = (namespaceKeys: number[]) => {
   return {
-    type: GET_MAILBOX_ALIASES_REQUEST
+    type: GET_MAILBOX_ALIASES_REQUEST,
+    payload: namespaceKeys
   };
 };
 
@@ -332,7 +333,7 @@ export const getMailboxAliasesFailure = (error: Error) => {
 
 export const fetchMailboxAliases = (namespaceKeys: number[]) => {
   return async (dispatch: Dispatch) => {
-    dispatch(getMailboxAliasesRequest());
+    dispatch(getMailboxAliasesRequest(namespaceKeys));
     let aliases;
     try {
       aliases = await Mail.getMailboxAliases(namespaceKeys);

@@ -368,6 +368,40 @@ class MailService {
     });
   }
 
+  static registerAliasAddress(payload) {
+    worker.send({
+      event: 'MAIL_SERVICE::registerAliasAddress',
+      payload
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::registerAliasAddress', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static updateAliasAddress(payload) {
+    worker.send({
+      event: 'MAIL_SERVICE::updateAliasAddress',
+      payload
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::updateAliasAddress', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
   static search(searchQuery) {
     worker.send({ event: 'searchMailbox', payload: { searchQuery } });
 
