@@ -24,7 +24,7 @@ export default function AliasModal(props: Props) {
 
   return (
     <div className="modal-container">
-      <Modal show={show} onHide={onHide}>
+      <Modal show={show} onHide={onHide} size='md'>
         {namespace === null && (
           <NamespaceRegistration show={show} onHide={onHide} />
         )}

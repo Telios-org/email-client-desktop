@@ -7,10 +7,12 @@ import {
   FormGroup,
   FormControl,
   Schema,
-  InputGroup
+  InputGroup,
+  IconButton,
+  Icon
 } from 'rsuite';
 
-import { ChevronDown } from 'react-iconly';
+import { Danger } from 'react-iconly';
 import { generateSlug } from 'random-word-slugs';
 
 // REDUX ACTION
@@ -66,6 +68,7 @@ export default function AliasModal(props: Props) {
     } else {
       setFormValue(initialFormState);
     }
+    setShowHelp(false);
   }, [firstNamespace, show]);
 
   const handleSubmit = async () => {
@@ -122,8 +125,11 @@ export default function AliasModal(props: Props) {
       <Modal.Header>
         <Modal.Title className="font-bold flex-row flex justify-between select-none">
           <div>{i18n.t('aliasing.alias_management')}</div>
-          <div onClick={toggleHelp} className="text-coolGray-400 font-extralight text-xs mr-4 mt-1 cursor-pointer hover:text-coolGray-600">
-            {`${showHelp? 'Show' : 'Hide'} Help`}
+          <div
+            onClick={toggleHelp}
+            className="text-coolGray-400 font-extralight text-xs mr-4 mt-1 cursor-pointer hover:text-coolGray-600"
+          >
+            {`${showHelp ? 'Show' : 'Hide'} Help`}
           </div>
         </Modal.Title>
         <div className="text-xs">
@@ -134,7 +140,7 @@ export default function AliasModal(props: Props) {
         </div>
       </Modal.Header>
       <Modal.Body className="mt-5">
-        <div className={`text-sm mb-6 select-none ${showHelp? 'hidden' : ''}`}>
+        <div className={`text-sm mb-6 select-none ${showHelp ? '' : 'hidden'}`}>
           <p className="mb-4 text-sm">
             Need help creating aliases, you have
             <b> 2 options :</b>
@@ -157,11 +163,15 @@ export default function AliasModal(props: Props) {
 <span className="text-purple-600">mymadeupalias</span>
                 @telios.io
               </span>
-              and provide that in lieu of your primary email.
+              and provide that to the service, website, newsletter or perosn in
+              lieu of your primary email.
             </p>
-            <p className="leading-relaxed text-xs text-coolGray-400">
-              The alias will show in the app automatically as soon as it
-              receives its first email.
+            <p className="leading-relaxed text-xs text-coolGray-400 flex flex-row">
+              <Danger set="broken" className="text-purple-600" />
+              <span className="mt-1 ml-2 text-purple-600">
+                The alias will show up in the app automatically as soon as it
+                receives its first email.
+              </span>
             </p>
             <p className="mt-4">
               <b>Option 2 - </b>
@@ -183,9 +193,14 @@ export default function AliasModal(props: Props) {
           </p>
           <p className="text-sm" /> */}
         </div>
-        
-        <div>
-            
+
+        <div className="mb-2 flex flex-row-reverse">
+          <Button
+            onClick={onHide}
+            className="tracking-wide bg-purple-600 text-white border-color-purple-800 shadow-s "
+          >
+            <Icon icon="plus" className="mr-1 text-xs" /> Add alias
+          </Button>
         </div>
         <div className="bg-coolGray-100 w-full rounded-lg flex items-center flex-col pb-6 pt-4">
           {/* <CgHashtag className="text-3xl text-coolGray-400"/> */}
@@ -196,7 +211,8 @@ export default function AliasModal(props: Props) {
       <Modal.Footer>
         <Button
           onClick={onHide}
-          className="tracking-wide bg-purple-600 text-white border-color-purple-800 shadow-s"
+          appearance="ghost"
+          className="border-coolGray-300 text-coolGray-400 tracking-wide"
         >
           Close
         </Button>
