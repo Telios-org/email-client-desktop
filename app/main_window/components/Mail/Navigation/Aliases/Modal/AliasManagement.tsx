@@ -10,7 +10,7 @@ import {
   InputGroup
 } from 'rsuite';
 
-import RandomIcon from '@rsuite/icons/Random';
+import { ChevronDown } from 'react-iconly';
 import { generateSlug } from 'random-word-slugs';
 
 // REDUX ACTION
@@ -23,6 +23,7 @@ import {
 } from '../../../../../selectors/mail';
 
 import i18n from '../../../../../../i18n/i18n';
+import { namespace } from '../../../../../../app.global.less';
 
 const { StringType } = Schema.Types;
 
@@ -52,6 +53,7 @@ export default function AliasModal(props: Props) {
       msg: ''
     }
   });
+  const [showHelp, setShowHelp] = useState(false);
   const formEl = useRef(null);
 
   const disableNsCreation = formValue.namespace.length === 0;
@@ -111,55 +113,93 @@ export default function AliasModal(props: Props) {
     handleChange({ namespace: slug });
   };
 
+  const toggleHelp = () => {
+    setShowHelp(!showHelp);
+  };
+
   return (
     <>
       <Modal.Header>
-        <Modal.Title className="font-bold">
-          {i18n.t('aliasing.alias_management')}
+        <Modal.Title className="font-bold flex-row flex justify-between select-none">
+          <div>{i18n.t('aliasing.alias_management')}</div>
+          <div onClick={toggleHelp} className="text-coolGray-400 font-extralight text-xs mr-4 mt-1 cursor-pointer hover:text-coolGray-600">
+            {`${showHelp? 'Show' : 'Hide'} Help`}
+          </div>
         </Modal.Title>
+        <div className="text-xs">
+          <span>Namespace:</span>
+          <span className="font-semibold text-blue-500 capitalize ml-1">
+            {firstNamespace.name}
+          </span>
+        </div>
       </Modal.Header>
-      <Modal.Body>
-        <div className="">
-          <p className="text-sm">
-            <b>Option 1</b>
+      <Modal.Body className="mt-5">
+        <div className={`text-sm mb-6 select-none ${showHelp? 'hidden' : ''}`}>
+          <p className="mb-4 text-sm">
+            Need help creating aliases, you have
+            <b> 2 options :</b>
           </p>
-          <p className="text-sm">
-            <b>Option 2</b>
-          </p>
-          <p className="text-sm text-center bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded">
+          <div className="pl-4">
+            <p>
+              <span>
+                <b>Option 1 - </b>
+                On the fly creation
+              </span>
+            </p>
+            <p className="leading-relaxed">
+              To create an alias on the fly useing your namespace, simply make
+              up an alias
+              <span className="bg-coolGray-100 shadow-sm border border-coolGray-200 rounded px-1 mx-1 font-bold">
+                <span className="text-blue-500">
+                  {firstNamespace && firstNamespace.name}
+                </span>
+                #
+<span className="text-purple-600">mymadeupalias</span>
+                @telios.io
+              </span>
+              and provide that in lieu of your primary email.
+            </p>
+            <p className="leading-relaxed text-xs text-coolGray-400">
+              The alias will show in the app automatically as soon as it
+              receives its first email.
+            </p>
+            <p className="mt-4">
+              <b>Option 2 - </b>
+              In app creation
+            </p>
+            <p>
+              Click the{' '}
+              <span className="leading-relaxed bg-coolGray-100 shadow-sm border border-coolGray-200 rounded px-1 mx-1 font-bold">
+                + add alias
+              </span>{' '}
+              button below
+            </p>
+          </div>
+
+          {/* <p className="text-sm text-center bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded">
             <b>namespace</b>
             <b className="text-purple-500">#myalias</b>
             <b>@telios.io</b>
-
           </p>
-          <p className="text-sm">
-          </p>
+          <p className="text-sm" /> */}
+        </div>
+        
+        <div>
+            
+        </div>
+        <div className="bg-coolGray-100 w-full rounded-lg flex items-center flex-col pb-6 pt-4">
+          {/* <CgHashtag className="text-3xl text-coolGray-400"/> */}
+          <span className="text-2xl text-coolGray-400">@</span>
+          <p className="text-sm text-coolGray-400">No alias created yet</p>
         </div>
       </Modal.Body>
-      <Modal.Footer className="flex justify-between">
-        {/* <div className="flex flex-1 justify-items-start">
-          <Button
-            onClick={onHide}
-            appearance="ghost"
-            className="border-coolGray-300 text-coolGray-400 tracking-wide"
-          >
-            Cancel
-          </Button>
-        </div>
-        <div className="flex-1">
-          <Button
-            type="submit"
-            onClick={handleSubmit}
-            disabled={disableNsCreation}
-            className={`tracking-wide ${
-              disableNsCreation
-                ? 'bg-coolGray-100 text-gray-400'
-                : 'bg-purple-600 text-white'
-            } border-color-purple-800 shadow-sm`}
-          >
-            {i18n.t('global.create')}
-          </Button>
-        </div> */}
+      <Modal.Footer>
+        <Button
+          onClick={onHide}
+          className="tracking-wide bg-purple-600 text-white border-color-purple-800 shadow-s"
+        >
+          Close
+        </Button>
       </Modal.Footer>
     </>
   );
