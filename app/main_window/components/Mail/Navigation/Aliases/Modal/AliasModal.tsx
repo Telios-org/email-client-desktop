@@ -5,6 +5,7 @@ import { Modal } from 'rsuite';
 // COMPONENTS
 import NamespaceRegistration from './NamespaceRegistration';
 import AliasManagement from './AliasManagement';
+import AliasRegistration from './AliasRegistration';
 
 // SELECTORS
 import { selectFirstNamespace } from '../../../../../selectors/mail';
@@ -20,15 +21,40 @@ export default function AliasModal(props: Props) {
   const dispatch = useDispatch();
   const namespace = useSelector(selectFirstNamespace);
 
+  const [modalRoute, setModalRoute] = useState('');
+
   const { show, onHide } = props;
+
+  useEffect(() => {
+    if (namespace === null) {
+      setModalRoute('nsRegistration');
+    } else {
+      setModalRoute('aliasManagement');
+    }
+  }, [namespace, show]);
+
+
 
   return (
     <div className="modal-container">
-      <Modal show={show} onHide={onHide} size='md'>
-        {namespace === null && (
+      <Modal show={show} onHide={onHide} size="md">
+        {modalRoute === 'nsRegistration' && (
           <NamespaceRegistration show={show} onHide={onHide} />
         )}
-        {namespace !== null && <AliasManagement show={show} onHide={onHide} />}
+        {modalRoute === 'aliasManagement' && (
+          <AliasManagement
+            show={show}
+            onHide={onHide}
+            onCreateAlias={() => setModalRoute('aliasRegistration')}
+          />
+        )}
+        {modalRoute === 'aliasRegistration' && (
+          <AliasRegistration
+            show={show}
+            onHide={onHide}
+            onShowManagement={() => setModalRoute('aliasManagement')}
+          />
+        )}
       </Modal>
     </div>
   );

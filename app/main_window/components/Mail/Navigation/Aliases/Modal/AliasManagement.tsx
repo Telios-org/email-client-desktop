@@ -36,6 +36,7 @@ const formModel = Schema.Model({
 type Props = {
   show: boolean;
   onHide: () => void;
+  onCreateAlias: () => void;
 };
 
 const initialFormState = {
@@ -43,78 +44,15 @@ const initialFormState = {
 };
 
 export default function AliasModal(props: Props) {
-  const dispatch = useDispatch();
-  const mailbox = useSelector(selectActiveMailbox);
   const firstNamespace = useSelector(selectFirstNamespace);
 
-  const { onHide, show } = props;
-  const [formValue, setFormValue] = useState(initialFormState);
-  const [errorBlock, setErrorBlock] = useState({
-    namespace: {
-      showError: false,
-      msg: ''
-    }
-  });
-  const [showHelp, setShowHelp] = useState(false);
-  const formEl = useRef(null);
+  const { onHide, show, onCreateAlias } = props;
 
-  const disableNsCreation = formValue.namespace.length === 0;
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
-    if (firstNamespace !== null) {
-      setFormValue({
-        namespace: firstNamespace.name
-      });
-    } else {
-      setFormValue(initialFormState);
-    }
     setShowHelp(false);
-  }, [firstNamespace, show]);
-
-  const handleSubmit = async () => {
-    const { id } = mailbox;
-    const { namespace } = formValue;
-
-    // In case of retry clear out error block.
-    setErrorBlock({
-      namespace: {
-        showError: false,
-        msg: ''
-      }
-    });
-
-    const { status, success } = await dispatch(
-      registerNamespace(id, namespace)
-    );
-
-    if (!success && status === 'already-registered') {
-      setErrorBlock({
-        namespace: {
-          showError: true,
-          msg: 'Namespace is unavailable.'
-        }
-      });
-    }
-  };
-
-  const handleChange = val => {
-    setErrorBlock({
-      namespace: {
-        showError: false,
-        msg: ''
-      }
-    });
-    setFormValue({ ...val });
-  };
-
-  const generateRandomString = () => {
-    const slug = generateSlug(2, {
-      format: 'kebab',
-      partsOfSpeech: ['adjective', 'noun']
-    });
-
-    handleChange({ namespace: slug });
-  };
+  }, [show]);
 
   const toggleHelp = () => {
     setShowHelp(!showHelp);
@@ -129,7 +67,7 @@ export default function AliasModal(props: Props) {
             onClick={toggleHelp}
             className="text-coolGray-400 font-extralight text-xs mr-4 mt-1 cursor-pointer hover:text-coolGray-600"
           >
-            {`${showHelp ? 'Show' : 'Hide'} Help`}
+            {`${showHelp ? 'Hide' : 'Show'} Help`}
           </div>
         </Modal.Title>
         <div className="text-xs">
@@ -145,7 +83,7 @@ export default function AliasModal(props: Props) {
             Need help creating aliases, you have
             <b> 2 options :</b>
           </p>
-          <div className="pl-4">
+          <div className="px-5 py-4 rounded-lg bg-coolGray-100">
             <p>
               <span>
                 <b>Option 1 - </b>
@@ -155,7 +93,7 @@ export default function AliasModal(props: Props) {
             <p className="leading-relaxed">
               To create an alias on the fly useing your namespace, simply make
               up an alias
-              <span className="bg-coolGray-100 shadow-sm border border-coolGray-200 rounded px-1 mx-1 font-bold">
+              <span className="bg-white shadow-sm border border-coolGray-300 rounded px-1 mx-1 font-bold">
                 <span className="text-blue-500">
                   {firstNamespace && firstNamespace.name}
                 </span>
@@ -166,7 +104,7 @@ export default function AliasModal(props: Props) {
               and provide that to the service, website, newsletter or perosn in
               lieu of your primary email.
             </p>
-            <p className="leading-relaxed text-xs text-coolGray-400 flex flex-row">
+            <p className="leading-relaxed text-xs flex flex-row">
               <Danger set="broken" className="text-purple-600" />
               <span className="mt-1 ml-2 text-purple-600">
                 The alias will show up in the app automatically as soon as it
@@ -179,7 +117,7 @@ export default function AliasModal(props: Props) {
             </p>
             <p>
               Click the{' '}
-              <span className="leading-relaxed bg-coolGray-100 shadow-sm border border-coolGray-200 rounded px-1 mx-1 font-bold">
+              <span className="leading-relaxed bg-white shadow-sm border border-coolGray-300 rounded px-1 mx-1 font-bold">
                 + add alias
               </span>{' '}
               button below
@@ -194,9 +132,9 @@ export default function AliasModal(props: Props) {
           <p className="text-sm" /> */}
         </div>
 
-        <div className="mb-2 flex flex-row-reverse">
+        <div className="mb-3 flex flex-row-reverse">
           <Button
-            onClick={onHide}
+            onClick={onCreateAlias}
             className="tracking-wide bg-purple-600 text-white border-color-purple-800 shadow-s "
           >
             <Icon icon="plus" className="mr-1 text-xs" /> Add alias

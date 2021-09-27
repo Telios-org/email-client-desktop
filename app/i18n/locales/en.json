@@ -80,7 +80,8 @@
     },
     "aliasing":{
       "ns_choose": "Choose your alias namespace",
-      "alias_management": "Alias Management"
+      "alias_management": "Alias Management",
+      "alias_registration": "Alias Registration"
     },
     "messageToolbar":{
       "saveDraft": "Save & Close",
