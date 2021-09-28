@@ -2,8 +2,8 @@ import {
   FETCH_MAIL_DATA_SUCCESS,
   SAVE_INCOMING_MESSAGES_SUCCESS,
   MSG_SELECTION_FLOW_SUCCESS,
-  MSG_SELECTION_FLOW,
-  FOLDER_SELECTION_FLOW_SUCCESS
+  FOLDER_SELECTION_FLOW_SUCCESS,
+  FETCH_MORE_FOLDER_MESSAGES_SUCCESS
 } from '../../actions/mail';
 import {
   SAVE_SENT_MESSAGE_SUCCESS,
@@ -51,16 +51,27 @@ export default function messages(
     case SAVE_SENT_MESSAGE_SUCCESS:
       // checking for undefined to satisfy TS requirement.
       if (action.messages !== undefined && action.messages.length > 0) {
+
+        let messageArr = [];
+
         const msg = action.messages.filter(
           m => m.folderId === action.activeFolderId
         );
+
+        messageArr = [...msg];
+
+        for (let key in state.byId) {
+          messageArr.push(state.byId[key]);
+        }
+
+        const sortedMessages = messageArr.sort((a, b) => b.date - a.date);
+
         return {
           ...state,
           byId: {
-            ...state.byId,
-            ...arrayToObject(msg)
+            ...arrayToObject(sortedMessages)
           },
-          allIds: [...idFromArrayDict(msg), ...state.allIds]
+          allIds: [...idFromArrayDict(sortedMessages)]
         };
       }
       return { ...state };
@@ -100,6 +111,15 @@ export default function messages(
         ...state,
         byId: _byId,
         allIds: _allIds
+      };
+    case FETCH_MORE_FOLDER_MESSAGES_SUCCESS:
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          ...arrayToObject(action.messages)
+        },
+        allIds: [...state.allIds, ...idFromArrayDict(action.messages)]
       };
     default:
       return { ...state };

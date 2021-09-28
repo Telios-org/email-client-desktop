@@ -174,24 +174,19 @@ function MessageDisplay(props: Props) {
 
   const IFrame = ({ children, ...props }) => {
     const [contentRef, setContentRef] = useState();
-    const [height, setHeight] = useState('0px');
     const mountNode = contentRef?.contentWindow?.document?.body;
 
-    const onLoad = debounce(() => {
-      setHeight(
-        `${contentRef?.contentWindow?.document?.body?.scrollHeight + 20}px`
-      );
+    const onLoad = () => {
       setLoaded(true);
-    }, 100);
+    };
 
     return (
       <iframe
         {...props}
         ref={setContentRef}
         onLoad={onLoad}
-        height={height}
+        className={props.className}
         id="email-body"
-        scrolling="no"
         frameBorder="0"
       >
         {mountNode && createPortal(children, mountNode)}
@@ -283,23 +278,22 @@ function MessageDisplay(props: Props) {
       )}
       <div className="flex flex-1 w-full h-full relative">
         <div className="h-full flex-grow">
-          <Scrollbars hideTracksWhenNotNeeded autoHide>
-            <div className="h-full">
-              <div className="px-6 mb-6 mt-4 h-full">
-                {!loaded && (
-                  <Loader size="lg" backdrop vertical />
+          <div className="h-full">
+            <div className="mb-2 h-full">
+              {!loaded && (
+                <Loader size="lg" backdrop vertical />
+              )}
+
+              <IFrame className="w-full h-full">
+                {bodyAsHtml && (
+                  <div style={divStyle}>
+                    {renderHTML(bodyAsHtml)}
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
+                  </div>
                 )}
-                <IFrame className="w-full">
-                  {bodyAsHtml && (
-                    <div style={divStyle}>
-                      {renderHTML(bodyAsHtml)}
-                      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
-                    </div>
-                  )}
-                </IFrame>
-              </div>
+              </IFrame>
             </div>
-          </Scrollbars>
+          </div>
         </div>
       </div>
     </div>

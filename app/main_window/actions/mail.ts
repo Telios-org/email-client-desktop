@@ -125,7 +125,7 @@ export const fetchFolderMessages = (id: number) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByFolderId(id, 500);
+      messages = await Mail.getMessagesByFolderId(id, 50);
     } catch (error) {
       dispatch(getFolderMessagesFailure(error));
       return Promise.reject(error);
@@ -141,6 +141,32 @@ export const fetchFolderMessages = (id: number) => {
     //     await dispatch(fetchMsg(current[0]));
     //   }
     // }
+
+    return Promise.resolve(messages);
+  };
+};
+
+
+export const FETCH_MORE_FOLDER_MESSAGES_SUCCESS =
+  'MAILPAGE::FETCH_MORE_FOLDER_MESSAGES_SUCCESS';
+export const fetchMoreFolderMessagesSuccess = (messages: MailMessageType[]) => {
+  return {
+    type: FETCH_MORE_FOLDER_MESSAGES_SUCCESS,
+    messages
+  };
+};
+
+export const fetchMoreFolderMessages = (id: number, offset: number) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    let messages;
+
+    try {
+      messages = await Mail.getMessagesByFolderId(id, 50, offset);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+
+    dispatch(fetchMoreFolderMessagesSuccess(messages));
 
     return Promise.resolve(messages);
   };
@@ -379,9 +405,8 @@ export const saveIncomingMessagesFailure = (error: Error) => {
   };
 };
 
-export const saveIncomingMessages = (messages: Email[]) => {
+export const saveIncomingMessages = (messages: any) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    // dispatch(saveIncomingMessagesRequest());
     const {
       globalState: { activeFolderIndex },
       mail: {
@@ -389,26 +414,17 @@ export const saveIncomingMessages = (messages: Email[]) => {
       }
     } = getState();
     // eslint-disable-next-line
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        let msg;
-        try {
-          msg = await Mail.save({ messages, type: 'Incoming', sync: true });
-          // eslint-disable-next-line no-underscore-dangle
-          const msgArray = messages.map(m => m._id);
-          Mail.markAsSynced(msgArray, { sync: false });
-        } catch (error) {
-          dispatch(saveIncomingMessagesFailure(error));
-          return reject(error);
-        }
-        dispatch(
-          saveIncomingMessagesSuccess(msg, foldersArray[activeFolderIndex])
-        );
 
-        dispatch(updateFolderCount(1, 1));
-        return resolve('done');
-      });
+    Mail.save({ messages, type: 'Incoming', sync: true }).then(msg => {
+      dispatch(saveIncomingMessagesSuccess(msg, foldersArray[activeFolderIndex]));
     });
+
+    // eslint-disable-next-line no-underscore-dangle
+    const msgArray = messages.map(m => m._id);
+    Mail.markAsSynced(msgArray, { sync: false });
+
+    dispatch(updateFolderCount(1, 1));
+    return Promise.resolve('done');
   };
 };
 
@@ -590,16 +606,6 @@ export const messageSelection = (message: MailMessageType, action: string) => {
       dispatch(showMaximizedMessageDisplay(true));
     }
 
-    // dispatch(fetchMsg(message.id))
-    //   .then(fullMsg => {
-    //     dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
-    //     return Promise.resolve(message.id);
-    //   })
-    //   .catch(err => {
-    //     dispatch(msgSelectionFlowFailure(err));
-    //     return Promise.reject(err);
-    //   });
-
     try {
       const fullMsg = await dispatch(fetchMsg(message.id));
       dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
@@ -634,11 +640,13 @@ export const FOLDER_SELECTION_FLOW_SUCCESS =
   'MAILPAGE::FOLDER_SELECTION_FLOW_SUCCESS';
 export const folderSelectionFlowSuccess = (
   index: number,
+  folderId: number,
   messages: MailMessageType[]
 ) => {
   return {
     type: FOLDER_SELECTION_FLOW_SUCCESS,
     index,
+    folderId,
     messages
   };
 };
@@ -652,7 +660,7 @@ export const folderSelectionFlowFailure = (error: Error) => {
   };
 };
 
-export const folderSelection = (folderIndex: string) => {
+export const folderSelection = (folderIndex: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(folderSelectionFlow(folderIndex));
     // dispatch(showMaximizedMessageDisplay(false));
@@ -671,7 +679,7 @@ export const folderSelection = (folderIndex: string) => {
         const foldersActiveMsg = activeMsgIdObj[newFolderId].id;
 
         // Making sure the message selection has not been set to null before trying to fetch the message.
-        if (foldersActiveMsg !== null) {
+        if (foldersActiveMsg) {
           const fullActiveMsg = await dispatch(fetchMsg(foldersActiveMsg));
           messages = messages.map(m =>
             m.id !== fullActiveMsg.id ? m : fullActiveMsg
@@ -683,7 +691,7 @@ export const folderSelection = (folderIndex: string) => {
       return Promise.reject(err);
     }
 
-    dispatch(folderSelectionFlowSuccess(folderIndex, messages));
+    dispatch(folderSelectionFlowSuccess(folderIndex, newFolderId, messages));
     return Promise.resolve();
   };
 };
@@ -772,7 +780,7 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
       const foldersActiveMsg = activeMsgIdObj[activeFolderId].id;
 
       // Making sure the message selection has not been set to null before trying to fetch the message.
-      if (foldersActiveMsg !== null) {
+      if (foldersActiveMsg) {
         const fullActiveMsg = await dispatch(fetchMsg(foldersActiveMsg));
         messages = messages.map(m =>
           m.id !== fullActiveMsg.id ? m : fullActiveMsg

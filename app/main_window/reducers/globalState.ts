@@ -83,7 +83,7 @@ const globalState = (
             selected: action.payload
           }
         }
-      };
+      }
     case MSG_SELECTION_FLOW:
       return {
         ...state,
@@ -103,18 +103,18 @@ const globalState = (
           ...state.activeMsgId,
           [action.folderId]: {
             id: null
-            // selected: {
-            //   startIdx: null,
-            //   endIdx: null,
-            //   exclude: [],
-            //   items: []
-            // }
           }
         }
       };
     case FOLDER_SELECTION_FLOW_SUCCESS:
       return {
         ...state,
+        activeMsgId: {
+          ...state.activeMsgId,
+          [action.folderId]: {
+            id: null
+          }
+        },
         highlightText: '',
         activeFolderIndex: action.index
       };

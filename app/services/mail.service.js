@@ -207,16 +207,6 @@ class MailService {
 
   static updateFolderCount(opts) {
     worker.send({ event: 'updateFolderCount', payload: opts });
-
-    return new Promise((resolve, reject) => {
-      worker.once('updateFolderCount', m => {
-        const { data, error } = m;
-
-        if (error) return reject(error);
-
-        return resolve(data);
-      });
-    });
   }
 
   static deleteFolder(opts) {
@@ -247,8 +237,8 @@ class MailService {
     });
   }
 
-  static getMessagesByFolderId(id, limit) {
-    worker.send({ event: 'getMessagesByFolderId', payload: { id, limit } });
+  static getMessagesByFolderId(id, limit, offset) {
+    worker.send({ event: 'getMessagesByFolderId', payload: { id, limit, offset } });
 
     return new Promise((resolve, reject) => {
       worker.once('getMessagesByFolderId', m => {
