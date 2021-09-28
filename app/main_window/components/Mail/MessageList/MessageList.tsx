@@ -86,13 +86,13 @@ export default function MessageList(props: Props) {
     if (virtualLoaderRef.current) {
       virtualLoaderRef.current.resetloadMoreItemsCache();
     }
-  }, [folderId, messages]);
+  }, [currentFolderName, messages]);
 
   useEffect(() => {
     if (virtualLoaderRef && virtualLoaderRef.current) {
       virtualLoaderRef.current._listRef.scrollToItem(0);
     }
-  }, [folderId]);
+  }, [currentFolderName]);
 
   const handleDropResult = async (item, dropResult) => {
     let selection = [];
