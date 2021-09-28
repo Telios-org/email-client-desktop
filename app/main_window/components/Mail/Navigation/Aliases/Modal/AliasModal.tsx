@@ -29,7 +29,7 @@ export default function AliasModal(props: Props) {
     if (namespace === null) {
       setModalRoute('nsRegistration');
     } else {
-      setModalRoute('aliasManagement');
+      setModalRoute('aliasRegistration');
     }
   }, [namespace, show]);
 

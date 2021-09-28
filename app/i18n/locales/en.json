@@ -81,7 +81,7 @@
     "aliasing":{
       "ns_choose": "Choose your alias namespace",
       "alias_management": "Alias Management",
-      "alias_registration": "Alias Registration"
+      "alias_registration": "Create New Alias"
     },
     "messageToolbar":{
       "saveDraft": "Save & Close",

@@ -14,6 +14,9 @@ const model = {
     unique: true,
     allowNull: false
   },
+  description: {
+    type: DataTypes.TEXT
+  },
   namespaceKey: {
     type: DataTypes.STRING,
     allowNull: false

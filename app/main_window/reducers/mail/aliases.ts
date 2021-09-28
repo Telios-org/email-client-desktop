@@ -3,8 +3,15 @@ import { FETCH_MAIL_DATA_SUCCESS } from '../../actions/mail';
 
 const initialState = {
   byId: {},
-  allIds: []
+  allIds: [],
+  fwdAddresses:[] //must have the format below
 };
+
+// const pickerData = [
+//   { label: 'youri.nelson@gmail.com', value: 'youri.nelson@gmail.com' },
+//   { label: 'pierre.kraus@gmail.com', value: 'pierre.kraus@gmail.com' }
+// ]
+
 
 export default function aliases(
   state: MailType = initialState,
@@ -12,6 +19,7 @@ export default function aliases(
 ) {
   switch (action.type) {
     case FETCH_MAIL_DATA_SUCCESS:
+
       return {
         byId: {
           ...arrayToObject(action.aliases, 'id')

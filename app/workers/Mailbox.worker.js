@@ -258,6 +258,7 @@ module.exports = env => {
           attributes: [
             'aliasKey',
             'name',
+            'description',
             'namespaceKey',
             'count',
             'disabled',
@@ -292,6 +293,7 @@ module.exports = env => {
           namespaceKey,
           domain,
           address,
+          description,
           forwardAddresses,
           whitelisted
         } = payload;
@@ -309,6 +311,7 @@ module.exports = env => {
           name: address,
           namespaceKey,
           count: 0,
+          description,
           forwardAddresses,
           disabled: whitelisted
         });
@@ -335,6 +338,7 @@ module.exports = env => {
           namespaceName,
           domain,
           address,
+          description,
           forwardAddresses,
           whitelisted
         } = payload;
@@ -350,6 +354,7 @@ module.exports = env => {
         const output = await Alias.update(
           {
             forwardAddresses,
+            description,
             disabled: whitelisted
           },
           {

@@ -7,7 +7,8 @@ import {
   FormGroup,
   FormControl,
   Schema,
-  InputGroup
+  InputGroup,
+  ControlLabel
 } from 'rsuite';
 
 import RandomIcon from '@rsuite/icons/Random';
@@ -119,50 +120,59 @@ export default function AliasModal(props: Props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="">
-          <p className="text-sm">
-            To create aliases you first need to create an alias namespace. This
-            namespace will be the basis for all your aliases as shown below.
-          </p>
-          <p className="text-sm text-center bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded">
-            <b className="text-purple-500">namespace</b>
-            <b>#myalias@telios.io</b>
-          </p>
-          <p className="text-sm">
-            You namespace is unique to you. You can choose it yourself or
-            randomly generate it.
-          </p>
-        </div>
-        <Form
-          fluid
-          ref={formEl}
-          className="text-sm mt-5"
-          model={formModel}
-          formValue={formValue}
-          onChange={handleChange}
-          layout="horizontal"
-        >
-          <FormGroup controlId="namespace" className="relative mb-4">
-            <InputGroup style={{ width: '250px' }} className="m-auto">
-              <FormControl name="namespace" placeholder="Make your choice" />
+        <div className="mx-36">
+          <div className="">
+            <p className="text-sm">
+              To create aliases you first need to create an alias namespace.
+              This namespace will be the basis for all your aliases as shown
+              below.
+            </p>
+            <p className="text-sm text-center bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded">
+              <b className="text-purple-500">
+                {formValue.namespace.length === 0
+                  ? 'namespace'
+                  : formValue.namespace}
+              </b>
+              <b>#myalias@telios.io</b>
+            </p>
+            <p className="text-sm">
+              You namespace is unique to you. You can choose it yourself or
+              randomly generate it.
+            </p>
+          </div>
+          <Form
+            fluid
+            ref={formEl}
+            className="text-sm mt-5"
+            model={formModel}
+            formValue={formValue}
+            onChange={handleChange}
+          >
+            <FormGroup controlId="namespace" className="relative mb-4">
+              <ControlLabel className="text-coolGray-600 font-semibold text-sm">
+                Namespace
+              </ControlLabel>
+              <InputGroup className="w-full">
+                <FormControl name="namespace" placeholder="Make your choice" />
 
-              <InputGroup.Button
-                className="group"
-                onClick={generateRandomString}
+                <InputGroup.Button
+                  className="group"
+                  onClick={generateRandomString}
+                >
+                  <RandomIcon className="group-hover:text-blue-600" />
+                </InputGroup.Button>
+              </InputGroup>
+              <div
+                className={`absolute w-full text-center ${
+                  errorBlock.namespace.showError ? 'text-red-500' : 'hidden'
+                }`}
+                style={{ bottom: '-25px', marginLeft: '10px' }}
               >
-                <RandomIcon className="group-hover:text-blue-600" />
-              </InputGroup.Button>
-            </InputGroup>
-            <div
-              className={`absolute w-full text-center ${
-                errorBlock.namespace.showError ? 'text-red-500' : 'hidden'
-              }`}
-              style={{ bottom: '-25px', marginLeft: '10px' }}
-            >
-              {errorBlock.namespace.msg}
-            </div>
-          </FormGroup>
-        </Form>
+                {errorBlock.namespace.msg}
+              </div>
+            </FormGroup>
+          </Form>
+        </div>
       </Modal.Body>
       <Modal.Footer className="flex justify-between">
         <div className="flex flex-1 justify-items-start">
