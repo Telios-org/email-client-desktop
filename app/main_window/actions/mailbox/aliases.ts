@@ -35,11 +35,78 @@ export const registerNamespace = (mailboxId: number, namespace: string) => {
 
       if (error.message.startsWith('E11000 duplicate key')) {
         return { status: 'already-registered', success: false };
-      } 
+      }
       return error;
     }
 
     dispatch(namespaceRegistrationSuccess(ns));
+    return { status: 'registered', success: true };
+  };
+};
+
+export const REGISTER_ALIAS = 'ALIASES::REGISTER_ALIAS';
+export const startAliasRegistration = (alias:string) => {
+  return {
+    type: REGISTER_ALIAS,
+    alias
+  };
+};
+
+export const REGISTER_ALIAS_SUCCESS = 'ALIASES::REGISTER_ALIAS_SUCCESS';
+export const aliasRegistrationSuccess = payload => {
+  return {
+    type: REGISTER_ALIAS_SUCCESS,
+    payload
+  };
+};
+
+export const REGISTER_ALIAS_FAILURE = 'ALIASES::REGISTER_ALIAS_FAILURE';
+export const aliasRegistrationFailure = (error: string, alias:string) => {
+  return {
+    type: REGISTER_ALIAS_FAILURE,
+    error,
+    alias
+  };
+};
+
+export const registerAlias = (
+  namespaceName: string,
+  namespaceKey: string,
+  domain: string,
+  address: string,
+  description: string,
+  fwdAddresses: string[],
+  whitelisted: boolean
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch(startAliasRegistration(`${namespaceName}#${address}@${domain}`));
+    let alias;
+    try {
+      alias = await Mail.registerAliasAddress({
+        namespaceName,
+        namespaceKey,
+        domain,
+        address,
+        description,
+        fwdAddresses,
+        whitelisted
+      });
+    } catch (error) {
+      dispatch(
+        aliasRegistrationFailure(error, `${namespaceName}#${address}@${domain}`)
+      );
+
+      // if (error.message.startsWith('E11000 duplicate key')) {
+      //   return { status: 'already-registered', success: false };
+      // }
+      return {
+        status: 'issue-registering',
+        success: false,
+        message: error.message
+      };
+    }
+
+    dispatch(aliasRegistrationSuccess(alias));
     return { status: 'registered', success: true };
   };
 };

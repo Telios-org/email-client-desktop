@@ -34,6 +34,7 @@ const formModel = Schema.Model({
 type Props = {
   show: boolean;
   onHide: () => void;
+  domain: string;
 };
 
 const initialFormState = {
@@ -45,7 +46,7 @@ export default function AliasModal(props: Props) {
   const mailbox = useSelector(selectActiveMailbox);
   const firstNamespace = useSelector(selectFirstNamespace);
 
-  const { onHide, show } = props;
+  const { onHide, show, domain } = props;
   const [formValue, setFormValue] = useState(initialFormState);
   const [errorBlock, setErrorBlock] = useState({
     namespace: {
@@ -104,10 +105,22 @@ export default function AliasModal(props: Props) {
   };
 
   const generateRandomString = () => {
-    const slug = generateSlug(2, {
+    const slug = generateSlug(2,{
       format: 'kebab',
-      partsOfSpeech: ['adjective', 'noun']
-    });
+      partsOfSpeech: ['adjective', 'noun'],
+      categories: {
+        noun: [
+          'animals',
+          'place',
+          'food',
+          'sport',
+          'science',
+          'technology',
+          'thing'
+        ],
+        adjective: ['color', 'shapes', 'sounds', 'time']
+      }
+    }).replace('-', '');
 
     handleChange({ namespace: slug });
   };
@@ -133,7 +146,7 @@ export default function AliasModal(props: Props) {
                   ? 'namespace'
                   : formValue.namespace}
               </b>
-              <b>#myalias@telios.io</b>
+              <b>{`#myalias@${domain}`}</b>
             </p>
             <p className="text-sm">
               You namespace is unique to you. You can choose it yourself or

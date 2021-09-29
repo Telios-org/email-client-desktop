@@ -3,7 +3,7 @@ const { Model } = require('sequelize');
 const store = require('../Store');
 
 const model = {
-  aliasKey: {
+  aliasId: {
     type: DataTypes.STRING,
     primaryKey: true,
     unique: true,
@@ -21,9 +21,9 @@ const model = {
     type: DataTypes.STRING,
     allowNull: false
   },
-  forwardAddresses: {
+  fwdAddresses: {
     type: DataTypes.STRING,
-    defaultValue: '[]'
+    defaultValue: ''
   },
   count: {
     type: DataTypes.INTEGER,
@@ -56,7 +56,7 @@ module.exports.init = async (sequelize, opts) => {
 
   Alias.addHook('afterCreate', async (alias, options) => {
     try {
-      await collection.put(alias.aliasKey, alias.dataValues);
+      await collection.put(alias.aliasId, alias.dataValues);
     } catch (err) {
       console.log('Error saving Alias to Hyperbee', err);
       throw new Error(err);
@@ -65,7 +65,7 @@ module.exports.init = async (sequelize, opts) => {
 
   Alias.addHook('afterUpdate', async (alias, options) => {
     try {
-      await collection.put(alias.aliasKey, alias.dataValues);
+      await collection.put(alias.aliasId, alias.dataValues);
     } catch (err) {
       console.log('Error saving Alias to Hyperbee', err);
       throw new Error(err);
@@ -74,7 +74,7 @@ module.exports.init = async (sequelize, opts) => {
 
   Alias.addHook('beforeDestroy', async (alias, options) => {
     try {
-      await collection.del(alias.aliasKey);
+      await collection.del(alias.aliasId);
     } catch (err) {
       process.send({
         event: 'BeforeDestroy-deleteAlias',

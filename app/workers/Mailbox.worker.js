@@ -256,13 +256,13 @@ module.exports = env => {
       try {
         const aliases = await Alias.findAll({
           attributes: [
-            'aliasKey',
+            'aliasId',
             'name',
             'description',
             'namespaceKey',
             'count',
             'disabled',
-            'forwardAddresses',
+            'fwdAddresses',
             'createdAt'
           ],
           where: { namespaceKey: { [Op.in]: payload.namespaceKeys } },
@@ -270,9 +270,16 @@ module.exports = env => {
           raw: true
         });
 
+        const outputAliases = aliases.map(a => {
+          return {
+            ...a,
+            fwdAddresses: a.fwdAddresses.split(',')
+          };
+        });
+
         process.send({
           event: 'MAIL_WORKER::getMailboxAliases',
-          data: aliases
+          data: outputAliases
         });
       } catch (e) {
         process.send({
@@ -294,25 +301,25 @@ module.exports = env => {
           domain,
           address,
           description,
-          forwardAddresses,
+          fwdAddresses,
           whitelisted
         } = payload;
 
         const mailbox = store.getMailbox();
 
-        const { registered, alias_key } = await mailbox.registerAliasAddress({
+        const { registered } = await mailbox.registerAliasAddress({
           alias_address: `${namespaceName}#${address}@${domain}`,
-          forwards_to: forwardAddresses,
+          forwards_to: fwdAddresses,
           whitelisted
         });
 
         const output = await Alias.create({
-          aliasKey: alias_key,
+          aliasId: `${namespaceName}#${address}`,
           name: address,
           namespaceKey,
           count: 0,
           description,
-          forwardAddresses,
+          fwdAddresses: fwdAddresses.join(','),
           disabled: whitelisted
         });
 
@@ -339,7 +346,7 @@ module.exports = env => {
           domain,
           address,
           description,
-          forwardAddresses,
+          fwdAddresses,
           whitelisted
         } = payload;
 
@@ -347,13 +354,13 @@ module.exports = env => {
 
         await mailbox.updateAliasAddress({
           alias_address: `${namespaceName}#${address}@${domain}`,
-          forwards_to: forwardAddresses,
+          forwards_to: fwdAddresses,
           whitelisted
         });
 
         const output = await Alias.update(
           {
-            forwardAddresses,
+            fwdAddresses: fwdAddresses.join(','),
             description,
             disabled: whitelisted
           },

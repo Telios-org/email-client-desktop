@@ -22,7 +22,7 @@ import RandomIcon from '@rsuite/icons/Random';
 import { generateSlug } from 'random-word-slugs';
 
 // REDUX ACTION
-import { registerNamespace } from '../../../../../actions/mailbox/aliases';
+import { registerAlias } from '../../../../../actions/mailbox/aliases';
 
 // SELECTORS
 import {
@@ -45,6 +45,7 @@ type Props = {
   show: boolean;
   onHide: () => void;
   onShowManagement: () => void;
+  domain: string;
 };
 
 const initialFormState = {
@@ -55,32 +56,12 @@ const initialFormState = {
 };
 
 const initialErrorState = {
-  address: {
-    showError: false,
-    msg: ''
-  },
-  description: {
-    showError: false,
-    msg: ''
-  },
-  fwdAdresses: {
-    showError: false,
-    msg: ''
-  },
-  color: {
-    showError: false,
-    msg: ''
-  }
+  showError: false,
+  msg: ''
 };
-
-const pickerData = [
-  { label: 'youri.nelson@gmail.com', value: 'youri.nelson@gmail.com' },
-  { label: 'pierre.kraus@gmail.com', value: 'pierre.kraus@gmail.com' }
-];
 
 export default function AliasModal(props: Props) {
   const dispatch = useDispatch();
-  const mailbox = useSelector(selectActiveMailbox);
   const firstNamespace = useSelector(selectFirstNamespace);
   const fwdAddresses = useSelector(
     state => state.mail.aliases.fwdAddresses
@@ -88,13 +69,54 @@ export default function AliasModal(props: Props) {
     return { value: fwd, label: fwd };
   });
 
-  const { onHide, show, onShowManagement } = props;
+  const { onHide, show, onShowManagement, domain } = props;
+  const [loading, setLoading] = useState(false);
   const [formValue, setFormValue] = useState(initialFormState);
   const [errorBlock, setErrorBlock] = useState(initialErrorState);
   const [randomFormat, setRandomFormat] = useState('words');
   const formEl = useRef(null);
 
-  const handleSubmit = async () => {};
+  const disableCreate = formValue.address.length === 0;
+
+  const handleSubmit = async () => {
+    const { namespaceKey: nsKey, name: namespaceName } = firstNamespace;
+
+    const { address, description, fwdAddresses: fwd } = formValue;
+
+    const whitelisted = true;
+
+    const payload = {
+      namespaceName,
+      namespaceKey: nsKey,
+      domain,
+      address,
+      description,
+      fwdAddresses: fwd,
+      whitelisted: true
+    };
+    setLoading(true);
+    const res = await dispatch(
+      registerAlias(
+        namespaceName,
+        nsKey,
+        domain,
+        address,
+        description,
+        fwd,
+        whitelisted
+      )
+    );
+    setLoading(false);
+
+    if (res.success) {
+      onShowManagement();
+    } else {
+      setErrorBlock({
+        showError: true,
+        msg: res.message
+      });
+    }
+  };
 
   const handleChange = val => {
     setErrorBlock(initialErrorState);
@@ -107,8 +129,20 @@ export default function AliasModal(props: Props) {
     if (randomFormat === 'words') {
       rand = generateSlug(2, {
         format: 'kebab',
-        partsOfSpeech: ['adjective', 'noun']
-      });
+        partsOfSpeech: ['adjective', 'noun'],
+        categories: {
+          noun: [
+            'animals',
+            'place',
+            'food',
+            'sport',
+            'science',
+            'technology',
+            'thing'
+          ],
+          adjective: ['color', 'shapes', 'sounds', 'time']
+        }
+      }).replace('-', '');
     } else if (randomFormat === 'letters') {
       let s = '';
       const len = 8;
@@ -151,7 +185,7 @@ export default function AliasModal(props: Props) {
                   ? 'mynewalias'
                   : formValue.address}
               </span>
-              @telios.io
+              {`@${domain}`}
             </p>
           </div>
           <Form
@@ -175,14 +209,6 @@ export default function AliasModal(props: Props) {
                   <RandomIcon className="group-hover:text-blue-600" />
                 </InputGroup.Button>
               </InputGroup>
-              <div
-                className={`absolute w-full text-center ${
-                  errorBlock.address.showError ? 'text-red-500' : 'hidden'
-                }`}
-                style={{ bottom: '-25px', marginLeft: '10px' }}
-              >
-                {errorBlock.address.msg}
-              </div>
             </FormGroup>
             <FormGroup
               controlId="randomFormat"
@@ -224,16 +250,8 @@ export default function AliasModal(props: Props) {
                 accepter={TagPicker}
                 data={fwdAddresses}
                 style={{ width: '100%' }}
-                menuStyle={{ width: 300, 'font-size': '14px' }}
+                menuStyle={{ width: 300, fontSize: '14px' }}
               />
-              {/* <div
-                className={`absolute w-full text-center ${
-                  errorBlock.fwdAdresses.showError ? 'text-red-500' : 'hidden'
-                }`}
-                style={{ bottom: '-25px', marginLeft: '10px' }}
-              >
-                {errorBlock.fwdAdresses.msg}
-              </div> */}
             </FormGroup>
           </Form>
         </div>
@@ -255,13 +273,21 @@ export default function AliasModal(props: Props) {
             Cancel
           </Button>
         </div>
+        <div
+          className={`flex-grow text-sm text-center ${
+            errorBlock.showError ? 'text-red-500' : 'hidden'
+          }`}
+        >
+          {errorBlock.msg}
+        </div>
         <div className="flex-1">
           <Button
             type="submit"
+            loading={loading}
             onClick={handleSubmit}
-            disabled={false}
+            disabled={disableCreate}
             className={`tracking-wide ${
-              false
+              disableCreate
                 ? 'bg-coolGray-100 text-gray-400'
                 : 'bg-purple-600 text-white'
             } border-color-purple-800 shadow-sm`}

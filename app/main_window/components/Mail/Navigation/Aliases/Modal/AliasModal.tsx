@@ -12,6 +12,12 @@ import { selectFirstNamespace } from '../../../../../selectors/mail';
 
 import i18n from '../../../../../../i18n/i18n';
 
+const envAPI = require('../../../../../../env_api.json');
+
+const params = window.location.search.replace('?', '');
+const env = params.split('=')[1];
+const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
+
 type Props = {
   show: boolean;
   onHide: () => void;
@@ -29,23 +35,26 @@ export default function AliasModal(props: Props) {
     if (namespace === null) {
       setModalRoute('nsRegistration');
     } else {
-      setModalRoute('aliasRegistration');
+      setModalRoute('aliasManagement');
     }
   }, [namespace, show]);
-
-
 
   return (
     <div className="modal-container">
       <Modal show={show} onHide={onHide} size="md">
         {modalRoute === 'nsRegistration' && (
-          <NamespaceRegistration show={show} onHide={onHide} />
+          <NamespaceRegistration
+            show={show}
+            onHide={onHide}
+            domain={mailDomain}
+          />
         )}
         {modalRoute === 'aliasManagement' && (
           <AliasManagement
             show={show}
             onHide={onHide}
             onCreateAlias={() => setModalRoute('aliasRegistration')}
+            domain={mailDomain}
           />
         )}
         {modalRoute === 'aliasRegistration' && (
@@ -53,6 +62,7 @@ export default function AliasModal(props: Props) {
             show={show}
             onHide={onHide}
             onShowManagement={() => setModalRoute('aliasManagement')}
+            domain={mailDomain}
           />
         )}
       </Modal>

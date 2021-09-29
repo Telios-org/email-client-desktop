@@ -168,7 +168,7 @@ export type NamespaceType = {
 };
 
 export type AliasesType = {
-  aliasKey: string;
+  aliasId: string;
   name: string;
   namespaceKey: string;
   count: number;

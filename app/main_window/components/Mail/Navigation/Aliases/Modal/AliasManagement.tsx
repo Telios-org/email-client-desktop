@@ -37,6 +37,7 @@ type Props = {
   show: boolean;
   onHide: () => void;
   onCreateAlias: () => void;
+  domain: string;
 };
 
 const initialFormState = {
@@ -46,7 +47,7 @@ const initialFormState = {
 export default function AliasModal(props: Props) {
   const firstNamespace = useSelector(selectFirstNamespace);
 
-  const { onHide, show, onCreateAlias } = props;
+  const { onHide, show, onCreateAlias, domain } = props;
 
   const [showHelp, setShowHelp] = useState(false);
 
@@ -98,8 +99,8 @@ export default function AliasModal(props: Props) {
                   {firstNamespace && firstNamespace.name}
                 </span>
                 #
-<span className="text-purple-600">mymadeupalias</span>
-                @telios.io
+                <span className="text-purple-600">mymadeupalias</span>
+                {`@${domain}`}
               </span>
               and provide that to the service, website, newsletter or perosn in
               lieu of your primary email.
