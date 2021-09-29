@@ -16,6 +16,7 @@ module.exports = userDataPath => {
     if (event === 'createAccount') {
       try {
         const Account = new SDK.Account(apiDomain);
+        const accountUID = randomBytes(8).toString('hex'); // This is used as an anonymous ID that is sent to Matomo
         const acctPath = path.join(userDataPath, `/Accounts/${payload.email}`);
         store.acctPath = acctPath;
 
@@ -70,7 +71,7 @@ module.exports = userDataPath => {
         store.setDBConnection(payload.email, connection);
 
         const acctDBPayload = {
-          uid: randomBytes(8).toString('hex'), // This is used as an anonymous ID that is sent to Matomo
+          uid: accountUID,
           secretBoxPubKey: secretBoxKeypair.publicKey,
           secretBoxPrivKey: secretBoxKeypair.privateKey,
           hyperDBSecret: secret,
@@ -89,6 +90,8 @@ module.exports = userDataPath => {
         process.send({
           event: 'createAccount',
           data: {
+            uid: accountUID,
+            deviceId: account.device_id,
             signedAcct: account,
             secretBoxKeypair,
             signingKeypair,

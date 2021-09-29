@@ -141,7 +141,15 @@ class AccountService {
         const { data, error } = m;
         if (error) return reject(error);
 
-        const { signedAcct, secretBoxKeypair, signingKeypair, mnemonic, sig } = data;
+        const {
+          uid,
+          signedAcct,
+          secretBoxKeypair,
+          signingKeypair,
+          mnemonic,
+          deviceId,
+          sig
+        } = data;
 
         try {
           await MailService.loadMailbox({
@@ -159,7 +167,17 @@ class AccountService {
           await MailService.registerMailbox(registerPayload);
           await MailService.saveMailbox(payload.email);
 
-          ipcRenderer.invoke('MATOMO::init', { account, isNew: true });
+          ipcRenderer.invoke('MATOMO::init', {
+            account: {
+              uid,
+              secretBoxPubKey: secretBoxKeypair.publicKey,
+              deviceSigningPrivKey: signingKeypair.privateKey,
+              deviceSigningPubKey: signingKeypair.publicKey,
+              deviceId,
+              serverSig: sig
+            },
+            isNew: true
+          });
 
           resolve({
             secretBoxPubKey: secretBoxKeypair.publicKey,
