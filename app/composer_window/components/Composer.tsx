@@ -462,29 +462,24 @@ class Composer extends Component<Props, State> {
   setRecipients = (mailbox: MailboxType, action: string) => {
     const { email } = this.state;
 
-    let toArr = [];
-    let toCC = [];
-    let toBCC = [];
+    let fromArr = email.fromJSON ? JSON.parse(email.fromJSON) : [];
+    let toArr = email.toJSON ? JSON.parse(email.toJSON) : [];
+    let toCC = email.ccJSON ? JSON.parse(email.ccJSON) : [];
+    let toBCC = email.bccJSON ? JSON.parse(email.bccJSON) : [];
 
     switch (action) {
-      case 'maximize':
-        toArr = JSON.parse(email.toJSON);
-        toCC = JSON.parse(email.ccJSON);
-        toBCC = JSON.parse(email.bccJSON);
-        break;
-
       case 'replyAll': {
-        toArr = JSON.parse(email.fromJSON);
-        const arr = JSON.parse(email.toJSON).filter(
+        toArr = fromArr;
+        const toJSON = email.toJSON ? JSON.parse(email.toJSON) : [];
+        const arr = toJSON.filter(
           recip => recip.address !== mailbox.address
         );
         toArr = [...toArr, ...arr];
-        toCC = JSON.parse(email.ccJSON);
         break;
       }
 
       case 'reply':
-        toArr = JSON.parse(email.fromJSON);
+        toArr = fromArr;
         break;
 
       default:
@@ -556,7 +551,7 @@ class Composer extends Component<Props, State> {
       ${this.attr()}
       <br />
       <p>
-        ${email.bodyAsHtml}
+        ${email.bodyAsHtml ? email.bodyAsHtml : ''}
       </p>`;
 
     // const blocksFromHTML = convertFromHTML(reply);
@@ -581,8 +576,11 @@ class Composer extends Component<Props, State> {
     // );
     // console.log(JSON.stringify(convertToRaw(state)));
     // const newEditor = EditorState.createWithContent(state);
-    const newEditor = editorStateFromHTML(email.bodyAsHtml);
-    this.setEditorState(newEditor);
+
+    if (email.bodyAsHtml) {
+      const newEditor = editorStateFromHTML(email.bodyAsHtml);
+      this.setEditorState(newEditor);
+    }
   }
 
   handleOnMaximize() {

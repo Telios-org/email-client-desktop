@@ -529,7 +529,12 @@ export const fetchMsg = (messageId: string) => {
     try {
       email = await Mail.getMessagebyId(messageId);
 
-      if (email.folderId !== 2) {
+      if (
+        email.folderId !== 2 &&
+        email.folderId !== 3 &&
+        email.folderId !== 4 &&
+        email.folderId !== 5
+      ) {
         Mail.moveMessages([{
           id: email.id,
           unread: 0,

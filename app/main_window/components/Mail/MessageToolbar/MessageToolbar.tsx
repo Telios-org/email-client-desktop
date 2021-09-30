@@ -109,10 +109,8 @@ export default function MessageToolbar(props: Props) {
   const deleteMessages = async () => {
     const messagesToDelete = [];
 
-    selected.items.forEach(msgIdx => {
-      const messageId = messages.allIds[msgIdx];
-
-      messagesToDelete.push(messageId);
+    selected.items.forEach(msgId => {
+      messagesToDelete.push(msgId);
     });
 
     // NEED TO REWRITE THIS USING REDUX PATTERNS - THIS IS AN ANTI PATTERN
@@ -156,19 +154,17 @@ export default function MessageToolbar(props: Props) {
   const moveToFolder = async (toId: number, name: string) => {
     setIsLoading(true);
     try {
-      if ((currentFolderId === 5 && toId === 5) || currentFolderId === 3) {
+      if (currentFolderId === 5 || currentFolderId === 3) {
         await deleteMessages();
         Alert.success(`Deleted ${selected.items.length} message(s).`);
       } else {
         const messagesToMove = [];
 
-        selected.items.forEach(msgIdx => {
-          const messageId = messages.allIds[msgIdx];
-          const message = messages.byId[messageId];
-
+        selected.items.forEach(msgId => {
           messagesToMove.push({
-            id: messageId,
-            unread: message.unread,
+            id: msgId,
+            emailId: msgId,
+            unread: 0,
             folder: {
               fromId: currentFolderId,
               toId,
