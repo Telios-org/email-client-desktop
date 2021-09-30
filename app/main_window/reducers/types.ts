@@ -170,9 +170,12 @@ export type NamespaceType = {
 export type AliasesType = {
   aliasId: string;
   name: string;
+  description: string;
   namespaceKey: string;
+  fwdAddresses: string[];
   count: number;
   disabled: boolean;
+  createdAt: Date;
 };
 
 export type FolderType = {
@@ -240,6 +243,7 @@ export type MailType = {
       | AliasesType;
   };
   allIds: Array<number | string>;
+  fwdAddresses?: Array<string>;
   selected?: MailMessageType;
   loading: boolean;
 };

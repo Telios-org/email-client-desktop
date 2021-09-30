@@ -6,12 +6,19 @@ export const formatDateDisplay = date => {
   const now = DateTime.local();
   const received = DateTime.fromISO(date, { zone: 'utc' }).toLocal();
 
+  const diff = now.diff(received, ["years","months","days","hours"]);
+
   if (now.hasSame(received, 'day')) {
     return received.toLocaleString(DateTime.TIME_SIMPLE);
   }
   if (now.minus({ days: 1 }).hasSame(received, 'day')) {
     return 'Yesterday';
   }
+
+  if (diff.days > 1 && diff.days < 10) {
+    return received.toRelative();
+  }
+
   // if (now.hasSame(received, 'week')) {
   //   return received.toLocaleString({ week: 'long' });
   // }

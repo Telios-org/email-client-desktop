@@ -83,17 +83,8 @@ export default function AliasModal(props: Props) {
 
     const { address, description, fwdAddresses: fwd } = formValue;
 
-    const whitelisted = true;
+    const disabled = true;
 
-    const payload = {
-      namespaceName,
-      namespaceKey: nsKey,
-      domain,
-      address,
-      description,
-      fwdAddresses: fwd,
-      whitelisted: true
-    };
     setLoading(true);
     const res = await dispatch(
       registerAlias(
@@ -103,7 +94,7 @@ export default function AliasModal(props: Props) {
         address,
         description,
         fwd,
-        whitelisted
+        disabled
       )
     );
     setLoading(false);

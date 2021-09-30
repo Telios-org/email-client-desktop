@@ -1,31 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Button,
-  Modal,
-  Form,
-  FormGroup,
-  FormControl,
-  Schema,
-  InputGroup,
-  IconButton,
-  Icon
-} from 'rsuite';
+import { Button, Modal, Table, Schema, Icon } from 'rsuite';
 
 import { Danger } from 'react-iconly';
 import { generateSlug } from 'random-word-slugs';
 
+import AliasManagementTable from './AliasManagementTable';
+
 // REDUX ACTION
-import { registerNamespace } from '../../../../../actions/mailbox/aliases';
+import { registerNamespace } from '../../../../../../actions/mailbox/aliases';
 
 // SELECTORS
 import {
   selectActiveMailbox,
   selectFirstNamespace
-} from '../../../../../selectors/mail';
+} from '../../../../../../selectors/mail';
 
-import i18n from '../../../../../../i18n/i18n';
-import { namespace } from '../../../../../../app.global.less';
+import i18n from '../../../../../../../i18n/i18n';
+import { namespace } from '../../../../../../../app.global.less';
 
 const { StringType } = Schema.Types;
 
@@ -46,6 +38,9 @@ const initialFormState = {
 
 export default function AliasModal(props: Props) {
   const firstNamespace = useSelector(selectFirstNamespace);
+  const aliases = useSelector(state => state.mail.aliases);
+
+  const showTable = aliases.allIds.length > 0;
 
   const { onHide, show, onCreateAlias, domain } = props;
 
@@ -73,7 +68,7 @@ export default function AliasModal(props: Props) {
         </Modal.Title>
         <div className="text-xs">
           <span>Namespace:</span>
-          <span className="font-semibold text-blue-500 capitalize ml-1">
+          <span className="font-semibold text-blue-500 ml-1">
             {firstNamespace.name}
           </span>
         </div>
@@ -98,8 +93,7 @@ export default function AliasModal(props: Props) {
                 <span className="text-blue-500">
                   {firstNamespace && firstNamespace.name}
                 </span>
-                #
-                <span className="text-purple-600">mymadeupalias</span>
+                #<span className="text-purple-600">mymadeupalias</span>
                 {`@${domain}`}
               </span>
               and provide that to the service, website, newsletter or perosn in
@@ -117,10 +111,12 @@ export default function AliasModal(props: Props) {
               In app creation
             </p>
             <p>
-              Click the{' '}
+              Click the
+{' '}
               <span className="leading-relaxed bg-white shadow-sm border border-coolGray-300 rounded px-1 mx-1 font-bold">
                 + add alias
-              </span>{' '}
+              </span>
+{' '}
               button below
             </p>
           </div>
@@ -138,14 +134,21 @@ export default function AliasModal(props: Props) {
             onClick={onCreateAlias}
             className="tracking-wide bg-purple-600 text-white border-color-purple-800 shadow-s "
           >
-            <Icon icon="plus" className="mr-1 text-xs" /> Add alias
-          </Button>
+            <Icon icon="plus" className="mr-1 text-xs" />
+{' '}
+Add alias
+</Button>
         </div>
-        <div className="bg-coolGray-100 w-full rounded-lg flex items-center flex-col pb-6 pt-4">
-          {/* <CgHashtag className="text-3xl text-coolGray-400"/> */}
-          <span className="text-2xl text-coolGray-400">@</span>
-          <p className="text-sm text-coolGray-400">No alias created yet</p>
-        </div>
+        {!showTable && (
+          <div className="bg-coolGray-100 w-full rounded-lg flex items-center flex-col pb-6 pt-4">
+            {/* <CgHashtag className="text-3xl text-coolGray-400"/> */}
+            <span className="text-2xl text-coolGray-400">@</span>
+            <p className="text-sm text-coolGray-400">No alias created yet</p>
+          </div>
+        )}
+        {showTable && (
+          <AliasManagementTable domain={domain} aliases={aliases} ns={firstNamespace}/>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <Button

@@ -6,6 +6,8 @@ import {
   EditSquare,
   Download,
   Scan,
+  Setting,
+  Filter,
   Edit,
   Send,
   Danger,
@@ -114,7 +116,7 @@ export default function NamespaceBlock(props: Props) {
             size="small"
           />
           <div
-            className="flex-auto text-gray-600 flex-row flex self-center font-bold outline-none tracking-wider items-center text-sm uppercase"
+            className="flex-auto text-gray-600 flex-row flex self-center font-bold outline-none tracking-wider items-center text-sm capitalize"
             role="menuitem"
             tabIndex={0}
             onKeyPress={() => {}}
@@ -123,11 +125,13 @@ export default function NamespaceBlock(props: Props) {
             {i18n.t('mailbox.aliases')}
           </div>
           <div className="group-hover:visible invisible flex-none mr-2 inline-block items-center flex hover:bg-gray-200 cursor-pointer text-gray-600 rounded p-1">
-            <Icon
+            {/* <Icon
               icon="plus"
-              onClick={handleNewAlias}
-              className="focus:outline-none justify-center items-center tracking-wide flex flex-row h-full"
-            />
+              
+            /> */}
+            <Filter set="bold" onClick={handleNewAlias}
+              size="small"
+              className="text-coolGray-500 focus:outline-none justify-center items-center tracking-wide flex flex-row h-full"/>
           </div>
         </div>
 
@@ -163,7 +167,7 @@ export default function NamespaceBlock(props: Props) {
                   {alias.name}
                 </span>
 
-                <div className="opacity-0 group-hover:opacity-100 flex-none text-sm h-6">
+                {/* <div className="opacity-0 group-hover:opacity-100 flex-none text-sm h-6">
                   <Dropdown
                     size="xs"
                     placement="bottomEnd"
@@ -182,7 +186,7 @@ export default function NamespaceBlock(props: Props) {
                         <Edit set="broken" size="small" />
                         <span className="ml-2">{i18n.t('global.edit')}</span>
                       </div>
-                    </Dropdown.Item>
+                    </Dropdown.Item> */}
                     {/* <Dropdown.Item
                       onClick={e => handleDeleteFolder(alias, index, e)}
                     >
@@ -191,8 +195,8 @@ export default function NamespaceBlock(props: Props) {
                         <span className="ml-2">{i18n.t('global.delete')}</span>
                       </div>
                     </Dropdown.Item> */}
-                  </Dropdown>
-                </div>
+                  {/* </Dropdown> */}
+                {/* </div> */}
 
                 <span
                   className={`w-8 h-6 px-1 text-purple-700 font-semibold text-sm

@@ -32,6 +32,9 @@ const model = {
   disabled: {
     type: DataTypes.BOOLEAN
   },
+  whitelisted: {
+    type: DataTypes.BOOLEAN
+  },
   // Timestamps
   createdAt: DataTypes.DATE,
   updatedAt: DataTypes.DATE

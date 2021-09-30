@@ -273,7 +273,8 @@ module.exports = env => {
         const outputAliases = aliases.map(a => {
           return {
             ...a,
-            fwdAddresses: a.fwdAddresses.split(',')
+            fwdAddresses: a.fwdAddresses.split(','),
+            createdAt: new Date(a.createdAt)
           };
         });
 
@@ -302,7 +303,7 @@ module.exports = env => {
           address,
           description,
           fwdAddresses,
-          whitelisted
+          disabled
         } = payload;
 
         const mailbox = store.getMailbox();
@@ -310,7 +311,8 @@ module.exports = env => {
         const { registered } = await mailbox.registerAliasAddress({
           alias_address: `${namespaceName}#${address}@${domain}`,
           forwards_to: fwdAddresses,
-          whitelisted
+          disabled,
+          whitelisted: true
         });
 
         const output = await Alias.create({
@@ -320,7 +322,8 @@ module.exports = env => {
           count: 0,
           description,
           fwdAddresses: fwdAddresses.join(','),
-          disabled: whitelisted
+          disabled,
+          whitelisted: 1
         });
 
         process.send({
@@ -347,7 +350,7 @@ module.exports = env => {
           address,
           description,
           fwdAddresses,
-          whitelisted
+          disabled
         } = payload;
 
         const mailbox = store.getMailbox();
@@ -355,14 +358,14 @@ module.exports = env => {
         await mailbox.updateAliasAddress({
           alias_address: `${namespaceName}#${address}@${domain}`,
           forwards_to: fwdAddresses,
-          whitelisted
+          disabled
         });
 
         const output = await Alias.update(
           {
             fwdAddresses: fwdAddresses.join(','),
             description,
-            disabled: whitelisted
+            disabled
           },
           {
             where: { name: address },
@@ -371,12 +374,12 @@ module.exports = env => {
         );
 
         process.send({
-          event: 'MAIL_WORKER::registerAliasAddress',
+          event: 'MAIL_WORKER::updateAliasAddress',
           data: output.dataValues
         });
       } catch (e) {
         process.send({
-          event: 'MAIL_WORKER::registerAliasAddress',
+          event: 'MAIL_WORKER::updateAliasAddress',
           error: {
             name: e.name,
             message: e.message,

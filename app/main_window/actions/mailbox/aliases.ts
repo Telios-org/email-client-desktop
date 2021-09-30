@@ -45,7 +45,7 @@ export const registerNamespace = (mailboxId: number, namespace: string) => {
 };
 
 export const REGISTER_ALIAS = 'ALIASES::REGISTER_ALIAS';
-export const startAliasRegistration = (alias:string) => {
+export const startAliasRegistration = (alias: string) => {
   return {
     type: REGISTER_ALIAS,
     alias
@@ -61,7 +61,7 @@ export const aliasRegistrationSuccess = payload => {
 };
 
 export const REGISTER_ALIAS_FAILURE = 'ALIASES::REGISTER_ALIAS_FAILURE';
-export const aliasRegistrationFailure = (error: string, alias:string) => {
+export const aliasRegistrationFailure = (error: string, alias: string) => {
   return {
     type: REGISTER_ALIAS_FAILURE,
     error,
@@ -76,7 +76,7 @@ export const registerAlias = (
   address: string,
   description: string,
   fwdAddresses: string[],
-  whitelisted: boolean
+  disabled: boolean
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(startAliasRegistration(`${namespaceName}#${address}@${domain}`));
@@ -89,7 +89,7 @@ export const registerAlias = (
         address,
         description,
         fwdAddresses,
-        whitelisted
+        disabled
       });
     } catch (error) {
       dispatch(
@@ -108,5 +108,91 @@ export const registerAlias = (
 
     dispatch(aliasRegistrationSuccess(alias));
     return { status: 'registered', success: true };
+  };
+};
+
+// UPDATE ALIAS ACTIONS
+
+export const UPDATE_ALIAS = 'ALIASES::UPDATE_ALIAS';
+export const startAliasUpdate = (alias: string, payload: any) => {
+  return {
+    type: UPDATE_ALIAS,
+    alias,
+    payload
+  };
+};
+
+export const UPDATE_ALIAS_SUCCESS = 'ALIASES::UPDATE_ALIAS_SUCCESS';
+export const aliasUpdateSuccess = (payload: any) => {
+  return {
+    type: UPDATE_ALIAS_SUCCESS,
+    payload
+  };
+};
+
+export const UPDATE_ALIAS_FAILURE = 'ALIASES::UPDATE_ALIAS_FAILURE';
+export const aliasUpdateFailure = (
+  error: string,
+  alias: string,
+  payload: any
+) => {
+  return {
+    type: UPDATE_ALIAS_FAILURE,
+    error,
+    alias,
+    payload
+  };
+};
+
+export const updateAlias = (payload: {
+  namespaceName: string;
+  domain: string;
+  address: string;
+  description: string;
+  fwdAddresses: string[];
+  disabled: boolean;
+}) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      namespaceName,
+      domain,
+      address,
+      description,
+      fwdAddresses,
+      disabled
+    } = payload;
+    dispatch(
+      startAliasUpdate(`${namespaceName}#${address}@${domain}`, payload)
+    );
+    try {
+      await Mail.updateAliasAddress({
+        namespaceName,
+        domain,
+        address,
+        description,
+        fwdAddresses,
+        disabled
+      });
+    } catch (error) {
+      dispatch(
+        aliasUpdateFailure(
+          error,
+          `${namespaceName}#${address}@${domain}`,
+          payload
+        )
+      );
+
+      // if (error.message.startsWith('E11000 duplicate key')) {
+      //   return { status: 'already-updateed', success: false };
+      // }
+      return {
+        status: 'issue-updateing',
+        success: false,
+        message: error.message
+      };
+    }
+
+    dispatch(aliasUpdateSuccess(payload));
+    return { status: 'updateed', success: true };
   };
 };

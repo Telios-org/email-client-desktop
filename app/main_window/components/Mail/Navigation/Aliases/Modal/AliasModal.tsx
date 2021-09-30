@@ -4,7 +4,7 @@ import { Modal } from 'rsuite';
 
 // COMPONENTS
 import NamespaceRegistration from './NamespaceRegistration';
-import AliasManagement from './AliasManagement';
+import AliasManagement from './AliasManagement/AliasManagement';
 import AliasRegistration from './AliasRegistration';
 
 // SELECTORS

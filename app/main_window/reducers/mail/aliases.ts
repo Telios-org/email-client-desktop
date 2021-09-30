@@ -1,6 +1,11 @@
 import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
 import { FETCH_MAIL_DATA_SUCCESS } from '../../actions/mail';
 
+import {
+  UPDATE_ALIAS_SUCCESS,
+  REGISTER_ALIAS_SUCCESS
+} from '../../actions/mailbox/aliases';
+
 const initialState = {
   byId: {},
   allIds: [],
@@ -18,6 +23,7 @@ export default function aliases(
 ) {
   let fwd;
   let uniqueFwd;
+  let aliasId;
   switch (action.type) {
     case FETCH_MAIL_DATA_SUCCESS:
       fwd = [];
@@ -34,6 +40,37 @@ export default function aliases(
         },
         allIds: [...idFromArrayDict(action.aliases, 'aliasId')],
         fwdAddresses: uniqueFwd
+      };
+    case REGISTER_ALIAS_SUCCESS:
+      return {
+        byId: {
+          ...state.byId,
+          [action.payload.aliasId]: {
+            ...action.payload
+          }
+        },
+        allIds: [...state.allIds, action.payload.aliasId],
+        fwdAddresses: [
+          ...new Set([...state.fwdAddresses, ...action.payload.fwdAddresses])
+        ]
+      };
+    case UPDATE_ALIAS_SUCCESS:
+      aliasId = `${action.payload.namespaceName}#${action.payload.address}`;
+
+      return {
+        byId: {
+          ...state.byId,
+          [aliasId]: {
+            ...state.byId[aliasId],
+            disabled: action.payload.disabled,
+            fwdAddresses: [...action.payload.fwdAddresses],
+            description: action.payload.description
+          }
+        },
+        allIds: [...state.allIds],
+        fwdAddresses: [
+          ...new Set([...state.fwdAddresses, ...action.payload.fwdAddresses])
+        ]
       };
     default:
       return { ...state };
