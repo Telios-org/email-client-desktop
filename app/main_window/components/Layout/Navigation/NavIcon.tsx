@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-closing-tag-location */
 import React from 'react';
-import { Message, People } from 'react-iconly';
+import { Message, People, Setting } from 'react-iconly';
 
 type Props = {
   active: string;
@@ -13,7 +13,8 @@ const NavStack = (props: Props) => {
 
   const iconMapping = {
     mail: Message,
-    contacts: People
+    contacts: People,
+    settings: Setting
   };
 
   const handleSelect = () => {
@@ -31,9 +32,8 @@ const NavStack = (props: Props) => {
   return (
     <>
       <div
-        className={`w-full h-12 flex justify-center items-center cursor-pointer outline-none mb-6 relative ${
-          active === eventKey ? '' : ''
-        } `}
+        className={`w-full h-12 flex justify-center items-center cursor-pointer outline-none mb-6 relative ${active === eventKey ? '' : ''
+          } `}
         onClick={handleSelect}
         onKeyPress={onKeyPressHandler}
         role="button"
@@ -50,11 +50,10 @@ const NavStack = (props: Props) => {
         <IconTag
           set={`${active === eventKey ? 'bulk' : 'broken'}`}
           size="medium"
-          className={`${
-            active === eventKey
+          className={`${active === eventKey
               ? 'text-purple-600'
               : 'text-gray-400 hover:text-gray-500'
-          }`}
+            }`}
         />
       </div>
     </>

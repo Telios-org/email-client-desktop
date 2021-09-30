@@ -33,9 +33,10 @@ const NavStack = (props: Props) => {
       <div className="flex flex-col items-center flex-1">
         <NavIcon active={active} eventKey="mail" onClick={onSelect} />
         <NavIcon active={active} eventKey="contacts" onClick={onSelect} />
+        <NavIcon active={active} eventKey="settings" onClick={onSelect} />
       </div>
       <div className="flex flex-col items-center w-full justify-center mb-6">
-        <Whisper
+        {/* <Whisper
           trigger="click"
           triggerRef={triggerRef}
           placement="autoHorizontalEnd"
@@ -46,7 +47,7 @@ const NavStack = (props: Props) => {
             style={{ cursor: 'pointer' }}
             className="hover:text-purple-500 text-gray-400 mb-6"
           />
-        </Whisper>
+        </Whisper> */}
         <Whisper
           trigger="hover"
           placement="right"
