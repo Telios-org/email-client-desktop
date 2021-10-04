@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-closing-tag-location */
 import React from 'react';
-import { Message, People, Setting } from 'react-iconly';
+import { Message, People } from 'react-iconly';
 
 type Props = {
   active: string;
@@ -13,8 +13,7 @@ const NavStack = (props: Props) => {
 
   const iconMapping = {
     mail: Message,
-    contacts: People,
-    settings: Setting
+    contacts: People
   };
 
   const handleSelect = () => {

@@ -5,6 +5,7 @@ import NavStack from '../../components/Layout/Navigation/NavStack';
 import GlobalTopBar from '../../components/Layout/TopBar/GlobalTopBar';
 import MailPage from './MailPage/MailPage';
 import ContactPage from './ContactPage/ContactPage';
+import SettingsPage from './SettingsPage/SettingsPage';
 import Account from '../../../services/account.service';
 import Notifier from '../../../services/notifier.service';
 
@@ -55,6 +56,7 @@ class MainWindow extends React.Component {
               {active === 'mail' && <MailPage />}
               {/* {active === 'files' && <div>Files page</div>} */}
               {active === 'contacts' && <ContactPage />}
+              {active === 'settings' && <SettingsPage />}
             </div>
           </div>
         </div>
