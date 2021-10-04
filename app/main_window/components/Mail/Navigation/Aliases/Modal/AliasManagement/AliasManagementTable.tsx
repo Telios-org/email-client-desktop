@@ -48,10 +48,14 @@ const FwdPills = ({ rowData, dataKey, ...props }) => {
   return (
     <Cell {...props}>
       <div className="flex flex-col">
-        {rowData[dataKey].map((fwd: string) => (
+        {rowData[dataKey]?.map((fwd: string) => (
           <div
             key={`fwd_${fwd}`}
-            className="bg-yellow-200 py-1 px-3 text-xs rounded mb-1"
+            className={`${
+              fwd.length > 0
+                ? 'bg-coolGray-100 py-1 px-3 text-xs rounded mb-1 overflow-ellipsis'
+                : ''
+            }`}
             style={{ width: 'fit-content' }}
           >
             {fwd}
@@ -83,7 +87,13 @@ export default function AliasManagementTable(props: Props) {
     };
   });
 
-  const tableHeight = data?.length * 55 + 40;
+  // const tableHeight = data?.length * 55 + 40;
+  const tableHeight = data?.reduce((previousValue, curr) => {
+    const multiplier =
+      curr.fwdAddresses.length <= 1 ? 1 : curr.fwdAddresses.length * 0.75;
+    console.log('multiplier', multiplier, curr.fwdAddresses);
+    return multiplier * 55 + previousValue;
+  }, 40);
 
   const handleToggleAction = async (rowData, value, event) => {
     const payload = {
@@ -109,11 +119,16 @@ export default function AliasManagementTable(props: Props) {
         loading={data.length === 0}
         data={data}
         hover={false}
-        className="text-xs text-coolGray-500 rounded bg-coolGray-100"
+        className="text-xs text-coolGray-500 rounded"
         bordered
-        height={tableHeight}
-        rowHeight={55}
-        wordwrap
+        height={tableHeight < 300 ? tableHeight : 300}
+        rowHeight={rowData => {
+          if (rowData?.fwdAddresses?.length > 1) {
+            return rowData?.fwdAddresses?.length * 55 * 0.75;
+          }
+
+          return 55;
+        }}
         onSortColumn={(sortColumn, sortType) => {
           console.log(sortColumn, sortType);
         }}
@@ -209,11 +224,12 @@ export default function AliasManagementTable(props: Props) {
             alias either "on the fly" or by adding an alias within the app.
           </p>
           <p className="leading-relaxed text-xs flex flex-row items-center ">
-              <Danger set="broken" className="text-coolGray-400" />
-              <span className="mt-1 ml-2 text-coolGray-400">
-                If you mean to block emails from coming in through this alias de-activate it instead.
-              </span>
-            </p>
+            <Danger set="broken" className="text-coolGray-400" />
+            <span className="mt-1 ml-2 text-coolGray-400">
+              If you want to prevent/block emails from coming in through this
+              alias de-activate it instead.
+            </span>
+          </p>
         </Modal.Body>
         <Modal.Footer>
           <Button

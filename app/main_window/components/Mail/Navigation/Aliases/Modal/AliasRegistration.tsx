@@ -68,6 +68,12 @@ export default function AliasModal(props: Props) {
   ).map(fwd => {
     return { value: fwd, label: fwd };
   });
+  const [fwdData, setfwdData] = useState([]);
+
+  useEffect(() => {
+    const d = [...fwdData, ...fwdAddresses];
+    setfwdData(d);
+  }, []);
 
   const { onHide, show, onShowManagement, domain } = props;
   const [loading, setLoading] = useState(false);
@@ -81,9 +87,19 @@ export default function AliasModal(props: Props) {
   const handleSubmit = async () => {
     const { namespaceKey: nsKey, name: namespaceName } = firstNamespace;
 
-    const { address, description, fwdAddresses: fwd } = formValue;
+    const { address, description = '', fwdAddresses: fwd = [] } = formValue;
 
-    const disabled = true;
+    const disabled = false;
+
+    console.log(
+      'REGISTERING',
+      namespaceName,
+      nsKey,
+      domain,
+      address,
+      description,
+      fwd
+    );
 
     setLoading(true);
     const res = await dispatch(
@@ -111,6 +127,19 @@ export default function AliasModal(props: Props) {
 
   const handleChange = val => {
     setErrorBlock(initialErrorState);
+    console.log('CHANGES', val);
+
+    fwdData.map(fwd => fwd.value);
+    const newAdd = val.fwdAddresses.filter(add => !fwdData.includes(add));
+
+    // If they are creating a new choice.
+    if (newAdd.lenght > 0) {
+      const n = newAdd.map(fwd => {
+        return { value: fwd, label: fwd };
+      });
+      setfwdData([...fwdData, ...n]);
+    }
+
     setFormValue({ ...val });
   };
 
@@ -149,7 +178,7 @@ export default function AliasModal(props: Props) {
     //   rand = uuidv4();
     // }
 
-    handleChange({ address: rand });
+    handleChange({ ...formValue, address: rand });
   };
 
   return (
@@ -239,7 +268,7 @@ export default function AliasModal(props: Props) {
                 className="text-xs"
                 creatable
                 accepter={TagPicker}
-                data={fwdAddresses}
+                data={fwdData}
                 style={{ width: '100%' }}
                 menuStyle={{ width: 300, fontSize: '14px' }}
               />

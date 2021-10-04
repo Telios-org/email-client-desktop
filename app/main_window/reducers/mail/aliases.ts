@@ -32,7 +32,8 @@ export default function aliases(
         fwd.push(...el.fwdAddresses);
       });
 
-      uniqueFwd = [...new Set(fwd)];
+      // we want unique strings greater than 0
+      uniqueFwd = [...new Set(fwd)].filter(n => n.length > 0);
 
       return {
         byId: {

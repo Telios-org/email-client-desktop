@@ -273,7 +273,10 @@ module.exports = env => {
         const outputAliases = aliases.map(a => {
           return {
             ...a,
-            fwdAddresses: a.fwdAddresses.split(','),
+            fwdAddresses:
+              (a.fwdAddresses && a.fwdAddresses.length) > 0
+                ? a.fwdAddresses.split(',')
+                : [],
             createdAt: new Date(a.createdAt)
           };
         });
@@ -311,8 +314,8 @@ module.exports = env => {
         const { registered } = await mailbox.registerAliasAddress({
           alias_address: `${namespaceName}#${address}@${domain}`,
           forwards_to: fwdAddresses,
-          disabled,
-          whitelisted: true
+          whitelisted: true,
+          disabled
         });
 
         const output = await Alias.create({
@@ -321,14 +324,14 @@ module.exports = env => {
           namespaceKey,
           count: 0,
           description,
-          fwdAddresses: fwdAddresses.join(','),
+          fwdAddresses: fwdAddresses.length > 0 ? fwdAddresses.join(',') : null,
           disabled,
           whitelisted: 1
         });
 
         process.send({
           event: 'MAIL_WORKER::registerAliasAddress',
-          data: output.dataValues
+          data: { ...output.dataValues, fwdAddresses }
         });
       } catch (e) {
         process.send({
@@ -358,12 +361,14 @@ module.exports = env => {
         await mailbox.updateAliasAddress({
           alias_address: `${namespaceName}#${address}@${domain}`,
           forwards_to: fwdAddresses,
+          whitelisted: true,
           disabled
         });
 
         const output = await Alias.update(
           {
-            fwdAddresses: fwdAddresses.join(','),
+            fwdAddresses:
+              fwdAddresses.length > 0 ? fwdAddresses.join(',') : null,
             description,
             disabled
           },
@@ -387,6 +392,38 @@ module.exports = env => {
           }
         });
       }
+    }
+
+    if (event === 'MAIL_SERVICE::removeAliasAddress') {
+      // process.send({ event: 'DELETEMAIL', ids: payload.messageIds });
+      // const msgArr = await Alias.findAll({
+      //   attributes: ['aliasId'],
+      //   where: {
+      //     where: { aliasId: address },
+      //   },
+      //   raw: true
+      // });
+      // process.send({ event: 'DELETEMAIL', msgArr });
+      // try {
+      //   await Email.destroy({
+      //     where: {
+      //       emailId: {
+      //         [Op.in]: payload.messageIds
+      //       }
+      //     },
+      //     individualHooks: true
+      //   });
+      //   process.send({ event: 'MAIL_SERVICE::removeAliasAddress', data: null });
+      // } catch (e) {
+      //   process.send({
+      //     event: 'MAIL_SERVICE::removeAliasAddress',
+      //     error: {
+      //       name: e.name,
+      //       message: e.message,
+      //       stacktrace: e.stack
+      //     }
+      //   });
+      // }
     }
 
     if (event === 'getMessagesByFolderId') {

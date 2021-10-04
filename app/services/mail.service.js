@@ -402,6 +402,23 @@ class MailService {
     });
   }
 
+  static removeAliasAddress(payload) {
+    worker.send({
+      event: x,
+      payload
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::removeAliasAddress', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
   static search(searchQuery) {
     worker.send({ event: 'searchMailbox', payload: { searchQuery } });
 

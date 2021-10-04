@@ -52,7 +52,6 @@ const configureStore = initialState => {
   };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose
   /* eslint-disable no-underscore-dangle */
-  console.log(window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__, compose);
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
         // Options: http://extension.remotedev.io/docs/API/Arguments.html
