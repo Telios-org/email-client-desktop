@@ -65,6 +65,8 @@ module.exports = env => {
             account.secretBoxPrivKey,
             account.secretBoxPubKey
           );
+
+          process.send({ event: 'getNewMailMeta', data: { meta, account } });
         } catch (e) {
           process.send({
             event: 'getNewMailMeta',
@@ -75,8 +77,6 @@ module.exports = env => {
             }
           });
         }
-
-        process.send({ event: 'getNewMailMeta', data: { meta, account } });
       } catch (e) {
         process.send({
           event: 'getNewMailMeta',
@@ -286,6 +286,7 @@ module.exports = env => {
         email.attachments = JSON.parse(email.attachments);
 
         if (email.unread) {
+          process.send({ event: 'emailupdate1' });
           await Email.update(
             { unread: 0 },
             {
@@ -313,6 +314,7 @@ module.exports = env => {
       const { id } = payload;
 
       try {
+        process.send({ event: 'emailupdate2' });
         await Email.update(
           { unread: 1 },
           {
@@ -460,6 +462,7 @@ module.exports = env => {
         };
 
         if (msg.email.emailId && type !== 'incoming') {
+          process.send({ event: 'emailupdate3' });
           asyncMsgs.push(
             Email.update(msgObj, {
               where: { emailId: msg.email.emailId },
@@ -561,6 +564,7 @@ module.exports = env => {
         const toFolder = messages[0].folder.toId;
 
         for (let email of messages) {
+          process.send({ event: 'emailupdate4' });
           Email.update(
             {
               folderId: toFolder,
