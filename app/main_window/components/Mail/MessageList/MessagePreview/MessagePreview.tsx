@@ -40,7 +40,7 @@ const { formatDateDisplay } = require('../../../../utils/date.util');
 type Props = {
   onMsgClick: (message: MailMessageType, id: number) => void;
   index: number;
-  onDropResult: () => void;
+  onDropResult: (item: any, dropResult: any) => void;
   previewStyle: any;
 };
 
@@ -57,6 +57,7 @@ export default function MessagePreview(props: Props) {
 
   const [isHover, setIsHover] = useState(false);
   const [displayLoader, setLoader] = useState(false);
+  const [isRead, setIsRead] = useState(false);
 
   const messages = useSelector(state => state.mail.messages);
   const currentFolderId = useSelector(activeFolderId);
@@ -187,6 +188,7 @@ export default function MessagePreview(props: Props) {
   const handleClick = event => {
     event.preventDefault();
     setIsHover(true);
+    setIsRead(true);
 
     const selection = { ...selected };
 
@@ -290,6 +292,7 @@ export default function MessagePreview(props: Props) {
           >
             <div className="flex justify-center w-6 flex-shrink-0 items-center pt-0.5">
               {unread === 1 &&
+                !isRead &&
                 currentFolder.name !== 'Sent' &&
                 currentFolder.name !== 'Drafts' && (
                   <Badge className="bg-purple-600" />
@@ -322,7 +325,7 @@ export default function MessagePreview(props: Props) {
 
               <div
                 id="subject"
-                className={`flex flex-1 flex-row justify-between ${unread === 1 ? 'text-purple-600 font-bold' : ''
+                className={`flex flex-1 flex-row justify-between ${unread === 1 && !isRead ? 'text-purple-600 font-bold' : ''
                   }`}
               >
                 <div className="flex flex-1 leading-tight overflow-hidden text-sm break-all line-clamp-1">

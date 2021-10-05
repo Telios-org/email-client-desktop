@@ -428,6 +428,7 @@ module.exports = env => {
         const messages = await Email.findAll({
           where: { folderId: payload.id },
           limit: payload.limit,
+          offset: payload.offset,
           attributes: [
             ['emailId', 'id'],
             'folderId',

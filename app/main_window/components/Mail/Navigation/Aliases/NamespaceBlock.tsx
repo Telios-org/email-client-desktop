@@ -129,9 +129,12 @@ export default function NamespaceBlock(props: Props) {
               icon="plus"
               
             /> */}
-            <Filter set="bold" onClick={handleNewAlias}
+            <Filter
+              set="bold"
+              onClick={handleNewAlias}
               size="small"
-              className="text-coolGray-500 focus:outline-none justify-center items-center tracking-wide flex flex-row h-full"/>
+              className="text-coolGray-500 focus:outline-none justify-center items-center tracking-wide flex flex-row h-full"
+            />
           </div>
         </div>
 
@@ -156,13 +159,20 @@ export default function NamespaceBlock(props: Props) {
                 role="menuitem"
                 tabIndex={index}
               >
-                <IconTag
+                {/* <IconTag
                   className={`flex-initial ml-1 mb-0.5 ${
                     active === index ? 'text-purple-700' : ''
                   }`}
                   set={active === index ? 'bulk' : 'broken'}
                   size="small"
-                />
+                /> */}
+                <div
+                  className={`flex-initial ml-2 mb-0.5${
+                    active === index ? 'text-purple-700' : ''
+                  }`}
+                >
+                  #
+                </div>
                 <span className="flex-auto ml-2 leading-loose align-middle tracking-wide text-sm">
                   {alias.name}
                 </span>
@@ -187,7 +197,7 @@ export default function NamespaceBlock(props: Props) {
                         <span className="ml-2">{i18n.t('global.edit')}</span>
                       </div>
                     </Dropdown.Item> */}
-                    {/* <Dropdown.Item
+                {/* <Dropdown.Item
                       onClick={e => handleDeleteFolder(alias, index, e)}
                     >
                       <div className="flex text-sm">
@@ -195,7 +205,7 @@ export default function NamespaceBlock(props: Props) {
                         <span className="ml-2">{i18n.t('global.delete')}</span>
                       </div>
                     </Dropdown.Item> */}
-                  {/* </Dropdown> */}
+                {/* </Dropdown> */}
                 {/* </div> */}
 
                 <span

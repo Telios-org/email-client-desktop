@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState, useCallback } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // ELECTRON IPC IMPORT
@@ -10,8 +10,9 @@ import { Alert } from 'rsuite';
 
 // EXTERNAL COMPONENT LIBRARIES
 import { VariableSizeList as List, areEqual } from 'react-window';
+import InfiniteLoader from 'react-window-infinite-loader';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { Scrollbars } from 'react-custom-scrollbars';
+// import { Scrollbars } from 'react-custom-scrollbars';
 
 // INTERNATIONALIZATION
 import { BsInbox } from 'react-icons/bs';
@@ -21,14 +22,15 @@ import i18n from '../../../../i18n/i18n';
 // REDUX ACTIONS
 import {
   messageSelection,
-  msgRangeSelection
+  msgRangeSelection,
+  fetchMoreFolderMessages
 } from '../../../actions/mail';
 
 import { clearActiveMessage, moveMessagesToFolder } from '../../../actions/mailbox/messages';
 
 // SELECTORS
 import {
-  selectActiveFolder,
+  selectActiveFolderName,
   selectGlobalState,
   selectMessages,
   activeMessageId,
@@ -44,21 +46,24 @@ import {
 
 // COMPONENTS IMPORTS
 import MessagePreview from './MessagePreview/MessagePreview';
+import SortIcon from './SortIcon';
 
 type Props = {};
 
 export default function MessageList(props: Props) {
   const dispatch = useDispatch();
 
-  const [listRef, setListRef] = useState();
   const [sort, setSort] = useState('');
-
-  const currentFolder = useSelector(selectActiveFolder);
+  const currentFolderName = useSelector(selectActiveFolderName);
   const messages = useSelector(selectMessages);
   const activeMsgId = useSelector(activeMessageId);
   const activeSelectedRange = useSelector(activeMessageSelectedRange);
   const folderId = useSelector(activeFolderId);
   const { editorIsOpen } = useSelector(selectGlobalState);
+
+  const virtualLoaderRef = useRef(null);
+
+  let isLoading = false;
 
   const selectMessage = (message: MailMessageType) => {
     return dispatch(messageSelection(message, ''));
@@ -77,12 +82,17 @@ export default function MessageList(props: Props) {
   }
 
   useEffect(() => {
-    setListRef(React.createRef());
-  }, []);
+    setSort('');
+    if (virtualLoaderRef.current) {
+      virtualLoaderRef.current.resetloadMoreItemsCache();
+    }
+  }, [currentFolderName, messages]);
 
   useEffect(() => {
-    setSort('');
-  }, [currentFolder]);
+    if (virtualLoaderRef && virtualLoaderRef.current) {
+      virtualLoaderRef.current._listRef.scrollToItem(0);
+    }
+  }, [currentFolderName]);
 
   const handleDropResult = async (item, dropResult) => {
     let selection = [];
@@ -179,40 +189,80 @@ export default function MessageList(props: Props) {
     return data.messages.byId[msgId].id
   };
 
-  const CustomScrollbars = ({ onScroll, forwardedRef, style, children }) => {
-    const refSetter = useCallback(scrollbarsRef => {
-      if (scrollbarsRef) {
-        if (listRef && listRef.current && listRef.current.state) {
-          scrollbarsRef.scrollTop(listRef.current.state.scrollOffset);
-          forwardedRef(scrollbarsRef.view);
-        }
-      } else {
-        forwardedRef(null);
-      }
-    }, []);
+  // Removing these to reevaluate if we need them. Including custom scrollbars creates a lot of
+  // bugs and edge cases with the infinite loader.
 
-    return (
-      <Scrollbars
-        ref={refSetter}
-        onScroll={onScroll}
-        style={{ ...style, overflow: 'hidden' }}
-        hideTracksWhenNotNeeded
-        autoHide
-      >
-        {children}
-      </Scrollbars>
-    );
-  };
+  // const CustomScrollbars = ({ onScroll, forwardedRef, style, children }) => {
+  //   const refSetter = debounce(scrollbarsRef => {
+  //     if (scrollbarsRef) {
 
-  const CustomScrollbarsVirtualList = React.forwardRef((props, ref) => (
-    <CustomScrollbars {...props} forwardedRef={ref} />
-  ));
+  //       if (listRef && listRef.current && listRef.current.state) {
+  //         currentScrollOffset.current = listRef.current.state.scrollOffset;
+  //       }
 
-  const toggleSort = () => {
-    if (!sort || sort === 'DESC') {
-      setSort('ASC');
-    } else {
-      setSort('DESC');
+  //       if (loadMoreFired && !isLoading) {
+  //         scrollbarsRef.scrollTop(currentScrollOffset.current);
+  //         forwardedRef(scrollbarsRef.view);
+  //         loadMoreFired = false;
+  //       }
+
+  //       if (localScrollOffset !== null && localScrollOffset !== undefined && !scrollPositionIsSet) {
+  //         if (localScrollOffset === 0) {
+  //           scrollbarsRef.scrollTop(1);
+  //         } else {
+  //           scrollbarsRef.scrollTop(localScrollOffset);
+  //         }
+  //         forwardedRef(scrollbarsRef.view);
+  //         scrollPositionIsSet = true;
+  //       }
+  //     } else {
+  //       // forwardedRef(null);
+  //     }
+  //   }, 300);
+
+  //   return (
+  //     <Scrollbars
+  //       ref={refSetter}
+  //       onScroll={onScroll}
+  //       style={{ ...style, overflow: 'hidden' }}
+  //       hideTracksWhenNotNeeded
+  //       autoHide
+  //     >
+  //       {children}
+  //     </Scrollbars>
+  //   );
+  // };
+
+  // const CustomScrollbarsVirtualList = React.forwardRef((props, ref) => (
+  //   <CustomScrollbars {...props} forwardedRef={ref} />
+  // ));
+
+  // const toggleSort = () => {
+  //   if (!sort || sort === 'DESC') {
+  //     setSort('ASC');
+  //   } else {
+  //     setSort('DESC');
+  //   }
+  // }
+
+  const isItemLoaded = (index: number) => {
+    return index < 50;
+  }
+
+  const loadMoreItems = (startIndex: number, stopIndex: number) => {
+    if (!isLoading && messages.allIds.length - 1 < stopIndex) {
+      isLoading = true;
+
+      return new Promise((resolve, reject) => {
+        dispatch(fetchMoreFolderMessages(folderId, startIndex))
+          .then(() => {
+            isLoading = false;
+            return resolve();
+          })
+          .catch(err => {
+            return reject(err);
+          })
+      });
     }
   }
 
@@ -220,34 +270,43 @@ export default function MessageList(props: Props) {
     <div className="flex-1 flex w-full flex-col rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
       <div className="h-10 w-full text-lg font-semibold justify-center py-2 pl-4 pr-4 mb-2 text-gray-600 flex flex-row justify-between">
         <div className="flex-1 select-none">
-          {(currentFolder && currentFolder.name) || ''}
+          {currentFolderName || ''}
           <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
         </div>
-        {/* <div className="items-end flex">
-          <div style={{ cursor: 'pointer' }} onClick={toggleSort}>
+        <div className="items-end flex">
+          {/* <div style={{ cursor: 'pointer' }} onClick={toggleSort}>
             <SortIcon color="#9333ea" order={sort} />
-          </div>
-          <Filter2 set="broken" size="small" style={{ cursor: 'pointer' }} />
-        </div> */}
+          </div> */}
+          {/* <Filter2 set="broken" size="small" style={{ cursor: 'pointer' }} /> */}
+        </div>
       </div>
       {messages.allIds.length > 0 && (
         <div className="flex-1 flex w-full">
 
           <AutoSizer>
             {({ height, width }) => (
-              <List
-                ref={listRef || null}
-                className="List"
-                height={height}
-                itemKey={itemKey}
-                itemCount={messages.allIds.length}
-                itemData={itemData}
-                itemSize={() => 74}
-                width={width}
-                outerElementType={listRef ? CustomScrollbarsVirtualList : null}
+              <InfiniteLoader
+                ref={virtualLoaderRef}
+                isItemLoaded={isItemLoaded}
+                itemCount={999999999}
+                loadMoreItems={loadMoreItems}
               >
-                {Row}
-              </List>
+                {({ onItemsRendered, ref }) => (
+                  <List
+                    ref={ref}
+                    onItemsRendered={onItemsRendered}
+                    className="List"
+                    height={height}
+                    itemKey={itemKey}
+                    itemCount={messages.allIds.length}
+                    itemData={itemData}
+                    itemSize={() => 74}
+                    width={width}
+                  >
+                    {Row}
+                  </List>
+                )}
+              </InfiniteLoader>
             )}
           </AutoSizer>
 
