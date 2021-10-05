@@ -24,7 +24,11 @@ import {
   CLEAR_ACTIVE_MESSAGE
 } from '../actions/mailbox/messages';
 
-import { TOGGLE_EDITOR, UPDATE_NETWORK_STATUS } from '../actions/global';
+import {
+  TOGGLE_EDITOR,
+  UPDATE_NETWORK_STATUS,
+  REFRESH_TOKEN
+} from '../actions/global';
 
 const initialState = {
   activeMsgId: {},
@@ -48,6 +52,7 @@ const initialState = {
   editorIsOpen: false,
   editorAction: '',
   highlightText: '',
+  authToken: '',
   // This below is to indicate the Message Display take the room of the Message List, it is not currently implemented.
   showMaximizedMessageDisplay: false,
   accounts: []
@@ -169,6 +174,11 @@ const globalState = (
         ...state,
         status: action.status
       };
+    case REFRESH_TOKEN:
+      return {
+        ...state,
+        authToken: action.token
+      }
     default:
       return state;
   }

@@ -1,6 +1,9 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Divider, Panel, Icon, Button, Progress, Modal, Placeholder } from 'rsuite';
+
+// REDUX STATE SELECTORS
+import { selectAuthToken } from '../../selectors/global';
 
 type Props = {
 };
@@ -8,6 +11,8 @@ type Props = {
 export default function BillingsPayemnts(props: Props) {
   const { Line } = Progress;
   const { Paragraph } = Placeholder;
+
+  const authToken = useSelector(selectAuthToken);
 
   const [show, setShow] = useState(false);
 
@@ -91,7 +96,7 @@ export default function BillingsPayemnts(props: Props) {
         </Panel>
       </div>
 
-      {/* <div className="mb-8">
+      <div className="mb-8">
         <Panel bordered bodyFill>
           <h6 className="bg-gray-100 p-4">Aliases</h6>
           <Divider style={{ margin: '0' }} />
@@ -108,14 +113,16 @@ export default function BillingsPayemnts(props: Props) {
             </div>
           </div>
         </Panel>
-      </div> */}
+      </div>
 
-      <Modal style={{ padding: '0' }} full show={show} onHide={close}>
+      <Modal className="h-screen" style={{ padding: '0', width: '100%' }} full show={show} onHide={close}>
         <Modal.Header>
           <Modal.Title>Upgrade Your Plan</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ margin: '0', padding: '0' }}>
-          <Paragraph rows={8} />
+          <div>
+            {/* <webview style={{ margin: '0', padding: '0', height: '750px' }} className="w-full" src={`http://localhost:3001/client/subscribe?token=${authToken}`} ></webview> */}
+          </div>
         </Modal.Body>
       </Modal>
     </div>

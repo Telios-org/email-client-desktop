@@ -221,6 +221,7 @@ export type GlobalType = {
       };
     };
   };
+  authToken: string;
   accounts: Array<string>;
   loading: boolean;
   editorIsOpen: boolean;

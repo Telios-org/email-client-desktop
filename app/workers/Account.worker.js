@@ -151,6 +151,12 @@ module.exports = userDataPath => {
         store.setDBConnection(payload.email, connection);
         store.setAccount(acct);
 
+        // Immediately set a token
+        refreshToken();
+
+        // Refresh and get a new token every 25 seconds
+        setInterval(refreshToken, 25000);
+
         process.send({ event: 'getAcct', data: acct });
       } catch (e) {
         process.send({ event: 'loginFailed', data: null });
@@ -184,6 +190,11 @@ module.exports = userDataPath => {
     }
   });
 };
+
+function refreshToken() {
+  const token = store.refreshToken();
+  process.send({ event: 'ACCOUNT_WORKER::refreshToken', data: { token } });
+}
 
 
 async function handleDriveMessages(drive, account) {

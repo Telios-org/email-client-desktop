@@ -144,6 +144,19 @@ class Store {
   getTheme() {
     return this.theme;
   }
+
+  refreshToken() {
+    console.log(this.account);
+
+    const payload = {
+      account_key: this.account.secretBoxPubKey,
+      device_signing_key: this.account.deviceSigningPubKey,
+      device_id: this.account.deviceId,
+      sig: this.account.serverSig
+    }
+
+    return SDK.Account.createAuthToken(payload, this.account.deviceSigningPrivKey);
+  }
 }
 
 const instance = new Store();

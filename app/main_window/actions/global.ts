@@ -23,3 +23,11 @@ export const toggleEditor = (editorAction: string, forcedStatus?: boolean) => {
     forcedStatus
   };
 };
+
+export const REFRESH_TOKEN = 'GLOBAL::REFRESH_TOKEN';
+export const refreshToken = (token: string) => {
+  return {
+    type: REFRESH_TOKEN,
+    token
+  };
+};

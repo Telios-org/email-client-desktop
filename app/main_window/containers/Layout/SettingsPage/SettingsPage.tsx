@@ -25,12 +25,12 @@ export default function SettingsPage(props: Props) {
 
   return (
     <div className="flex flex-col select-none h-full">
-      <div className="grid grid-cols-12 h-full">
+      <div className="grid grid-cols-12 ">
         <div className="col-span-2 p-4">
           <h6 className="mb-6">Account Settings</h6>
           <CustomNav appearance="subtle" reversed active={active} onSelect={handleSelect} />
         </div>
-        <div className="col-span-10 bg-white w-full h-full p-4">
+        <div className="col-span-10 bg-white w-full max-h-full p-4">
           <div className="w-3/5">
             {active === 'payments' && (
               <BillingPayments />
