@@ -29,6 +29,7 @@ type Props = {
   show: boolean;
   onHide: () => void;
   onCreateAlias: () => void;
+  onShowEdit: (aliasId: string) => void;
   domain: string;
 };
 
@@ -42,7 +43,7 @@ export default function AliasModal(props: Props) {
 
   const showTable = aliases.allIds.length > 0;
 
-  const { onHide, show, onCreateAlias, domain } = props;
+  const { onHide, show, onCreateAlias, domain, onShowEdit } = props;
 
   const [showHelp, setShowHelp] = useState(false);
 
@@ -147,7 +148,7 @@ Add alias
           </div>
         )}
         {showTable && (
-          <AliasManagementTable domain={domain} aliases={aliases} ns={firstNamespace}/>
+          <AliasManagementTable domain={domain} aliases={aliases} ns={firstNamespace} onShowEdit={onShowEdit}/>
         )}
       </Modal.Body>
       <Modal.Footer>

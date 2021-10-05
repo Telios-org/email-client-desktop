@@ -14,7 +14,10 @@ import {
 import { MailType } from '../../../../../../reducers/types';
 
 // ACTION CREATORS
-import { updateAlias } from '../../../../../../actions/mailbox/aliases';
+import {
+  updateAlias,
+  removeAlias
+} from '../../../../../../actions/mailbox/aliases';
 
 // CSS Style
 
@@ -24,6 +27,7 @@ type Props = {
   domain: string;
   aliases: MailType[];
   ns: any;
+  onShowEdit: (aliasId: string) => void;
 };
 
 const { Column, HeaderCell, Cell } = Table;
@@ -47,18 +51,18 @@ const CreatedDateCell = ({ rowData, dataKey, ...props }) => {
 const FwdPills = ({ rowData, dataKey, ...props }) => {
   return (
     <Cell {...props}>
-      <div className="flex flex-col">
+      <div className="flex-col flex">
         {rowData[dataKey]?.map((fwd: string) => (
-          <div
-            key={`fwd_${fwd}`}
-            className={`${
-              fwd.length > 0
-                ? 'bg-coolGray-100 py-1 px-3 text-xs rounded mb-1 overflow-ellipsis'
-                : ''
-            }`}
-            style={{ width: 'fit-content' }}
-          >
-            {fwd}
+          <div key={`fwd_${fwd}`} className="inline-flex truncate">
+            <div
+              className={`${
+                fwd.length > 0
+                  ? 'bg-coolGray-100 py-1 px-3 text-xs rounded mb-1 truncate'
+                  : ''
+              }`}
+            >
+              {fwd}
+            </div>
           </div>
         ))}
       </div>
@@ -68,9 +72,10 @@ const FwdPills = ({ rowData, dataKey, ...props }) => {
 
 export default function AliasManagementTable(props: Props) {
   const dispatch = useDispatch();
-  const { aliases, domain, ns } = props;
+  const { aliases, domain, ns, onShowEdit } = props;
   const [showDelete, setShowDelete] = useState(false);
   const [deleteObj, setDeleteObj] = useState({});
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const data = aliases.allIds.map((al, index) => {
     const d = aliases.byId[al];
@@ -91,21 +96,31 @@ export default function AliasManagementTable(props: Props) {
   const tableHeight = data?.reduce((previousValue, curr) => {
     const multiplier =
       curr.fwdAddresses.length <= 1 ? 1 : curr.fwdAddresses.length * 0.75;
-    console.log('multiplier', multiplier, curr.fwdAddresses);
     return multiplier * 55 + previousValue;
   }, 40);
 
   const handleToggleAction = async (rowData, value, event) => {
     const payload = {
-      namespaceName: ns.name,
+      namespaceName: rowData.ns,
       domain,
       address: rowData.alias,
       description: rowData.description,
       fwdAddresses: rowData.fwdAddresses,
       disabled: !rowData.disabled
     };
-    console.log('POOP', rowData, payload, value);
     dispatch(updateAlias(payload));
+  };
+
+  const handleDeleteAlias = async () => {
+    const payload = {
+      namespaceName: deleteObj.ns,
+      domain,
+      address: deleteObj.alias
+    };
+    setDeleteLoading(true);
+    await dispatch(removeAlias(payload));
+    setDeleteLoading(false);
+    setShowDelete(false);
   };
 
   const handleDeleteAction = rowData => {
@@ -141,13 +156,20 @@ export default function AliasManagementTable(props: Props) {
         </Column>
         <Column flexGrow={1} verticalAlign="middle">
           <HeaderCell className="font-bold text-coolGray-500">Alias</HeaderCell>
-          <Cell className="text-xs font-semibold">
+          <Cell>
             {rowData => {
               return (
                 <>
-                  {`${rowData.ns}#`}
-                  <b className="text-purple-600">{rowData.alias}</b>
-                  {`@${rowData.domain}`}
+                  <div className="text-xs font-semibold">
+                    {`${rowData.ns}#`}
+                    <span className="text-purple-600">{rowData.alias}</span>
+                    {`@${rowData.domain}`}
+                  </div>
+                  {rowData.description.length > 0 && (
+                    <div className="text-2xs text-coolGray-400">
+                      {rowData.description}
+                    </div>
+                  )}
                 </>
               );
             }}
@@ -188,7 +210,7 @@ export default function AliasManagementTable(props: Props) {
                   size="small"
                   className="hover:text-blue-500"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => {}}
+                  onClick={() => onShowEdit(`${rowData.ns}#${rowData.alias}`)}
                 />
                 <span className="mx-1" />
                 <Delete
@@ -233,13 +255,14 @@ export default function AliasManagementTable(props: Props) {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            onClick={() => setShowDelete(true)}
+            onClick={handleDeleteAlias}
+            loading={deleteLoading}
             className="tracking-wide border-color-purple-800 shadow-sm border-red-400 bg-red-500 text-white"
           >
             Yes, Delete
           </Button>
           <Button
-            onClick={() => setShowDelete(true)}
+            onClick={() => setShowDelete(false)}
             appearance="ghost"
             className="border-coolGray-300 text-coolGray-400 tracking-wide"
           >

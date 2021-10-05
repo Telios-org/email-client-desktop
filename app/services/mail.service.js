@@ -404,7 +404,7 @@ class MailService {
 
   static removeAliasAddress(payload) {
     worker.send({
-      event: x,
+      event: 'MAIL_SERVICE::removeAliasAddress',
       payload
     });
 

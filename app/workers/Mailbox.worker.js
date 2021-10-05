@@ -266,7 +266,7 @@ module.exports = env => {
             'createdAt'
           ],
           where: { namespaceKey: { [Op.in]: payload.namespaceKeys } },
-          order: [['name', 'ASC']],
+          order: [['createdAt', 'DESC']],
           raw: true
         });
 
@@ -395,35 +395,32 @@ module.exports = env => {
     }
 
     if (event === 'MAIL_SERVICE::removeAliasAddress') {
-      // process.send({ event: 'DELETEMAIL', ids: payload.messageIds });
-      // const msgArr = await Alias.findAll({
-      //   attributes: ['aliasId'],
-      //   where: {
-      //     where: { aliasId: address },
-      //   },
-      //   raw: true
-      // });
-      // process.send({ event: 'DELETEMAIL', msgArr });
-      // try {
-      //   await Email.destroy({
-      //     where: {
-      //       emailId: {
-      //         [Op.in]: payload.messageIds
-      //       }
-      //     },
-      //     individualHooks: true
-      //   });
-      //   process.send({ event: 'MAIL_SERVICE::removeAliasAddress', data: null });
-      // } catch (e) {
-      //   process.send({
-      //     event: 'MAIL_SERVICE::removeAliasAddress',
-      //     error: {
-      //       name: e.name,
-      //       message: e.message,
-      //       stacktrace: e.stack
-      //     }
-      //   });
-      // }
+      const { namespaceName, domain, address } = payload;
+
+      try {
+        const mailbox = store.getMailbox();
+
+        await mailbox.removeAliasAddress(
+          `${namespaceName}#${address}@${domain}`
+        );
+
+        await Alias.destroy({
+          where: {
+            aliasId: `${namespaceName}#${address}`
+          },
+          individualHooks: true
+        });
+        process.send({ event: 'MAIL_WORKER::removeAliasAddress', data: null });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::removeAliasAddress',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
     }
 
     if (event === 'getMessagesByFolderId') {

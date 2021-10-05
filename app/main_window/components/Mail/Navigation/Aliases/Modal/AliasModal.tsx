@@ -6,6 +6,8 @@ import { Modal } from 'rsuite';
 import NamespaceRegistration from './NamespaceRegistration';
 import AliasManagement from './AliasManagement/AliasManagement';
 import AliasRegistration from './AliasRegistration';
+import AliasEdit from './AliasManagement/AliasEdit';
+
 
 // SELECTORS
 import { selectFirstNamespace } from '../../../../../selectors/mail';
@@ -26,10 +28,16 @@ type Props = {
 export default function AliasModal(props: Props) {
   const dispatch = useDispatch();
   const namespace = useSelector(selectFirstNamespace);
+  const [aliasEdit, setAliasEdit] = useState('');
 
   const [modalRoute, setModalRoute] = useState('');
 
   const { show, onHide } = props;
+
+  const handleAliasEdit = (aliasId) => {
+    setAliasEdit(aliasId);
+    setModalRoute('aliasEdit');
+  }
 
   useEffect(() => {
     if (namespace === null) {
@@ -54,6 +62,7 @@ export default function AliasModal(props: Props) {
             show={show}
             onHide={onHide}
             onCreateAlias={() => setModalRoute('aliasRegistration')}
+            onShowEdit={handleAliasEdit}
             domain={mailDomain}
           />
         )}
@@ -62,6 +71,15 @@ export default function AliasModal(props: Props) {
             show={show}
             onHide={onHide}
             onShowManagement={() => setModalRoute('aliasManagement')}
+            domain={mailDomain}
+          />
+        )}
+        {modalRoute === 'aliasEdit' && (
+          <AliasEdit
+            show={show}
+            onHide={onHide}
+            onShowManagement={() => setModalRoute('aliasManagement')}
+            aliasId={aliasEdit}
             domain={mailDomain}
           />
         )}

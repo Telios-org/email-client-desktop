@@ -196,3 +196,76 @@ export const updateAlias = (payload: {
     return { status: 'updateed', success: true };
   };
 };
+
+// REMOVE ALIAS
+
+export const REMOVE_ALIAS = 'ALIASES::REMOVE_ALIAS';
+export const startAliasRemove = (alias: string, payload: any) => {
+  return {
+    type: REMOVE_ALIAS,
+    alias,
+    payload
+  };
+};
+
+export const REMOVE_ALIAS_SUCCESS = 'ALIASES::REMOVE_ALIAS_SUCCESS';
+export const aliasRemoveSuccess = (payload: any) => {
+  return {
+    type: REMOVE_ALIAS_SUCCESS,
+    payload
+  };
+};
+
+export const REMOVE_ALIAS_FAILURE = 'ALIASES::REMOVE_ALIAS_FAILURE';
+export const aliasRemoveFailure = (
+  error: string,
+  alias: string,
+  payload: any
+) => {
+  return {
+    type: REMOVE_ALIAS_FAILURE,
+    error,
+    alias,
+    payload
+  };
+};
+
+export const removeAlias = (payload: {
+  namespaceName: string;
+  domain: string;
+  address: string;
+}) => {
+  return async (dispatch: Dispatch) => {
+    const { namespaceName, domain, address } = payload;
+    dispatch(
+      startAliasRemove(`${namespaceName}#${address}@${domain}`, payload)
+    );
+    try {
+      await Mail.removeAliasAddress({
+        namespaceName,
+        domain,
+        address
+      });
+    } catch (error) {
+      dispatch(
+        aliasRemoveFailure(
+          error,
+          `${namespaceName}#${address}@${domain}`,
+          payload
+        )
+      );
+
+      // if (error.message.startsWith('E11000 duplicate key')) {
+      //   return { status: 'already-removeed', success: false };
+      // }
+      return {
+        status: 'issue-removing',
+        success: false,
+        message: error.message
+      };
+    }
+
+    dispatch(aliasRemoveSuccess({ aliasId: `${namespaceName}#${address}` }));
+    return { status: 'removed', success: true };
+  };
+};
