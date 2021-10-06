@@ -32,6 +32,9 @@ import styles from '../Navigation.less';
 // STATE SELECTORS
 import { selectAllAliasesById } from '../../../../selectors/mail';
 
+// ACTION CREATORS
+import { aliasSelection } from '../../../../actions/mailbox/aliases';
+
 // TYPESCRIPT TYPES
 import { StateType } from '../../../../reducers/types';
 
@@ -98,7 +101,7 @@ export default function NamespaceBlock(props: Props) {
 
     if (index !== undefined) {
       const indx = parseInt(index);
-      await dispatch();
+      await dispatch(aliasSelection(indx));
     }
   };
 
@@ -167,7 +170,7 @@ export default function NamespaceBlock(props: Props) {
                   size="small"
                 /> */}
                 <div
-                  className={`flex-initial ml-2 mb-0.5${
+                  className={`flex-initial ml-2 mb-0.5 ${
                     active === index ? 'text-purple-700' : ''
                   }`}
                 >

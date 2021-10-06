@@ -238,10 +238,30 @@ class MailService {
   }
 
   static getMessagesByFolderId(id, limit, offset) {
-    worker.send({ event: 'getMessagesByFolderId', payload: { id, limit, offset } });
+    worker.send({
+      event: 'MAIL_SERVICE::getMessagesByFolderId',
+      payload: { id, limit, offset }
+    });
 
     return new Promise((resolve, reject) => {
-      worker.once('getMessagesByFolderId', m => {
+      worker.once('MAIL_WORKER::getMessagesByFolderId', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static getMessagesByAliasId(id, limit, offset) {
+    worker.send({
+      event: 'MAIL_SERVICE::getMessagesByAliasId',
+      payload: { id, limit, offset }
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::getMessagesByAliasId', m => {
         const { data, error } = m;
 
         if (error) return reject(error);

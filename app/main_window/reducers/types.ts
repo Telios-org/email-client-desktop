@@ -143,6 +143,7 @@ export type MailMessageType = {
   id: string;
   folderId: number;
   isPreview: boolean;
+  aliasId: string;
   // mailboxId: number; THIS WILL BE NEEDED WHEN MULTIPLE MAILBOX ARE PRESENT
   headers: any;
   active: boolean;

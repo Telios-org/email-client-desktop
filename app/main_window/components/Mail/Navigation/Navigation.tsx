@@ -37,7 +37,8 @@ import i18n from '../../../../i18n/i18n';
 import {
   selectAllFoldersById,
   selectActiveMailbox,
-  activeFolderId
+  activeFolderId,
+  activeAliasId
 } from '../../../selectors/mail';
 
 // REDUX ACTION CREATORS
@@ -56,6 +57,7 @@ export default function Navigation(props: Props) {
   const mailbox = useSelector(selectActiveMailbox);
   const allFolders = useSelector(selectAllFoldersById);
   const folderId = useSelector(activeFolderId);
+  const aliasId = useSelector(activeAliasId);
   // const history = useHistory();
   const dispatch = useDispatch();
 
@@ -71,7 +73,7 @@ export default function Navigation(props: Props) {
   };
 
   const newMessageAction = async () => {
-    await dispatch(clearActiveMessage(folderId));
+    await dispatch(clearActiveMessage(folderId || aliasId));
     dispatch(toggleEditor('brandNewComposer', true));
   };
 
@@ -181,19 +183,21 @@ export default function Navigation(props: Props) {
             return (
               <li
                 className={`flex relative px-2 my-0.5 mb-0 p-0.5 text-gray-500 items-center
-                ${active === index && !isDrop
+                ${
+                  active === index && !isDrop
                     ? 'text-gray-600 font-bold '
                     : 'hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-600'
-                  }
-                ${isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
-                  }
+                }
+                ${
+                  isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
+                }
                 ${styles.navItem}`}
                 key={folder.seq - 1}
                 onClick={() => selectFolder(index)}
                 ref={
                   folder.name !== 'Screened' &&
-                    folder.name !== 'Sent' &&
-                    folder.name !== 'Drafts'
+                  folder.name !== 'Sent' &&
+                  folder.name !== 'Drafts'
                     ? drop
                     : null
                 }
@@ -206,8 +210,9 @@ export default function Navigation(props: Props) {
                   }`}
                 /> */}
                 <IconTag
-                  className={`flex-initial ml-3 mb-0.5 ${active === index && !isDrop ? 'text-purple-700' : ''
-                    }`}
+                  className={`flex-initial ml-3 mb-0.5 ${
+                    active === index && !isDrop ? 'text-purple-700' : ''
+                  }`}
                   set={active === index && !isDrop ? 'light' : 'broken'}
                   size="small"
                 />
@@ -241,8 +246,9 @@ export default function Navigation(props: Props) {
 
           </div> */}
           <ChevronDown
-            className={`mr-2 mb-0.5 text-gray-600 rounded hover:bg-gray-200 transition-transform ${expandFolders ? '' : 'transform -rotate-90 '
-              }
+            className={`mr-2 mb-0.5 text-gray-600 rounded hover:bg-gray-200 transition-transform ${
+              expandFolders ? '' : 'transform -rotate-90 '
+            }
               ${styles.chevron}`}
             onClick={toggleFolders}
             set="light"
@@ -291,19 +297,22 @@ export default function Navigation(props: Props) {
               >
                 <li
                   className={`group flex relative text-gray-500 pl-4 my-0.5 mb-0 p-0.5 items-center
-                ${active === index && !isDrop
-                      ? 'text-gray-600 font-bold'
-                      : 'hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500'
-                    }
-                ${isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
-                    }
+                ${
+                  active === index && !isDrop
+                    ? 'text-gray-600 font-bold'
+                    : 'hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500'
+                }
+                ${
+                  isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
+                }
                 ${styles.navItem}`}
                   onClick={e => selectFolder(index, e)}
                   ref={drop}
                 >
                   <IconTag
-                    className={`flex-initial ml-1 mb-0.5 ${active === index && !isDrop ? 'text-purple-700' : ''
-                      }`}
+                    className={`flex-initial ml-1 mb-0.5 ${
+                      active === index && !isDrop ? 'text-purple-700' : ''
+                    }`}
                     set={active === index && !isDrop ? 'bulk' : 'broken'}
                     size="small"
                   />
