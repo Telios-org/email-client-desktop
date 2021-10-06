@@ -15,12 +15,12 @@ class MesssageIngress {
   }
 
   async initDrive() {
-    if(!this.drive) {
+    if (!this.drive) {
       this.drive = store.getDrive();
     }
 
     // If worker is running before drive is ready then call .ready()
-    if(!this.drive.discoveryKey) {
+    if (!this.drive.discoveryKey) {
       await this.drive.ready();
     }
 
@@ -44,7 +44,7 @@ class MesssageIngress {
     this.mailbox = store.getMailbox();
 
     files = files.map(f => {
-      if(account) {
+      if (account) {
         const fileMeta = this.mailbox._decryptMailMeta(
           f,
           account.secretBoxPrivKey,
@@ -66,13 +66,14 @@ class MesssageIngress {
         });
 
         stream.on('error', err => {
-          if(!file.failed) {
+          if (!file.failed) {
             file.failed = 1;
           } else {
             file.failed += 1;
           }
 
-          process.send({ event: 'fetchError',
+          process.send({
+            event: 'fetchError',
             error: {
               file,
               message: err.message,
@@ -109,7 +110,7 @@ class MesssageIngress {
     try {
       let keyPair;
 
-      while(!keyPair) {
+      while (!keyPair) {
         keyPair = this.drive._workerKeyPairs.getKeyPair();
       }
 
@@ -123,13 +124,14 @@ class MesssageIngress {
 
       stream.on('error', err => {
 
-        if(!fileMeta.failed) {
+        if (!fileMeta.failed) {
           fileMeta.failed = 1;
         } else {
           fileMeta.failed += 1;
         }
 
-        process.send({ event: 'fetchError',
+        process.send({
+          event: 'fetchError',
           error: {
             file: fileMeta,
             message: err.message,
@@ -163,8 +165,9 @@ class MesssageIngress {
           }
         });
       });
-    } catch(err) {
-      process.send({ event: 'fetchError',
+    } catch (err) {
+      process.send({
+        event: 'fetchError',
         error: {
           file: fileMeta,
           message: err.message,
@@ -180,11 +183,12 @@ class MesssageIngress {
     bodyAsText = bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
     const selection = bodyAsText.split(' ').slice(0, 20);
 
-    if(selection[selection.length-1] !== '...') {
+    if (selection[selection.length - 1] !== '...') {
       selection.push('...');
     }
 
-    process.send({ event: 'notify',
+    process.send({
+      event: 'notify',
       data: {
         icon: path.join(__dirname, '../img/telios_notify_icon.png'),
         title,
@@ -203,7 +207,7 @@ module.exports = async (userDataPath) => {
     const { event, payload } = data;
 
     // This fires after mailbox has finshed initializing from inside mailbox.service
-    if(event === 'initMessageListener') {
+    if (event === 'initMessageListener') {
       await messageIngressWorker.initDrive();
     }
 

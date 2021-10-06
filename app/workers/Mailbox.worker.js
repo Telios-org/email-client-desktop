@@ -562,10 +562,12 @@ module.exports = env => {
 
       const asyncMsgs = [];
       const asyncFolders = [];
+      const newAliases = [];
 
-      messages.forEach(msg => {
+      messages.forEach(async msg => {
         const attachments = [];
         let folderId;
+        let aliasId;
 
         if (!msg.email) {
           msg.email = msg;
@@ -609,7 +611,65 @@ module.exports = env => {
 
         switch (type) {
           case 'Incoming':
-            folderId = 1; // Save message to Inbox
+            let isAlias = false;
+
+            // Assign email into appropriate folder/alias
+            for (let recipient of msg.email.to) {
+
+              // Recipient is an alias
+              if (recipient.address.indexOf('#') > - 1) {
+                isAlias = true;
+                const localPart = recipient.split('@')[0];
+                const recipAliasName = localPart.split('#')[0];
+                const recipAliasAddress = localPart.split('#')[1];
+
+                const aliasNamespace = await AliasNamespace.findOne({
+                  where: {
+                    name: recipAliasName
+                  },
+                  raw: true
+                });
+
+                // Alias is not part of this account so send this email to the main inbox
+                if (!aliasNamespace) {
+                  folderId = 1;
+                  break;
+                }
+
+                const aliasAddrs = await Alias.findAll({
+                  attributes: [
+                    'aliasId',
+                    'name'
+                  ],
+                  raw: true
+                });
+
+                // Check if incoming message alias already exists
+                const aliasIndex = aliasAddrs.findIndex(item => item.name === recipAliasAddress);
+
+                if (aliasIndex === -1) {
+                  // create a new alias!
+                  const alias = await Alias.create({
+                    aliasId: recipient,
+                    name: recipAliasAddress,
+                    namespaceKey: aliasNamespace.namespaceKey,
+                    count: 1,
+                    disabled: false,
+                    whitelisted: 1
+                  });
+
+                  aliasId = alias.recipient;
+                  newAliases.push(alias);
+                } else {
+                  aliasId = aliasAddrs[aliasIndex].aliasId;
+                }
+              }
+            }
+
+            if (!isAlias) {
+              folderId = 1
+            }
+
             break;
           case 'Sent':
             folderId = 4; // Save message to Sent
@@ -625,6 +685,7 @@ module.exports = env => {
           emailId: msg.email.emailId || msg._id,
           unread: folderId === 2 || folderId === 4 || folderId === 5 ? 0 : 1,
           folderId,
+          aliasId,
           fromJSON: JSON.stringify(msg.email.from),
           toJSON: JSON.stringify(msg.email.to),
           subject: msg.email.subject ? msg.email.subject : '(no subject)',
@@ -669,7 +730,10 @@ module.exports = env => {
           });
           return process.send({
             event: 'MAILBOX WORKER::saveMessageToDB',
-            data: msgArr
+            data: {
+              msgArr,
+              newAliases
+            }
           });
         })
         .catch(e => {
@@ -714,7 +778,7 @@ module.exports = env => {
             where: { emailId: msg.emailId },
             individualHooks: true
           })
-            .then(res => {})
+            .then(res => { })
             .catch(e => {
               process.send({ event: 'removeMessages', error: e.message });
             });

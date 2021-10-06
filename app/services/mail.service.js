@@ -132,7 +132,7 @@ class MailService {
       payload: { messages: opts.messages, type: opts.type }
     });
 
-    if (opts.sync) {
+    if (opts.async) {
       return new Promise((resolve, reject) => {
         worker.once('MAILBOX WORKER::saveMessageToDB', m => {
           const { data, error } = m;

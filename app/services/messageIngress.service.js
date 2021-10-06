@@ -16,9 +16,11 @@ class MessageIngressService extends EventEmitter {
     this.finished = 0;
     this.msgBatchSize = 0;
     this.syncIds = [];
+    this.incomingMsgBatch = [];
     this.retryQueue = [];
     this.account = null;
     this.MAX_RETRY = 3;
+    this.folderCounts = {};
 
     mainWorker.on('newMessage', async m => {
       const { data, error } = m;
@@ -36,11 +38,13 @@ class MessageIngressService extends EventEmitter {
       if (!error) {
         const email = transformEmail(data);
 
-        this.emit('saveIncoming', [email]);
-      }
+        MailService.save({ messages: [email], type: 'Incoming', async: true }).then(data => {
+          this.incomingMsgBatch.push(data);
 
-      if (data._id) {
-        this.syncIds.push(data._id);
+          if (data._id) {
+            this.syncIds.push(data._id);
+          }
+        });
       }
 
       this.finished += 1;
@@ -124,9 +128,12 @@ class MessageIngressService extends EventEmitter {
       this.emit('messageSynced', {
         index: this.finished,
         total: this.msgBatchSize,
+        messages: this.incomingMsgBatch.msgArr,
+        newAliases: this.incomingMsgBatch.newAliases,
         done: true
       });
 
+      this.incomingMsgBatch = [];
       this.finished = 0;
       this.msgBatchSize = 0;
     }

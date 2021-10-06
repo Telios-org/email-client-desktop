@@ -406,7 +406,7 @@ export const saveIncomingMessagesFailure = (error: Error) => {
   };
 };
 
-export const saveIncomingMessages = (messages: any) => {
+export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       globalState: { activeFolderIndex },
@@ -416,15 +416,22 @@ export const saveIncomingMessages = (messages: any) => {
     } = getState();
     // eslint-disable-next-line
 
-    Mail.save({ messages, type: 'Incoming', sync: true }).then(msg => {
-      dispatch(saveIncomingMessagesSuccess(msg, foldersArray[activeFolderIndex]));
-    });
+
+    console.log('::::::MESSAGES::::::', messages);
+    console.log('::::::NEW ALIASES::::::', newAliases);
+
+
+    // dispatch(saveIncomingMessagesSuccess(messages, foldersArray[activeFolderIndex]));
+
+    // Mail.save({ messages, type: 'Incoming', async: true }).then(msg => {
+    //   dispatch(saveIncomingMessagesSuccess(msg, foldersArray[activeFolderIndex]));
+    // });
 
     // eslint-disable-next-line no-underscore-dangle
-    const msgArray = messages.map(m => m._id);
-    Mail.markAsSynced(msgArray, { sync: false });
+    // const msgArray = messages.map(m => m._id);
+    // Mail.markAsSynced(msgArray, { sync: false });
 
-    dispatch(updateFolderCount(1, 1));
+    // dispatch(updateFolderCount(1, 1));
     return Promise.resolve('done');
   };
 };
