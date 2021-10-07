@@ -125,3 +125,20 @@ export const selectFirstNamespace = createSelector(selectAllNamespaces, ns => {
 
   return null;
 });
+
+const activeAliasIndex = (state: StateType) =>
+  state.globalState.activeAliasIndex;
+
+export const activeAliasId = createSelector(
+  [selectAllAliases, activeAliasIndex],
+  (aliases, activeAlias) => {
+    return aliases.allIds[activeAlias];
+  }
+);
+
+export const selectActiveAliasName = createSelector(
+  [selectAllAliases, activeAliasId],
+  (aliases, activeAlias) => {
+    return aliases.byId[activeAlias] ? aliases.byId[activeAlias].name : '';
+  }
+);

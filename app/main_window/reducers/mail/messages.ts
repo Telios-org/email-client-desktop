@@ -11,6 +11,11 @@ import {
   MARK_UNREAD_SUCCESS,
   UPDATE_MESSAGE_LIST
 } from '../../actions/mailbox/messages';
+
+import {
+  ALIAS_SELECTION_FLOW_SUCCESS,
+  FETCH_MORE_ALIAS_MESSAGES_SUCCESS
+} from '../../actions/mailbox/aliases';
 import { MailType, MailAction } from '../types';
 import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
 
@@ -51,7 +56,6 @@ export default function messages(
     case SAVE_SENT_MESSAGE_SUCCESS:
       // checking for undefined to satisfy TS requirement.
       if (action.messages !== undefined && action.messages.length > 0) {
-
         let messageArr = [];
 
         const msg = action.messages.filter(
@@ -60,7 +64,7 @@ export default function messages(
 
         messageArr = [...msg];
 
-        for (let key in state.byId) {
+        for (const key in state.byId) {
           messageArr.push(state.byId[key]);
         }
 
@@ -87,6 +91,7 @@ export default function messages(
 
     case FETCH_MAIL_DATA_SUCCESS:
     case FOLDER_SELECTION_FLOW_SUCCESS:
+    case ALIAS_SELECTION_FLOW_SUCCESS:
       return {
         ...state,
         byId: {
@@ -95,10 +100,14 @@ export default function messages(
         allIds: [...idFromArrayDict(action.messages)]
       };
     case UPDATE_MESSAGE_LIST:
-      let _byId = { ...state.byId };
+      const _byId = { ...state.byId };
       let _allIds = [...state.allIds];
 
-      if (action.messages && action.updateType && action.updateType === 'remove') {
+      if (
+        action.messages &&
+        action.updateType &&
+        action.updateType === 'remove'
+      ) {
         for (let i = 0; i < action.messages.length; i += 1) {
           const msgId = action.messages[i].id || action.messages[i].emailId;
 
@@ -113,6 +122,7 @@ export default function messages(
         allIds: _allIds
       };
     case FETCH_MORE_FOLDER_MESSAGES_SUCCESS:
+    case FETCH_MORE_ALIAS_MESSAGES_SUCCESS:
       return {
         ...state,
         byId: {

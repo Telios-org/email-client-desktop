@@ -424,7 +424,7 @@ module.exports = env => {
       }
     }
 
-    if (event === 'getMessagesByFolderId') {
+    if (event === 'MAIL_SERVICE::getMessagesByFolderId') {
       try {
         const messages = await Email.findAll({
           where: { folderId: payload.id },
@@ -433,6 +433,7 @@ module.exports = env => {
           attributes: [
             ['emailId', 'id'],
             'folderId',
+            'aliasId',
             'subject',
             'unread',
             'date',
@@ -445,10 +446,51 @@ module.exports = env => {
           order: [['date', 'DESC']],
           raw: true
         });
-        process.send({ event: 'getMessagesByFolderId', data: messages });
+        process.send({
+          event: 'MAIL_WORKER::getMessagesByFolderId',
+          data: messages
+        });
       } catch (e) {
         process.send({
-          event: 'getMessagesByFolderId',
+          event: 'MAIL_WORKER::getMessagesByFolderId',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    if (event === 'MAIL_SERVICE::getMessagesByAliasId') {
+      try {
+        const messages = await Email.findAll({
+          where: { aliasId: payload.id },
+          limit: payload.limit,
+          offset: payload.offset,
+          attributes: [
+            ['emailId', 'id'],
+            'folderId',
+            'aliasId',
+            'subject',
+            'unread',
+            'date',
+            'toJSON',
+            'fromJSON',
+            'ccJSON',
+            'bodyAsText',
+            'attachments'
+          ],
+          order: [['date', 'DESC']],
+          raw: true
+        });
+        process.send({
+          event: 'MAIL_WORKER::getMessagesByAliasId',
+          data: messages
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::getMessagesByAliasId',
           error: {
             name: e.name,
             message: e.message,
