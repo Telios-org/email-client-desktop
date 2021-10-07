@@ -110,7 +110,6 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   Email.addHook('beforeCreate', async (email, options) => {
-    process.send({ event: 'BEFORE-BeforeCreate-saveMessageToDBLOG', data: email });
     try {
       email.bodyAsText = removeMd(email.bodyAsText);
       email.bodyAsText = email.bodyAsText.replace(/\[(.*?)\]/g, '');

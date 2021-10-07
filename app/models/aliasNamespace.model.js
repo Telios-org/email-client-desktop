@@ -3,10 +3,14 @@ const { Model } = require('sequelize');
 const store = require('../Store');
 
 const model = {
-  namespaceKey: {
+  publicKey: {
     type: DataTypes.STRING,
     primaryKey: true,
     unique: true,
+    allowNull: false
+  },
+  privateKey: {
+    type: DataTypes.STRING,
     allowNull: false
   },
   name: {
@@ -29,7 +33,7 @@ const model = {
   updatedAt: DataTypes.DATE
 };
 
-class AliasNamespace extends Model {}
+class AliasNamespace extends Model { }
 
 module.exports.AliasNamespace = AliasNamespace;
 

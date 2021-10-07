@@ -11,3 +11,15 @@ export const updateFolderCount = (id: number, amount: number) => {
     amount
   };
 };
+
+export const UPDATE_ALIAS_COUNT = 'GLOBAL::UPDATE_ALIAS_COUNT';
+export const updateAliasCount = (id: string, amount: number) => {
+
+  Mail.updateAliasCount({ id, amount });
+
+  return {
+    type: UPDATE_ALIAS_COUNT,
+    id,
+    amount
+  };
+};

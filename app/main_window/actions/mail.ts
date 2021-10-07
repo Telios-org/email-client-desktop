@@ -1,5 +1,6 @@
 /* eslint-disable promise/no-nesting */
-import { updateFolderCount } from './mailbox/folders';
+import { updateFolderCount, updateAliasCount } from './mailbox/folders';
+import { aliasRegistrationSuccess } from './mailbox/aliases';
 import {
   Dispatch,
   GetState,
@@ -415,23 +416,43 @@ export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
       }
     } = getState();
     // eslint-disable-next-line
-
+    let folderCounts = {};
+    let aliasCounts = {};
 
     console.log('::::::MESSAGES::::::', messages);
     console.log('::::::NEW ALIASES::::::', newAliases);
 
+    if (newAliases.length) {
+      // add new aliases to redux
+      for (let alias of newAliases) {
+        dispatch(aliasRegistrationSuccess(alias));
+      }
+    }
 
-    // dispatch(saveIncomingMessagesSuccess(messages, foldersArray[activeFolderIndex]));
+    dispatch(saveIncomingMessagesSuccess(messages, foldersArray[activeFolderIndex]));
 
-    // Mail.save({ messages, type: 'Incoming', async: true }).then(msg => {
-    //   dispatch(saveIncomingMessagesSuccess(msg, foldersArray[activeFolderIndex]));
-    // });
+    for (let msg of messages) {
+      if (msg.folderId) {
+        if (!folderCounts[msg.folderId]) folderCounts[msg.folderId] = 0;
+        folderCounts[msg.folderId] += 1;
+      }
 
-    // eslint-disable-next-line no-underscore-dangle
-    // const msgArray = messages.map(m => m._id);
-    // Mail.markAsSynced(msgArray, { sync: false });
+      if (msg.aliasId) {
+        if (!aliasCounts[msg.aliasId]) aliasCounts[msg.aliasId] = 0;
+        aliasCounts[msg.aliasId] += 1;
+      }
+    }
 
-    // dispatch(updateFolderCount(1, 1));
+    // Update Folder Counts
+    for (let key in folderCounts) {
+      dispatch(updateFolderCount(parseInt(key), folderCounts[key]));
+    }
+
+    // Update Alias Counts
+    for (let key in aliasCounts) {
+      dispatch(updateAliasCount(key, aliasCounts[key]));
+    }
+
     return Promise.resolve('done');
   };
 };

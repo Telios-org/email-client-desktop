@@ -17,6 +17,7 @@ class MessageIngressService extends EventEmitter {
     this.msgBatchSize = 0;
     this.syncIds = [];
     this.incomingMsgBatch = [];
+    this.newAliases = [];
     this.retryQueue = [];
     this.account = null;
     this.MAX_RETRY = 3;
@@ -38,17 +39,22 @@ class MessageIngressService extends EventEmitter {
       if (!error) {
         const email = transformEmail(data);
 
-        MailService.save({ messages: [email], type: 'Incoming', async: true }).then(data => {
-          this.incomingMsgBatch.push(data);
+        MailService.save({ messages: [email], type: 'Incoming', async: true }).then(msg => {
+
+          this.incomingMsgBatch = [...msg.msgArr, ...this.incomingMsgBatch];
+
+          if (msg.newAliases.length > 0) {
+            this.newAliases = [...msg.newAliases, ...this.newAliases];
+          }
 
           if (data._id) {
             this.syncIds.push(data._id);
           }
+
+          this.finished += 1;
+          this.handleDone();
         });
       }
-
-      this.finished += 1;
-      this.handleDone();
     });
 
     mainWorker.on('fetchError', async m => {
@@ -128,8 +134,8 @@ class MessageIngressService extends EventEmitter {
       this.emit('messageSynced', {
         index: this.finished,
         total: this.msgBatchSize,
-        messages: this.incomingMsgBatch.msgArr,
-        newAliases: this.incomingMsgBatch.newAliases,
+        messages: this.incomingMsgBatch,
+        newAliases: this.newAliases,
         done: true
       });
 

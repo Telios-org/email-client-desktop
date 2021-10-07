@@ -43,10 +43,6 @@ export default function MessageSyncNotifier(props: Props) {
       }
     });
 
-    // MessageIngress.on('saveIncoming', data => {
-    //   dispatch(saveIncomingMessages(data));
-    // });
-
     return () => {
       MessageIngress.removeAllListeners();
       inProgress(false);

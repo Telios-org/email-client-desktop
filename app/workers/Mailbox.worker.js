@@ -187,7 +187,7 @@ module.exports = env => {
       try {
         const namespaces = await AliasNamespace.findAll({
           attributes: [
-            'namespaceKey',
+            ['publicKey', 'namespaceKey'],
             'name',
             'mailboxId',
             'domain',
@@ -229,7 +229,8 @@ module.exports = env => {
         });
 
         const output = await AliasNamespace.create({
-          namespaceKey: key,
+          publicKey: key,
+          privateKey: secretBoxKeypair.privateKey,
           name: namespace,
           mailboxId,
           domain,
@@ -265,7 +266,7 @@ module.exports = env => {
             'fwdAddresses',
             'createdAt'
           ],
-          where: { namespaceKey: { [Op.in]: payload.namespaceKeys } },
+          where: { publicKey: { [Op.in]: payload.namespaceKeys } },
           order: [['createdAt', 'DESC']],
           raw: true
         });
@@ -562,9 +563,9 @@ module.exports = env => {
 
       const asyncMsgs = [];
       const asyncFolders = [];
-      const newAliases = [];
+      let newAliases = [];
 
-      messages.forEach(async msg => {
+      for await (let msg of messages) {
         const attachments = [];
         let folderId;
         let aliasId;
@@ -614,12 +615,13 @@ module.exports = env => {
             let isAlias = false;
 
             // Assign email into appropriate folder/alias
-            for (let recipient of msg.email.to) {
+            for await (let recipient of msg.email.to) {
 
               // Recipient is an alias
               if (recipient.address.indexOf('#') > - 1) {
+                folderId = 0;
                 isAlias = true;
-                const localPart = recipient.split('@')[0];
+                const localPart = recipient.address.split('@')[0];
                 const recipAliasName = localPart.split('#')[0];
                 const recipAliasAddress = localPart.split('#')[1];
 
@@ -650,15 +652,15 @@ module.exports = env => {
                 if (aliasIndex === -1) {
                   // create a new alias!
                   const alias = await Alias.create({
-                    aliasId: recipient,
+                    aliasId: recipient.address,
                     name: recipAliasAddress,
-                    namespaceKey: aliasNamespace.namespaceKey,
-                    count: 1,
+                    namespaceKey: aliasNamespace.publicKey,
+                    count: 0,
                     disabled: false,
                     whitelisted: 1
                   });
 
-                  aliasId = alias.recipient;
+                  aliasId = alias.aliasId;
                   newAliases.push(alias);
                 } else {
                   aliasId = aliasAddrs[aliasIndex].aliasId;
@@ -711,7 +713,7 @@ module.exports = env => {
         } else {
           asyncMsgs.push(Email.create(msgObj));
         }
-      });
+      }
 
       Promise.all(asyncMsgs)
         .then(async items => {
@@ -732,7 +734,7 @@ module.exports = env => {
             event: 'MAILBOX WORKER::saveMessageToDB',
             data: {
               msgArr,
-              newAliases
+              newAliases: newAliases
             }
           });
         })
@@ -1028,19 +1030,52 @@ module.exports = env => {
       try {
         const { id, amount } = payload;
 
-        if (amount === 1) {
-          await Folder.increment(['count'], {
+        if (amount > 0) {
+          await Folder.increment('count', {
+            by: amount,
             where: { folderId: id },
             individualHooks: true
           });
         } else {
-          await Folder.decrement(['count'], {
+          await Folder.decrement('count', {
+            by: amount,
             where: { folderId: id },
             individualHooks: true
           });
         }
 
         process.send({ event: 'updateFolderCount', updated: true });
+      } catch (e) {
+        process.send({
+          event: 'updateFolder',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    if (event === 'updateAliasCount') {
+      try {
+        const { id, amount } = payload;
+
+        if (amount > 0) {
+          await Alias.increment('count', {
+            by: amount,
+            where: { aliasId: id },
+            individualHooks: true
+          });
+        } else {
+          await Alias.aliasId('count', {
+            by: amount,
+            where: { folderId: id },
+            individualHooks: true
+          });
+        }
+
+        process.send({ event: 'updateAliasCount', updated: true });
       } catch (e) {
         process.send({
           event: 'updateFolder',

@@ -209,6 +209,10 @@ class MailService {
     worker.send({ event: 'updateFolderCount', payload: opts });
   }
 
+  static updateAliasCount(opts) {
+    worker.send({ event: 'updateAliasCount', payload: opts });
+  }
+
   static deleteFolder(opts) {
     worker.send({ event: 'deleteFolder', payload: opts });
 

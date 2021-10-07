@@ -7,6 +7,8 @@ import {
   REMOVE_ALIAS_SUCCESS
 } from '../../actions/mailbox/aliases';
 
+import { UPDATE_ALIAS_COUNT } from '../../actions/mailbox/folders';
+
 const initialState = {
   byId: {},
   allIds: [],
@@ -85,7 +87,7 @@ export default function aliases(
 
       // Recreating the FwdAddresses Data
       fwd = [];
-      console.log('NEWSTATE', newState);
+
       newState.allIds.forEach(el => {
         fwd.push(...newState.byId[el].fwdAddresses);
       });
@@ -94,6 +96,19 @@ export default function aliases(
       newState.fwdAddresses = uniqueFwd;
 
       return newState;
+
+    case UPDATE_ALIAS_COUNT:
+      return {
+        byId: {
+          ...state.byId,
+          [action.id]: {
+            ...state.byId[action.id],
+            count: state.byId[action.id].count += action.amount
+          }
+        },
+        allIds: [...state.allIds],
+        fwdAddresses: [...state.fwdAddresses]
+      };
 
     default:
       return { ...state };
