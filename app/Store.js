@@ -19,6 +19,7 @@ class Store {
     this.acctPath = null;
     this.accountSecrets = {};
     this.account = null;
+    this.aliasNamespaces = [];
     this.currentAccount = null;
     this.sessionActive = false;
     this.keypair = null;
@@ -143,6 +144,10 @@ class Store {
 
   getTheme() {
     return this.theme;
+  }
+
+  setAliasNamespaces(namespaces) {
+    this.aliasNamespaces = namespaces;
   }
 }
 

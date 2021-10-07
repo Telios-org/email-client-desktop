@@ -188,6 +188,7 @@ module.exports = env => {
         const namespaces = await AliasNamespace.findAll({
           attributes: [
             ['publicKey', 'namespaceKey'],
+            'privateKey',
             'name',
             'mailboxId',
             'domain',
@@ -197,6 +198,8 @@ module.exports = env => {
           order: [['name', 'ASC']],
           raw: true
         });
+
+        store.setAliasNamespaces(namespaces);
 
         process.send({
           event: 'MAIL_WORKER::getMailboxNamespaces',
@@ -237,6 +240,8 @@ module.exports = env => {
           disabled: false
         });
 
+        store.setAliasNamespaces([{ ...output.dataValues }, ...store.aliasNamespaces]);
+
         process.send({
           event: 'MAIL_WORKER::registerAliasNamespace',
           data: output.dataValues
@@ -266,7 +271,7 @@ module.exports = env => {
             'fwdAddresses',
             'createdAt'
           ],
-          where: { publicKey: { [Op.in]: payload.namespaceKeys } },
+          where: { namespaceKey: { [Op.in]: payload.namespaceKeys } },
           order: [['createdAt', 'DESC']],
           raw: true
         });

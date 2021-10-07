@@ -389,12 +389,14 @@ export const SAVE_INCOMING_MESSAGES_SUCCESS =
   'MAILPAGE::SAVE_INCOMING_MESSAGES_SUCCESS';
 export const saveIncomingMessagesSuccess = function (
   messages: MailMessageType[],
-  activeFolderId: number
+  activeFolderId: number,
+  activeAliasId: string
 ) {
   return {
     type: SAVE_INCOMING_MESSAGES_SUCCESS,
     messages,
-    activeFolderId
+    activeFolderId,
+    activeAliasId
   };
 };
 
@@ -410,9 +412,10 @@ export const saveIncomingMessagesFailure = (error: Error) => {
 export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      globalState: { activeFolderIndex },
+      globalState: { activeFolderIndex, activeAliasIndex },
       mail: {
-        folders: { allIds: foldersArray }
+        folders: { allIds: foldersArray },
+        aliases: { allIds: aliasesArray }
       }
     } = getState();
     // eslint-disable-next-line
@@ -429,7 +432,7 @@ export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
       }
     }
 
-    dispatch(saveIncomingMessagesSuccess(messages, foldersArray[activeFolderIndex]));
+    dispatch(saveIncomingMessagesSuccess(messages, foldersArray[activeFolderIndex], aliasesArray[activeAliasIndex]));
 
     for (let msg of messages) {
       if (msg.folderId) {

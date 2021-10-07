@@ -3,17 +3,17 @@ const { Model } = require('sequelize');
 const store = require('../Store');
 
 const model = {
-  publicKey: {
+  name: {
     type: DataTypes.STRING,
     primaryKey: true,
+    allowNull: false
+  },
+  publicKey: {
+    type: DataTypes.STRING,
     unique: true,
     allowNull: false
   },
   privateKey: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  name: {
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -52,7 +52,7 @@ module.exports.init = async (sequelize, opts) => {
 
   AliasNamespace.addHook('afterCreate', async (ns, options) => {
     try {
-      await collection.put(ns.namespaceKey, ns.dataValues);
+      await collection.put(ns.name, ns.dataValues);
     } catch (err) {
       console.log('Error saving AliasNamespace to Hyperbee', err);
       throw new Error(err);
@@ -61,7 +61,7 @@ module.exports.init = async (sequelize, opts) => {
 
   AliasNamespace.addHook('afterUpdate', async (ns, options) => {
     try {
-      await collection.put(ns.namespaceKey, ns.dataValues);
+      await collection.put(ns.name, ns.dataValues);
     } catch (err) {
       console.log('Error saving AliasNamespace to Hyperbee', err);
       throw new Error(err);
@@ -70,7 +70,7 @@ module.exports.init = async (sequelize, opts) => {
 
   AliasNamespace.addHook('beforeDestroy', async (ns, options) => {
     try {
-      await collection.del(ns.namespaceKey);
+      await collection.del(ns.name);
     } catch (err) {
       process.send({
         event: 'BeforeDestroy-deleteAliasNamespace',

@@ -1,5 +1,8 @@
 import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
-import { FETCH_MAIL_DATA_SUCCESS } from '../../actions/mail';
+import {
+  FETCH_MAIL_DATA_SUCCESS,
+  SAVE_INCOMING_MESSAGES_SUCCESS
+} from '../../actions/mail';
 
 import {
   UPDATE_ALIAS_SUCCESS,
@@ -46,6 +49,32 @@ export default function aliases(
         allIds: [...idFromArrayDict(action.aliases, 'aliasId')],
         fwdAddresses: uniqueFwd
       };
+    case SAVE_INCOMING_MESSAGES_SUCCESS:
+      if (action.messages !== undefined && action.messages.length > 0) {
+        let messageArr = [];
+
+        const msg = action.messages.filter(
+          m => m.aliasId === action.activeAliasId
+        );
+
+        messageArr = [...msg];
+
+        for (const key in state.byId) {
+          messageArr.push(state.byId[key]);
+        }
+
+        const sortedMessages = messageArr.sort((a, b) => b.date - a.date);
+
+        return {
+          ...state,
+          byId: {
+            ...arrayToObject(sortedMessages)
+          },
+          allIds: [...idFromArrayDict(sortedMessages)],
+          fwdAddresses: [...state.fwdAddresses]
+        };
+      }
+      return { ...state };
     case REGISTER_ALIAS_SUCCESS:
       return {
         byId: {
