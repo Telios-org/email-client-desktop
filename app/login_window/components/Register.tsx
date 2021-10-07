@@ -9,7 +9,7 @@ import {
   AiOutlineHistory,
   AiFillCloseCircle
 } from 'react-icons/ai';
-import { TickSquare, CloseSquare } from 'react-iconly';
+import { Show, Hide, Lock } from 'react-iconly';
 import {
   Form,
   FormGroup,
@@ -20,7 +20,9 @@ import {
   Steps,
   Icon,
   Whisper,
-  Tooltip
+  Tooltip,
+  CheckboxGroup,
+  Checkbox
 } from 'rsuite';
 import { Mailbox } from '@telios/client-sdk';
 import Store from 'electron-store';
@@ -81,6 +83,7 @@ type State = {
   passwordStrength: number | null;
   crackTime: string | null;
   account: any;
+  visiblePassword: boolean;
 };
 
 class Register extends Component<Props, State> {
@@ -92,6 +95,7 @@ class Register extends Component<Props, State> {
         masterpass: '',
         confirmpass: '',
         recoveryemail: '',
+        checkbox: [],
         betacode: ''
       },
       step: 0,
@@ -106,7 +110,8 @@ class Register extends Component<Props, State> {
       crackTime: null,
       account: {
         mnemonic: null
-      }
+      },
+      visiblePassword: false
     };
 
     this.onChangeEmail = this.onChangeEmail.bind(this);
@@ -120,6 +125,7 @@ class Register extends Component<Props, State> {
     this.isNextStepDisabled = this.isNextStepDisabled.bind(this);
     this.passwordStrengthlass = this.passwordStrengthlass.bind(this);
     this.showMainWindow = this.showMainWindow.bind(this);
+    this.togglePassword = this.togglePassword.bind(this);
   }
 
   onChangeBetaCode = debounce(async input => {
@@ -283,7 +289,7 @@ class Register extends Component<Props, State> {
         const store = new Store();
         store.set('lastAccount', email);
       } catch (e) {
-        console.log('ERROR', e)
+        console.log('ERROR', e);
         this.setState({
           formError: {
             ...formError,
@@ -301,7 +307,7 @@ class Register extends Component<Props, State> {
   }
 
   handleFormChange(formValue) {
-    const { formError, step } = this.state;
+    const { formError, step, formSuccess } = { ...this.state };
 
     if (formValue.masterpass) {
       this.onChangePass(formValue);
@@ -313,6 +319,19 @@ class Register extends Component<Props, State> {
 
     if (formValue.recoveryemail) {
       this.onChangeRecoveryEmail(formValue);
+    }
+
+    if (formValue.checkbox) {
+      if (
+        formValue.checkbox.includes('emailComm') &&
+        formValue.checkbox.includes('termAndPrivacy')
+      ) {
+        formSuccess.checkboxes = true;
+        this.setState({ formSuccess });
+      } else {
+        delete formSuccess.checkboxes;
+        this.setState({ formSuccess });
+      }
     }
 
     // if (formValue.betacode) {
@@ -332,6 +351,8 @@ class Register extends Component<Props, State> {
       formValue.betacode &&
       formValue.email &&
       formValue.masterpass &&
+      formValue.checkbox.includes('emailComm') &&
+      formValue.checkbox.includes('termAndPrivacy') &&
       formValue.confirmpass &&
       formValue.recoveryemail &&
       errors === 0
@@ -348,7 +369,7 @@ class Register extends Component<Props, State> {
     }
 
     const previousStepDisabled = this.isNextStepDisabled(nextStep - 1);
-    if (nextStep > step && previousStepDisabled && nextStep !== 4) {
+    if (nextStep > step && previousStepDisabled && nextStep !== 5) {
       return true;
     }
 
@@ -461,24 +482,24 @@ class Register extends Component<Props, State> {
 
   isNextStepDisabled(currentStep: number) {
     const { formSuccess } = this.state;
-
     if (
       (currentStep === 0 && formSuccess.betacode) ||
-      (currentStep === 1 && formSuccess.email) ||
-      currentStep === 4
+      (currentStep === 1 && formSuccess.checkboxes) ||
+      (currentStep === 2 && formSuccess.email) ||
+      currentStep === 5
     ) {
       return false;
     }
 
     if (
-      currentStep === 2 &&
+      currentStep === 3 &&
       formSuccess.confirmpass &&
       formSuccess.masterpass
     ) {
       return false;
     }
 
-    if (currentStep === 3 && formSuccess.recoveryemail) {
+    if (currentStep === 4 && formSuccess.recoveryemail) {
       return false;
     }
 
@@ -519,6 +540,11 @@ class Register extends Component<Props, State> {
     fs.writeFileSync(filePath, key, 'utf-8'); // eslint-disable-line
   }
 
+  togglePassword() {
+    const { visiblePassword } = this.state;
+    this.setState({ visiblePassword: !visiblePassword });
+  }
+
   render() {
     const {
       formValue,
@@ -532,7 +558,8 @@ class Register extends Component<Props, State> {
       step,
       passwordStrength,
       crackTime,
-      account
+      account,
+      visiblePassword
     } = this.state;
 
     const { onUpdateActive, firstAccount } = this.props;
@@ -577,86 +604,139 @@ class Register extends Component<Props, State> {
         </div>
         <div className="flex-1">
           {step === 0 && (
-            <FormGroup className="mb-0 -mt-2">
-              <ControlLabel className="font-medium text-gray-500 select-none">
-                {i18n.t('global.code')}
-              </ControlLabel>
-              <InputGroup className="w-full" inside>
-                <FormControl name="betacode" onChange={this.onChangeBetaCode} />
-                <InputGroup.Addon className="bg-transparent">
-                  {betaCheckLoading &&
-                    !formSuccess.betacode &&
-                    !formError.betacode && (
-                      <AiOutlineLoading3Quarters className="loading-indicator" />
-                    )}
-                  {!betaCheckLoading &&
-                    formSuccess.betacode &&
-                    !formError.betacode && (
-                      <BsCheckCircle className="text-green-500" />
-                    )}
-                  {!betaCheckLoading &&
-                    !formSuccess.betacode &&
-                    formError.betacode && (
-                      <BsXCircleFill className="text-red-500" />
-                    )}
-                  {/* <BsCheck className="mr-1 text-gray-400" /> */}
-                </InputGroup.Addon>
-              </InputGroup>
-              <div style={errorStyles(formError.betacode)}>
-                {formError.betacode}
-              </div>
-            </FormGroup>
+            <>
+              <FormGroup className="mb-0 -mt-2">
+                <ControlLabel className="font-medium text-gray-500 select-none">
+                  {i18n.t('global.code')}
+                </ControlLabel>
+                <InputGroup className="w-full" inside>
+                  <FormControl
+                    name="betacode"
+                    onChange={this.onChangeBetaCode}
+                  />
+                  <InputGroup.Addon className="bg-transparent">
+                    {betaCheckLoading &&
+                      !formSuccess.betacode &&
+                      !formError.betacode && (
+                        <AiOutlineLoading3Quarters className="loading-indicator" />
+                      )}
+                    {!betaCheckLoading &&
+                      formSuccess.betacode &&
+                      !formError.betacode && (
+                        <BsCheckCircle className="text-green-500" />
+                      )}
+                    {!betaCheckLoading &&
+                      !formSuccess.betacode &&
+                      formError.betacode && (
+                        <BsXCircleFill className="text-red-500" />
+                      )}
+                    {/* <BsCheck className="mr-1 text-gray-400" /> */}
+                  </InputGroup.Addon>
+                </InputGroup>
+                <div style={errorStyles(formError.betacode)}>
+                  {formError.betacode}
+                </div>
+              </FormGroup>
+            </>
           )}
           {step === 1 && (
-            <FormGroup>
-              <ControlLabel className="font-medium mb-2 text-gray-500 select-none">
-                {i18n.t('global.email')}
-              </ControlLabel>
-              <InputGroup className="w-full">
-                <InputGroup.Addon className="bg-transparent">
-                  {!emailCheckLoading && !formSuccess.email && (
-                    <FaRegEnvelope
-                      className={`text-gray-400
-                    ${formError.email && !formSuccess.email
-                          ? 'text-red-600'
-                          : ''
-                        }
-                    ${formSuccess.email && !formError.email
-                          ? 'text-green-500'
-                          : ''
-                        }`}
-                    />
-                  )}
-                  {emailCheckLoading &&
-                    !formSuccess.email &&
-                    !formError.email && (
-                      <AiOutlineLoading3Quarters className="loading-indicator" />
-                    )}
-
-                  {!emailCheckLoading &&
-                    formSuccess.email &&
-                    !formError.email && (
-                      <BsCheckCircle className="text-green-500" />
-                    )}
-                </InputGroup.Addon>
-                <FormControl
-                  onChange={this.onChangeEmail}
-                  disabled={loading}
-                  name="email"
-                />
-                <InputGroup.Addon>
-                  {' '}
-                  <div
-                    className={`${loading ? 'text-gray-400 select-none' : ''}`}
-                  >
-                    {`@${mailDomain}`}
-                  </div>
-                </InputGroup.Addon>
-              </InputGroup>
-              <div style={errorStyles(formError.email)}>{formError.email}</div>
-            </FormGroup>
+            <>
+              <FormGroup className="-mt-2">
+                <FormControl name="checkbox" accepter={CheckboxGroup}>
+                  <Checkbox value="emailComm">
+                    <p className="text-sm">
+                      I understand that after activating my Telios account, my
+                      Telios account will receive occasional emails containing
+                      important updates, future product offerings, and
+                      occasional surveys.
+                    </p>
+                    <p className="text-sm">
+                      After the beta period, I will be able to unsubscribe from
+                      future emails and continue using my Telios account.
+                    </p>
+                    <p className="text-sm">
+                      Telios will not sell or distribute your email address to
+                      any third party at any time.
+                    </p>
+                  </Checkbox>
+                  <Checkbox value="termAndPrivacy">
+                    <p className="text-sm">
+                      I agree to the Telios
+{' '}
+                      <a href="https://docs.google.com/document/u/1/d/e/2PACX-1vQXqRRpBkB-7HqwLd2XtsWVDLjCUnBUIeNQADb56FuKHdj_IF9wbmsl4G7RLxR2_yKYMhnSO1M-X39H/pub">
+                        {' '}
+                        Terms of Service
+                      </a>
+{' '}
+                      and
+{' '}
+                      <a href="https://docs.google.com/document/u/1/d/e/2PACX-1vTIL7a6NbUhBDxHmRy5tW0e5H4YoBWXUO1WvPseVuEATSLHMIemVAG6nnRe_xIJZ-s5YYPh2C05JwKR/pub">
+                        Privacy Policy
+                      </a>
+                    </p>
+                  </Checkbox>
+                </FormControl>
+              </FormGroup>
+            </>
           )}
           {step === 2 && (
+            <>
+              <FormGroup>
+                <ControlLabel className="font-medium mb-2 text-gray-500 select-none">
+                  {i18n.t('global.email')}
+                </ControlLabel>
+                <InputGroup className="w-full">
+                  <InputGroup.Addon className="bg-transparent">
+                    {!emailCheckLoading && !formSuccess.email && (
+                      <FaRegEnvelope
+                        className={`text-gray-400
+                    ${
+                      formError.email && !formSuccess.email
+                        ? 'text-red-600'
+                        : ''
+                    }
+                    ${
+                      formSuccess.email && !formError.email
+                        ? 'text-green-500'
+                        : ''
+                    }`}
+                      />
+                    )}
+                    {emailCheckLoading &&
+                      !formSuccess.email &&
+                      !formError.email && (
+                        <AiOutlineLoading3Quarters className="loading-indicator" />
+                      )}
+
+                    {!emailCheckLoading &&
+                      formSuccess.email &&
+                      !formError.email && (
+                        <BsCheckCircle className="text-green-500" />
+                      )}
+                  </InputGroup.Addon>
+                  <FormControl
+                    onChange={this.onChangeEmail}
+                    disabled={loading}
+                    name="email"
+                  />
+                  <InputGroup.Addon>
+                    {' '}
+                    <div
+                      className={`${
+                        loading ? 'text-gray-400 select-none' : ''
+                      }`}
+                    >
+                      {`@${mailDomain}`}
+                    </div>
+                  </InputGroup.Addon>
+                </InputGroup>
+                <div style={errorStyles(formError.email)}>
+                  {formError.email}
+                </div>
+              </FormGroup>
+            </>
+          )}
+          {step === 3 && (
             <>
               <FormGroup className="mb-0 -mt-2">
                 <ControlLabel className="font-medium text-gray-500 select-none">
@@ -664,7 +744,9 @@ class Register extends Component<Props, State> {
                 </ControlLabel>
                 <InputGroup className="w-full" inside>
                   <InputGroup.Addon>
-                    <BsLock
+                    <Lock
+                      size="small"
+                      set="broken"
                       className={`mr-1 text-gray-400
                   ${formError.masterpass ? 'text-red-600' : ''}
                   ${formSuccess.masterpass ? 'text-green-500' : ''}`}
@@ -673,8 +755,28 @@ class Register extends Component<Props, State> {
                   <FormControl
                     disabled={loading}
                     name="masterpass"
-                    type="password"
+                    type={`${visiblePassword ? 'password' : 'text'}`}
                   />
+                  <InputGroup.Addon>
+                    {visiblePassword && (
+                      <Hide
+                        size="small"
+                        set="broken"
+                        onClick={this.togglePassword}
+                        className="lr-1 text-gray-400 hover:text-purple-600"
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                    {!visiblePassword && (
+                      <Show
+                        size="small"
+                        set="broken"
+                        onClick={this.togglePassword}
+                        className="lr-1 text-gray-400 hover:text-purple-600"
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                  </InputGroup.Addon>
                 </InputGroup>
                 {/* <div style={errorStyles(formError.masterpass)}>
                   {formError.masterpass}
@@ -682,32 +784,37 @@ class Register extends Component<Props, State> {
               </FormGroup>
               <div className="flex flex-row h-1 w-full mt-1 mb-3 px-1">
                 <div
-                  className={`flex-1  mr-2 rounded ${passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
-                    }`}
+                  className={`flex-1  mr-2 rounded ${
+                    passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
+                  }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 1
-                    ? 'bg-red-400'
-                    : 'bg-gray-300'
-                    }`}
+                  className={`flex-1  mr-2 rounded ${
+                    passwordStrength !== null && passwordStrength >= 1
+                      ? 'bg-red-400'
+                      : 'bg-gray-300'
+                  }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 2
-                    ? 'bg-orange-400'
-                    : 'bg-gray-300'
-                    }`}
+                  className={`flex-1  mr-2 rounded ${
+                    passwordStrength !== null && passwordStrength >= 2
+                      ? 'bg-orange-400'
+                      : 'bg-gray-300'
+                  }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 3
-                    ? 'bg-yellow-400'
-                    : 'bg-gray-300'
-                    }`}
+                  className={`flex-1  mr-2 rounded ${
+                    passwordStrength !== null && passwordStrength >= 3
+                      ? 'bg-yellow-400'
+                      : 'bg-gray-300'
+                  }`}
                 />
                 <div
-                  className={`flex-1 rounded ${passwordStrength !== null && passwordStrength === 4
-                    ? 'bg-green-400'
-                    : 'bg-gray-300'
-                    }`}
+                  className={`flex-1 rounded ${
+                    passwordStrength !== null && passwordStrength === 4
+                      ? 'bg-green-400'
+                      : 'bg-gray-300'
+                  }`}
                 />
               </div>
 
@@ -717,7 +824,9 @@ class Register extends Component<Props, State> {
                 </ControlLabel>
                 <InputGroup className="w-full" inside>
                   <InputGroup.Addon>
-                    <BsLock
+                    <Lock
+                      size="small"
+                      set="broken"
                       className={`mr-1 text-gray-400
                   ${formError.confirmpass ? 'text-red-600' : ''}
                   ${formSuccess.confirmpass ? 'text-green-500' : ''}`}
@@ -726,12 +835,33 @@ class Register extends Component<Props, State> {
                   <FormControl
                     disabled={loading}
                     name="confirmpass"
-                    type="password"
+                    type={`${visiblePassword ? 'password' : 'text'}`}
                   />
+                  <InputGroup.Addon>
+                    {visiblePassword && (
+                      <Hide
+                        size="small"
+                        set="broken"
+                        onClick={this.togglePassword}
+                        className="lr-1 text-gray-400 hover:text-purple-600"
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                    {!visiblePassword && (
+                      <Show
+                        size="small"
+                        set="broken"
+                        onClick={this.togglePassword}
+                        className="lr-1 text-gray-400 hover:text-purple-600"
+                        style={{ cursor: 'pointer' }}
+                      />
+                    )}
+                  </InputGroup.Addon>
                 </InputGroup>
                 <div className="text-red-500">
-                  {`${formError.masterpass ? formError.masterpass : ''} ${formError.confirmpass ? formError.confirmpass : ''
-                    }`}
+                  {`${formError.masterpass ? formError.masterpass : ''} ${
+                    formError.confirmpass ? formError.confirmpass : ''
+                  }`}
                 </div>
               </FormGroup>
               <Whisper placement="top" trigger="hover" speaker={tooltip}>
@@ -753,7 +883,7 @@ class Register extends Component<Props, State> {
               </Whisper>
             </>
           )}
-          {step === 3 && (
+          {step === 4 && (
             <FormGroup>
               <ControlLabel className="font-medium mb-2 text-gray-500 select-none">
                 {i18n.t('global.recoveryEmail')}
@@ -772,12 +902,14 @@ class Register extends Component<Props, State> {
                 {formError.recoveryemail}
               </div>
               {loading && (
-                <div className="flex-none mt-2 text-gray-500 text-sm animate-pulse">{i18n.t('register.connecting')}</div>
+                <div className="flex-none mt-2 text-gray-500 text-sm animate-pulse">
+                  {i18n.t('register.connecting')}
+                </div>
               )}
             </FormGroup>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <div>
               <div className="text-sm text-gray-600 font-medium rounded p-4 mb-8 bg-gray-200 break-words">
                 {account.mnemonic}
@@ -795,7 +927,7 @@ class Register extends Component<Props, State> {
           )}
         </div>
         <div className="flex-none mb-6 select-none">
-          {step !== 3 && (
+          {step !== 4 && (
             <Button
               appearance="primary"
               block
@@ -805,7 +937,7 @@ class Register extends Component<Props, State> {
               Next
             </Button>
           )}
-          {step === 3 && (
+          {step === 4 && (
             <Button
               appearance="primary"
               loading={loading}
@@ -818,13 +950,14 @@ class Register extends Component<Props, State> {
             </Button>
           )}
         </div>
-        {step !== 4 && (
+        {step !== 5 && (
           <div className="w-8/12 flex-none self-center mb-2 registrationSteps select-none">
             <Steps current={step} small>
               <Steps.Item onClick={() => this.handleNextStep(0)} />
               <Steps.Item onClick={() => this.handleNextStep(1)} />
               <Steps.Item onClick={() => this.handleNextStep(2)} />
               <Steps.Item onClick={() => this.handleNextStep(3)} />
+              <Steps.Item onClick={() => this.handleNextStep(4)} />
             </Steps>
           </div>
         )}
