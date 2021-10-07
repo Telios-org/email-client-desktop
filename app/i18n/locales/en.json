@@ -28,23 +28,27 @@
       "steps": {
         "0": {
           "header": "Beta Access",
-          "description": "Enter your Beta Access Code. You can find your code in your invitation email."
+          "description": "Enter your Beta Access Code. What?? you didn't get an invite! If you haven't done so already go to our website and hop on the waitlist. We'll notify you as soon as we're ready for you."
         },
         "1": {
-          "header": "Create Account",
-          "description": "Choose your email address. This will be your primary identifier on the Telios your network choose it wisely."
+          "header": "Beta Consent",
+          "description": ""
         },
         "2": {
+          "header": "Create Account",
+          "description": "Choose your email. This can be what your mama calls you or your friends or a completely made up string. Up to you, that's really none of our business."
+        },
+        "3": {
           "header": "Master Password",
           "description": ""
         },
-        "3": {
-          "header": "Recovery Email",
-          "description": "If you choose to store your encrypted data on our servers, this email address will be the only way for you to retrieve your data should something happen to your device."
-        },
         "4": {
+          "header": "Recovery Email",
+          "description": "Soooo, you spilled coffee on your computer and now it doesn't work?! This email address can be used to retrieve your encrypted data (if you opted to store your encrypted data on our cloud backup)."
+        },
+        "5": {
           "header": "Recovery Phrase",
-          "description": "In the event you lose your password or device, this phrase can be used to restore your account. Be sure to memorize this phrase or keep it somewhere secure like a safe."
+          "description": "In the event you lose your password or device, this phrase can be used to restore your account. Be sure to memorize this phrase or keep it somewhere secure like a under your pillow."
         }
       },
       "confirmPass": "Confirm Password",
@@ -100,7 +104,8 @@
       "weakPass": "Password is too weak.",
       "passMismatch": "Passwords do not match.",
       "confirmRequired": "Confirm password is required.",
-      "betaCodeRequired": "Access Code Required to Register"
+      "betaCodeRequired": "Access Code Required to Register",
+      "betaConsent": "Consent is required for the Beta"
     }
   }
 }
