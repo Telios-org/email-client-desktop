@@ -700,7 +700,7 @@ module.exports = env => {
                   // create a new alias!
                   const alias = await Alias.create({
                     aliasId: recipient.address,
-                    name: recipAliasAddress,
+                    name: localPart,
                     namespaceKey: aliasNamespace.publicKey,
                     count: 0,
                     disabled: false,

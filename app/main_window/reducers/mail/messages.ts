@@ -62,21 +62,23 @@ export default function messages(
           m => m.folderId === action.activeFolderId
         );
 
-        messageArr = [...msg];
+        if (msg.length) {
+          messageArr = [...msg];
 
-        for (const key in state.byId) {
-          messageArr.push(state.byId[key]);
+          for (const key in state.byId) {
+            messageArr.push(state.byId[key]);
+          }
+
+          const sortedMessages = messageArr.sort((a, b) => b.date - a.date);
+
+          return {
+            ...state,
+            byId: {
+              ...arrayToObject(sortedMessages)
+            },
+            allIds: [...idFromArrayDict(sortedMessages)]
+          };
         }
-
-        const sortedMessages = messageArr.sort((a, b) => b.date - a.date);
-
-        return {
-          ...state,
-          byId: {
-            ...arrayToObject(sortedMessages)
-          },
-          allIds: [...idFromArrayDict(sortedMessages)]
-        };
       }
       return { ...state };
     case REMOVE_MESSAGE_SUCCESS:

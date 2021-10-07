@@ -54,25 +54,28 @@ export default function aliases(
         let messageArr = [];
 
         const msg = action.messages.filter(
-          m => m.aliasId === action.activeAliasId
+          m => m.aliasId && m.aliasId === action.activeAliasId
         );
 
-        messageArr = [...msg];
+        if (msg.length) {
+          messageArr = [...msg];
 
-        for (const key in state.byId) {
-          messageArr.push(state.byId[key]);
+          for (const key in state.byId) {
+            messageArr.push(state.byId[key]);
+          }
+
+          const sortedMessages = messageArr.sort((a, b) => b.date - a.date);
+
+
+          return {
+            ...state,
+            byId: {
+              ...arrayToObject(sortedMessages)
+            },
+            allIds: [...idFromArrayDict(sortedMessages)],
+            fwdAddresses: [...state.fwdAddresses]
+          };
         }
-
-        const sortedMessages = messageArr.sort((a, b) => b.date - a.date);
-
-        return {
-          ...state,
-          byId: {
-            ...arrayToObject(sortedMessages)
-          },
-          allIds: [...idFromArrayDict(sortedMessages)],
-          fwdAddresses: [...state.fwdAddresses]
-        };
       }
       return { ...state };
     case REGISTER_ALIAS_SUCCESS:
