@@ -19,10 +19,9 @@ class Store {
     this.acctPath = null;
     this.accountSecrets = {};
     this.account = null;
-    this.aliasNamespaces = [];
     this.currentAccount = null;
     this.sessionActive = false;
-    this.keypair = null;
+    this.keypairs = {};
     this.authPayload = null;
     this.connection = {};
     this.theme = 'system';
@@ -99,11 +98,11 @@ class Store {
   }
 
   setKeypair(keypair) {
-    this.keypair = keypair;
+    this.keypairs[keypair.publicKey] = keypair
   }
 
-  getKeypair() {
-    return this.keypair;
+  getKeypairs() {
+    return this.keypairs;
   }
 
   setMailbox(mailbox) {
@@ -144,10 +143,6 @@ class Store {
 
   getTheme() {
     return this.theme;
-  }
-
-  setAliasNamespaces(namespaces) {
-    this.aliasNamespaces = namespaces;
   }
 }
 

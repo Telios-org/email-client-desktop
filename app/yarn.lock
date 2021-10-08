@@ -76,10 +76,10 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.3.tgz#0300943770e04231041a51bd39f0439b5c7ab4f0"
   integrity sha512-nkalE/f1RvRGChwBnEIoBfSEYOXnCRdleKuv6+lePbMDrMZXeDQnqak5XDOeBgrPPyPfAdcCu/B5z+v3VhplGg==
 
-"@telios/client-sdk@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-1.0.3.tgz#bee059afa3c505b9597719c89347ba9de14e8a4b"
-  integrity sha512-RupqwSMSgftOu02cvZhwNk7nXdaLgjXZLBmfinICJJbylYk9rHXy2aWVikpOYIkN4zsQUTegzIV+vdKICB81SA==
+"@telios/client-sdk@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-1.0.5.tgz#1e67f68d92d6291edb8070dcf3ddadbde69a4f74"
+  integrity sha512-T+Y2aUuNDmc3iWCRy9TG1SBXl37qtUBDGBA+ldi3LMO2kODNUvz/tOEohqmCcdJHIw/Fn2xh8pwdfGCEvv0eFg==
   dependencies:
     "@geut/hypercore-promise" "^2.1.1"
     "@hyperswarm/dht" "^5.0.0-rc.2"

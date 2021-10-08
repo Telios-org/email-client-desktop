@@ -199,7 +199,14 @@ module.exports = env => {
           raw: true
         });
 
-        store.setAliasNamespaces(namespaces);
+        for (let namespace of namespaces) {
+          const keypair = {
+            publicKey: namespace.namespaceKey,
+            privateKey: namespace.privateKey
+          };
+
+          store.setKeypair(keypair);
+        }
 
         process.send({
           event: 'MAIL_WORKER::getMailboxNamespaces',
@@ -223,24 +230,26 @@ module.exports = env => {
 
         const mailbox = store.getMailbox();
         const domain = 'telios.io';
-        const { secretBoxKeypair } = SDK.Account.makeKeys();
+        const account = store.account;
+
+        const keypair = SDK.Crypto.boxKeypairFromStr(`${account.secretBoxPrivKey}${namespace}@${domain}`);
 
         const { registered, key } = await mailbox.registerAliasName({
           alias_name: namespace,
           domain,
-          key: secretBoxKeypair.publicKey
+          key: keypair.publicKey
         });
 
         const output = await AliasNamespace.create({
           publicKey: key,
-          privateKey: secretBoxKeypair.privateKey,
+          privateKey: keypair.privateKey,
           name: namespace,
           mailboxId,
           domain,
           disabled: false
         });
 
-        store.setAliasNamespaces([{ ...output.dataValues }, ...store.aliasNamespaces]);
+        store.setKeypair(keypair);
 
         process.send({
           event: 'MAIL_WORKER::registerAliasNamespace',

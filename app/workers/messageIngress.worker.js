@@ -42,13 +42,25 @@ class MesssageIngress {
    */
   async fetchBatch(files, account) {
     this.mailbox = store.getMailbox();
+    const keyPairs = store.getKeypairs();
 
     files = files.map(f => {
       if (account) {
+        let publicKey;
+        let privateKey;
+
+        if (account.secretBoxPubKey === f.account_key) {
+          publicKey = account.secretBoxPubKey;
+          privateKey = account.secretBoxPrivKey;
+        } else {
+          publicKey = keyPairs[f.account_key] && keyPairs[f.account_key].publicKey ? keyPairs[f.account_key].publicKey : null;
+          privateKey = keyPairs[f.account_key] && keyPairs[f.account_key].privateKey ? keyPairs[f.account_key].privateKey : null;
+        }
+
         const fileMeta = this.mailbox._decryptMailMeta(
           f,
-          account.secretBoxPrivKey,
-          account.secretBoxPubKey
+          privateKey,
+          publicKey
         );
 
         f = { _id: f._id, ...fileMeta };
