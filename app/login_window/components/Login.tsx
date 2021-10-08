@@ -10,11 +10,13 @@ import {
   Button,
   Schema
 } from 'rsuite';
+import { Show, Hide, Lock } from 'react-iconly';
 import Store from 'electron-store';
 import i18n from '../../i18n/i18n';
 
 const { ipcRenderer } = require('electron');
 const LoginService = require('../../services/login.service');
+
 const { StringType } = Schema.Types;
 const errorStyles = errorVisible => {
   return {
@@ -67,6 +69,7 @@ type State = {
   formError: string | null;
   canSubmit: boolean;
   loading: boolean;
+  visiblePassword: boolean;
 };
 
 class Login extends Component<Props, State> {
@@ -92,12 +95,14 @@ class Login extends Component<Props, State> {
       },
       formError: null,
       canSubmit: false,
-      loading: false
+      loading: false,
+      visiblePassword: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onChangeSelectedAccount = this.onChangeSelectedAccount.bind(this);
     this.clearState = this.clearState.bind(this);
+    this.togglePassword = this.togglePassword.bind(this);
   }
 
   async handleLogin() {
@@ -168,8 +173,20 @@ class Login extends Component<Props, State> {
     });
   }
 
+  togglePassword() {
+    const { visiblePassword } = this.state;
+    this.setState({ visiblePassword: !visiblePassword });
+  }
+
   render() {
-    const { selectedAccount, formError, formValue, canSubmit, loading } = this.state;
+    const {
+      selectedAccount,
+      formError,
+      formValue,
+      canSubmit,
+      loading,
+      visiblePassword
+    } = this.state;
     const { accounts, onUpdateActive } = this.props;
 
     if (accounts.length > 0) {
@@ -207,13 +224,37 @@ class Login extends Component<Props, State> {
               </ControlLabel>
               <InputGroup style={this.inputStyle} inside>
                 <InputGroup.Addon>
-                  <BsLock className="mb-1 text-gray-400" />
+                  <Lock
+                    size="small"
+                    set="broken"
+                    className="mr-1 text-gray-400"
+                  />
                 </InputGroup.Addon>
                 <FormControl
                   disabled={loading}
                   name="masterpass"
-                  type="password"
+                  type={`${visiblePassword ? 'password' : 'text'}`}
                 />
+                <InputGroup.Addon>
+                  {visiblePassword && (
+                    <Hide
+                      size="small"
+                      set="broken"
+                      onClick={this.togglePassword}
+                      className="lr-1 text-gray-400 hover:text-purple-600"
+                      style={{ cursor: 'pointer' }}
+                    />
+                  )}
+                  {!visiblePassword && (
+                    <Show
+                      size="small"
+                      set="broken"
+                      onClick={this.togglePassword}
+                      className="lr-1 text-gray-400 hover:text-purple-600"
+                      style={{ cursor: 'pointer' }}
+                    />
+                  )}
+                </InputGroup.Addon>
               </InputGroup>
               <div style={errorStyles(formError)}>{formError}</div>
             </FormGroup>

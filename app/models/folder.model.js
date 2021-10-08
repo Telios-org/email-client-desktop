@@ -4,39 +4,39 @@ const store = require('../Store');
 
 module.exports.DefaultFolders = [
   {
+    id: 0,
+    name: 'Alias',
+    type: 'hidden',
+    icon: null,
+    seq: 0
+  },
+  {
     id: 1,
-    name: 'New',
+    name: 'Inbox',
     type: 'default',
-    icon: 'new',
+    icon: 'inbox',
     seq: 1
   },
   {
     id: 2,
-    name: 'Read',
+    name: 'Drafts',
     type: 'default',
-    icon: 'read',
+    icon: 'pencil',
     seq: 2
   },
   {
     id: 3,
-    name: 'Drafts',
+    name: 'Sent',
     type: 'default',
-    icon: 'pencil',
+    icon: 'send-o',
     seq: 3
   },
   {
     id: 4,
-    name: 'Sent',
-    type: 'default',
-    icon: 'send-o',
-    seq: 4
-  },
-  {
-    id: 5,
     name: 'Trash',
     type: 'default',
     icon: 'trash-o',
-    seq: 5
+    seq: 4
   },
 ];
 

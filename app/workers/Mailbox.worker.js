@@ -470,7 +470,7 @@ module.exports = env => {
     if (event === 'MAIL_SERVICE::getMessagesByAliasId') {
       try {
         const messages = await Email.findAll({
-          where: { aliasId: payload.id },
+          where: { aliasId: payload.id, folderId: 0 },
           limit: payload.limit,
           offset: payload.offset,
           attributes: [
@@ -512,7 +512,6 @@ module.exports = env => {
         email.attachments = JSON.parse(email.attachments);
 
         if (email.unread) {
-          process.send({ event: 'emailupdate1' });
           await Email.update(
             { unread: 0 },
             {
@@ -540,7 +539,6 @@ module.exports = env => {
       const { id } = payload;
 
       try {
-        process.send({ event: 'emailupdate2' });
         await Email.update(
           { unread: 1 },
           {
@@ -612,6 +610,7 @@ module.exports = env => {
       const asyncFolders = [];
       let newAliases = [];
 
+      // eslint-disable-next-line no-restricted-syntax
       for await (let msg of messages) {
         const attachments = [];
         let folderId;
@@ -694,13 +693,13 @@ module.exports = env => {
                 });
 
                 // Check if incoming message alias already exists
-                const aliasIndex = aliasAddrs.findIndex(item => item.name === recipAliasAddress);
+                const aliasIndex = aliasAddrs.findIndex(item => item.aliasId === localPart);
 
                 if (aliasIndex === -1) {
                   // create a new alias!
                   const alias = await Alias.create({
-                    aliasId: recipient.address,
-                    name: localPart,
+                    aliasId: localPart,
+                    name: recipAliasAddress,
                     namespaceKey: aliasNamespace.publicKey,
                     count: 0,
                     disabled: false,
@@ -721,18 +720,18 @@ module.exports = env => {
 
             break;
           case 'Sent':
-            folderId = 4; // Save message to Sent
+            folderId = 3; // Save message to Sent
             break;
           case 'Draft':
-            folderId = 3; // Save message to Drafts
+            folderId = 2; // Save message to Drafts
             break;
           default:
-            folderId = 0;
+            folderId = 1;
         }
 
         const msgObj = {
           emailId: msg.email.emailId || msg._id,
-          unread: folderId === 2 || folderId === 4 || folderId === 5 ? 0 : 1,
+          unread: folderId === 1 || folderId === 3 || folderId === 4 ? 0 : 1,
           folderId,
           aliasId,
           fromJSON: JSON.stringify(msg.email.from),

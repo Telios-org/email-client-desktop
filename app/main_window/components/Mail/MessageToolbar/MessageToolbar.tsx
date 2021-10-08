@@ -99,7 +99,7 @@ export default function MessageToolbar(props: Props) {
   };
 
   const showComposerControls =
-    editorIsOpen || (currentFolderId === 3 && selected.items.length === 1);
+    editorIsOpen || (currentFolderId === 2 && selected.items.length === 1);
   // Buttons positioning
   const displacement = showComposerControls ? `${panelSize}px` : '0px';
 
@@ -154,7 +154,7 @@ export default function MessageToolbar(props: Props) {
   const moveToFolder = async (toId: number, name: string) => {
     setIsLoading(true);
     try {
-      if (currentFolderId === 5 || currentFolderId === 3) {
+      if (currentFolderId === 4 || currentFolderId === 2) {
         await deleteMessages();
         Alert.success(`Deleted ${selected.items.length} message(s).`);
       } else {
@@ -190,10 +190,6 @@ export default function MessageToolbar(props: Props) {
       // Trigger if not already unread.
       if (!message.unread) {
         dispatch(markAsUnread(id, currentFolderId));
-      }
-
-      if (currentFolderId === 2) {
-        dispatch(clearActiveMessage(currentFolderId));
       }
     });
   };
@@ -284,7 +280,7 @@ export default function MessageToolbar(props: Props) {
         <>
           <CustomButton
             onClick={() => {
-              moveToFolder(5, 'Trash');
+              moveToFolder(4, 'Trash');
             }}
             icon="trash"
             disabled={isActionDisabled}
@@ -318,7 +314,7 @@ export default function MessageToolbar(props: Props) {
             />
           )} */}
 
-          {currentFolderId !== 3 && currentFolderId !== 4 && (
+          {currentFolderId !== 2 && currentFolderId !== 3 && (
             <CustomButton
               onClick={() => {
                 unread();

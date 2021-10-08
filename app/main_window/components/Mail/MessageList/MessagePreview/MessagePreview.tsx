@@ -21,7 +21,9 @@ import {
   activeFolderId,
   selectMessageByIndex,
   activeMessageId as activeMsgId,
-  activeMessageSelectedRange
+  activeMessageSelectedRange,
+  selectActiveAliasName,
+  activeAliasId
 } from '../../../../selectors/mail';
 
 // REDUX ACTIONS
@@ -46,6 +48,7 @@ type Props = {
 
 export default function MessagePreview(props: Props) {
   const currentFolder = useSelector(selectActiveFolder);
+  const currentAliasName = useSelector(selectActiveAliasName);
   const {
     onMsgClick,
     onDropResult,
@@ -61,6 +64,7 @@ export default function MessagePreview(props: Props) {
 
   const messages = useSelector(state => state.mail.messages);
   const currentFolderId = useSelector(activeFolderId);
+  const currentAliasId = useSelector(activeAliasId);
   const selected = useSelector(activeMessageSelectedRange);
   const message = useSelector(state => selectMessageByIndex(state, index));
 
@@ -272,7 +276,7 @@ export default function MessagePreview(props: Props) {
 
   return (
     <div>
-      {currentFolder && currentFolder.name && (
+      {currentFolder?.name && (
         <div className="overflow-hidden" style={previewStyle}>
           <DragPreviewImage connect={preview} src={envelope} />
           <div

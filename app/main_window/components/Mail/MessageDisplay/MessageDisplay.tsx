@@ -279,7 +279,7 @@ function MessageDisplay(props: Props) {
       <div className="flex flex-1 w-full h-full relative">
         <div className="h-full flex-grow">
           <div className="h-full">
-            <div className="mb-2 h-full">
+            <div className="mb-2 h-full px-4 pt-4">
               {!loaded && (
                 <Loader size="lg" backdrop vertical />
               )}

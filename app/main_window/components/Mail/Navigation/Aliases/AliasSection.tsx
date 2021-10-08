@@ -11,37 +11,28 @@ import i18n from '../../../../../i18n/i18n';
 // TYPESCRIPT TYPES
 import { StateType } from '../../../../reducers/types';
 
-type Props = {};
+type Props = {
+  handleSelectAction: (index: string, isAlias: boolean, e: any) => void;
+};
 
 export default function AliasSection(props: Props) {
   const dispatch = useDispatch();
+  const { handleSelectAction } = props;
 
   const [showAliasModal, setShowAliasModal] = useState(false);
-  const [editAlias, setEditAlias] = useState(null);
-  const namespaceKeys = useSelector(
-    (state: StateType) => state.mail.namespaces.allIds
-  );
-
   const handleHideAliasModal = () => {
     setShowAliasModal(false);
   };
 
-  const handleNewAlias = () => {
-    setEditAlias(null);
-    setShowAliasModal(true);
-  };
-
-  const handleEditAlias = (alias, e) => {
-    e.stopPropagation();
-    setEditAlias(alias);
+  const handleAlias = () => {
     setShowAliasModal(true);
   };
 
   return (
     <>
       <NamespaceBlock
-        handleNewAlias={handleNewAlias}
-        handleEditAlias={handleEditAlias}
+        handleAlias={handleAlias}
+        handleSelectAction={handleSelectAction}
       />
       <AliasModal show={showAliasModal} onHide={handleHideAliasModal} />
     </>

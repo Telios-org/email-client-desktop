@@ -20,6 +20,7 @@ import {
   MoreSquare,
   Star,
   TickSquare,
+  Message,
   Bookmark
 } from 'react-iconly';
 
@@ -43,6 +44,7 @@ import {
 
 // REDUX ACTION CREATORS
 import { folderSelection, createNewFolder } from '../../../actions/mail';
+import { aliasSelection } from '../../../actions/mailbox/aliases';
 import { clearActiveMessage } from '../../../actions/mailbox/messages';
 import { toggleEditor } from '../../../actions/global';
 
@@ -57,14 +59,13 @@ export default function Navigation(props: Props) {
   const mailbox = useSelector(selectActiveMailbox);
   const allFolders = useSelector(selectAllFoldersById);
   const folderId = useSelector(activeFolderId);
-  const aliasId = useSelector(activeAliasId);
   // const history = useHistory();
   const dispatch = useDispatch();
 
   // Dictionary of Icon Components used in this function
   const CustomIcon = {
     new: Star,
-    read: TickSquare,
+    inbox: Message,
     pencil: Edit,
     'send-o': Send,
     'trash-o': Delete,
@@ -73,7 +74,7 @@ export default function Navigation(props: Props) {
   };
 
   const newMessageAction = async () => {
-    await dispatch(clearActiveMessage(folderId || aliasId));
+    await dispatch(clearActiveMessage(folderId));
     dispatch(toggleEditor('brandNewComposer', true));
   };
 
@@ -90,7 +91,7 @@ export default function Navigation(props: Props) {
     (state: StateType) => state.mail.folders.allIds
   );
 
-  const selectFolder = async (index: string, e) => {
+  const selectFolder = async (index: string, isAlias, e) => {
     if (
       (e &&
         !e.target.classList.contains('flex-initial') &&
@@ -107,7 +108,11 @@ export default function Navigation(props: Props) {
 
     if (index !== undefined) {
       const indx = parseInt(index);
-      await dispatch(folderSelection(indx));
+      if (isAlias) {
+        await dispatch(aliasSelection(indx));
+      } else {
+        await dispatch(folderSelection(indx));
+      }
     }
   };
 
@@ -159,7 +164,7 @@ export default function Navigation(props: Props) {
 
   const MainFolders = ({ active, onSelect, folders, ...props }) => {
     return (
-      <ul className="select-none">
+      <ul className="select-none -mb-3">
         {folders.map((id, index) => {
           const folder = allFolders[id];
 
@@ -193,7 +198,7 @@ export default function Navigation(props: Props) {
                 }
                 ${styles.navItem}`}
                 key={folder.seq - 1}
-                onClick={() => selectFolder(index)}
+                onClick={e => selectFolder(index, false, e)}
                 ref={
                   folder.name !== 'Screened' &&
                   folder.name !== 'Sent' &&
@@ -306,7 +311,7 @@ export default function Navigation(props: Props) {
                   isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
                 }
                 ${styles.navItem}`}
-                  onClick={e => selectFolder(index, e)}
+                  onClick={e => selectFolder(index, false, e)}
                   ref={drop}
                 >
                   <IconTag
@@ -419,7 +424,7 @@ export default function Navigation(props: Props) {
               active={activeFolderIndex}
               onSelect={selectFolder}
             /> */}
-            <AliasSection />
+            <AliasSection handleSelectAction={selectFolder} />
           </div>
         </Scrollbars>
       </div>
