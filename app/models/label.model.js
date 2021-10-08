@@ -15,7 +15,10 @@ const model = {
   },
   color: {
     type: Sequelize.STRING
-  }
+  },
+  // Timestamps
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE
 };
 
 class Label extends Model {}
@@ -29,7 +32,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'Label',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   Mailbox.hasMany(Label, { as: 'labels' });

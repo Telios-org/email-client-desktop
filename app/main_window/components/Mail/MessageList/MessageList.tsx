@@ -1,9 +1,6 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-// ELECTRON IPC IMPORT
-const { ipcRenderer } = require('electron');
-
 // EXTERNAL UTILS LIBRAIRIES
 import memoize from 'memoize-one';
 import { Alert } from 'rsuite';
@@ -26,7 +23,12 @@ import {
   fetchMoreFolderMessages
 } from '../../../actions/mail';
 
-import { clearActiveMessage, moveMessagesToFolder } from '../../../actions/mailbox/messages';
+import { fetchMoreAliasMessages } from '../../../actions/mailbox/aliases';
+
+import {
+  clearActiveMessage,
+  moveMessagesToFolder
+} from '../../../actions/mailbox/messages';
 
 // SELECTORS
 import {
@@ -35,18 +37,20 @@ import {
   selectMessages,
   activeMessageId,
   activeMessageSelectedRange,
-  activeFolderId
+  activeFolderId,
+  activeAliasId,
+  selectActiveAliasName
 } from '../../../selectors/mail';
 
 // TS TYPES
-import {
-  MailMessageType,
-  SelectionRange
-} from '../../../reducers/types';
+import { MailMessageType, SelectionRange } from '../../../reducers/types';
 
 // COMPONENTS IMPORTS
 import MessagePreview from './MessagePreview/MessagePreview';
 import SortIcon from './SortIcon';
+
+// ELECTRON IPC IMPORT
+const { ipcRenderer } = require('electron');
 
 type Props = {};
 
@@ -55,10 +59,12 @@ export default function MessageList(props: Props) {
 
   const [sort, setSort] = useState('');
   const currentFolderName = useSelector(selectActiveFolderName);
+  const currentAliasName = useSelector(selectActiveAliasName);
   const messages = useSelector(selectMessages);
   const activeMsgId = useSelector(activeMessageId);
   const activeSelectedRange = useSelector(activeMessageSelectedRange);
   const folderId = useSelector(activeFolderId);
+  const aliasId = useSelector(activeAliasId);
   const { editorIsOpen } = useSelector(selectGlobalState);
 
   const virtualLoaderRef = useRef(null);
@@ -67,43 +73,48 @@ export default function MessageList(props: Props) {
 
   const selectMessage = (message: MailMessageType) => {
     return dispatch(messageSelection(message, ''));
-  }
+  };
 
-  const selectMessageRange = async (selected: SelectionRange, folderId: number) => {
+  const selectMessageRange = async (
+    selected: SelectionRange,
+    folderId: number
+  ) => {
     dispatch(msgRangeSelection(selected, folderId));
-  }
+  };
 
   const moveMessages = async (messages: any) => {
     dispatch(moveMessagesToFolder(messages));
-  }
+  };
 
   const clearSelectedMessage = async (folderId: number) => {
     dispatch(clearActiveMessage(folderId));
-  }
+  };
 
   useEffect(() => {
     setSort('');
     if (virtualLoaderRef.current) {
       virtualLoaderRef.current.resetloadMoreItemsCache();
     }
-  }, [currentFolderName, messages]);
+
+    console.log(currentFolderName, currentAliasName, folderId, aliasId);
+  }, [currentFolderName, currentAliasName, messages]);
 
   useEffect(() => {
     if (virtualLoaderRef && virtualLoaderRef.current) {
       virtualLoaderRef.current._listRef.scrollToItem(0);
     }
-  }, [currentFolderName]);
+  }, [currentFolderName, currentAliasName]);
 
   const handleDropResult = async (item, dropResult) => {
     let selection = [];
 
     if (activeSelectedRange.items.length > 0) {
       selection = activeSelectedRange.items.map(id => {
-        let unread = messages.byId[id].unread;
+        const { unread } = messages.byId[id];
 
         return {
           id: messages.byId[id].id,
-          unread: unread,
+          unread,
           folder: {
             fromId: messages.byId[id].folderId,
             toId: dropResult.id,
@@ -112,12 +123,12 @@ export default function MessageList(props: Props) {
         };
       });
     } else {
-      let unread = item.unread;
+      const { unread } = item;
 
       selection = [
         {
           id: item.id,
-          unread: unread,
+          unread,
           folder: {
             fromId: item.folderId,
             toId: dropResult.id,
@@ -131,13 +142,19 @@ export default function MessageList(props: Props) {
       clearSelectedMessage(folderId);
 
       Alert.success(
-        `Moved ${activeSelectedRange.items.length ? activeSelectedRange.items.length : 1
+        `Moved ${
+          activeSelectedRange.items.length
+            ? activeSelectedRange.items.length
+            : 1
         } message(s) to ${dropResult.name}.`
       );
     });
-  }
+  };
 
-  const handleSelectMessage = async (message: MailMessageType, index: number) => {
+  const handleSelectMessage = async (
+    message: MailMessageType,
+    index: number
+  ) => {
     const selected = {
       startIdx: index,
       endIdx: index,
@@ -159,7 +176,7 @@ export default function MessageList(props: Props) {
       selectMessage(message);
       selectMessageRange(selected, folderId);
     }
-  }
+  };
 
   const Row = memo(({ data, index, style }) => {
     return (
@@ -174,19 +191,21 @@ export default function MessageList(props: Props) {
 
   Row.displayName = 'Row';
 
-  const createItemData = memoize(
-    (messages, onMsgClick, onDropResult) => ({
-      messages,
-      onMsgClick,
-      onDropResult
-    })
-  );
+  const createItemData = memoize((messages, onMsgClick, onDropResult) => ({
+    messages,
+    onMsgClick,
+    onDropResult
+  }));
 
-  const itemData = createItemData(messages, handleSelectMessage, handleDropResult);
+  const itemData = createItemData(
+    messages,
+    handleSelectMessage,
+    handleDropResult
+  );
 
   const itemKey = (index, data) => {
     const msgId = data.messages.allIds[index];
-    return data.messages.byId[msgId].id
+    return data.messages.byId[msgId].id;
   };
 
   // Removing these to reevaluate if we need them. Including custom scrollbars creates a lot of
@@ -247,30 +266,41 @@ export default function MessageList(props: Props) {
 
   const isItemLoaded = (index: number) => {
     return index < 50;
-  }
+  };
 
   const loadMoreItems = (startIndex: number, stopIndex: number) => {
     if (!isLoading && messages.allIds.length - 1 < stopIndex) {
       isLoading = true;
 
       return new Promise((resolve, reject) => {
-        dispatch(fetchMoreFolderMessages(folderId, startIndex))
-          .then(() => {
-            isLoading = false;
-            return resolve();
-          })
-          .catch(err => {
-            return reject(err);
-          })
+        if (folderId !== null) {
+          dispatch(fetchMoreFolderMessages(folderId, startIndex))
+            .then(() => {
+              isLoading = false;
+              return resolve();
+            })
+            .catch(err => {
+              return reject(err);
+            });
+        } else if (aliasId !== null) {
+          dispatch(fetchMoreAliasMessages(aliasId, startIndex))
+            .then(() => {
+              isLoading = false;
+              return resolve();
+            })
+            .catch(err => {
+              return reject(err);
+            });
+        }
       });
     }
-  }
+  };
 
   return (
     <div className="flex-1 flex w-full flex-col rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
       <div className="h-10 w-full text-lg font-semibold justify-center py-2 pl-4 pr-4 mb-2 text-gray-600 flex flex-row justify-between">
         <div className="flex-1 select-none">
-          {currentFolderName || ''}
+          {currentFolderName || currentAliasName || ''}
           <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
         </div>
         <div className="items-end flex">
@@ -282,7 +312,6 @@ export default function MessageList(props: Props) {
       </div>
       {messages.allIds.length > 0 && (
         <div className="flex-1 flex w-full">
-
           <AutoSizer>
             {({ height, width }) => (
               <InfiniteLoader
@@ -309,7 +338,6 @@ export default function MessageList(props: Props) {
               </InfiniteLoader>
             )}
           </AutoSizer>
-
         </div>
       )}
 

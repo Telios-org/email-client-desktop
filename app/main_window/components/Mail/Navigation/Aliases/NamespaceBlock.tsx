@@ -1,0 +1,247 @@
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+// ICONS IMPORTS
+import {
+  EditSquare,
+  Download,
+  Scan,
+  Setting,
+  Filter,
+  Edit,
+  Send,
+  Danger,
+  Delete,
+  Plus,
+  ChevronDown,
+  MoreSquare,
+  Star,
+  TickSquare,
+  Bookmark
+} from 'react-iconly';
+
+// COMPONENTS
+import { Dropdown, Icon } from 'rsuite';
+
+// INTERNATIONALIZATION
+import i18n from '../../../../../i18n/i18n';
+
+// CSS/LESS STYLES
+import styles from '../Navigation.less';
+
+// STATE SELECTORS
+import { selectAllAliasesById } from '../../../../selectors/mail';
+
+// ACTION CREATORS
+import { aliasSelection } from '../../../../actions/mailbox/aliases';
+
+// TYPESCRIPT TYPES
+import { StateType } from '../../../../reducers/types';
+
+type Props = {
+  handleNewAlias: () => void;
+  handleEditAlias: (alias, e) => void;
+};
+
+export default function NamespaceBlock(props: Props) {
+  const dispatch = useDispatch();
+
+  const { handleNewAlias, handleEditAlias } = props;
+
+  const allAliases = useSelector(selectAllAliasesById);
+  const [expandAliases, setExpandAliases] = useState(true);
+
+  const active = useSelector(
+    (state: StateType) => state.globalState.activeAliasIndex
+  );
+
+  const aliases = useSelector((state: StateType) => state.mail.aliases.allIds);
+
+  // const namespaces = useSelector(
+  //   (state: StateType) => state.mail.namespaces.byId
+  // );
+
+  // const namespaceKeys = useSelector(
+  //   (state: StateType) => state.mail.namespaces.allIds
+  // );
+
+  // Dictionary of Icon Components used in this function
+  const CustomIcon = {
+    new: Star,
+    read: TickSquare,
+    pencil: Edit,
+    'send-o': Send,
+    'trash-o': Delete,
+    'folder-o': Bookmark,
+    ban: Danger
+  };
+
+  const toggleAliases = () => {
+    if (expandAliases) {
+      setExpandAliases(false);
+    } else {
+      setExpandAliases(true);
+    }
+  };
+
+  const selectAlias = async (index: string, e) => {
+    if (
+      (e &&
+        !e.target.classList.contains('flex-initial') &&
+        e.target.nodeName === 'svg') ||
+      (e &&
+        !e.target.classList.contains('flex-initial') &&
+        e.target.nodeName === 'path') ||
+      (e &&
+        !e.target.classList.contains('flex-initial') &&
+        e.target.nodeName === 'BUTTON')
+    ) {
+      return e.preventDefault();
+    }
+
+    if (index !== undefined) {
+      const indx = parseInt(index);
+      await dispatch(aliasSelection(indx));
+    }
+  };
+
+  return (
+    <>
+      <ul className="select-none">
+        <div className="group flex ml-2 mt-6" style={{ cursor: 'pointer' }}>
+          <ChevronDown
+            className={`mr-2 mb-0.5 text-gray-600 rounded hover:bg-gray-200 transition-transform ${
+              expandAliases ? '' : 'transform -rotate-90 '
+            }
+              ${styles.chevron}`}
+            onClick={toggleAliases}
+            set="light"
+            size="small"
+          />
+          <div
+            className="flex-auto text-gray-600 flex-row flex self-center font-bold outline-none tracking-wider items-center text-sm capitalize"
+            role="menuitem"
+            tabIndex={0}
+            onKeyPress={() => {}}
+            onClick={toggleAliases}
+          >
+            {i18n.t('mailbox.aliases')}
+          </div>
+          <div className="group-hover:visible invisible flex-none mr-2 inline-block items-center flex hover:bg-gray-200 cursor-pointer text-gray-600 rounded p-1">
+            {/* <Icon
+              icon="plus"
+              
+            /> */}
+            <Filter
+              set="bold"
+              onClick={handleNewAlias}
+              size="small"
+              className="text-coolGray-500 focus:outline-none justify-center items-center tracking-wide flex flex-row h-full"
+            />
+          </div>
+        </div>
+
+        {aliases.map((id, index) => {
+          const alias = allAliases[id];
+          const IconTag = CustomIcon['folder-o'];
+          return (
+            <div
+              key={`alias_${id}`}
+              className={expandAliases ? 'show' : 'hide'}
+            >
+              <li
+                className={`group flex relative text-gray-500 pl-4 my-0.5 mb-0 p-0.5 items-center outline-none
+              ${
+                active === index
+                  ? 'text-gray-600 font-bold'
+                  : 'hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500'
+              }
+              ${styles.navItem}`}
+                onClick={e => selectAlias(index, e)}
+                onKeyPress={() => {}}
+                role="menuitem"
+                tabIndex={index}
+              >
+                {/* <IconTag
+                  className={`flex-initial ml-1 mb-0.5 ${
+                    active === index ? 'text-purple-700' : ''
+                  }`}
+                  set={active === index ? 'bulk' : 'broken'}
+                  size="small"
+                /> */}
+                <div
+                  className={`flex-initial ml-2 mb-0.5 ${
+                    active === index ? 'text-purple-700' : ''
+                  }`}
+                >
+                  #
+                </div>
+                <span className="flex-auto ml-2 leading-loose align-middle tracking-wide text-sm">
+                  {alias.name}
+                </span>
+
+                {/* <div className="opacity-0 group-hover:opacity-100 flex-none text-sm h-6">
+                  <Dropdown
+                    size="xs"
+                    placement="bottomEnd"
+                    renderTitle={() => {
+                      return (
+                        <MoreSquare
+                          set="broken"
+                          size="small"
+                          className="mt-0.5"
+                        />
+                      );
+                    }}
+                  >
+                    <Dropdown.Item onClick={e => handleEditAlias(alias, e)}>
+                      <div className="flex text-sm">
+                        <Edit set="broken" size="small" />
+                        <span className="ml-2">{i18n.t('global.edit')}</span>
+                      </div>
+                    </Dropdown.Item> */}
+                {/* <Dropdown.Item
+                      onClick={e => handleDeleteFolder(alias, index, e)}
+                    >
+                      <div className="flex text-sm">
+                        <Delete set="broken" size="small" />
+                        <span className="ml-2">{i18n.t('global.delete')}</span>
+                      </div>
+                    </Dropdown.Item> */}
+                {/* </Dropdown> */}
+                {/* </div> */}
+
+                <span
+                  className={`w-8 h-6 px-1 text-purple-700 font-semibold text-sm
+                  flex-initial text-right leading-loose self-center flex items-center justify-center`}
+                >
+                  {alias.count ? alias.count : ''}
+                </span>
+              </li>
+            </div>
+          );
+        })}
+        <div className={expandAliases ? 'show' : 'hide'}>
+          <li
+            className={`group flex relative text-gray-500 px-4 my-0.5 mb-0 p-0.5 items-center outline-none
+               hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500 ${styles.navItem}`}
+            onClick={handleNewAlias}
+            onKeyPress={() => {}}
+            role="menuitem"
+            tabIndex={aliases.length + 1}
+          >
+            <Plus
+              className="flex-initial ml-1 text-trueGray-400"
+              set="two-tone"
+              size="small"
+              filled
+            />
+            <span className="flex-auto ml-2 leading-loose align-middle tracking-wide text-sm">
+              Add alias
+            </span>
+          </li>
+        </div>
+      </ul>
+    </>
+  );
+}

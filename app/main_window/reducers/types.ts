@@ -143,6 +143,7 @@ export type MailMessageType = {
   id: string;
   folderId: number;
   isPreview: boolean;
+  aliasId: string;
   // mailboxId: number; THIS WILL BE NEEDED WHEN MULTIPLE MAILBOX ARE PRESENT
   headers: any;
   active: boolean;
@@ -170,9 +171,12 @@ export type NamespaceType = {
 export type AliasesType = {
   aliasId: string;
   name: string;
+  description: string;
   namespaceKey: string;
+  fwdAddresses: string[];
   count: number;
   disabled: boolean;
+  createdAt: Date;
 };
 
 export type FolderType = {
@@ -232,8 +236,16 @@ export type GlobalType = {
 };
 
 export type MailType = {
-  byId: { [index: number]: MailMessageType | MailboxType | FolderType };
-  allIds: Array<number>;
+  byId: {
+    [index: number | string]:
+      | MailMessageType
+      | MailboxType
+      | FolderType
+      | NamespaceType
+      | AliasesType;
+  };
+  allIds: Array<number | string>;
+  fwdAddresses?: Array<string>;
   selected?: MailMessageType;
   loading: boolean;
 };

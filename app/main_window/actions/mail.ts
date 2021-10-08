@@ -1,5 +1,6 @@
 /* eslint-disable promise/no-nesting */
-import { updateFolderCount } from './mailbox/folders';
+import { updateFolderCount, updateAliasCount } from './mailbox/folders';
+import { aliasRegistrationSuccess } from './mailbox/aliases';
 import {
   Dispatch,
   GetState,
@@ -328,9 +329,10 @@ export const fetchMailboxNamespaces = (id: number) => {
 
 export const GET_MAILBOX_ALIASES_REQUEST =
   'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST';
-export const getMailboxAliasesRequest = () => {
+export const getMailboxAliasesRequest = (namespaceKeys: number[]) => {
   return {
-    type: GET_MAILBOX_ALIASES_REQUEST
+    type: GET_MAILBOX_ALIASES_REQUEST,
+    payload: namespaceKeys
   };
 };
 
@@ -358,7 +360,7 @@ export const getMailboxAliasesFailure = (error: Error) => {
 
 export const fetchMailboxAliases = (namespaceKeys: number[]) => {
   return async (dispatch: Dispatch) => {
-    dispatch(getMailboxAliasesRequest());
+    dispatch(getMailboxAliasesRequest(namespaceKeys));
     let aliases;
     try {
       aliases = await Mail.getMailboxAliases(namespaceKeys);
@@ -387,12 +389,14 @@ export const SAVE_INCOMING_MESSAGES_SUCCESS =
   'MAILPAGE::SAVE_INCOMING_MESSAGES_SUCCESS';
 export const saveIncomingMessagesSuccess = function (
   messages: MailMessageType[],
-  activeFolderId: number
+  activeFolderId: number,
+  activeAliasId: string
 ) {
   return {
     type: SAVE_INCOMING_MESSAGES_SUCCESS,
     messages,
-    activeFolderId
+    activeFolderId,
+    activeAliasId
   };
 };
 
@@ -405,25 +409,53 @@ export const saveIncomingMessagesFailure = (error: Error) => {
   };
 };
 
-export const saveIncomingMessages = (messages: any) => {
+export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      globalState: { activeFolderIndex },
+      globalState: { activeFolderIndex, activeAliasIndex },
       mail: {
-        folders: { allIds: foldersArray }
+        folders: { allIds: foldersArray },
+        aliases: { allIds: aliasesArray }
       }
     } = getState();
     // eslint-disable-next-line
+    let folderCounts = {};
+    let aliasCounts = {};
 
-    Mail.save({ messages, type: 'Incoming', sync: true }).then(msg => {
-      dispatch(saveIncomingMessagesSuccess(msg, foldersArray[activeFolderIndex]));
-    });
+    console.log('::::::MESSAGES::::::', messages);
+    console.log('::::::NEW ALIASES::::::', newAliases);
 
-    // eslint-disable-next-line no-underscore-dangle
-    const msgArray = messages.map(m => m._id);
-    Mail.markAsSynced(msgArray, { sync: false });
+    if (newAliases.length) {
+      // add new aliases to redux
+      for (let alias of newAliases) {
+        dispatch(aliasRegistrationSuccess(alias));
+      }
+    }
 
-    dispatch(updateFolderCount(1, 1));
+    dispatch(saveIncomingMessagesSuccess(messages, foldersArray[activeFolderIndex], aliasesArray[activeAliasIndex]));
+
+    for (let msg of messages) {
+      if (msg.folderId) {
+        if (!folderCounts[msg.folderId]) folderCounts[msg.folderId] = 0;
+        folderCounts[msg.folderId] += 1;
+      }
+
+      if (msg.aliasId) {
+        if (!aliasCounts[msg.aliasId]) aliasCounts[msg.aliasId] = 0;
+        aliasCounts[msg.aliasId] += 1;
+      }
+    }
+
+    // Update Folder Counts
+    for (let key in folderCounts) {
+      dispatch(updateFolderCount(parseInt(key), folderCounts[key]));
+    }
+
+    // Update Alias Counts
+    for (let key in aliasCounts) {
+      dispatch(updateAliasCount(key, aliasCounts[key]));
+    }
+
     return Promise.resolve('done');
   };
 };
@@ -529,7 +561,12 @@ export const fetchMsg = (messageId: string) => {
     try {
       email = await Mail.getMessagebyId(messageId);
 
-      if (email.folderId !== 2) {
+      if (
+        email.folderId !== 2 &&
+        email.folderId !== 3 &&
+        email.folderId !== 4 &&
+        email.folderId !== 5
+      ) {
         Mail.moveMessages([{
           id: email.id,
           unread: 0,

@@ -40,7 +40,10 @@ const model = {
   deviceId: {
     type: Sequelize.STRING,
     allowNull: false
-  }
+  },
+  // Timestamps
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE
 };
 
 class Account extends Model { }
@@ -54,7 +57,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'Account',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const store = require('../Store');

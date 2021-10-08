@@ -277,6 +277,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
+    "@rsuite/icons": "^1.0.0",
     "@tailwindcss/line-clamp": "^0.2.0",
     "clsx": "^1.1.1",
     "connected-react-router": "^6.6.1",
@@ -311,6 +312,7 @@
     "mime-types": "^2.1.27",
     "moment": "^2.27.0",
     "prismjs": "^1.21.0",
+    "random-word-slugs": "^0.0.5",
     "react": "^16.12.0",
     "react-beautiful-dnd": "^13.0.0",
     "react-captcha": "^2.0.9",

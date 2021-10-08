@@ -4,19 +4,26 @@ const store = require('../Store');
 
 const model = {
   aliasId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     primaryKey: true,
-    autoIncrement: true,
     unique: true,
     allowNull: false
   },
   name: {
     type: DataTypes.STRING,
+    unique: true,
     allowNull: false
+  },
+  description: {
+    type: DataTypes.TEXT
   },
   namespaceKey: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  fwdAddresses: {
+    type: DataTypes.STRING,
+    defaultValue: ''
   },
   count: {
     type: DataTypes.INTEGER,
@@ -24,50 +31,56 @@ const model = {
   },
   disabled: {
     type: DataTypes.BOOLEAN
-  }
+  },
+  whitelisted: {
+    type: DataTypes.BOOLEAN
+  },
+  // Timestamps
+  createdAt: DataTypes.DATE,
+  updatedAt: DataTypes.DATE
 };
 
-class Aliases extends Model {}
+class Alias extends Model {}
 
-module.exports.Aliases = Aliases;
+module.exports.Alias = Alias;
 
 module.exports.model = model;
 
 module.exports.init = async (sequelize, opts) => {
-  Aliases.init(model, {
+  Alias.init(model, {
     sequelize,
-    tableName: 'Aliases',
+    tableName: 'Alias',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('Aliases');
+  const collection = await drive.collection('Alias');
 
-  Aliases.addHook('afterCreate', async (alias, options) => {
+  Alias.addHook('afterCreate', async (alias, options) => {
     try {
       await collection.put(alias.aliasId, alias.dataValues);
     } catch (err) {
-      console.log('Error saving Aliases to Hyperbee', err);
+      console.log('Error saving Alias to Hyperbee', err);
       throw new Error(err);
     }
   });
 
-  Aliases.addHook('afterUpdate', async (alias, options) => {
+  Alias.addHook('afterUpdate', async (alias, options) => {
     try {
       await collection.put(alias.aliasId, alias.dataValues);
     } catch (err) {
-      console.log('Error saving Aliases to Hyperbee', err);
+      console.log('Error saving Alias to Hyperbee', err);
       throw new Error(err);
     }
   });
 
-  Aliases.addHook('beforeDestroy', async (alias, options) => {
+  Alias.addHook('beforeDestroy', async (alias, options) => {
     try {
       await collection.del(alias.aliasId);
     } catch (err) {
       process.send({
-        event: 'BeforeDestroy-deleteAliases',
+        event: 'BeforeDestroy-deleteAlias',
         error: {
           name: err.name,
           message: err.message,
@@ -78,5 +91,5 @@ module.exports.init = async (sequelize, opts) => {
     }
   });
 
-  return Aliases;
+  return Alias;
 };

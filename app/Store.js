@@ -21,7 +21,7 @@ class Store {
     this.account = null;
     this.currentAccount = null;
     this.sessionActive = false;
-    this.keypair = null;
+    this.keypairs = {};
     this.authPayload = null;
     this.connection = {};
     this.theme = 'system';
@@ -98,11 +98,11 @@ class Store {
   }
 
   setKeypair(keypair) {
-    this.keypair = keypair;
+    this.keypairs[keypair.publicKey] = keypair
   }
 
-  getKeypair() {
-    return this.keypair;
+  getKeypairs() {
+    return this.keypairs;
   }
 
   setMailbox(mailbox) {

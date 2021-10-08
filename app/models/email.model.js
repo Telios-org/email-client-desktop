@@ -18,7 +18,7 @@ const model = {
     allowNull: false
   },
   aliasId: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING,
     allowNull: true
   },
   subject: {
@@ -55,7 +55,10 @@ const model = {
   },
   path: {
     type: Sequelize.STRING
-  }
+  },
+  // Timestamps
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE
 };
 
 class Email extends Model { }
@@ -69,7 +72,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'Email',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();
@@ -107,7 +110,6 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   Email.addHook('beforeCreate', async (email, options) => {
-    process.send({ event: 'BEFORE-BeforeCreate-saveMessageToDBLOG', data: email });
     try {
       email.bodyAsText = removeMd(email.bodyAsText);
       email.bodyAsText = email.bodyAsText.replace(/\[(.*?)\]/g, '');

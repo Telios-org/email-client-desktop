@@ -24,11 +24,9 @@ import {
   CLEAR_ACTIVE_MESSAGE
 } from '../actions/mailbox/messages';
 
-import {
-  TOGGLE_EDITOR,
-  UPDATE_NETWORK_STATUS,
-  REFRESH_TOKEN
-} from '../actions/global';
+import { ALIAS_SELECTION_FLOW_SUCCESS } from '../actions/mailbox/aliases';
+
+import { TOGGLE_EDITOR, UPDATE_NETWORK_STATUS, REFRESH_TOKEN } from '../actions/global';
 
 const initialState = {
   activeMsgId: {},
@@ -88,7 +86,7 @@ const globalState = (
             selected: action.payload
           }
         }
-      }
+      };
     case MSG_SELECTION_FLOW:
       return {
         ...state,
@@ -121,7 +119,22 @@ const globalState = (
           }
         },
         highlightText: '',
-        activeFolderIndex: action.index
+        activeFolderIndex: action.index,
+        activeAliasIndex: null
+      };
+
+    case ALIAS_SELECTION_FLOW_SUCCESS:
+      return {
+        ...state,
+        activeMsgId: {
+          ...state.activeMsgId,
+          [action.aliasId]: {
+            id: null
+          }
+        },
+        highlightText: '',
+        activeFolderIndex: null,
+        activeAliasIndex: action.index
       };
 
     case TOGGLE_EDITOR: {

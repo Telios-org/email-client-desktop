@@ -135,8 +135,7 @@ export const removeMessageFailure = (error: string) => {
 // NOT CURRENTLY BEING USED because choice was made to reload all messages upon delete instead
 // May need to switch to the redux method later.
 export const removeMessage = (id: number, folderId: number) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { client, globalState } = getState();
+  return async (dispatch: Dispatch) => {
     dispatch(initiateRemoveMessage());
     try {
       await Mail.removeMessages(id);

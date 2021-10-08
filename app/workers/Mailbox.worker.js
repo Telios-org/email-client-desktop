@@ -4,8 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const SDK = require('@telios/client-sdk');
 const { Mailbox } = require('../models/mailbox.model');
 const { Folder, DefaultFolders } = require('../models/folder.model');
-const { AliasesNamespace } = require('../models/aliasNamespaces.model');
-const { Aliases } = require('../models/aliases.model');
+const { AliasNamespace } = require('../models/aliasNamespace.model');
+const { Alias } = require('../models/alias.model');
 const { Email } = require('../models/email.model');
 const { File } = require('../models/file.model');
 const fileUtil = require('../utils/file.util');
@@ -65,6 +65,8 @@ module.exports = env => {
             account.secretBoxPrivKey,
             account.secretBoxPubKey
           );
+
+          process.send({ event: 'getNewMailMeta', data: { meta, account } });
         } catch (e) {
           process.send({
             event: 'getNewMailMeta',
@@ -75,8 +77,6 @@ module.exports = env => {
             }
           });
         }
-
-        process.send({ event: 'getNewMailMeta', data: { meta, account } });
       } catch (e) {
         process.send({
           event: 'getNewMailMeta',
@@ -185,9 +185,10 @@ module.exports = env => {
 
     if (event === 'MAIL_SERVICE::getMailboxNamespaces') {
       try {
-        const namespaces = await AliasesNamespace.findAll({
+        const namespaces = await AliasNamespace.findAll({
           attributes: [
-            'namespaceKey',
+            ['publicKey', 'namespaceKey'],
+            'privateKey',
             'name',
             'mailboxId',
             'domain',
@@ -197,6 +198,15 @@ module.exports = env => {
           order: [['name', 'ASC']],
           raw: true
         });
+
+        for (let namespace of namespaces) {
+          const keypair = {
+            publicKey: namespace.namespaceKey,
+            privateKey: namespace.privateKey
+          };
+
+          store.setKeypair(keypair);
+        }
 
         process.send({
           event: 'MAIL_WORKER::getMailboxNamespaces',
@@ -214,24 +224,81 @@ module.exports = env => {
       }
     }
 
+    if (event === 'MAIL_SERVICE::registerAliasNamespace') {
+      try {
+        const { mailboxId, namespace } = payload;
+
+        const mailbox = store.getMailbox();
+        const domain = 'telios.io';
+        const account = store.account;
+
+        const keypair = SDK.Crypto.boxKeypairFromStr(`${account.secretBoxPrivKey}${namespace}@${domain}`);
+
+        const { registered, key } = await mailbox.registerAliasName({
+          alias_name: namespace,
+          domain,
+          key: keypair.publicKey
+        });
+
+        const output = await AliasNamespace.create({
+          publicKey: key,
+          privateKey: keypair.privateKey,
+          name: namespace,
+          mailboxId,
+          domain,
+          disabled: false
+        });
+
+        store.setKeypair(keypair);
+
+        process.send({
+          event: 'MAIL_WORKER::registerAliasNamespace',
+          data: output.dataValues
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::registerAliasNamespace',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
     if (event === 'MAIL_SERVICE::getMailboxAliases') {
       try {
-        const aliases = await Aliases.findAll({
+        const aliases = await Alias.findAll({
           attributes: [
-            ['aliasId', 'id'],
+            'aliasId',
             'name',
+            'description',
             'namespaceKey',
             'count',
-            'disabled'
+            'disabled',
+            'fwdAddresses',
+            'createdAt'
           ],
-          where: { namespaceKey: { $in: payload.namespaceKeys } },
-          order: [['name', 'ASC']],
+          where: { namespaceKey: { [Op.in]: payload.namespaceKeys } },
+          order: [['createdAt', 'DESC']],
           raw: true
+        });
+
+        const outputAliases = aliases.map(a => {
+          return {
+            ...a,
+            fwdAddresses:
+              (a.fwdAddresses && a.fwdAddresses.length) > 0
+                ? a.fwdAddresses.split(',')
+                : [],
+            createdAt: new Date(a.createdAt)
+          };
         });
 
         process.send({
           event: 'MAIL_WORKER::getMailboxAliases',
-          data: aliases
+          data: outputAliases
         });
       } catch (e) {
         process.send({
@@ -245,7 +312,133 @@ module.exports = env => {
       }
     }
 
-    if (event === 'getMessagesByFolderId') {
+    if (event === 'MAIL_SERVICE::registerAliasAddress') {
+      try {
+        const {
+          namespaceName,
+          namespaceKey,
+          domain,
+          address,
+          description,
+          fwdAddresses,
+          disabled
+        } = payload;
+
+        const mailbox = store.getMailbox();
+
+        const { registered } = await mailbox.registerAliasAddress({
+          alias_address: `${namespaceName}#${address}@${domain}`,
+          forwards_to: fwdAddresses,
+          whitelisted: true,
+          disabled
+        });
+
+        const output = await Alias.create({
+          aliasId: `${namespaceName}#${address}`,
+          name: address,
+          namespaceKey,
+          count: 0,
+          description,
+          fwdAddresses: fwdAddresses.length > 0 ? fwdAddresses.join(',') : null,
+          disabled,
+          whitelisted: 1
+        });
+
+        process.send({
+          event: 'MAIL_WORKER::registerAliasAddress',
+          data: { ...output.dataValues, fwdAddresses }
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::registerAliasAddress',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    if (event === 'MAIL_SERVICE::updateAliasAddress') {
+      try {
+        const {
+          namespaceName,
+          domain,
+          address,
+          description,
+          fwdAddresses,
+          disabled
+        } = payload;
+
+        const mailbox = store.getMailbox();
+
+        await mailbox.updateAliasAddress({
+          alias_address: `${namespaceName}#${address}@${domain}`,
+          forwards_to: fwdAddresses,
+          whitelisted: true,
+          disabled
+        });
+
+        const output = await Alias.update(
+          {
+            fwdAddresses:
+              fwdAddresses.length > 0 ? fwdAddresses.join(',') : null,
+            description,
+            disabled
+          },
+          {
+            where: { name: address },
+            individualHooks: true
+          }
+        );
+
+        process.send({
+          event: 'MAIL_WORKER::updateAliasAddress',
+          data: output.dataValues
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::updateAliasAddress',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    if (event === 'MAIL_SERVICE::removeAliasAddress') {
+      const { namespaceName, domain, address } = payload;
+
+      try {
+        const mailbox = store.getMailbox();
+
+        await mailbox.removeAliasAddress(
+          `${namespaceName}#${address}@${domain}`
+        );
+
+        await Alias.destroy({
+          where: {
+            aliasId: `${namespaceName}#${address}`
+          },
+          individualHooks: true
+        });
+        process.send({ event: 'MAIL_WORKER::removeAliasAddress', data: null });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::removeAliasAddress',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    if (event === 'MAIL_SERVICE::getMessagesByFolderId') {
       try {
         const messages = await Email.findAll({
           where: { folderId: payload.id },
@@ -254,6 +447,7 @@ module.exports = env => {
           attributes: [
             ['emailId', 'id'],
             'folderId',
+            'aliasId',
             'subject',
             'unread',
             'date',
@@ -266,10 +460,51 @@ module.exports = env => {
           order: [['date', 'DESC']],
           raw: true
         });
-        process.send({ event: 'getMessagesByFolderId', data: messages });
+        process.send({
+          event: 'MAIL_WORKER::getMessagesByFolderId',
+          data: messages
+        });
       } catch (e) {
         process.send({
-          event: 'getMessagesByFolderId',
+          event: 'MAIL_WORKER::getMessagesByFolderId',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    if (event === 'MAIL_SERVICE::getMessagesByAliasId') {
+      try {
+        const messages = await Email.findAll({
+          where: { aliasId: payload.id },
+          limit: payload.limit,
+          offset: payload.offset,
+          attributes: [
+            ['emailId', 'id'],
+            'folderId',
+            'aliasId',
+            'subject',
+            'unread',
+            'date',
+            'toJSON',
+            'fromJSON',
+            'ccJSON',
+            'bodyAsText',
+            'attachments'
+          ],
+          order: [['date', 'DESC']],
+          raw: true
+        });
+        process.send({
+          event: 'MAIL_WORKER::getMessagesByAliasId',
+          data: messages
+        });
+      } catch (e) {
+        process.send({
+          event: 'MAIL_WORKER::getMessagesByAliasId',
           error: {
             name: e.name,
             message: e.message,
@@ -286,6 +521,7 @@ module.exports = env => {
         email.attachments = JSON.parse(email.attachments);
 
         if (email.unread) {
+          process.send({ event: 'emailupdate1' });
           await Email.update(
             { unread: 0 },
             {
@@ -313,6 +549,7 @@ module.exports = env => {
       const { id } = payload;
 
       try {
+        process.send({ event: 'emailupdate2' });
         await Email.update(
           { unread: 1 },
           {
@@ -382,10 +619,12 @@ module.exports = env => {
 
       const asyncMsgs = [];
       const asyncFolders = [];
+      let newAliases = [];
 
-      messages.forEach(msg => {
+      for await (let msg of messages) {
         const attachments = [];
         let folderId;
+        let aliasId;
 
         if (!msg.email) {
           msg.email = msg;
@@ -429,7 +668,66 @@ module.exports = env => {
 
         switch (type) {
           case 'Incoming':
-            folderId = 1; // Save message to Inbox
+            let isAlias = false;
+
+            // Assign email into appropriate folder/alias
+            for await (let recipient of msg.email.to) {
+
+              // Recipient is an alias
+              if (recipient.address.indexOf('#') > - 1) {
+                folderId = 0;
+                isAlias = true;
+                const localPart = recipient.address.split('@')[0];
+                const recipAliasName = localPart.split('#')[0];
+                const recipAliasAddress = localPart.split('#')[1];
+
+                const aliasNamespace = await AliasNamespace.findOne({
+                  where: {
+                    name: recipAliasName
+                  },
+                  raw: true
+                });
+
+                // Alias is not part of this account so send this email to the main inbox
+                if (!aliasNamespace) {
+                  folderId = 1;
+                  break;
+                }
+
+                const aliasAddrs = await Alias.findAll({
+                  attributes: [
+                    'aliasId',
+                    'name'
+                  ],
+                  raw: true
+                });
+
+                // Check if incoming message alias already exists
+                const aliasIndex = aliasAddrs.findIndex(item => item.name === recipAliasAddress);
+
+                if (aliasIndex === -1) {
+                  // create a new alias!
+                  const alias = await Alias.create({
+                    aliasId: recipient.address,
+                    name: localPart,
+                    namespaceKey: aliasNamespace.publicKey,
+                    count: 0,
+                    disabled: false,
+                    whitelisted: 1
+                  });
+
+                  aliasId = alias.aliasId;
+                  newAliases.push(alias);
+                } else {
+                  aliasId = aliasAddrs[aliasIndex].aliasId;
+                }
+              }
+            }
+
+            if (!isAlias) {
+              folderId = 1
+            }
+
             break;
           case 'Sent':
             folderId = 4; // Save message to Sent
@@ -445,6 +743,7 @@ module.exports = env => {
           emailId: msg.email.emailId || msg._id,
           unread: folderId === 2 || folderId === 4 || folderId === 5 ? 0 : 1,
           folderId,
+          aliasId,
           fromJSON: JSON.stringify(msg.email.from),
           toJSON: JSON.stringify(msg.email.to),
           subject: msg.email.subject ? msg.email.subject : '(no subject)',
@@ -460,6 +759,7 @@ module.exports = env => {
         };
 
         if (msg.email.emailId && type !== 'incoming') {
+          process.send({ event: 'emailupdate3' });
           asyncMsgs.push(
             Email.update(msgObj, {
               where: { emailId: msg.email.emailId },
@@ -469,7 +769,7 @@ module.exports = env => {
         } else {
           asyncMsgs.push(Email.create(msgObj));
         }
-      });
+      }
 
       Promise.all(asyncMsgs)
         .then(async items => {
@@ -488,7 +788,10 @@ module.exports = env => {
           });
           return process.send({
             event: 'MAILBOX WORKER::saveMessageToDB',
-            data: msgArr
+            data: {
+              msgArr,
+              newAliases: newAliases
+            }
           });
         })
         .catch(e => {
@@ -560,7 +863,7 @@ module.exports = env => {
         const fromFolder = messages[0].folder.fromId;
         const toFolder = messages[0].folder.toId;
 
-        for (let email of messages) {
+        for (const email of messages) {
           Email.update(
             {
               folderId: toFolder,
@@ -783,19 +1086,52 @@ module.exports = env => {
       try {
         const { id, amount } = payload;
 
-        if (amount === 1) {
-          await Folder.increment(['count'], {
+        if (amount > 0) {
+          await Folder.increment('count', {
+            by: amount,
             where: { folderId: id },
             individualHooks: true
           });
         } else {
-          await Folder.decrement(['count'], {
+          await Folder.decrement('count', {
+            by: amount,
             where: { folderId: id },
             individualHooks: true
           });
         }
 
         process.send({ event: 'updateFolderCount', updated: true });
+      } catch (e) {
+        process.send({
+          event: 'updateFolder',
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
+      }
+    }
+
+    if (event === 'updateAliasCount') {
+      try {
+        const { id, amount } = payload;
+
+        if (amount > 0) {
+          await Alias.increment('count', {
+            by: amount,
+            where: { aliasId: id },
+            individualHooks: true
+          });
+        } else {
+          await Alias.aliasId('count', {
+            by: amount,
+            where: { folderId: id },
+            individualHooks: true
+          });
+        }
+
+        process.send({ event: 'updateAliasCount', updated: true });
       } catch (e) {
         process.send({
           event: 'updateFolder',

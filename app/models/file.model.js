@@ -43,7 +43,10 @@ const model = {
   },
   feed: {
     type: Sequelize.STRING
-  }
+  },
+  // Timestamps
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE
 };
 
 class File extends Model {}
@@ -57,7 +60,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'File',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();

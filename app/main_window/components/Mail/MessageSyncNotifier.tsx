@@ -36,13 +36,11 @@ export default function MessageSyncNotifier(props: Props) {
       }
 
       if (data.done) {
+        dispatch(saveIncomingMessages(data.messages, data.newAliases));
+
         inProgress(false);
         setIsLoading(false);
       }
-    });
-
-    MessageIngress.on('saveIncoming', data => {
-      dispatch(saveIncomingMessages(data));
     });
 
     return () => {

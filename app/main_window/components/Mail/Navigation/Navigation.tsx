@@ -24,7 +24,8 @@ import {
 } from 'react-iconly';
 
 // COMPONENT IMPORT
-import NewFolderModal from '../NewFolderModal';
+import NewFolderModal from './NewFolderModal';
+import AliasSection from './Aliases/AliasSection';
 
 // CSS/LESS STYLES
 import styles from './Navigation.less';
@@ -35,9 +36,9 @@ import i18n from '../../../../i18n/i18n';
 // STATE SELECTORS
 import {
   selectAllFoldersById,
-  selectAllAliasesById,
   selectActiveMailbox,
-  activeFolderId
+  activeFolderId,
+  activeAliasId
 } from '../../../selectors/mail';
 
 // REDUX ACTION CREATORS
@@ -55,8 +56,8 @@ type Props = {
 export default function Navigation(props: Props) {
   const mailbox = useSelector(selectActiveMailbox);
   const allFolders = useSelector(selectAllFoldersById);
-  const allAliases = useSelector(selectAllAliasesById);
   const folderId = useSelector(activeFolderId);
+  const aliasId = useSelector(activeAliasId);
   // const history = useHistory();
   const dispatch = useDispatch();
 
@@ -72,32 +73,21 @@ export default function Navigation(props: Props) {
   };
 
   const newMessageAction = async () => {
-    await dispatch(clearActiveMessage(folderId));
+    await dispatch(clearActiveMessage(folderId || aliasId));
     dispatch(toggleEditor('brandNewComposer', true));
   };
 
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [showDeleteFolderModal, setShowDeleteFolderModal] = useState(false);
-  const [showAliasModal, setShowAliasModal] = useState(false);
   const [expandFolders, setExpandFolders] = useState(true);
-  const [expandAliases, setExpandAliases] = useState(true);
   const [editFolder, setEditFolder] = useState(null);
-  const [editAlias, setEditAlias] = useState(null);
 
   const activeFolderIndex = useSelector(
     (state: StateType) => state.globalState.activeFolderIndex
   );
 
-  const activeAliasIndex = useSelector(
-    (state: StateType) => state.globalState.activeAliasIndex
-  );
-
   const foldersArray = useSelector(
     (state: StateType) => state.mail.folders.allIds
-  );
-
-  const aliasesArray = useSelector(
-    (state: StateType) => state.mail.aliases.allIds
   );
 
   const selectFolder = async (index: string, e) => {
@@ -121,43 +111,11 @@ export default function Navigation(props: Props) {
     }
   };
 
-  const selectAlias = async (index: string, e) => {
-    if (
-      (e &&
-        !e.target.classList.contains('flex-initial') &&
-        e.target.nodeName === 'svg') ||
-      (e &&
-        !e.target.classList.contains('flex-initial') &&
-        e.target.nodeName === 'path') ||
-      (e &&
-        !e.target.classList.contains('flex-initial') &&
-        e.target.nodeName === 'BUTTON')
-    ) {
-      return e.preventDefault();
-    }
-
-    if (index !== undefined) {
-      const indx = parseInt(index);
-      await dispatch();
-    }
-  };
-
   const { onRefreshData } = props;
 
   const handleNewFolder = () => {
     setEditFolder(null);
     setShowFolderModal(true);
-  };
-
-  const handleNewAlias = () => {
-    setEditAliases(null);
-    setShowAliasesModal(true);
-  };
-
-  const handleEditAlias = (alias, e) => {
-    e.stopPropagation();
-    setEditAlias(alias);
-    setShowAliasModal(true);
   };
 
   const handleEditFolder = (folder: FolderType, e) => {
@@ -199,14 +157,6 @@ export default function Navigation(props: Props) {
     }
   };
 
-  const toggleAliases = () => {
-    if (expandAliases) {
-      setExpandAliases(false);
-    } else {
-      setExpandAliases(true);
-    }
-  };
-
   const MainFolders = ({ active, onSelect, folders, ...props }) => {
     return (
       <ul className="select-none">
@@ -233,19 +183,21 @@ export default function Navigation(props: Props) {
             return (
               <li
                 className={`flex relative px-2 my-0.5 mb-0 p-0.5 text-gray-500 items-center
-                ${active === index && !isDrop
+                ${
+                  active === index && !isDrop
                     ? 'text-gray-600 font-bold '
                     : 'hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-600'
-                  }
-                ${isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
-                  }
+                }
+                ${
+                  isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
+                }
                 ${styles.navItem}`}
                 key={folder.seq - 1}
                 onClick={() => selectFolder(index)}
                 ref={
                   folder.name !== 'Screened' &&
-                    folder.name !== 'Sent' &&
-                    folder.name !== 'Drafts'
+                  folder.name !== 'Sent' &&
+                  folder.name !== 'Drafts'
                     ? drop
                     : null
                 }
@@ -258,8 +210,9 @@ export default function Navigation(props: Props) {
                   }`}
                 /> */}
                 <IconTag
-                  className={`flex-initial ml-3 mb-0.5 ${active === index && !isDrop ? 'text-purple-700' : ''
-                    }`}
+                  className={`flex-initial ml-3 mb-0.5 ${
+                    active === index && !isDrop ? 'text-purple-700' : ''
+                  }`}
                   set={active === index && !isDrop ? 'light' : 'broken'}
                   size="small"
                 />
@@ -293,8 +246,9 @@ export default function Navigation(props: Props) {
 
           </div> */}
           <ChevronDown
-            className={`mr-2 mb-0.5 text-gray-600 rounded hover:bg-gray-200 transition-transform ${expandFolders ? '' : 'transform -rotate-90 '
-              }
+            className={`mr-2 mb-0.5 text-gray-600 rounded hover:bg-gray-200 transition-transform ${
+              expandFolders ? '' : 'transform -rotate-90 '
+            }
               ${styles.chevron}`}
             onClick={toggleFolders}
             set="light"
@@ -343,19 +297,22 @@ export default function Navigation(props: Props) {
               >
                 <li
                   className={`group flex relative text-gray-500 pl-4 my-0.5 mb-0 p-0.5 items-center
-                ${active === index && !isDrop
-                      ? 'text-gray-600 font-bold'
-                      : 'hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500'
-                    }
-                ${isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
-                    }
+                ${
+                  active === index && !isDrop
+                    ? 'text-gray-600 font-bold'
+                    : 'hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500'
+                }
+                ${
+                  isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
+                }
                 ${styles.navItem}`}
                   onClick={e => selectFolder(index, e)}
                   ref={drop}
                 >
                   <IconTag
-                    className={`flex-initial ml-1 mb-0.5 ${active === index && !isDrop ? 'text-purple-700' : ''
-                      }`}
+                    className={`flex-initial ml-1 mb-0.5 ${
+                      active === index && !isDrop ? 'text-purple-700' : ''
+                    }`}
                     set={active === index && !isDrop ? 'bulk' : 'broken'}
                     size="small"
                   />
@@ -428,122 +385,6 @@ export default function Navigation(props: Props) {
     );
   };
 
-  const Aliases = ({ active, onSelect, aliases, ...props }) => {
-    return (
-      <ul className="select-none">
-        <div className="group flex ml-2 mt-6" style={{ cursor: 'pointer' }}>
-          <ChevronDown
-            className={`mr-2 mb-0.5 text-gray-600 rounded hover:bg-gray-200 transition-transform ${expandAliases ? '' : 'transform -rotate-90 '
-              }
-              ${styles.chevron}`}
-            onClick={toggleAliases}
-            set="light"
-            size="small"
-          />
-          <div
-            className="flex-auto text-gray-600 flex-row flex self-center font-bold tracking-wider items-center text-sm uppercase"
-            onClick={toggleAliases}
-          >
-            {i18n.t('mailbox.aliases')}
-          </div>
-          <div className="group-hover:visible invisible flex-none mr-2 inline-block items-center flex hover:bg-gray-200 cursor-pointer text-gray-600 rounded p-1">
-            <Icon
-              icon="plus"
-              onClick={handleNewAlias}
-              className="focus:outline-none justify-center items-center tracking-wide flex flex-row h-full"
-            />
-          </div>
-        </div>
-
-        {aliases.map((id, index) => {
-          const alias = allAliases[id];
-          const IconTag = CustomIcon['folder-o'];
-          return (
-            <div
-              key={`alias_${id}`}
-              className={expandAliases ? 'show' : 'hide'}
-            >
-              <li
-                className={`group flex relative text-gray-500 pl-4 my-0.5 mb-0 p-0.5 items-center
-              ${active === index
-                    ? 'text-gray-600 font-bold'
-                    : 'hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500'
-                  }
-              ${styles.navItem}`}
-                onClick={e => selectAlias(index, e)}
-              >
-                <IconTag
-                  className={`flex-initial ml-1 mb-0.5 ${active === index ? 'text-purple-700' : ''
-                    }`}
-                  set={active === index ? 'bulk' : 'broken'}
-                  size="small"
-                />
-                <span className="flex-auto ml-2 leading-loose align-middle tracking-wide text-sm">
-                  {alias.name}
-                </span>
-
-                <div className="opacity-0 group-hover:opacity-100 flex-none text-sm h-6">
-                  <Dropdown
-                    size="xs"
-                    placement="bottomEnd"
-                    renderTitle={() => {
-                      return (
-                        <MoreSquare
-                          set="broken"
-                          size="small"
-                          className="mt-0.5"
-                        />
-                      );
-                    }}
-                  >
-                    <Dropdown.Item onClick={e => handleEditAlias(alias, e)}>
-                      <div className="flex text-sm">
-                        <Edit set="broken" size="small" />
-                        <span className="ml-2">{i18n.t('global.edit')}</span>
-                      </div>
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      onClick={e => handleDeleteFolder(alias, index, e)}
-                    >
-                      <div className="flex text-sm">
-                        <Delete set="broken" size="small" />
-                        <span className="ml-2">{i18n.t('global.delete')}</span>
-                      </div>
-                    </Dropdown.Item>
-                  </Dropdown>
-                </div>
-
-                <span
-                  className={`w-8 h-6 px-1 text-purple-700 font-semibold text-sm
-                  flex-initial text-right leading-loose self-center flex items-center justify-center`}
-                >
-                  {alias.count ? alias.count : ''}
-                </span>
-              </li>
-            </div>
-          );
-        })}
-        <div className={expandAliases ? 'show' : 'hide'}>
-          <li
-            className={`group flex relative text-gray-500 px-4 my-0.5 mb-0 p-0.5 items-center
-               hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500 ${styles.navItem}`}
-            onClick={handleNewAlias}
-          >
-            <Plus
-              className="flex-initial ml-1 text-trueGray-400"
-              set="two-tone"
-              size="small"
-              filled
-            />
-            <span className="flex-auto ml-2 leading-loose align-middle tracking-wide text-sm">
-              Add alias
-            </span>
-          </li>
-        </div>
-      </ul>
-    );
-  };
-
   return (
     <div className="flex w-full h-full ">
       <div className="flex-1">
@@ -578,17 +419,11 @@ export default function Navigation(props: Props) {
               active={activeFolderIndex}
               onSelect={selectFolder}
             /> */}
-            <Aliases
-              appearance="subtle"
-              reversed
-              aliases={aliasesArray}
-              active={activeAliasIndex}
-              onSelect={selectAlias}
-            />
+            <AliasSection />
           </div>
         </Scrollbars>
       </div>
-      <NewFolderModal
+      {/* <NewFolderModal
         show={showFolderModal}
         showDelete={showDeleteFolderModal}
         hide={handleHideFolderModal}
@@ -597,7 +432,7 @@ export default function Navigation(props: Props) {
         onCreateFolder={handleCreateFolder}
         folderCount={foldersArray.length}
         onRefresh={handleRefresh}
-      />
+      /> */}
     </div>
   );
 }

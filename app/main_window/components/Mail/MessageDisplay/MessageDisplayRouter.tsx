@@ -66,7 +66,7 @@ function MessageDisplayRouter(props: Props) {
           )}
         </div>
       )}
-      {message.id !== null && selectedItems.length < 2 && message.fromJSON && (
+      {message.id !== null && selectedItems.length < 2 && message.fromJSON && !showComposer && (
         <MessageDisplay
           highlight={highlight}
           message={message}
