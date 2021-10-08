@@ -16,7 +16,7 @@
   "license": "CC-BY-NC-4.0",
   "dependencies": {
     "@journeyapps/sqlcipher": "^4.0.0",
-    "@telios/client-sdk": "^1.0.3",
+    "@telios/client-sdk": "^1.0.5",
     "@telios/nebula-drive": "^1.0.6",
     "@types/prismjs": "^1.16.1",
     "file-type": "^16.1.0",
