@@ -87,7 +87,7 @@ export default function AliasEdit(props: Props) {
   const formEl = useRef(null);
 
   const handleSubmit = async () => {
-    const { namespaceKey: nsKey, name: namespaceName } = firstNamespace;
+    const { name: namespaceName } = firstNamespace;
 
     const { description = '', fwdAddresses: fwd = [] } = formValue;
 

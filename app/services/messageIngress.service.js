@@ -39,21 +39,27 @@ class MessageIngressService extends EventEmitter {
       if (!error) {
         const email = transformEmail(data);
 
-        MailService.save({ messages: [email], type: 'Incoming', async: true }).then(msg => {
+        MailService.save({
+          messages: [email],
+          type: 'Incoming',
+          async: true
+        })
+          .then(msg => {
+            this.incomingMsgBatch = [...msg.msgArr, ...this.incomingMsgBatch];
 
-          this.incomingMsgBatch = [...msg.msgArr, ...this.incomingMsgBatch];
+            if (msg.newAliases.length > 0) {
+              this.newAliases = [...msg.newAliases, ...this.newAliases];
+            }
 
-          if (msg.newAliases.length > 0) {
-            this.newAliases = [...msg.newAliases, ...this.newAliases];
-          }
+            if (data._id) {
+              this.syncIds.push(data._id);
+            }
 
-          if (data._id) {
-            this.syncIds.push(data._id);
-          }
-
-          this.finished += 1;
-          this.handleDone();
-        });
+            this.finished += 1;
+            this.handleDone();
+            return 'Message Saved';
+          })
+          .catch(errors => console.log(errors));
       }
     });
 
@@ -122,7 +128,6 @@ class MessageIngressService extends EventEmitter {
         total: this.msgBatchSize,
         done: false
       });
-
     } else {
       this.getMailLocked = false;
 
@@ -152,7 +157,7 @@ module.exports = instance;
 
 function transformEmail(data) {
   const { path, key, header } = data.email;
-  let email = data.email.content;
+  const email = data.email.content;
 
   return {
     unread: 1,
@@ -166,5 +171,5 @@ function transformEmail(data) {
     encKey: key,
     encHeader: header,
     ...email
-  }
+  };
 }

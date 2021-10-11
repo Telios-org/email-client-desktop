@@ -161,9 +161,10 @@ export type MailMessageType = {
 };
 
 export type NamespaceType = {
-  namespaceKey: string;
   name: string;
   mailboxId: number;
+  publicKey: string;
+  privateKey: string;
   domain: string;
   disabled: boolean;
 };

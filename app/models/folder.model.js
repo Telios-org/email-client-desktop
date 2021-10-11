@@ -4,13 +4,6 @@ const store = require('../Store');
 
 module.exports.DefaultFolders = [
   {
-    id: 0,
-    name: 'Alias',
-    type: 'hidden',
-    icon: null,
-    seq: 0
-  },
-  {
     id: 1,
     name: 'Inbox',
     type: 'default',
@@ -38,6 +31,13 @@ module.exports.DefaultFolders = [
     icon: 'trash-o',
     seq: 4
   },
+  {
+    id: 5,
+    name: 'Alias',
+    type: 'hidden',
+    icon: null,
+    seq: 5
+  }
 ];
 
 const model = {

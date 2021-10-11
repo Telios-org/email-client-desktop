@@ -144,8 +144,8 @@ export const selectActiveAliasName = createSelector(
 );
 
 export const aliasFolderIndex = createSelector([selectAllFolders], folders => {
-  if (folders.byId['0']?.name !== 'Alias') {
-    console.error('Alias folder does not have id=0');
-  }
+  // if (folders.byId['0']?.name !== 'Alias') {
+  //   console.error('Alias folder does not have id=0');
+  // }
   return folders.allIds.indexOf(0);
 });

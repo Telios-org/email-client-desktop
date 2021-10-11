@@ -16,20 +16,17 @@ export default function namespaces(
     case FETCH_MAIL_DATA_SUCCESS:
       return {
         byId: {
-          ...arrayToObject(action.namespaces, 'namespaceKey')
+          ...arrayToObject(action.namespaces, 'name')
         },
-        allIds: [...idFromArrayDict(action.namespaces, 'namespaceKey')]
+        allIds: [...idFromArrayDict(action.namespaces, 'name')]
       };
     case REGISTER_NAMESPACE_SUCCESS:
       return {
         byId: {
           ...state.byId,
-          ...arrayToObject([action.payload], 'namespaceKey')
+          ...arrayToObject([action.payload], 'name')
         },
-        allIds: [
-          ...state.allIds,
-          ...idFromArrayDict([action.payload], 'namespaceKey')
-        ]
+        allIds: [...state.allIds, ...idFromArrayDict([action.payload], 'name')]
       };
 
     default:

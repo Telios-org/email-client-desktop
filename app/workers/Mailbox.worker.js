@@ -187,7 +187,7 @@ module.exports = env => {
       try {
         const namespaces = await AliasNamespace.findAll({
           attributes: [
-            ['publicKey', 'namespaceKey'],
+            'publicKey',
             'privateKey',
             'name',
             'mailboxId',
@@ -199,9 +199,9 @@ module.exports = env => {
           raw: true
         });
 
-        for (let namespace of namespaces) {
+        for (const namespace of namespaces) {
           const keypair = {
-            publicKey: namespace.namespaceKey,
+            publicKey: namespace.publicKey,
             privateKey: namespace.privateKey
           };
 
@@ -230,9 +230,11 @@ module.exports = env => {
 
         const mailbox = store.getMailbox();
         const domain = 'telios.io';
-        const account = store.account;
+        const { account } = store;
 
-        const keypair = SDK.Crypto.boxKeypairFromStr(`${account.secretBoxPrivKey}${namespace}@${domain}`);
+        const keypair = SDK.Crypto.boxKeypairFromStr(
+          `${account.secretBoxPrivKey}${namespace}@${domain}`
+        );
 
         const { registered, key } = await mailbox.registerAliasName({
           alias_name: namespace,
@@ -336,7 +338,7 @@ module.exports = env => {
         const output = await Alias.create({
           aliasId: `${namespaceName}#${address}`,
           name: address,
-          namespaceKey,
+          namespaceKey: namespaceName,
           count: 0,
           description,
           fwdAddresses: fwdAddresses.length > 0 ? fwdAddresses.join(',') : null,
@@ -479,7 +481,7 @@ module.exports = env => {
     if (event === 'MAIL_SERVICE::getMessagesByAliasId') {
       try {
         const messages = await Email.findAll({
-          where: { aliasId: payload.id, folderId: 0 },
+          where: { aliasId: payload.id, folderId: 5 },
           limit: payload.limit,
           offset: payload.offset,
           attributes: [
@@ -617,10 +619,10 @@ module.exports = env => {
 
       const asyncMsgs = [];
       const asyncFolders = [];
-      let newAliases = [];
+      const newAliases = [];
 
       // eslint-disable-next-line no-restricted-syntax
-      for await (let msg of messages) {
+      for await (const msg of messages) {
         const attachments = [];
         let folderId;
         let aliasId;
@@ -665,15 +667,14 @@ module.exports = env => {
           });
         }
 
+        let isAlias = false;
         switch (type) {
           case 'Incoming':
-            let isAlias = false;
-
             // Assign email into appropriate folder/alias
-            for await (let recipient of msg.email.to) {
-
+            // eslint-disable-next-line no-restricted-syntax
+            for await (const recipient of msg.email.to) {
               // Recipient is an alias
-              if (recipient.address.indexOf('#') > - 1) {
+              if (recipient.address.indexOf('#') > -1) {
                 folderId = 0;
                 isAlias = true;
                 const localPart = recipient.address.split('@')[0];
@@ -694,22 +695,21 @@ module.exports = env => {
                 }
 
                 const aliasAddrs = await Alias.findAll({
-                  attributes: [
-                    'aliasId',
-                    'name'
-                  ],
+                  attributes: ['aliasId', 'name'],
                   raw: true
                 });
 
                 // Check if incoming message alias already exists
-                const aliasIndex = aliasAddrs.findIndex(item => item.aliasId === localPart);
+                const aliasIndex = aliasAddrs.findIndex(
+                  item => item.aliasId === localPart
+                );
 
                 if (aliasIndex === -1) {
                   // create a new alias!
                   const alias = await Alias.create({
                     aliasId: localPart,
                     name: recipAliasAddress,
-                    namespaceKey: aliasNamespace.publicKey,
+                    namespaceKey: aliasNamespace.name,
                     count: 0,
                     disabled: false,
                     whitelisted: 1
@@ -724,7 +724,9 @@ module.exports = env => {
             }
 
             if (!isAlias) {
-              folderId = 1
+              folderId = 1;
+            } else {
+              folderId = 5;
             }
 
             break;
@@ -789,7 +791,7 @@ module.exports = env => {
             event: 'MAILBOX WORKER::saveMessageToDB',
             data: {
               msgArr,
-              newAliases: newAliases
+              newAliases
             }
           });
         })
@@ -835,7 +837,7 @@ module.exports = env => {
             where: { emailId: msg.emailId },
             individualHooks: true
           })
-            .then(res => { })
+            .then(res => {})
             .catch(e => {
               process.send({ event: 'removeMessages', error: e.message });
             });
@@ -862,6 +864,7 @@ module.exports = env => {
         const fromFolder = messages[0].folder.fromId;
         const toFolder = messages[0].folder.toId;
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const email of messages) {
           Email.update(
             {
@@ -895,7 +898,8 @@ module.exports = env => {
       try {
         const mailbox = await Mailbox.create({ address });
 
-        for (folder of DefaultFolders) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const folder of DefaultFolders) {
           folder.mailboxId = mailbox.mailboxId;
           await Folder.create(folder);
         }

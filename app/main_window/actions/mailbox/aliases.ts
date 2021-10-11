@@ -71,7 +71,6 @@ export const aliasRegistrationFailure = (error: string, alias: string) => {
 
 export const registerAlias = (
   namespaceName: string,
-  namespaceKey: string,
   domain: string,
   address: string,
   description: string,
@@ -84,7 +83,6 @@ export const registerAlias = (
     try {
       alias = await Mail.registerAliasAddress({
         namespaceName,
-        namespaceKey,
         domain,
         address,
         description,

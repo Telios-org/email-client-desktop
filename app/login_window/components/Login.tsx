@@ -233,7 +233,7 @@ class Login extends Component<Props, State> {
                 <FormControl
                   disabled={loading}
                   name="masterpass"
-                  type={`${visiblePassword ? 'password' : 'text'}`}
+                  type={`${visiblePassword ? 'text' : 'password'}`}
                 />
                 <InputGroup.Addon>
                   {visiblePassword && (

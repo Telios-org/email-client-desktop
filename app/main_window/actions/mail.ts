@@ -797,7 +797,7 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
     folders = await dispatch(fetchMailboxFolders(activeMailboxId));
     namespaces = await dispatch(fetchMailboxNamespaces(activeMailboxId));
 
-    const namespaceKeys = namespaces.map(ns => ns.namespaceKey);
+    const namespaceKeys = namespaces.map(ns => ns.name);
 
     if (namespaceKeys.length > 0) {
       aliases = await dispatch(fetchMailboxAliases(namespaceKeys));

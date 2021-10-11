@@ -755,7 +755,7 @@ class Register extends Component<Props, State> {
                   <FormControl
                     disabled={loading}
                     name="masterpass"
-                    type={`${visiblePassword ? 'password' : 'text'}`}
+                    type={`${visiblePassword ? 'text' : 'password'}`}
                   />
                   <InputGroup.Addon>
                     {visiblePassword && (
@@ -835,7 +835,7 @@ class Register extends Component<Props, State> {
                   <FormControl
                     disabled={loading}
                     name="confirmpass"
-                    type={`${visiblePassword ? 'password' : 'text'}`}
+                    type={`${visiblePassword ? 'text' : 'password'}`}
                   />
                   <InputGroup.Addon>
                     {visiblePassword && (

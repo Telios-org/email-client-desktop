@@ -85,7 +85,7 @@ export default function AliasModal(props: Props) {
   const disableCreate = formValue.address.length === 0;
 
   const handleSubmit = async () => {
-    const { namespaceKey: nsKey, name: namespaceName } = firstNamespace;
+    const { name: namespaceName } = firstNamespace;
 
     const { address, description = '', fwdAddresses: fwd = [] } = formValue;
 
@@ -94,7 +94,6 @@ export default function AliasModal(props: Props) {
     console.log(
       'REGISTERING',
       namespaceName,
-      nsKey,
       domain,
       address,
       description,
@@ -103,15 +102,7 @@ export default function AliasModal(props: Props) {
 
     setLoading(true);
     const res = await dispatch(
-      registerAlias(
-        namespaceName,
-        nsKey,
-        domain,
-        address,
-        description,
-        fwd,
-        disabled
-      )
+      registerAlias(namespaceName, domain, address, description, fwd, disabled)
     );
     setLoading(false);
 
