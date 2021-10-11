@@ -1,6 +1,9 @@
 /* eslint-disable promise/no-nesting */
 import { updateFolderCount, updateAliasCount } from './mailbox/folders';
-import { aliasRegistrationSuccess } from './mailbox/aliases';
+import {
+  aliasRegistrationSuccess,
+  fetchAliasMessages
+} from './mailbox/aliases';
 import {
   Dispatch,
   GetState,
@@ -778,6 +781,7 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
     globalState: {
       activeMailboxIndex,
       activeFolderIndex,
+      activeAliasIndex,
       activeMsgId: activeMsgIdObj
     }
   } = getState();
@@ -789,6 +793,9 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
   let messages;
   let activeMailboxId;
   let activeFolderId;
+  let activeAliasId;
+
+  const isAlias = activeAliasId !== null;
 
   try {
     mailboxes = await dispatch(fetchMailboxes());
@@ -805,8 +812,13 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
       aliases = [];
     }
 
-    activeFolderId = folders[activeFolderIndex].id;
-    messages = await dispatch(fetchFolderMessages(activeFolderId));
+    if (isAlias) {
+      activeAliasId = aliases[activeAliasIndex].id;
+      messages = await dispatch(fetchAliasMessages(activeAliasId));
+    } else {
+      activeFolderId = folders[activeFolderIndex].id;
+      messages = await dispatch(fetchFolderMessages(activeFolderId));
+    }
 
     // Selection retention was removed for now
     // if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, activeFolderId)) {
