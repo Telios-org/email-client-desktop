@@ -179,35 +179,7 @@ export const markAsUnread = (id: number, folderId: number) => {
     dispatch(initiateMarkAsUnread(id));
     try {
       await Mail.markAsUnread(id, folderId);
-
-      if (folderId !== 2) {
-        const msg = [{
-          id: id,
-          unread: 1,
-          folder: {
-            fromId: folderId,
-            toId: 1,
-            name: 'New'
-          }
-        }]
-        await Mail.moveMessages(msg);
-        await dispatch(updateFolderCount(folderId, 1));
-      }
-
-      if (folderId !== 1) {
-        const msg = [{
-          id: id,
-          unread: 1,
-          folder: {
-            fromId: folderId,
-            toId: 1,
-            name: 'New'
-          }
-        }]
-        dispatch(updateFolderCount(1, 1));
-        await Mail.moveMessages(msg);
-        dispatch(updateMessageList(msg, 'remove'));
-      }
+      await dispatch(updateFolderCount(folderId, 1));
     } catch (error) {
       dispatch(markAsUnreadFailure(error));
       return error;
@@ -266,34 +238,6 @@ export const moveMessagesToFolder = (messages: any) => {
       if (!currentFolderId) {
         currentFolderId = msg.folder.fromId;
       }
-
-      if (
-        msg.folder.toId !== 2 &&
-        msg.folder.toId !== 3 &&
-        msg.folder.toId !== 4 &&
-        msg.folder.toId !== 5
-      ) {
-        dispatch(updateFolderCount(1, 1));
-      }
-
-      if (
-        msg.unread &&
-        msg.folder.fromId !== 2 &&
-        msg.folder.fromId !== 3 &&
-        msg.folder.fromId !== 4 &&
-        msg.folder.fromId !== 5
-      ) {
-        dispatch(updateFolderCount(1, -1));
-      }
-
-      if (msg.folder.toId === 1) {
-        msg.unread = 1;
-      }
-
-      if (msg.folder.toId === 2) {
-        msg.unread = 0;
-      }
-
       return msg;
     })
 

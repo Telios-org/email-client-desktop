@@ -42,7 +42,7 @@ const initialState = {
   activeAccountIndex: 0,
   // This denote the index of the allIds array in folders
   // NOT THE ID
-  activeFolderIndex: 0,
+  activeFolderIndex: 1,
   activeAliasIndex: null,
   loading: false,
   status: 'online',
@@ -113,7 +113,7 @@ const globalState = (
       return {
         ...state,
         activeMsgId: {
-          ...state.activeMsgId,
+          // ...state.activeMsgId, 
           [action.folderId]: {
             id: null
           }
@@ -127,13 +127,13 @@ const globalState = (
       return {
         ...state,
         activeMsgId: {
-          ...state.activeMsgId,
+          // ...state.activeMsgId,
           [action.aliasId]: {
             id: null
           }
         },
         highlightText: '',
-        activeFolderIndex: null,
+        activeFolderIndex: 0,
         activeAliasIndex: action.index
       };
 

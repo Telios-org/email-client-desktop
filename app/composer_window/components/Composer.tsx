@@ -151,7 +151,7 @@ class Composer extends Component<Props, State> {
     this.setState({ mailbox });
 
     // When in the Draft folder do the below
-    if (isInline && message && message.ccJSON && folder.id === 3) {
+    if (isInline && message && message.ccJSON && folder.id === 2) {
       this.updateComposer(mailbox, message);
     }
 
@@ -198,7 +198,7 @@ class Composer extends Component<Props, State> {
     if (
       isInline &&
       message &&
-      folder.id === 3 &&
+      folder.name === 'Drafts' &&
       message.ccJSON &&
       JSON.stringify(prevProps.message) !== JSON.stringify(message)
     ) {
@@ -409,7 +409,7 @@ class Composer extends Component<Props, State> {
 
       this.setState({ loading: true });
 
-      if (folder !== 4) {
+      if (folder !== 3) {
         email.emailId = null;
       }
 
@@ -462,18 +462,16 @@ class Composer extends Component<Props, State> {
   setRecipients = (mailbox: MailboxType, action: string) => {
     const { email } = this.state;
 
-    let fromArr = email.fromJSON ? JSON.parse(email.fromJSON) : [];
+    const fromArr = email.fromJSON ? JSON.parse(email.fromJSON) : [];
     let toArr = email.toJSON ? JSON.parse(email.toJSON) : [];
-    let toCC = email.ccJSON ? JSON.parse(email.ccJSON) : [];
-    let toBCC = email.bccJSON ? JSON.parse(email.bccJSON) : [];
+    const toCC = email.ccJSON ? JSON.parse(email.ccJSON) : [];
+    const toBCC = email.bccJSON ? JSON.parse(email.bccJSON) : [];
 
     switch (action) {
       case 'replyAll': {
         toArr = fromArr;
         const toJSON = email.toJSON ? JSON.parse(email.toJSON) : [];
-        const arr = toJSON.filter(
-          recip => recip.address !== mailbox.address
-        );
+        const arr = toJSON.filter(recip => recip.address !== mailbox.address);
         toArr = [...toArr, ...arr];
         break;
       }

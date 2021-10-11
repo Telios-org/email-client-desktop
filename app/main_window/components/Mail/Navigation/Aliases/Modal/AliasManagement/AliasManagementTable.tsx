@@ -165,7 +165,7 @@ export default function AliasManagementTable(props: Props) {
                     <span className="text-purple-600">{rowData.alias}</span>
                     {`@${rowData.domain}`}
                   </div>
-                  {rowData.description.length > 0 && (
+                  {rowData.description?.length > 0 && (
                     <div className="text-2xs text-coolGray-400">
                       {rowData.description}
                     </div>

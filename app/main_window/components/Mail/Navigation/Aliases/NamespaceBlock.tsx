@@ -30,25 +30,26 @@ import i18n from '../../../../../i18n/i18n';
 import styles from '../Navigation.less';
 
 // STATE SELECTORS
-import { selectAllAliasesById } from '../../../../selectors/mail';
-
-// ACTION CREATORS
-import { aliasSelection } from '../../../../actions/mailbox/aliases';
+import {
+  selectAllAliasesById,
+  aliasFolderIndex
+} from '../../../../selectors/mail';
 
 // TYPESCRIPT TYPES
 import { StateType } from '../../../../reducers/types';
 
 type Props = {
-  handleNewAlias: () => void;
-  handleEditAlias: (alias, e) => void;
+  handleAlias: () => void;
+  handleSelectAction: (index: string, isAlias: boolean, e:any) => void;
 };
 
 export default function NamespaceBlock(props: Props) {
   const dispatch = useDispatch();
 
-  const { handleNewAlias, handleEditAlias } = props;
+  const { handleAlias, handleSelectAction } = props;
 
   const allAliases = useSelector(selectAllAliasesById);
+  const aliasFolder = useSelector(aliasFolderIndex);
   const [expandAliases, setExpandAliases] = useState(true);
 
   const active = useSelector(
@@ -57,51 +58,11 @@ export default function NamespaceBlock(props: Props) {
 
   const aliases = useSelector((state: StateType) => state.mail.aliases.allIds);
 
-  // const namespaces = useSelector(
-  //   (state: StateType) => state.mail.namespaces.byId
-  // );
-
-  // const namespaceKeys = useSelector(
-  //   (state: StateType) => state.mail.namespaces.allIds
-  // );
-
-  // Dictionary of Icon Components used in this function
-  const CustomIcon = {
-    new: Star,
-    read: TickSquare,
-    pencil: Edit,
-    'send-o': Send,
-    'trash-o': Delete,
-    'folder-o': Bookmark,
-    ban: Danger
-  };
-
   const toggleAliases = () => {
     if (expandAliases) {
       setExpandAliases(false);
     } else {
       setExpandAliases(true);
-    }
-  };
-
-  const selectAlias = async (index: string, e) => {
-    if (
-      (e &&
-        !e.target.classList.contains('flex-initial') &&
-        e.target.nodeName === 'svg') ||
-      (e &&
-        !e.target.classList.contains('flex-initial') &&
-        e.target.nodeName === 'path') ||
-      (e &&
-        !e.target.classList.contains('flex-initial') &&
-        e.target.nodeName === 'BUTTON')
-    ) {
-      return e.preventDefault();
-    }
-
-    if (index !== undefined) {
-      const indx = parseInt(index);
-      await dispatch(aliasSelection(indx));
     }
   };
 
@@ -134,7 +95,7 @@ export default function NamespaceBlock(props: Props) {
             /> */}
             <Filter
               set="bold"
-              onClick={handleNewAlias}
+              onClick={handleAlias}
               size="small"
               className="text-coolGray-500 focus:outline-none justify-center items-center tracking-wide flex flex-row h-full"
             />
@@ -143,7 +104,6 @@ export default function NamespaceBlock(props: Props) {
 
         {aliases.map((id, index) => {
           const alias = allAliases[id];
-          const IconTag = CustomIcon['folder-o'];
           return (
             <div
               key={`alias_${id}`}
@@ -157,7 +117,7 @@ export default function NamespaceBlock(props: Props) {
                   : 'hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500'
               }
               ${styles.navItem}`}
-                onClick={e => selectAlias(index, e)}
+                onClick={e => handleSelectAction(String(index), true, e)}
                 onKeyPress={() => {}}
                 role="menuitem"
                 tabIndex={index}
@@ -225,7 +185,7 @@ export default function NamespaceBlock(props: Props) {
           <li
             className={`group flex relative text-gray-500 px-4 my-0.5 mb-0 p-0.5 items-center outline-none
                hover:bg-gray-300 hover:bg-opacity-25 hover:text-gray-500 ${styles.navItem}`}
-            onClick={handleNewAlias}
+            onClick={handleAlias}
             onKeyPress={() => {}}
             role="menuitem"
             tabIndex={aliases.length + 1}

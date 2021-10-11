@@ -96,7 +96,6 @@ export default function MessageList(props: Props) {
       virtualLoaderRef.current.resetloadMoreItemsCache();
     }
 
-    console.log(currentFolderName, currentAliasName, folderId, aliasId);
   }, [currentFolderName, currentAliasName, messages]);
 
   useEffect(() => {
@@ -273,8 +272,8 @@ export default function MessageList(props: Props) {
       isLoading = true;
 
       return new Promise((resolve, reject) => {
-        if (folderId !== null) {
-          dispatch(fetchMoreFolderMessages(folderId, startIndex))
+        if (aliasId !== null) {
+          dispatch(fetchMoreAliasMessages(aliasId, startIndex))
             .then(() => {
               isLoading = false;
               return resolve();
@@ -282,8 +281,8 @@ export default function MessageList(props: Props) {
             .catch(err => {
               return reject(err);
             });
-        } else if (aliasId !== null) {
-          dispatch(fetchMoreAliasMessages(aliasId, startIndex))
+        } else {
+          dispatch(fetchMoreFolderMessages(folderId, startIndex))
             .then(() => {
               isLoading = false;
               return resolve();
@@ -300,7 +299,7 @@ export default function MessageList(props: Props) {
     <div className="flex-1 flex w-full flex-col rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
       <div className="h-10 w-full text-lg font-semibold justify-center py-2 pl-4 pr-4 mb-2 text-gray-600 flex flex-row justify-between">
         <div className="flex-1 select-none">
-          {currentFolderName || currentAliasName || ''}
+          {currentAliasName || currentFolderName || ''}
           <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
         </div>
         <div className="items-end flex">
