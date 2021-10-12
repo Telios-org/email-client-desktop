@@ -318,7 +318,6 @@ module.exports = env => {
       try {
         const {
           namespaceName,
-          namespaceKey,
           domain,
           address,
           description,

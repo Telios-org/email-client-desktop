@@ -95,7 +95,6 @@ export default function MessageList(props: Props) {
     if (virtualLoaderRef.current) {
       virtualLoaderRef.current.resetloadMoreItemsCache();
     }
-
   }, [currentFolderName, currentAliasName, messages]);
 
   useEffect(() => {
@@ -141,9 +140,10 @@ export default function MessageList(props: Props) {
       clearSelectedMessage(folderId);
 
       Alert.success(
-        `Moved ${activeSelectedRange.items.length
-          ? activeSelectedRange.items.length
-          : 1
+        `Moved ${
+          activeSelectedRange.items.length
+            ? activeSelectedRange.items.length
+            : 1
         } message(s) to ${dropResult.name}.`
       );
     });
@@ -296,12 +296,17 @@ export default function MessageList(props: Props) {
 
   return (
     <div className="flex-1 flex w-full flex-col rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
-      <div className="h-10 w-full text-lg font-semibold justify-center py-2 pl-4 pr-4 mb-2 text-gray-600 flex flex-row justify-between">
+      <div className="w-full text-lg font-semibold py-2 pl-4 pr-2 mb-2 text-gray-600 flex flex-row justify-between">
         <div className="flex-1 select-none">
           {currentAliasName || currentFolderName || ''}
           <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
         </div>
-        <div className="items-end flex">
+        <div className="items-end flex text-gray-400">
+          <div className="flex flex-row text-xs rounded px-2 py-1 text-gray-300 content-center">
+            <div className="px-2 py-1 bg-gray-100 text-gray-400 rounded shadow mr-2">Unread</div>
+            <div className="px-2 py-1 mr-2">Read</div>
+            <div className="px-2 py-1">All</div>
+          </div>
           {/* <div style={{ cursor: 'pointer' }} onClick={toggleSort}>
             <SortIcon color="#9333ea" order={sort} />
           </div> */}
