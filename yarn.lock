@@ -9849,6 +9849,11 @@ lodash.assign@^4.2.0:
   resolved "https://registry.yarnpkg.com/lodash.assign/-/lodash.assign-4.2.0.tgz#0d99f3ccd7a6d261d19bdaeb9245005d285808e7"
   integrity sha1-DZnzzNem0mHRm9rrkkUAXShYCOc=
 
+lodash.camelcase@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
+  integrity sha1-soqmKIorn8ZRA1x3EfZathkDMaY=
+
 lodash.clonedeep@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
@@ -12659,6 +12664,15 @@ react-dom@^16.12.0:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.19.1"
+
+react-electron-browser-view@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-electron-browser-view/-/react-electron-browser-view-3.0.0.tgz#788599002c3d57765783c30def1070a4df668421"
+  integrity sha512-N7IJrBFCeZ+JsoWdQTVqlsm2+s2YEwFUSFh7PYvNxXWwY6I88xRAQkLAFsZ0z9f9KM/r8c46BK7vsTRD2jXrsw==
+  dependencies:
+    "@babel/plugin-proposal-class-properties" "^7.8.3"
+    lodash.camelcase "^4.3.0"
+    prop-types "^15.7.2"
 
 react-highlight-words@^0.16.0:
   version "0.16.0"

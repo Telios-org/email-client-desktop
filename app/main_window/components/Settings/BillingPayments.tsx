@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Divider, Panel, Icon, Button, Progress, Modal, Placeholder } from 'rsuite';
+import BrowserView from 'react-electron-browser-view';
 
 // REDUX STATE SELECTORS
 import { selectAuthToken } from '../../selectors/global';
@@ -15,6 +16,7 @@ export default function BillingsPayemnts(props: Props) {
   const authToken = useSelector(selectAuthToken);
 
   const [show, setShow] = useState(false);
+  let paymentWebview = useRef(null);
 
   const close = () => {
     setShow(false);
@@ -23,6 +25,8 @@ export default function BillingsPayemnts(props: Props) {
   const open = () => {
     setShow(true);
   }
+
+  console.log('paymentWebview', paymentWebview)
 
   return (
     <div className="overflow-hidden">
@@ -121,6 +125,27 @@ export default function BillingsPayemnts(props: Props) {
         </Modal.Header>
         <Modal.Body style={{ margin: '0', padding: '0' }}>
           <div>
+            <BrowserView
+              ref={(webview) => {
+                paymentWebview = webview
+              }}
+              // Your source
+              src={`http://localhost:3001/client/subscribe?token=${authToken}`}
+
+              // Using events
+              onDidAttach={() => {
+                console.log("BrowserView attached");
+              }}
+              onUpdateTargetUrl={(e, t) => {
+                console.log("Updated Target URL", t);
+              }}
+
+              // Providing styling for the container element
+              style={{
+                width: '100%',
+                height: '600px'
+              }}
+            />
             {/* <webview style={{ margin: '0', padding: '0', height: '750px' }} className="w-full" src={`http://localhost:3001/client/subscribe?token=${authToken}`} ></webview> */}
           </div>
         </Modal.Body>
