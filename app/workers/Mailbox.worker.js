@@ -742,7 +742,7 @@ module.exports = env => {
 
         const msgObj = {
           emailId: msg.email.emailId || msg._id,
-          unread: folderId === 1 || folderId === 3 || folderId === 4 ? 0 : 1,
+          unread: folderId === 3 || folderId === 2 ? 0 : 1,
           folderId,
           aliasId,
           fromJSON: JSON.stringify(msg.email.from),
@@ -1097,7 +1097,7 @@ module.exports = env => {
           });
         } else {
           await Folder.decrement('count', {
-            by: amount,
+            by: Math.abs(amount),
             where: { folderId: id },
             individualHooks: true
           });
@@ -1128,7 +1128,7 @@ module.exports = env => {
           });
         } else {
           await Alias.decrement('count', {
-            by: amount,
+            by: Math.abs(amount),
             where: { aliasId: id },
             individualHooks: true
           });

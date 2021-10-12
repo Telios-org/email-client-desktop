@@ -1,4 +1,4 @@
-import { updateFolderCount } from './folders';
+import { updateFolderCount, updateAliasCount } from './folders';
 import { toggleEditor } from '../global';
 
 import Mail from '../../../services/mail.service';
@@ -11,6 +11,7 @@ import {
 } from '../../reducers/types';
 
 import { activeFolderId } from '../../selectors/mail';
+import { AiOutlineConsoleSql } from 'react-icons/ai';
 
 export const SAVE_SENT_MESSAGE = 'MESSAGES::SAVE_SENT_MESSAGE';
 export const initiateSaveSent = () => {
@@ -177,9 +178,18 @@ export const markAsUnreadFailure = (error: string) => {
 export const markAsUnread = (id: number, folderId: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(initiateMarkAsUnread(id));
+
     try {
-      await Mail.markAsUnread(id, folderId);
-      await dispatch(updateFolderCount(folderId, 1));
+      if (folderId === 5) {
+        const { mail, globalState } = getState();
+        const aliasId = mail.aliases.allIds[globalState.activeAliasIndex];
+
+        await Mail.markAsUnread(id);
+        await dispatch(updateAliasCount(aliasId, 1));
+      } else {
+        await Mail.markAsUnread(id);
+        await dispatch(updateFolderCount(folderId, 1));
+      }
     } catch (error) {
       dispatch(markAsUnreadFailure(error));
       return error;

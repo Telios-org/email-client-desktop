@@ -132,7 +132,7 @@ const globalState = (
           }
         },
         highlightText: '',
-        activeFolderIndex: 0,
+        activeFolderIndex: 4,
         activeAliasIndex: action.index
       };
 
