@@ -16,14 +16,17 @@ class MessageIngressService extends EventEmitter {
     this.finished = 0;
     this.msgBatchSize = 0;
     this.syncIds = [];
+    this.incomingMsgBatch = [];
+    this.newAliases = [];
     this.retryQueue = [];
     this.account = null;
     this.MAX_RETRY = 3;
+    this.folderCounts = {};
 
     mainWorker.on('newMessage', async m => {
       const { data, error } = m;
 
-        this.msgBatchSize +=1;
+      this.msgBatchSize += 1;
 
       mainWorker.send({
         event: 'newMessage',
@@ -39,27 +42,36 @@ class MessageIngressService extends EventEmitter {
         MailService.save({
           messages: [email],
           type: 'Incoming',
-          sync: false
-        });
-      }
+          async: true
+        })
+          .then(msg => {
+            this.incomingMsgBatch = [...msg.msgArr, ...this.incomingMsgBatch];
 
-      if(data._id) {
-        this.syncIds.push(data._id);
-      }
+            if (msg.newAliases.length > 0) {
+              this.newAliases = [...msg.newAliases, ...this.newAliases];
+            }
 
-      this.finished += 1;
-      this.handleDone();
+            if (data._id) {
+              this.syncIds.push(data._id);
+            }
+
+            this.finished += 1;
+            this.handleDone();
+            return 'Message Saved';
+          })
+          .catch(errors => console.log(errors));
+      }
     });
 
     mainWorker.on('fetchError', async m => {
       const { error } = m;
 
-      if(error.file && error.file.failed < this.MAX_RETRY) {
+      if (error.file && error.file.failed < this.MAX_RETRY) {
         this.retryQueue.push(error.file);
         this.handleDone();
       }
 
-      if(error.file && error.file.failed === this.MAX_RETRY) {
+      if (error.file && error.file.failed === this.MAX_RETRY) {
         console.log(`File ${error.file.hash} failed all attempts!`);
 
         // Goes into drive's dead letter queue
@@ -95,13 +107,13 @@ class MessageIngressService extends EventEmitter {
   }
 
   handleDone() {
-    if(this.syncIds.length > 4) {
+    if (this.syncIds.length > 4) {
       MailService.markAsSynced(this.syncIds, { sync: false });
       this.syncIds = [];
     }
 
     // Retry failed messages
-    if(this.finished + this.retryQueue.length === this.msgBatchSize) {
+    if (this.finished + this.retryQueue.length === this.msgBatchSize) {
       mainWorker.send({
         event: 'retryMessageBatch',
         payload: { batch: this.retryQueue }
@@ -116,11 +128,10 @@ class MessageIngressService extends EventEmitter {
         total: this.msgBatchSize,
         done: false
       });
-
     } else {
       this.getMailLocked = false;
 
-      if(this.syncIds.length) {
+      if (this.syncIds.length) {
         MailService.markAsSynced(this.syncIds, { sync: false });
         this.syncIds = [];
       }
@@ -128,9 +139,12 @@ class MessageIngressService extends EventEmitter {
       this.emit('messageSynced', {
         index: this.finished,
         total: this.msgBatchSize,
+        messages: this.incomingMsgBatch,
+        newAliases: this.newAliases,
         done: true
       });
 
+      this.incomingMsgBatch = [];
       this.finished = 0;
       this.msgBatchSize = 0;
     }
@@ -143,9 +157,10 @@ module.exports = instance;
 
 function transformEmail(data) {
   const { path, key, header } = data.email;
-  let email = data.email.content;
+  const email = data.email.content;
 
   return {
+    unread: 1,
     fromJSON: JSON.stringify(email.from),
     toJSON: JSON.stringify(email.to),
     ccJSON: JSON.stringify(email.cc),
@@ -156,5 +171,5 @@ function transformEmail(data) {
     encKey: key,
     encHeader: header,
     ...email
-  }
+  };
 }

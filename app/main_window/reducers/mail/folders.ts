@@ -4,7 +4,9 @@ import {
   CREATE_NEW_FOLDER
 } from '../../actions/mail';
 
-import { UPDATE_FOLDER_COUNT } from '../../actions/mailbox/folders';
+import {
+  UPDATE_FOLDER_COUNT
+} from '../../actions/mailbox/folders';
 
 import { MailType, MailAction } from '../types';
 import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';

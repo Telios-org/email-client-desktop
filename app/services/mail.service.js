@@ -132,7 +132,7 @@ class MailService {
       payload: { messages: opts.messages, type: opts.type }
     });
 
-    if (opts.sync) {
+    if (opts.async) {
       return new Promise((resolve, reject) => {
         worker.once('MAILBOX WORKER::saveMessageToDB', m => {
           const { data, error } = m;
@@ -205,6 +205,14 @@ class MailService {
     });
   }
 
+  static updateFolderCount(opts) {
+    worker.send({ event: 'updateFolderCount', payload: opts });
+  }
+
+  static updateAliasCount(opts) {
+    worker.send({ event: 'updateAliasCount', payload: opts });
+  }
+
   static deleteFolder(opts) {
     worker.send({ event: 'deleteFolder', payload: opts });
 
@@ -220,10 +228,10 @@ class MailService {
   }
 
   static getMailboxFolders(id) {
-    worker.send({ event: 'getMailboxFolders', payload: { id } });
+    worker.send({ event: 'MAIL_SERVICE::getMailboxFolders', payload: { id } });
 
     return new Promise((resolve, reject) => {
-      worker.once('getMailboxFolders', m => {
+      worker.once('MAIL_WORKER::getMailboxFolders', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
@@ -233,11 +241,31 @@ class MailService {
     });
   }
 
-  static getMessagesByFolderId(id, limit) {
-    worker.send({ event: 'getMessagesByFolderId', payload: { id, limit } });
+  static getMessagesByFolderId(id, limit, offset) {
+    worker.send({
+      event: 'MAIL_SERVICE::getMessagesByFolderId',
+      payload: { id, limit, offset }
+    });
 
     return new Promise((resolve, reject) => {
-      worker.once('getMessagesByFolderId', m => {
+      worker.once('MAIL_WORKER::getMessagesByFolderId', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static getMessagesByAliasId(id, limit, offset) {
+    worker.send({
+      event: 'MAIL_SERVICE::getMessagesByAliasId',
+      payload: { id, limit, offset }
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::getMessagesByAliasId', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
@@ -248,14 +276,14 @@ class MailService {
   }
 
   static getMessagebyId(id) {
-    worker.send({ event: 'getMessageById', payload: { id } });
+    worker.send({ event: 'MAIL_SERVICE::getMessageById', payload: { id } });
 
     return new Promise((resolve, reject) => {
-      worker.once('getMessagebyId', m => {
+      worker.once('MAIL_WORKER::getMessagebyId', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
-        data.unread = false;
+
         return resolve(data);
       });
     });
@@ -294,6 +322,108 @@ class MailService {
 
     return new Promise((resolve, reject) => {
       worker.once('registerMailbox', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static getMailboxNamespaces(id) {
+    worker.send({
+      event: 'MAIL_SERVICE::getMailboxNamespaces',
+      payload: { id }
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::getMailboxNamespaces', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static getMailboxAliases(namespaceKeys) {
+    worker.send({
+      event: 'MAIL_SERVICE::getMailboxAliases',
+      payload: { namespaceKeys }
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::getMailboxAliases', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static registerAliasNamespace(payload) {
+    worker.send({
+      event: 'MAIL_SERVICE::registerAliasNamespace',
+      payload
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::registerAliasNamespace', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static registerAliasAddress(payload) {
+    worker.send({
+      event: 'MAIL_SERVICE::registerAliasAddress',
+      payload
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::registerAliasAddress', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static updateAliasAddress(payload) {
+    worker.send({
+      event: 'MAIL_SERVICE::updateAliasAddress',
+      payload
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::updateAliasAddress', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static removeAliasAddress(payload) {
+    worker.send({
+      event: 'MAIL_SERVICE::removeAliasAddress',
+      payload
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('MAIL_WORKER::removeAliasAddress', m => {
         const { data, error } = m;
 
         if (error) return reject(error);

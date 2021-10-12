@@ -20,14 +20,15 @@ import {
   selectActiveFolder,
   activeFolderId,
   selectMessageByIndex,
-  selectIndexForMessageId,
   activeMessageId as activeMsgId,
-  activeMessageSelectedRange
+  activeMessageSelectedRange,
+  selectActiveAliasName,
+  activeAliasId
 } from '../../../../selectors/mail';
 
 // REDUX ACTIONS
 import { msgRangeSelection } from '../../../../actions/mail';
-import { moveMessagesToFolder } from '../../../../actions/mailbox/folders';
+import { moveMessagesToFolder } from '../../../../actions/mailbox/messages';
 
 // TYPESCRIPT TYPES
 import { MailMessageType } from '../../../../reducers/types';
@@ -41,29 +42,32 @@ const { formatDateDisplay } = require('../../../../utils/date.util');
 type Props = {
   onMsgClick: (message: MailMessageType, id: number) => void;
   index: number;
-  onDropResult: () => void;
+  onDropResult: (item: any, dropResult: any) => void;
   previewStyle: any;
 };
 
 export default function MessagePreview(props: Props) {
   const currentFolder = useSelector(selectActiveFolder);
+  const currentAliasName = useSelector(selectActiveAliasName);
   const {
     onMsgClick,
     onDropResult,
     index,
-    previewStyle
+    previewStyle,
   } = props;
 
   const dispatch = useDispatch();
 
   const [isHover, setIsHover] = useState(false);
   const [displayLoader, setLoader] = useState(false);
+  const [isRead, setIsRead] = useState(false);
 
   const messages = useSelector(state => state.mail.messages);
   const currentFolderId = useSelector(activeFolderId);
+  const currentAliasId = useSelector(activeAliasId);
   const selected = useSelector(activeMessageSelectedRange);
   const message = useSelector(state => selectMessageByIndex(state, index));
-  const messageIndex = useSelector(state => selectIndexForMessageId(state, message.id));
+
   const {
     id,
     folderId,
@@ -76,27 +80,8 @@ export default function MessagePreview(props: Props) {
     unread
   } = message;
   const activeMessageId = useSelector(activeMsgId);
-  const isActive = id === activeMessageId || selected.items.indexOf(index) > -1;
+  const isActive = id === activeMessageId || selected.items.indexOf(message.id) > -1;
 
-  useEffect(() => {
-    const active = id === activeMessageId || selected.items.indexOf(messageIndex) > -1;
-
-    let isMounted = true;
-    if (
-      isMounted &&
-      unread !== 1 &&
-      currentFolder.name === 'New' &&
-      !active
-    ) {
-      setLoader(true);
-    } else {
-      setLoader(false);
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [unread, activeMessageId, selected.items]);
 
   const [{ opacity }, drag, preview] = useDrag({
     item: { id, unread, folderId, type: 'message' },
@@ -170,7 +155,7 @@ export default function MessagePreview(props: Props) {
     if (newSelection.endIdx !== null) {
       messages.allIds.forEach((msg, index) => {
         if (index === newSelection.startIdx && index === newSelection.endIdx) {
-          newSelection.items.push(index);
+          newSelection.items.push(msg);
           newLoaders.push(msg.id);
         }
 
@@ -181,7 +166,7 @@ export default function MessagePreview(props: Props) {
           newSelection.startIdx < newSelection.endIdx &&
           newSelection.exclude.indexOf(index) === -1
         ) {
-          newSelection.items.push(index);
+          newSelection.items.push(msg);
           newLoaders.push(msg.id);
         }
 
@@ -192,8 +177,8 @@ export default function MessagePreview(props: Props) {
           newSelection.startIdx > newSelection.endIdx &&
           newSelection.exclude.indexOf(index) === -1
         ) {
-          newSelection.items.push(index);
-          newLoaders.push(msg.id);
+          newSelection.items.push(msg);
+          newLoaders.push(msg);
         }
       });
     }
@@ -207,6 +192,7 @@ export default function MessagePreview(props: Props) {
   const handleClick = event => {
     event.preventDefault();
     setIsHover(true);
+    setIsRead(true);
 
     const selection = { ...selected };
 
@@ -277,21 +263,20 @@ export default function MessagePreview(props: Props) {
   };
 
   const handleLoaderComplete = () => {
-    // console.log(`Move message to READ: ${message.id}`);
     dispatch(moveMessagesToFolder([{
       id: message.id,
-      unread: false,
+      unread: 0,
       folder: {
         fromId: currentFolder.id,
         toId: 2,
         name: 'Read'
       }
-    }]))
+    }]));
   }
 
   return (
     <div>
-      {currentFolder && currentFolder.name && (
+      {currentFolder?.name && (
         <div className="overflow-hidden" style={previewStyle}>
           <DragPreviewImage connect={preview} src={envelope} />
           <div
@@ -311,6 +296,7 @@ export default function MessagePreview(props: Props) {
           >
             <div className="flex justify-center w-6 flex-shrink-0 items-center pt-0.5">
               {unread === 1 &&
+                !isRead &&
                 currentFolder.name !== 'Sent' &&
                 currentFolder.name !== 'Drafts' && (
                   <Badge className="bg-purple-600" />
@@ -343,7 +329,7 @@ export default function MessagePreview(props: Props) {
 
               <div
                 id="subject"
-                className={`flex flex-1 flex-row justify-between ${unread === 1 ? 'text-purple-600 font-bold' : ''
+                className={`flex flex-1 flex-row justify-between ${unread === 1 && !isRead ? 'text-purple-600 font-bold' : ''
                   }`}
               >
                 <div className="flex flex-1 leading-tight overflow-hidden text-sm break-all line-clamp-1">

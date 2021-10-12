@@ -1,7 +1,9 @@
 import { ipcRenderer } from 'electron';
-import React, { useState } from 'react';
-import { createPortal } from 'react-dom'
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
+import { debounce } from 'lodash';
 
 // EXTERNAL LIBRAIRIES
 import Highlighter from 'react-highlight-words';
@@ -37,43 +39,42 @@ import {
   forwardMessage
 } from '../../../actions/mailbox/messages';
 
-// TYPESCRIPT TYPES
+// REDUX STATE SELECTORS
 import {
-  MailMessageType,
-  MailboxType,
-  FolderType
-} from '../../../reducers/types';
+  selectActiveMailbox
+} from '../../../selectors/mail';
+
+// TYPESCRIPT TYPES
+import { MailMessageType, MailboxType } from '../../../reducers/types';
 
 type Props = {
   message: MailMessageType;
-  folders: FolderType;
-  mailbox: MailboxType;
-  loading: boolean;
   highlight: string;
 };
 
 function MessageDisplay(props: Props) {
   const {
     message: {
-      id,
-      folderId,
       subject,
       fromJSON,
       toJSON,
       ccJSON,
-      bccJSON,
       date,
       bodyAsHtml,
-      bodyAsText,
       attachments
     },
     highlight,
-    mailbox,
     message
   } = props;
 
+  const mailbox = useSelector(selectActiveMailbox);
   const [loaded, setLoaded] = useState(false);
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setLoaded(false);
+  }, [bodyAsHtml])
 
   let files = [];
 
@@ -172,12 +173,10 @@ function MessageDisplay(props: Props) {
   };
 
   const IFrame = ({ children, ...props }) => {
-    const [contentRef, setContentRef] = useState(null);
-    const [height, setHeight] = useState('');
+    const [contentRef, setContentRef] = useState();
     const mountNode = contentRef?.contentWindow?.document?.body;
 
     const onLoad = () => {
-      setHeight(contentRef?.contentWindow?.document?.body?.scrollHeight + 20 + "px");
       setLoaded(true);
     };
 
@@ -186,18 +185,16 @@ function MessageDisplay(props: Props) {
         {...props}
         ref={setContentRef}
         onLoad={onLoad}
-        height={height}
+        className={props.className}
         id="email-body"
-        scrolling="no"
         frameBorder="0"
       >
         {mountNode && createPortal(children, mountNode)}
-        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
       </iframe>
     );
-  }
+  };
 
-  var divStyle = {
+  const divStyle = {
     fontFamily: 'Arial, sans-serif',
     WebkitFontSmoothing: 'antialiased',
     fontSize: '16px',
@@ -274,24 +271,29 @@ function MessageDisplay(props: Props) {
           )}
         </div>
       </div>
-      {attachments && attachments.length > 0 && (
+      {bodyAsHtml && attachments && attachments.length > 0 && (
         <div className="px-6">
           <Attachments attachments={attachments} displayStatus="recipient" />
         </div>
       )}
       <div className="flex flex-1 w-full h-full relative">
         <div className="h-full flex-grow">
-          <Scrollbars hideTracksWhenNotNeeded autoHide>
-            <div className="h-full">
-              <div className="px-6 mb-6 mt-4 h-full">
-                <IFrame className="w-full">
+          <div className="h-full">
+            <div className="mb-2 h-full px-4 pt-4">
+              {!loaded && (
+                <Loader size="lg" backdrop vertical />
+              )}
+
+              <IFrame className="w-full h-full">
+                {bodyAsHtml && (
                   <div style={divStyle}>
                     {renderHTML(bodyAsHtml)}
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
                   </div>
-                </IFrame>
-              </div>
+                )}
+              </IFrame>
             </div>
-          </Scrollbars>
+          </div>
         </div>
       </div>
     </div>

@@ -11,9 +11,8 @@ import {
   CREATE_LOCAL_MAILBOX_FAILURE,
   CREATE_LOCAL_MAILBOX_SUCCESS,
   FETCH_MAIL_DATA_SUCCESS,
-  // GET_FOLDER_MESSAGES_REQUEST_SUCCESS,
   FETCH_MAIL_DATA_FAILURE,
-  MSG_SELECTION_FLOW_SUCCESS,
+  MSG_SELECTION_FLOW,
   SHOW_MAXIMIZED_MESSAGE_DISPLAY,
   FOLDER_SELECTION_FLOW_SUCCESS,
   HIGHLIGHT_SEARCH_QUERY,
@@ -24,6 +23,8 @@ import {
   REMOVE_MESSAGE_SUCCESS,
   CLEAR_ACTIVE_MESSAGE
 } from '../actions/mailbox/messages';
+
+import { ALIAS_SELECTION_FLOW_SUCCESS } from '../actions/mailbox/aliases';
 
 import { TOGGLE_EDITOR, UPDATE_NETWORK_STATUS } from '../actions/global';
 
@@ -42,6 +43,7 @@ const initialState = {
   // This denote the index of the allIds array in folders
   // NOT THE ID
   activeFolderIndex: 0,
+  activeAliasIndex: null,
   loading: false,
   status: 'online',
   error: '',
@@ -68,7 +70,6 @@ const globalState = (
       return {
         ...state,
         error: action.error,
-        loading: false,
         editorIsOpen: false
         // activeMsgId: null
       };
@@ -85,21 +86,14 @@ const globalState = (
           }
         }
       };
-
-    case MSG_SELECTION_FLOW_SUCCESS:
+    case MSG_SELECTION_FLOW:
       return {
         ...state,
-        editorIsOpen: false,
         activeMsgId: {
           ...state.activeMsgId,
           [action.folderId]: {
+            ...state.activeMsgId[action.folderId],
             id: action.id
-            // selected: {
-            //   startIdx: null,
-            //   endIdx: null,
-            //   exclude: [],
-            //   items: []
-            // }
           }
         }
       };
@@ -111,20 +105,35 @@ const globalState = (
           ...state.activeMsgId,
           [action.folderId]: {
             id: null
-            // selected: {
-            //   startIdx: null,
-            //   endIdx: null,
-            //   exclude: [],
-            //   items: []
-            // }
           }
         }
       };
     case FOLDER_SELECTION_FLOW_SUCCESS:
       return {
         ...state,
+        activeMsgId: {
+          // ...state.activeMsgId, 
+          [action.folderId]: {
+            id: null
+          }
+        },
         highlightText: '',
-        activeFolderIndex: action.index
+        activeFolderIndex: action.index,
+        activeAliasIndex: null
+      };
+
+    case ALIAS_SELECTION_FLOW_SUCCESS:
+      return {
+        ...state,
+        activeMsgId: {
+          // ...state.activeMsgId,
+          [action.aliasId]: {
+            id: null
+          }
+        },
+        highlightText: '',
+        activeFolderIndex: 4,
+        activeAliasIndex: action.index
       };
 
     case TOGGLE_EDITOR: {
@@ -167,7 +176,6 @@ const globalState = (
         highlightText: '',
         showMaximizedMessageDisplay: false
       };
-
     case HIGHLIGHT_SEARCH_QUERY:
       return {
         ...state,

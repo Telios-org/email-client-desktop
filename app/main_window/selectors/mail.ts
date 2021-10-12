@@ -52,8 +52,21 @@ export const selectActiveFolder = createSelector(
   }
 );
 
+export const selectActiveFolderName = createSelector(
+  [selectAllFolders, activeFolderId],
+  (folders, activeFolder) => {
+    return folders.byId[activeFolder] ? folders.byId[activeFolder].name : '';
+  }
+);
+
 const activeMsgIdObj = (state: StateType) => state.globalState.activeMsgId;
+export const hiddenMsgIds = (state: StateType) =>
+  state.globalState.hiddenMsgIds;
 export const selectAllMessages = (state: StateType) => state.mail.messages;
+
+export const selectMessages = createSelector([selectAllMessages], messages => {
+  return messages;
+});
 
 export const activeMessageId = createSelector(
   [activeMsgIdObj, selectAllFolders, activeFolderIndex],
@@ -96,3 +109,43 @@ export const selectIndexForMessageId = createSelector(
     return messages.allIds.indexOf(id);
   }
 );
+
+export const selectAllAliases = (state: StateType) => state.mail.aliases;
+export const selectAllAliasesById = (state: StateType) =>
+  state.mail.aliases.byId;
+
+export const selectAllNamespaces = (state: StateType) => state.mail.namespaces;
+export const selectFirstNamespace = createSelector(selectAllNamespaces, ns => {
+  const ids = ns.allIds;
+  const objs = ns.byId;
+
+  if (ids.length > 0) {
+    return objs[ids[0]];
+  }
+
+  return null;
+});
+
+const activeAliasIndex = (state: StateType) =>
+  state.globalState.activeAliasIndex;
+
+export const activeAliasId = createSelector(
+  [selectAllAliases, activeAliasIndex],
+  (aliases, activeAlias) => {
+    return aliases.allIds[activeAlias];
+  }
+);
+
+export const selectActiveAliasName = createSelector(
+  [selectAllAliases, activeAliasId],
+  (aliases, activeAlias) => {
+    return aliases.byId[activeAlias] ? aliases.byId[activeAlias].name : '';
+  }
+);
+
+export const aliasFolderIndex = createSelector([selectAllFolders], folders => {
+  // if (folders.byId['0']?.name !== 'Alias') {
+  //   console.error('Alias folder does not have id=0');
+  // }
+  return folders.allIds.indexOf(0);
+});

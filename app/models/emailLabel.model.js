@@ -10,7 +10,10 @@ const model = {
   labelId: {
     type: Sequelize.INTEGER,
     allowNull: false
-  }
+  },
+  // Timestamps
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE
 };
 
 class EmailLabel extends Model {}
@@ -24,7 +27,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'EmailLabel',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();

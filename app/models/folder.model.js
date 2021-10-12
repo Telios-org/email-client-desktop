@@ -5,39 +5,39 @@ const store = require('../Store');
 module.exports.DefaultFolders = [
   {
     id: 1,
-    name: 'New',
+    name: 'Inbox',
     type: 'default',
     icon: 'inbox',
     seq: 1
   },
   {
     id: 2,
-    name: 'Read',
+    name: 'Drafts',
     type: 'default',
-    icon: 'inbox',
+    icon: 'pencil',
     seq: 2
   },
   {
     id: 3,
-    name: 'Drafts',
+    name: 'Sent',
     type: 'default',
-    icon: 'pencil',
+    icon: 'send-o',
     seq: 3
   },
   {
     id: 4,
-    name: 'Sent',
+    name: 'Trash',
     type: 'default',
-    icon: 'send-o',
+    icon: 'trash-o',
     seq: 4
   },
   {
     id: 5,
-    name: 'Trash',
-    type: 'default',
-    icon: 'trash-o',
+    name: 'Alias',
+    type: 'hidden',
+    icon: null,
     seq: 5
-  },
+  }
 ];
 
 const model = {
@@ -68,7 +68,10 @@ const model = {
   },
   seq: {
     type: DataTypes.INTEGER
-  }
+  },
+  // Timestamps
+  createdAt: DataTypes.DATE,
+  updatedAt: DataTypes.DATE
 };
 
 class Folder extends Model { }
@@ -82,7 +85,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'Folder',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();

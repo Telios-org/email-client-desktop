@@ -1,4 +1,4 @@
-import { updateFolderCount } from './folders';
+import { updateFolderCount, updateAliasCount } from './folders';
 import { toggleEditor } from '../global';
 
 import Mail from '../../../services/mail.service';
@@ -11,6 +11,7 @@ import {
 } from '../../reducers/types';
 
 import { activeFolderId } from '../../selectors/mail';
+import { AiOutlineConsoleSql } from 'react-icons/ai';
 
 export const SAVE_SENT_MESSAGE = 'MESSAGES::SAVE_SENT_MESSAGE';
 export const initiateSaveSent = () => {
@@ -91,7 +92,6 @@ export const sendMessage = (email: Email) => {
     dispatch(initiateSending(email));
 
     try {
-      console.log('sending...');
       await Mail.send(email, client.secretBoxPrivKey, client.secretBoxPubKey);
       await dispatch(saveSentMessage(email));
     } catch (error) {
@@ -136,8 +136,7 @@ export const removeMessageFailure = (error: string) => {
 // NOT CURRENTLY BEING USED because choice was made to reload all messages upon delete instead
 // May need to switch to the redux method later.
 export const removeMessage = (id: number, folderId: number) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { client, globalState } = getState();
+  return async (dispatch: Dispatch) => {
     dispatch(initiateRemoveMessage());
     try {
       await Mail.removeMessages(id);
@@ -179,13 +178,24 @@ export const markAsUnreadFailure = (error: string) => {
 export const markAsUnread = (id: number, folderId: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(initiateMarkAsUnread(id));
+
     try {
-      await Mail.markAsUnread(id, folderId);
-      await dispatch(updateFolderCount(folderId, 1));
+      if (folderId === 5) {
+        const { mail, globalState } = getState();
+        const aliasId = mail.aliases.allIds[globalState.activeAliasIndex];
+
+        await Mail.markAsUnread(id);
+        await dispatch(updateAliasCount(aliasId, 1));
+      } else {
+        await Mail.markAsUnread(id);
+        await dispatch(updateFolderCount(folderId, 1));
+      }
     } catch (error) {
       dispatch(markAsUnreadFailure(error));
       return error;
     }
+
+    dispatch(clearActiveMessage(folderId));
     return dispatch(markAsUnreadSuccess(id));
   };
 };
@@ -217,5 +227,32 @@ export const forwardMessage = () => {
     const folderId = activeFolderId(state);
     await dispatch(clearActiveMessage(folderId));
     dispatch(toggleEditor('forward', true));
+  };
+};
+
+export const UPDATE_MESSAGE_LIST = 'MESSAGES::UPDATE_MESSAGE_LIST';
+export const updateMessageList = (messages: any, updateType: string) => {
+  return {
+    type: UPDATE_MESSAGE_LIST,
+    messages,
+    updateType
+  };
+};
+
+export const moveMessagesToFolder = (messages: any) => {
+  return async (dispatch: Dispatch) => {
+
+    let currentFolderId = 0;
+
+    const msgArr = messages.map((msg: any) => {
+      if (!currentFolderId) {
+        currentFolderId = msg.folder.fromId;
+      }
+      return msg;
+    })
+
+    dispatch(clearActiveMessage(currentFolderId));
+    dispatch(updateMessageList(msgArr, 'remove'));
+    await Mail.moveMessages(msgArr);
   };
 };

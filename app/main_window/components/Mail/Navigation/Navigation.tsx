@@ -1,18 +1,16 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 
 // IMPORT EXTERNAL LIBRAIRIES
-import { Button, IconButton, Dropdown, Icon, IconStack } from 'rsuite';
+import { Button, Dropdown, Icon } from 'rsuite';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useDrop } from 'react-dnd';
 
 // ICONS IMPORTS
 import {
   EditSquare,
-  Download,
   Edit,
   Send,
   Danger,
@@ -20,12 +18,15 @@ import {
   Plus,
   ChevronDown,
   MoreSquare,
-  MoreCircle,
+  Star,
+  TickSquare,
+  Message,
   Bookmark
 } from 'react-iconly';
 
 // COMPONENT IMPORT
-import NewFolderModal from '../NewFolderModal';
+import NewFolderModal from './NewFolderModal';
+import AliasSection from './Aliases/AliasSection';
 
 // CSS/LESS STYLES
 import styles from './Navigation.less';
@@ -36,36 +37,45 @@ import i18n from '../../../../i18n/i18n';
 // STATE SELECTORS
 import {
   selectAllFoldersById,
-  selectActiveMailbox
+  selectActiveMailbox,
+  activeFolderId,
+  activeAliasId
 } from '../../../selectors/mail';
 
 // REDUX ACTION CREATORS
 import { folderSelection, createNewFolder } from '../../../actions/mail';
+import { aliasSelection } from '../../../actions/mailbox/aliases';
+import { clearActiveMessage } from '../../../actions/mailbox/messages';
+import { toggleEditor } from '../../../actions/global';
 
 // TYPESCRIPT TYPES
 import { StateType, FolderType } from '../../../reducers/types';
 
 type Props = {
-  isLoading?: boolean; // eslint-disable-line react/no-unused-prop-types
-  newMessageAction: () => void;
   onRefreshData: () => void;
 };
 
 export default function Navigation(props: Props) {
   const mailbox = useSelector(selectActiveMailbox);
   const allFolders = useSelector(selectAllFoldersById);
-  // const displayFolders = useSelector(selectDisplayFolders);
+  const folderId = useSelector(activeFolderId);
   // const history = useHistory();
   const dispatch = useDispatch();
 
   // Dictionary of Icon Components used in this function
   const CustomIcon = {
-    inbox: Download,
+    new: Star,
+    inbox: Message,
     pencil: Edit,
     'send-o': Send,
     'trash-o': Delete,
     'folder-o': Bookmark,
     ban: Danger
+  };
+
+  const newMessageAction = async () => {
+    await dispatch(clearActiveMessage(folderId));
+    dispatch(toggleEditor('brandNewComposer', true));
   };
 
   const [showFolderModal, setShowFolderModal] = useState(false);
@@ -81,7 +91,7 @@ export default function Navigation(props: Props) {
     (state: StateType) => state.mail.folders.allIds
   );
 
-  const selectFolder = async (index: string, e) => {
+  const selectFolder = async (index: string, isAlias, e) => {
     if (
       (e &&
         !e.target.classList.contains('flex-initial') &&
@@ -98,11 +108,15 @@ export default function Navigation(props: Props) {
 
     if (index !== undefined) {
       const indx = parseInt(index);
-      await dispatch(folderSelection(indx));
+      if (isAlias) {
+        await dispatch(aliasSelection(indx));
+      } else {
+        await dispatch(folderSelection(indx));
+      }
     }
   };
 
-  const { newMessageAction, onRefreshData } = props;
+  const { onRefreshData } = props;
 
   const handleNewFolder = () => {
     setEditFolder(null);
@@ -150,7 +164,7 @@ export default function Navigation(props: Props) {
 
   const MainFolders = ({ active, onSelect, folders, ...props }) => {
     return (
-      <ul className="select-none">
+      <ul className="select-none -mb-3">
         {folders.map((id, index) => {
           const folder = allFolders[id];
 
@@ -184,7 +198,7 @@ export default function Navigation(props: Props) {
                 }
                 ${styles.navItem}`}
                 key={folder.seq - 1}
-                onClick={() => selectFolder(index)}
+                onClick={e => selectFolder(index, false, e)}
                 ref={
                   folder.name !== 'Screened' &&
                   folder.name !== 'Sent' &&
@@ -201,10 +215,10 @@ export default function Navigation(props: Props) {
                   }`}
                 /> */}
                 <IconTag
-                  className={`flex-initial ml-3 mb-1 ${
+                  className={`flex-initial ml-3 mb-0.5 ${
                     active === index && !isDrop ? 'text-purple-700' : ''
                   }`}
-                  set={active === index && !isDrop ? 'bulk' : 'broken'}
+                  set={active === index && !isDrop ? 'light' : 'broken'}
                   size="small"
                 />
                 <span className="flex-auto pl-3 leading-loose align-middle text-sm self-center">
@@ -222,7 +236,13 @@ export default function Navigation(props: Props) {
             );
           }
         })}
+      </ul>
+    );
+  };
 
+  const OtherFolders = ({ active, onSelect, folders, ...props }) => {
+    return (
+      <ul className="select-none">
         <div className="group flex ml-2 mt-6" style={{ cursor: 'pointer' }}>
           {/* <div
             className="flex-none inline-block mr-4 text-gray-200"
@@ -291,7 +311,7 @@ export default function Navigation(props: Props) {
                   isDrop ? 'bg-gray-300 text-gray-500 hover:text-gray-600' : ' '
                 }
                 ${styles.navItem}`}
-                  onClick={e => selectFolder(index, e)}
+                  onClick={e => selectFolder(index, false, e)}
                   ref={drop}
                 >
                   <IconTag
@@ -310,7 +330,13 @@ export default function Navigation(props: Props) {
                       size="xs"
                       placement="bottomEnd"
                       renderTitle={() => {
-                        return <MoreSquare set="broken" size="small" className="mt-0.5"/>;
+                        return (
+                          <MoreSquare
+                            set="broken"
+                            size="small"
+                            className="mt-0.5"
+                          />
+                        );
                       }}
                     >
                       <Dropdown.Item onClick={e => handleEditFolder(folder, e)}>
@@ -391,10 +417,18 @@ export default function Navigation(props: Props) {
               active={activeFolderIndex}
               onSelect={selectFolder}
             />
+            {/* <OtherFolders
+              appearance="subtle"
+              reversed
+              folders={foldersArray}
+              active={activeFolderIndex}
+              onSelect={selectFolder}
+            /> */}
+            <AliasSection handleSelectAction={selectFolder} />
           </div>
         </Scrollbars>
       </div>
-      <NewFolderModal
+      {/* <NewFolderModal
         show={showFolderModal}
         showDelete={showDeleteFolderModal}
         hide={handleHideFolderModal}
@@ -403,11 +437,7 @@ export default function Navigation(props: Props) {
         onCreateFolder={handleCreateFolder}
         folderCount={foldersArray.length}
         onRefresh={handleRefresh}
-      />
+      /> */}
     </div>
   );
 }
-
-Navigation.defaultProps = {
-  isLoading: false
-};

@@ -1,10 +1,10 @@
 import Mail from '../../../services/mail.service';
 
-import { loadMailboxes } from '../mail';
-import { clearActiveMessage } from './messages';
-
 export const UPDATE_FOLDER_COUNT = 'GLOBAL::UPDATE_FOLDER_COUNT';
 export const updateFolderCount = (id: number, amount: number) => {
+
+  Mail.updateFolderCount({ id, amount });
+
   return {
     type: UPDATE_FOLDER_COUNT,
     id,
@@ -12,10 +12,14 @@ export const updateFolderCount = (id: number, amount: number) => {
   };
 };
 
-export const moveMessagesToFolder = messages => {
-  return async (dispatch: Dispatch) => {
-    await Mail.moveMessages(messages);
-    await dispatch(clearActiveMessage(messages[0].folder.fromId));
-    await dispatch(loadMailboxes());
+export const UPDATE_ALIAS_COUNT = 'GLOBAL::UPDATE_ALIAS_COUNT';
+export const updateAliasCount = (id: string, amount: number) => {
+
+  Mail.updateAliasCount({ id, amount });
+
+  return {
+    type: UPDATE_ALIAS_COUNT,
+    id,
+    amount
   };
 };

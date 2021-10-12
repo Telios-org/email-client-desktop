@@ -1,10 +1,16 @@
 /* eslint-disable promise/no-nesting */
-import { updateFolderCount } from './mailbox/folders';
+import { updateFolderCount, updateAliasCount } from './mailbox/folders';
+import {
+  aliasRegistrationSuccess,
+  fetchAliasMessages
+} from './mailbox/aliases';
 import {
   Dispatch,
   GetState,
   MailboxType,
   FolderType,
+  NamespaceType,
+  AliasesType,
   MailMessageType,
   ExternalMailMessageType,
   Email,
@@ -123,7 +129,7 @@ export const fetchFolderMessages = (id: number) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByFolderId(id, 500);
+      messages = await Mail.getMessagesByFolderId(id, 50);
     } catch (error) {
       dispatch(getFolderMessagesFailure(error));
       return Promise.reject(error);
@@ -139,6 +145,31 @@ export const fetchFolderMessages = (id: number) => {
     //     await dispatch(fetchMsg(current[0]));
     //   }
     // }
+
+    return Promise.resolve(messages);
+  };
+};
+
+export const FETCH_MORE_FOLDER_MESSAGES_SUCCESS =
+  'MAILPAGE::FETCH_MORE_FOLDER_MESSAGES_SUCCESS';
+export const fetchMoreFolderMessagesSuccess = (messages: MailMessageType[]) => {
+  return {
+    type: FETCH_MORE_FOLDER_MESSAGES_SUCCESS,
+    messages
+  };
+};
+
+export const fetchMoreFolderMessages = (id: number, offset: number) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    let messages;
+
+    try {
+      messages = await Mail.getMessagesByFolderId(id, 50, offset);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+
+    dispatch(fetchMoreFolderMessagesSuccess(messages));
 
     return Promise.resolve(messages);
   };
@@ -246,6 +277,105 @@ export const fetchMailboxes = () => {
 };
 
 /*
+ *  Get Mailbox Namespaces
+ */
+
+export const GET_MAILBOX_NAMESPACES_REQUEST =
+  'MAILPAGE::GET_MAILBOX_NAMESPACES_REQUEST';
+export const getMailboxNamespacesRequest = () => {
+  return {
+    type: GET_MAILBOX_NAMESPACES_REQUEST
+  };
+};
+
+export const GET_MAILBOX_NAMESPACES_REQUEST_SUCCESS =
+  'MAILPAGE::GET_MAILBOX_NAMESPACES_REQUEST_SUCCESS';
+export const getMailboxNamespacesSuccess = (
+  id: number,
+  namespaces: NamespaceType[]
+) => {
+  return {
+    type: GET_MAILBOX_NAMESPACES_REQUEST_SUCCESS,
+    id,
+    namespaces
+  };
+};
+
+export const GET_MAILBOX_NAMESPACES_REQUEST_FAILURE =
+  'MAILPAGE::GET_MAILBOX_NAMESPACES_REQUEST_FAILURE';
+export const getMailboxNamespacesFailure = (error: Error) => {
+  return {
+    type: GET_MAILBOX_NAMESPACES_REQUEST_FAILURE,
+    error: error.message
+  };
+};
+
+export const fetchMailboxNamespaces = (id: number) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(getMailboxNamespacesRequest());
+    let namespaces;
+    try {
+      namespaces = await Mail.getMailboxNamespaces(id);
+    } catch (error) {
+      dispatch(getMailboxNamespacesFailure(error));
+      return error;
+    }
+    dispatch(getMailboxNamespacesSuccess(id, namespaces));
+    return namespaces;
+  };
+};
+
+/*
+ *  Get Mailbox Aliases
+ */
+
+export const GET_MAILBOX_ALIASES_REQUEST =
+  'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST';
+export const getMailboxAliasesRequest = (namespaceKeys: number[]) => {
+  return {
+    type: GET_MAILBOX_ALIASES_REQUEST,
+    payload: namespaceKeys
+  };
+};
+
+export const GET_MAILBOX_ALIASES_REQUEST_SUCCESS =
+  'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST_SUCCESS';
+export const getMailboxAliasesSuccess = (
+  namespaceKeys: number[],
+  aliases: AliasesType[]
+) => {
+  return {
+    type: GET_MAILBOX_ALIASES_REQUEST_SUCCESS,
+    namespaceKeys,
+    aliases
+  };
+};
+
+export const GET_MAILBOX_ALIASES_REQUEST_FAILURE =
+  'MAILPAGE::GET_MAILBOX_ALIASES_REQUEST_FAILURE';
+export const getMailboxAliasesFailure = (error: Error) => {
+  return {
+    type: GET_MAILBOX_ALIASES_REQUEST_FAILURE,
+    error: error.message
+  };
+};
+
+export const fetchMailboxAliases = (namespaceKeys: number[]) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(getMailboxAliasesRequest(namespaceKeys));
+    let aliases;
+    try {
+      aliases = await Mail.getMailboxAliases(namespaceKeys);
+    } catch (error) {
+      dispatch(getMailboxAliasesFailure(error));
+      return error;
+    }
+    dispatch(getMailboxAliasesSuccess(namespaceKeys, aliases));
+    return aliases;
+  };
+};
+
+/*
  *  Saving Emails to local DB and removing it from S3
  */
 
@@ -261,12 +391,14 @@ export const SAVE_INCOMING_MESSAGES_SUCCESS =
   'MAILPAGE::SAVE_INCOMING_MESSAGES_SUCCESS';
 export const saveIncomingMessagesSuccess = function (
   messages: MailMessageType[],
-  activeFolderId: number
+  activeFolderId: number,
+  activeAliasId: string
 ) {
   return {
     type: SAVE_INCOMING_MESSAGES_SUCCESS,
     messages,
-    activeFolderId
+    activeFolderId,
+    activeAliasId
   };
 };
 
@@ -279,34 +411,60 @@ export const saveIncomingMessagesFailure = (error: Error) => {
   };
 };
 
-export const saveIncomingMessages = (messages: Email[]) => {
+export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    // dispatch(saveIncomingMessagesRequest());
     const {
-      globalState: { activeFolderIndex },
+      globalState: { activeFolderIndex, activeAliasIndex },
       mail: {
-        folders: { allIds: foldersArray }
+        folders: { allIds: foldersArray },
+        aliases: { allIds: aliasesArray }
       }
     } = getState();
     // eslint-disable-next-line
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        let msg;
-        try {
-          msg = await Mail.save({ messages, type: 'Incoming', sync: true });
-          // eslint-disable-next-line no-underscore-dangle
-          const msgArray = messages.map(m => m._id);
-          Mail.markAsSynced(msgArray, { sync: false });
-        } catch (error) {
-          dispatch(saveIncomingMessagesFailure(error));
-          return reject(error);
-        }
-        dispatch(
-          saveIncomingMessagesSuccess(msg, foldersArray[activeFolderIndex])
-        );
-        return resolve('done');
-      });
-    });
+    let folderCounts = {};
+    const aliasCounts = {};
+
+    console.log('::::::MESSAGES::::::', messages);
+    console.log('::::::NEW ALIASES::::::', newAliases);
+
+    if (newAliases.length) {
+      // add new aliases to redux
+      for (const alias of newAliases) {
+        dispatch(aliasRegistrationSuccess(alias));
+      }
+    }
+
+    dispatch(
+      saveIncomingMessagesSuccess(
+        messages,
+        foldersArray[activeFolderIndex],
+        aliasesArray[activeAliasIndex]
+      )
+    );
+
+    for (const msg of messages) {
+      if (msg.folderId) {
+        if (!folderCounts[msg.folderId]) folderCounts[msg.folderId] = 0;
+        folderCounts[msg.folderId] += 1;
+      }
+
+      if (msg.aliasId) {
+        if (!aliasCounts[msg.aliasId]) aliasCounts[msg.aliasId] = 0;
+        aliasCounts[msg.aliasId] += 1;
+      }
+    }
+
+    // Update Folder Counts
+    for (const key in folderCounts) {
+      dispatch(updateFolderCount(parseInt(key), folderCounts[key]));
+    }
+
+    // Update Alias Counts
+    for (const key in aliasCounts) {
+      dispatch(updateAliasCount(key, aliasCounts[key]));
+    }
+
+    return Promise.resolve('done');
   };
 };
 
@@ -404,12 +562,22 @@ export const fetchMsgBodyFailure = (error: Error) => {
 };
 
 export const fetchMsg = (messageId: string) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(fetchMsgBody(messageId));
+    const { mail } = getState();
+    const isUnread = mail.messages?.byId[messageId]?.unread;
     let email;
 
     try {
       email = await Mail.getMessagebyId(messageId);
+
+      if (isUnread) {
+        if (email.aliasId !== null) {
+          dispatch(updateAliasCount(email.aliasId, -1));
+        } else {
+          dispatch(updateFolderCount(email.folderId, -1));
+        }
+      }
     } catch (err) {
       dispatch(fetchMsgBodyFailure(err));
       return Promise.reject(err);
@@ -419,7 +587,6 @@ export const fetchMsg = (messageId: string) => {
     return Promise.resolve(email);
   };
 };
-
 
 export const SHOW_MAXIMIZED_MESSAGE_DISPLAY =
   'MESSAGES::SHOW_MAXIMIZED_MESSAGE_DISPLAY';
@@ -469,30 +636,18 @@ export const msgSelectionFlowFailure = (error: Error) => {
 export const messageSelection = (message: MailMessageType, action: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(msgSelectionFlow(message.id, message.folderId));
+
     if (action === 'showMaxDisplay') {
       dispatch(showMaximizedMessageDisplay(true));
     }
 
-    let fullMsg;
-
     try {
-      if (
-        message.unread &&
-        message.folderId !== 3 &&
-        message.folderId !== 4 &&
-        message.folderId !== 5
-      ) {
-        dispatch(updateFolderCount(message.folderId, -1));
-      }
-
-      fullMsg = await dispatch(fetchMsg(message.id));
+      const fullMsg = await dispatch(fetchMsg(message.id));
+      dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
+      return Promise.resolve(message.id);
     } catch (err) {
-      dispatch(msgSelectionFlowFailure(err));
       return Promise.reject(err);
     }
-
-    dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
-    return Promise.resolve(message.id);
   };
 };
 
@@ -520,11 +675,13 @@ export const FOLDER_SELECTION_FLOW_SUCCESS =
   'MAILPAGE::FOLDER_SELECTION_FLOW_SUCCESS';
 export const folderSelectionFlowSuccess = (
   index: number,
+  folderId: number,
   messages: MailMessageType[]
 ) => {
   return {
     type: FOLDER_SELECTION_FLOW_SUCCESS,
     index,
+    folderId,
     messages
   };
 };
@@ -538,7 +695,7 @@ export const folderSelectionFlowFailure = (error: Error) => {
   };
 };
 
-export const folderSelection = (folderIndex: string) => {
+export const folderSelection = (folderIndex: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(folderSelectionFlow(folderIndex));
     // dispatch(showMaximizedMessageDisplay(false));
@@ -553,23 +710,23 @@ export const folderSelection = (folderIndex: string) => {
     try {
       messages = await dispatch(fetchFolderMessages(newFolderId));
 
-      if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, newFolderId)) {
-        const foldersActiveMsg = activeMsgIdObj[newFolderId].id;
+      // if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, newFolderId)) {
+      //   const foldersActiveMsg = activeMsgIdObj[newFolderId].id;
 
-        // Making sure the message selection has not been set to null before trying to fetch the message.
-        if (foldersActiveMsg !== null) {
-          const fullActiveMsg = await dispatch(fetchMsg(foldersActiveMsg));
-          messages = messages.map(m =>
-            m.id !== fullActiveMsg.id ? m : fullActiveMsg
-          );
-        }
-      }
+      //   // Making sure the message selection has not been set to null before trying to fetch the message.
+      //   if (foldersActiveMsg) {
+      //     const fullActiveMsg = await dispatch(fetchMsg(foldersActiveMsg));
+      //     messages = messages.map(m =>
+      //       m.id !== fullActiveMsg.id ? m : fullActiveMsg
+      //     );
+      //   }
+      // }
     } catch (err) {
       dispatch(folderSelectionFlowFailure(err));
       return Promise.reject(err);
     }
 
-    dispatch(folderSelectionFlowSuccess(folderIndex, messages));
+    dispatch(folderSelectionFlowSuccess(folderIndex, newFolderId, messages));
     return Promise.resolve();
   };
 };
@@ -590,6 +747,8 @@ export const fetchDataSuccess = (
   mailboxes: MailboxType[],
   activeMailboxId: number,
   folders: FolderType[],
+  namespaces: NamespaceType[],
+  aliases: AliasesType[],
   activeFolderId: number,
   messages: MailMessageType[]
 ) => {
@@ -598,6 +757,8 @@ export const fetchDataSuccess = (
     mailboxes,
     activeMailboxId,
     folders,
+    namespaces,
+    aliases,
     activeFolderId,
     messages
   };
@@ -620,36 +781,57 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
     globalState: {
       activeMailboxIndex,
       activeFolderIndex,
+      activeAliasIndex,
       activeMsgId: activeMsgIdObj
     }
   } = getState();
 
   let mailboxes;
   let folders;
+  let aliases;
+  let namespaces;
   let messages;
   let activeMailboxId;
   let activeFolderId;
+  let activeAliasId;
+
+  const isAlias = activeAliasId !== undefined && activeAliasIndex !== null;
 
   try {
     mailboxes = await dispatch(fetchMailboxes());
 
     activeMailboxId = mailboxes[activeMailboxIndex].id;
     folders = await dispatch(fetchMailboxFolders(activeMailboxId));
+    namespaces = await dispatch(fetchMailboxNamespaces(activeMailboxId));
 
-    activeFolderId = folders[activeFolderIndex].id;
-    messages = await dispatch(fetchFolderMessages(activeFolderId));
+    const namespaceKeys = namespaces.map(ns => ns.name);
 
-    if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, activeFolderId)) {
-      const foldersActiveMsg = activeMsgIdObj[activeFolderId].id;
-
-      // Making sure the message selection has not been set to null before trying to fetch the message.
-      if (foldersActiveMsg !== null) {
-        const fullActiveMsg = await dispatch(fetchMsg(foldersActiveMsg));
-        messages = messages.map(m =>
-          m.id !== fullActiveMsg.id ? m : fullActiveMsg
-        );
-      }
+    if (namespaceKeys.length > 0) {
+      aliases = await dispatch(fetchMailboxAliases(namespaceKeys));
+    } else {
+      aliases = [];
     }
+
+    if (isAlias) {
+      activeAliasId = aliases[activeAliasIndex].id;
+      messages = await dispatch(fetchAliasMessages(activeAliasId));
+    } else {
+      activeFolderId = folders[activeFolderIndex].id;
+      messages = await dispatch(fetchFolderMessages(activeFolderId));
+    }
+
+    // Selection retention was removed for now
+    // if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, activeFolderId)) {
+    //   const foldersActiveMsg = activeMsgIdObj[activeFolderId].id;
+
+    //   // Making sure the message selection has not been set to null before trying to fetch the message.
+    //   if (foldersActiveMsg) {
+    //     const fullActiveMsg = await dispatch(fetchMsg(foldersActiveMsg));
+    //     messages = messages.map(m =>
+    //       m.id !== fullActiveMsg.id ? m : fullActiveMsg
+    //     );
+    //   }
+    // }
   } catch (error) {
     dispatch(fetchDataFailure(error));
     return error;
@@ -660,20 +842,21 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
       mailboxes,
       activeMailboxId,
       folders,
+      namespaces,
+      aliases,
       activeFolderId,
       messages
     )
   );
 
-  return { mailboxes, folders, messages };
+  return { mailboxes, folders, messages, namespaces, aliases };
 };
 
-// THIS MAY BE IN THE WRONG ACTION CREATOR FOLDER
-// CLEANUP TO FOLLOW SAME REDUX PATTERN
-export const moveMessagesToFolder = messages => {
-  return async (dispatch: Dispatch) => {
-    await Mail.moveMessages(messages);
-    await dispatch(loadMailboxes());
+export const HIGHLIGHT_SEARCH_QUERY = 'GLOBAL::HIGHLIGHT_SEARCH_QUERY';
+export const setHighlightValue = (query: string) => {
+  return {
+    type: HIGHLIGHT_SEARCH_QUERY,
+    searchQuery: query
   };
 };
 
@@ -692,13 +875,5 @@ export const sync = (opts: { fullSync: boolean }) => {
     }
     console.timeEnd('Sync Mailboxes');
     return true;
-  };
-};
-
-export const HIGHLIGHT_SEARCH_QUERY = 'GLOBAL::HIGHLIGHT_SEARCH_QUERY';
-export const setHighlightValue = (query: string) => {
-  return {
-    type: HIGHLIGHT_SEARCH_QUERY,
-    searchQuery: query
   };
 };

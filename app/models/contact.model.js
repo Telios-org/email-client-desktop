@@ -74,7 +74,10 @@ const model = {
         }
       */
     type: Sequelize.JSON
-  }
+  },
+  // Timestamps
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE
 };
 
 class Contact extends Model {}
@@ -88,7 +91,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'Contact',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();

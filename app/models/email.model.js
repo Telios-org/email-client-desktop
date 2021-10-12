@@ -17,6 +17,10 @@ const model = {
     type: Sequelize.INTEGER,
     allowNull: false
   },
+  aliasId: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
   subject: {
     type: Sequelize.STRING
   },
@@ -51,10 +55,13 @@ const model = {
   },
   path: {
     type: Sequelize.STRING
-  }
+  },
+  // Timestamps
+  createdAt: Sequelize.DATE,
+  updatedAt: Sequelize.DATE
 };
 
-class Email extends Model {}
+class Email extends Model { }
 
 module.exports.Email = Email;
 
@@ -65,7 +72,7 @@ module.exports.init = async (sequelize, opts) => {
     sequelize,
     tableName: 'Email',
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
   });
 
   const drive = store.getDrive();
@@ -87,13 +94,16 @@ module.exports.init = async (sequelize, opts) => {
           let bodyAsText = removeMd(email[i].bodyAsText);
           bodyAsText = bodyAsText.replace(/\[(.*?)\]/g, '');
           bodyAsText = bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
-          const selection = bodyAsText.split(' ').slice(0, 20);
 
-          if(selection[selection.length-1] !== '...') {
-            selection.push('...');
-          }
+          email[i].bodyAsText = bodyAsText;
 
-          email[i].bodyAsText = selection.join(' ');
+          // const selection = bodyAsText.split(' ').slice(0, 20);
+
+          // if (selection[selection.length - 1] !== '...') {
+          //   selection.push('...');
+          // }
+
+          // email[i].bodyAsText = selection.join(' ');
         }
       }
     } catch (err) {
@@ -103,13 +113,13 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   Email.addHook('beforeCreate', async (email, options) => {
-    process.send({ event: 'BEFORE-BeforeCreate-saveMessageToDBLOG', data: email });
     try {
       email.bodyAsText = removeMd(email.bodyAsText);
       email.bodyAsText = email.bodyAsText.replace(/\[(.*?)\]/g, '');
       email.bodyAsText = email.bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
+      email.unread = email.unread ? 1 : 0;
 
-      if(!email.path) {
+      if (!email.path) {
         email.path = `/email/${uuidv4()}.json`;
       }
 
@@ -119,7 +129,7 @@ module.exports.init = async (sequelize, opts) => {
 
       await collection.put(email.emailId,
         {
-          unread: email.unread,
+          unread: email.unread ? 1 : 0,
           folderId: email.folderId,
           path: email.path
         }
@@ -149,11 +159,13 @@ module.exports.init = async (sequelize, opts) => {
 
       process.send({ event: 'BeforeUpdate-saveMessageToDBLOG', data: email });
     } catch (err) {
-      process.send({ event: 'BeforeUpdate-saveMessageToDBLOG', error: {
-        name: e.name,
-        message: e.message,
-        stacktrace: e.stack
-      } });
+      process.send({
+        event: 'BeforeUpdate-saveMessageToDBLOG', error: {
+          name: e.name,
+          message: e.message,
+          stacktrace: e.stack
+        }
+      });
       throw err;
     }
   });

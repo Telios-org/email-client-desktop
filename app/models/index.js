@@ -9,6 +9,8 @@ const EmailModel = require('./email.model.js');
 const EmailLabelModel = require('./emailLabel.model.js');
 const FileModel = require('./file.model.js');
 const FolderModel = require('./folder.model.js');
+const AliasModel = require('./alias.model');
+const NamespaceModel = require('./aliasNamespace.model');
 const LabelModel = require('./label.model.js');
 const MailboxModel = require('./mailbox.model.js');
 
@@ -26,6 +28,8 @@ class Models {
     const appModels = [
       MailboxModel,
       FolderModel,
+      AliasModel,
+      NamespaceModel,
       LabelModel,
       ContactModel,
       FileModel

@@ -21,12 +21,9 @@ import {
   ArrowUpSquare
 } from 'react-iconly';
 
-// Typescript Types
-import { MailType, Email } from '../../../reducers/types';
-
 // REDUX ACTIONS
-import { moveMessagesToFolder } from '../../../actions/mailbox/folders';
-import { loadMailboxes } from '../../../actions/mail';
+import { moveMessagesToFolder } from '../../../actions/mailbox/messages';
+import { loadMailboxes, msgRangeSelection } from '../../../actions/mail';
 
 import {
   clearActiveMessage,
@@ -51,10 +48,9 @@ type Props = {
   loading: boolean;
   panelSize: number;
   onRefreshMail: (full: any) => Promise<void>;
-  onSelectAction: (action: string) => void;
+  // onSelectAction: (action: string, allMsgIds: [String]) => void;
   onComposerClose: (opts: any) => void;
   onComposerMaximize: () => void;
-  // onClearSelected: () => void;
 };
 
 export default function MessageToolbar(props: Props) {
@@ -64,12 +60,12 @@ export default function MessageToolbar(props: Props) {
     onRefreshMail,
     panelSize,
     loading,
-    onSelectAction,
     onComposerClose,
     onComposerMaximize
   } = props;
 
   const editorIsOpen = useSelector(state => state.globalState.editorIsOpen);
+  const activeSelectedRange = useSelector(activeMessageSelectedRange);
   const selected = useSelector(activeMessageSelectedRange);
   const messages = useSelector(state => state.mail.messages);
   const folders = useSelector(selectAllFolders);
@@ -90,11 +86,6 @@ export default function MessageToolbar(props: Props) {
     selected.items.length >= 0 && messages.allIds.length > 0
   );
 
-  const isMoveDisabled =
-    isActionDisabled ||
-    (currentFolderId === 1 &&
-      folders.allIds.length === unmoveableToFolder.length + 1);
-
   // Dictionary of Icon Components used in this function
   const Icon = {
     trash: Delete,
@@ -108,7 +99,7 @@ export default function MessageToolbar(props: Props) {
   };
 
   const showComposerControls =
-    editorIsOpen || (currentFolderId === 3 && selected.items.length === 1);
+    editorIsOpen || (currentFolderId === 2 && selected.items.length === 1);
   // Buttons positioning
   const displacement = showComposerControls ? `${panelSize}px` : '0px';
 
@@ -118,10 +109,8 @@ export default function MessageToolbar(props: Props) {
   const deleteMessages = async () => {
     const messagesToDelete = [];
 
-    selected.items.forEach(msgIdx => {
-      const messageId = messages.allIds[msgIdx];
-
-      messagesToDelete.push(messageId);
+    selected.items.forEach(msgId => {
+      messagesToDelete.push(msgId);
     });
 
     // NEED TO REWRITE THIS USING REDUX PATTERNS - THIS IS AN ANTI PATTERN
@@ -139,23 +128,43 @@ export default function MessageToolbar(props: Props) {
     onComposerClose({ action: 'delete' });
   };
 
+  const selectMessageRange = async (selected: SelectionRange, folderId: number) => {
+    dispatch(msgRangeSelection(selected, folderId));
+  }
+
+  const handleSelectAction = (action: string, messages: any) => {
+    let selected = activeSelectedRange;
+
+    if (action === 'all') {
+      messages.forEach((id, index) => {
+        selected.items.push(index);
+      });
+    }
+
+    if (action === 'none') {
+      selected.items = [];
+      selected.endIdx = null;
+      selected.exclude = [];
+    }
+
+    selectMessageRange(selected, currentFolderId);
+  }
+
   // Handles Selection Movements including routing deletes
   const moveToFolder = async (toId: number, name: string) => {
     setIsLoading(true);
     try {
-      if ((currentFolderId === 5 && toId === 5) || currentFolderId === 3) {
+      if (currentFolderId === 4 || currentFolderId === 2) {
         await deleteMessages();
         Alert.success(`Deleted ${selected.items.length} message(s).`);
       } else {
         const messagesToMove = [];
 
-        selected.items.forEach(msgIdx => {
-          const messageId = messages.allIds[msgIdx];
-          const message = messages.byId[messageId];
-
+        selected.items.forEach(msgId => {
           messagesToMove.push({
-            id: message.id,
-            unread: message.unread,
+            id: msgId,
+            emailId: msgId,
+            unread: 0,
             folder: {
               fromId: currentFolderId,
               toId,
@@ -167,7 +176,7 @@ export default function MessageToolbar(props: Props) {
 
         Alert.success(`Moved ${selected.items.length} message(s) to ${name}.`);
       }
-      onSelectAction('none');
+      handleSelectAction('none', messages.allIds);
     } catch (err) {
       console.log(err);
     }
@@ -176,12 +185,11 @@ export default function MessageToolbar(props: Props) {
   };
 
   const unread = async () => {
-    selected.items.forEach(msgIdx => {
-      const messageId = messages.allIds[msgIdx];
-      const message = messages.byId[messageId];
+    selected.items.forEach(id => {
+      const message = messages.byId[id];
       // Trigger if not already unread.
       if (!message.unread) {
-        dispatch(markAsUnread(messageId, currentFolderId));
+        dispatch(markAsUnread(id, currentFolderId));
       }
     });
   };
@@ -272,7 +280,7 @@ export default function MessageToolbar(props: Props) {
         <>
           <CustomButton
             onClick={() => {
-              moveToFolder(5, 'Trash');
+              moveToFolder(4, 'Trash');
             }}
             icon="trash"
             disabled={isActionDisabled}
@@ -285,7 +293,7 @@ export default function MessageToolbar(props: Props) {
             {i18n.t('messageToolbar.delete')}
           </CustomButton>
 
-          {currentFolderId !== 3 && currentFolderId !== 4 && (
+          {/* {currentFolderId !== 3 && currentFolderId !== 4 && (
             <MoveDropdown
               disabled={isMoveDisabled}
               renderTitle={() => {
@@ -304,9 +312,9 @@ export default function MessageToolbar(props: Props) {
                 );
               }}
             />
-          )}
+          )} */}
 
-          {currentFolderId !== 3 && currentFolderId !== 4 && (
+          {currentFolderId !== 2 && currentFolderId !== 3 && (
             <CustomButton
               onClick={() => {
                 unread();

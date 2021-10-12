@@ -15,12 +15,12 @@ class MesssageIngress {
   }
 
   async initDrive() {
-    if(!this.drive) {
+    if (!this.drive) {
       this.drive = store.getDrive();
     }
 
     // If worker is running before drive is ready then call .ready()
-    if(!this.drive.discoveryKey) {
+    if (!this.drive.discoveryKey) {
       await this.drive.ready();
     }
 
@@ -42,13 +42,25 @@ class MesssageIngress {
    */
   async fetchBatch(files, account) {
     this.mailbox = store.getMailbox();
+    const keyPairs = store.getKeypairs();
 
     files = files.map(f => {
-      if(account) {
+      if (account) {
+        let publicKey;
+        let privateKey;
+
+        if (account.secretBoxPubKey === f.account_key) {
+          publicKey = account.secretBoxPubKey;
+          privateKey = account.secretBoxPrivKey;
+        } else {
+          publicKey = keyPairs[f.account_key] && keyPairs[f.account_key].publicKey ? keyPairs[f.account_key].publicKey : null;
+          privateKey = keyPairs[f.account_key] && keyPairs[f.account_key].privateKey ? keyPairs[f.account_key].privateKey : null;
+        }
+
         const fileMeta = this.mailbox._decryptMailMeta(
           f,
-          account.secretBoxPrivKey,
-          account.secretBoxPubKey
+          privateKey,
+          publicKey
         );
 
         f = { _id: f._id, ...fileMeta };
@@ -66,13 +78,14 @@ class MesssageIngress {
         });
 
         stream.on('error', err => {
-          if(!file.failed) {
+          if (!file.failed) {
             file.failed = 1;
           } else {
             file.failed += 1;
           }
 
-          process.send({ event: 'fetchError',
+          process.send({
+            event: 'fetchError',
             error: {
               file,
               message: err.message,
@@ -109,7 +122,7 @@ class MesssageIngress {
     try {
       let keyPair;
 
-      while(!keyPair) {
+      while (!keyPair) {
         keyPair = this.drive._workerKeyPairs.getKeyPair();
       }
 
@@ -123,13 +136,14 @@ class MesssageIngress {
 
       stream.on('error', err => {
 
-        if(!fileMeta.failed) {
+        if (!fileMeta.failed) {
           fileMeta.failed = 1;
         } else {
           fileMeta.failed += 1;
         }
 
-        process.send({ event: 'fetchError',
+        process.send({
+          event: 'fetchError',
           error: {
             file: fileMeta,
             message: err.message,
@@ -163,8 +177,9 @@ class MesssageIngress {
           }
         });
       });
-    } catch(err) {
-      process.send({ event: 'fetchError',
+    } catch (err) {
+      process.send({
+        event: 'fetchError',
         error: {
           file: fileMeta,
           message: err.message,
@@ -180,11 +195,12 @@ class MesssageIngress {
     bodyAsText = bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
     const selection = bodyAsText.split(' ').slice(0, 20);
 
-    if(selection[selection.length-1] !== '...') {
+    if (selection[selection.length - 1] !== '...') {
       selection.push('...');
     }
 
-    process.send({ event: 'notify',
+    process.send({
+      event: 'notify',
       data: {
         icon: path.join(__dirname, '../img/telios_notify_icon.png'),
         title,
@@ -203,7 +219,7 @@ module.exports = async (userDataPath) => {
     const { event, payload } = data;
 
     // This fires after mailbox has finshed initializing from inside mailbox.service
-    if(event === 'initMessageListener') {
+    if (event === 'initMessageListener') {
       await messageIngressWorker.initDrive();
     }
 

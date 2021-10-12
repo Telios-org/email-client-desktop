@@ -2,7 +2,6 @@ const SDK = require('@telios/client-sdk');
 const Drive = require('@telios/nebula-drive');
 const fs = require('fs');
 const envAPI = require('./env_api.json');
-const Matomo = require('./utils/matomo.util');
 
 class Store {
   constructor() {
@@ -22,7 +21,7 @@ class Store {
     this.account = null;
     this.currentAccount = null;
     this.sessionActive = false;
-    this.keypair = null;
+    this.keypairs = {};
     this.authPayload = null;
     this.connection = {};
     this.theme = 'system';
@@ -99,11 +98,11 @@ class Store {
   }
 
   setKeypair(keypair) {
-    this.keypair = keypair;
+    this.keypairs[keypair.publicKey] = keypair
   }
 
-  getKeypair() {
-    return this.keypair;
+  getKeypairs() {
+    return this.keypairs;
   }
 
   setMailbox(mailbox) {
@@ -119,11 +118,6 @@ class Store {
   }
 
   setAccount(account) {
-    this.matomo = new Matomo(process.env.NODE_ENV, account);
-
-    this.matomo.event({});
-    this.matomo.heartBeat(30000);
-
     this.account = account;
   }
 
