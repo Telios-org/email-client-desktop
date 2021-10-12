@@ -837,8 +837,6 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
     return error;
   }
 
-  console.log('FOLDERS => ', folders);
-
   dispatch(
     fetchDataSuccess(
       mailboxes,

@@ -25,7 +25,6 @@ export default function folders(
   switch (action.type) {
     case CREATE_LOCAL_MAILBOX_SUCCESS:
     case FETCH_MAIL_DATA_SUCCESS:
-      console.log('FETCH MAIL DATA FOLDERS :: ', action.folders);
       return {
         byId: {
           ...arrayToObject(action.folders, 'id')
