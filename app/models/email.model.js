@@ -94,13 +94,16 @@ module.exports.init = async (sequelize, opts) => {
           let bodyAsText = removeMd(email[i].bodyAsText);
           bodyAsText = bodyAsText.replace(/\[(.*?)\]/g, '');
           bodyAsText = bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
-          const selection = bodyAsText.split(' ').slice(0, 20);
 
-          if (selection[selection.length - 1] !== '...') {
-            selection.push('...');
-          }
+          email[i].bodyAsText = bodyAsText;
 
-          email[i].bodyAsText = selection.join(' ');
+          // const selection = bodyAsText.split(' ').slice(0, 20);
+
+          // if (selection[selection.length - 1] !== '...') {
+          //   selection.push('...');
+          // }
+
+          // email[i].bodyAsText = selection.join(' ');
         }
       }
     } catch (err) {

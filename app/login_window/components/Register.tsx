@@ -645,31 +645,26 @@ class Register extends Component<Props, State> {
                 <FormControl name="checkbox" accepter={CheckboxGroup}>
                   <Checkbox value="emailComm">
                     <p className="text-sm">
-                      I understand that after activating my Telios account, my
-                      Telios account will receive occasional emails containing
-                      important updates, future product offerings, and
-                      occasional surveys.
+                      I understand that my Telios account will receive occasional emails containing important product updates and surveys that will help us make this beta a success.
                     </p>
-                    <p className="text-sm">
-                      After the beta period, I will be able to unsubscribe from
-                      future emails and continue using my Telios account.
+                    <p>
+                      Telios will never sell or distribute your email address to any third party at any time.
                     </p>
-                    <p className="text-sm">
-                      Telios will not sell or distribute your email address to
-                      any third party at any time.
+                    <p>
+                      If you wish to unsubscribe from future emails, you can do so at any time.
                     </p>
                   </Checkbox>
                   <Checkbox value="termAndPrivacy">
                     <p className="text-sm">
                       I agree to the Telios
-{' '}
+                      {' '}
                       <a href="https://docs.google.com/document/u/1/d/e/2PACX-1vQXqRRpBkB-7HqwLd2XtsWVDLjCUnBUIeNQADb56FuKHdj_IF9wbmsl4G7RLxR2_yKYMhnSO1M-X39H/pub">
                         {' '}
                         Terms of Service
                       </a>
-{' '}
+                      {' '}
                       and
-{' '}
+                      {' '}
                       <a href="https://docs.google.com/document/u/1/d/e/2PACX-1vTIL7a6NbUhBDxHmRy5tW0e5H4YoBWXUO1WvPseVuEATSLHMIemVAG6nnRe_xIJZ-s5YYPh2C05JwKR/pub">
                         Privacy Policy
                       </a>
@@ -690,16 +685,14 @@ class Register extends Component<Props, State> {
                     {!emailCheckLoading && !formSuccess.email && (
                       <FaRegEnvelope
                         className={`text-gray-400
-                    ${
-                      formError.email && !formSuccess.email
-                        ? 'text-red-600'
-                        : ''
-                    }
-                    ${
-                      formSuccess.email && !formError.email
-                        ? 'text-green-500'
-                        : ''
-                    }`}
+                    ${formError.email && !formSuccess.email
+                            ? 'text-red-600'
+                            : ''
+                          }
+                    ${formSuccess.email && !formError.email
+                            ? 'text-green-500'
+                            : ''
+                          }`}
                       />
                     )}
                     {emailCheckLoading &&
@@ -722,9 +715,8 @@ class Register extends Component<Props, State> {
                   <InputGroup.Addon>
                     {' '}
                     <div
-                      className={`${
-                        loading ? 'text-gray-400 select-none' : ''
-                      }`}
+                      className={`${loading ? 'text-gray-400 select-none' : ''
+                        }`}
                     >
                       {`@${mailDomain}`}
                     </div>
@@ -784,37 +776,32 @@ class Register extends Component<Props, State> {
               </FormGroup>
               <div className="flex flex-row h-1 w-full mt-1 mb-3 px-1">
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
-                  }`}
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
+                    }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null && passwordStrength >= 1
-                      ? 'bg-red-400'
-                      : 'bg-gray-300'
-                  }`}
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 1
+                    ? 'bg-red-400'
+                    : 'bg-gray-300'
+                    }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null && passwordStrength >= 2
-                      ? 'bg-orange-400'
-                      : 'bg-gray-300'
-                  }`}
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 2
+                    ? 'bg-orange-400'
+                    : 'bg-gray-300'
+                    }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${
-                    passwordStrength !== null && passwordStrength >= 3
-                      ? 'bg-yellow-400'
-                      : 'bg-gray-300'
-                  }`}
+                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 3
+                    ? 'bg-yellow-400'
+                    : 'bg-gray-300'
+                    }`}
                 />
                 <div
-                  className={`flex-1 rounded ${
-                    passwordStrength !== null && passwordStrength === 4
-                      ? 'bg-green-400'
-                      : 'bg-gray-300'
-                  }`}
+                  className={`flex-1 rounded ${passwordStrength !== null && passwordStrength === 4
+                    ? 'bg-green-400'
+                    : 'bg-gray-300'
+                    }`}
                 />
               </div>
 
@@ -859,9 +846,8 @@ class Register extends Component<Props, State> {
                   </InputGroup.Addon>
                 </InputGroup>
                 <div className="text-red-500">
-                  {`${formError.masterpass ? formError.masterpass : ''} ${
-                    formError.confirmpass ? formError.confirmpass : ''
-                  }`}
+                  {`${formError.masterpass ? formError.masterpass : ''} ${formError.confirmpass ? formError.confirmpass : ''
+                    }`}
                 </div>
               </FormGroup>
               <Whisper placement="top" trigger="hover" speaker={tooltip}>
