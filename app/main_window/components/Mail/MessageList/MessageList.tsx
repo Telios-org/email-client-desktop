@@ -141,10 +141,9 @@ export default function MessageList(props: Props) {
       clearSelectedMessage(folderId);
 
       Alert.success(
-        `Moved ${
-          activeSelectedRange.items.length
-            ? activeSelectedRange.items.length
-            : 1
+        `Moved ${activeSelectedRange.items.length
+          ? activeSelectedRange.items.length
+          : 1
         } message(s) to ${dropResult.name}.`
       );
     });
@@ -272,7 +271,7 @@ export default function MessageList(props: Props) {
       isLoading = true;
 
       return new Promise((resolve, reject) => {
-        if (aliasId !== null) {
+        if (aliasId) {
           dispatch(fetchMoreAliasMessages(aliasId, startIndex))
             .then(() => {
               isLoading = false;
