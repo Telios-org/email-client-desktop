@@ -837,7 +837,7 @@ module.exports = env => {
             where: { emailId: msg.emailId },
             individualHooks: true
           })
-            .then(res => {})
+            .then(res => { })
             .catch(e => {
               process.send({ event: 'removeMessages', error: e.message });
             });
@@ -1127,9 +1127,9 @@ module.exports = env => {
             individualHooks: true
           });
         } else {
-          await Alias.aliasId('count', {
+          await Alias.decrement('count', {
             by: amount,
-            where: { folderId: id },
+            where: { aliasId: id },
             individualHooks: true
           });
         }
@@ -1137,7 +1137,7 @@ module.exports = env => {
         process.send({ event: 'updateAliasCount', updated: true });
       } catch (e) {
         process.send({
-          event: 'updateFolder',
+          event: 'updateAliasCount',
           error: {
             name: e.name,
             message: e.message,

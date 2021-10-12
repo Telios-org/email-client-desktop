@@ -4,7 +4,9 @@ import {
   CREATE_NEW_FOLDER
 } from '../../actions/mail';
 
-import { UPDATE_FOLDER_COUNT } from '../../actions/mailbox/folders';
+import {
+  UPDATE_FOLDER_COUNT
+} from '../../actions/mailbox/folders';
 
 import { MailType, MailAction } from '../types';
 import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
@@ -23,6 +25,7 @@ export default function folders(
   switch (action.type) {
     case CREATE_LOCAL_MAILBOX_SUCCESS:
     case FETCH_MAIL_DATA_SUCCESS:
+      console.log('FETCH MAIL DATA FOLDERS :: ', action.folders);
       return {
         byId: {
           ...arrayToObject(action.folders, 'id')

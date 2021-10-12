@@ -42,7 +42,7 @@ const initialState = {
   activeAccountIndex: 0,
   // This denote the index of the allIds array in folders
   // NOT THE ID
-  activeFolderIndex: 1,
+  activeFolderIndex: 0,
   activeAliasIndex: null,
   loading: false,
   status: 'online',

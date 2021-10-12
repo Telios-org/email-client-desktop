@@ -389,7 +389,7 @@ export const saveIncomingMessagesRequest = () => {
 
 export const SAVE_INCOMING_MESSAGES_SUCCESS =
   'MAILPAGE::SAVE_INCOMING_MESSAGES_SUCCESS';
-export const saveIncomingMessagesSuccess = function(
+export const saveIncomingMessagesSuccess = function (
   messages: MailMessageType[],
   activeFolderId: number,
   activeAliasId: string
@@ -572,7 +572,7 @@ export const fetchMsg = (messageId: string) => {
       email = await Mail.getMessagebyId(messageId);
 
       if (isUnread) {
-        if (email.aliasid !== null) {
+        if (email.aliasId !== null) {
           dispatch(updateAliasCount(email.aliasId, -1));
         } else {
           dispatch(updateFolderCount(email.folderId, -1));
@@ -795,7 +795,7 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
   let activeFolderId;
   let activeAliasId;
 
-  const isAlias = activeAliasId !== null;
+  const isAlias = activeAliasId !== undefined && activeAliasIndex !== null;
 
   try {
     mailboxes = await dispatch(fetchMailboxes());
@@ -836,6 +836,8 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
     dispatch(fetchDataFailure(error));
     return error;
   }
+
+  console.log('FOLDERS => ', folders);
 
   dispatch(
     fetchDataSuccess(
