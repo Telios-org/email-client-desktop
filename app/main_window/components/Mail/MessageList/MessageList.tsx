@@ -303,11 +303,11 @@ export default function MessageList(props: Props) {
         </div>
         <div className="items-end flex text-gray-400">
           <div className="flex flex-row text-xs rounded px-2 py-1 text-gray-300 content-center">
-            <div className="px-2 py-1 bg-gray-100 text-gray-400 rounded shadow mr-2">Unread</div>
+            <div className="px-2 py-1 bg-gray-100 text-gray-400 rounded shadow-inner mr-2">Unread</div>
             <div className="px-2 py-1 mr-2">Read</div>
             <div className="px-2 py-1">All</div>
           </div>
-          {/* <div style={{ cursor: 'pointer' }} onClick={toggleSort}>
+          {/* <div style={{ cursor: 'pointer' }}>
             <SortIcon color="#9333ea" order={sort} />
           </div> */}
           {/* <Filter2 set="broken" size="small" style={{ cursor: 'pointer' }} /> */}

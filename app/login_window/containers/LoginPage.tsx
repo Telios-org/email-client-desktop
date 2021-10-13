@@ -1,5 +1,4 @@
 import { ipcRenderer } from 'electron';
-import { hot } from 'react-hot-loader/root';
 import React, { Component } from 'react';
 import Login from '../components/Login';
 import Register from '../components/Register';
@@ -113,4 +112,4 @@ class LoginPage extends Component<Props, State> {
   }
 }
 
-export default hot(LoginPage);
+export default LoginPage;

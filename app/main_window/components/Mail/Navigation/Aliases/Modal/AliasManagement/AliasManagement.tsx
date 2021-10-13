@@ -17,7 +17,6 @@ import {
 } from '../../../../../../selectors/mail';
 
 import i18n from '../../../../../../../i18n/i18n';
-import { namespace } from '../../../../../../../app.global.less';
 
 const { StringType } = Schema.Types;
 
