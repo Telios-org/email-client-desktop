@@ -5,7 +5,7 @@ const { Account } = require('@telios/client-sdk');
 class Matomo {
   constructor(account, userAgent) {
     const env = process.env.NODE_ENV;
-    const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
+    const requestBase = env === 'production' || !env ? envAPI.prod : envAPI.dev;
     this.account = account;
     this.defaultData = {
       uid: account.uid,

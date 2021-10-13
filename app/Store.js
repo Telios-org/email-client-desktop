@@ -9,7 +9,7 @@ class Store {
       account: () => {
         return new SDK.Account({
           provider:
-            process.env.NODE_ENV === 'production' ? envAPI.prod : envAPI.dev
+            process.env.NODE_ENV === 'production' || !process.env.NODE_ENV ? envAPI.prod : envAPI.dev
         });
       },
       mailbox: null

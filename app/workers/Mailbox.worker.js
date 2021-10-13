@@ -31,7 +31,7 @@ module.exports = env => {
       } = account;
 
       const mailbox = new SDK.Mailbox({
-        provider: env === 'production' ? envAPI.prod : envAPI.dev,
+        provider: env === 'production' || !env ? envAPI.prod : envAPI.dev,
         auth: {
           claims: {
             account_key: secretBoxPubKey,

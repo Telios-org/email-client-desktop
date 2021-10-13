@@ -7,7 +7,7 @@ const store = require('../Store');
 const envAPI = require('../env_api.json');
 const { randomBytes } = require('crypto');
 
-const apiDomain = process.env.NODE_ENV === 'production' ? envAPI.prod : envAPI.dev;
+const apiDomain = process.env.NODE_ENV === 'production' || !process.env.NODE_ENV ? envAPI.prod : envAPI.dev;
 
 module.exports = userDataPath => {
   process.on('message', async data => {
