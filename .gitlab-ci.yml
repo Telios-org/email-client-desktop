@@ -51,10 +51,14 @@ code_quality:
       - 'app/package.json'
 
 version:
+  extends:
+    - .set_version
   only:
     - master
 
 version:
+  extends:
+    - .set_version
   only:
     - beta
   variables:
