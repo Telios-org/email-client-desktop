@@ -23,6 +23,7 @@ export default class AppUpdater {
   constructor() {
     if (process.env.NODE_ENV === 'production') {
       log.transports.file.level = 'info';
+      autoUpdater.channel = 'latest';
       autoUpdater.logger = log;
       autoUpdater.allowDowngrade = true;
       autoUpdater.checkForUpdatesAndNotify();
@@ -61,7 +62,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const createMainWindow = async () => {
   const mainWindow = await windowManager.create('mainWindow', {
-    url: `file://${__dirname}/main_window/app.html#/mail`,
+    url: `file://${__dirname}/main_window/app.html#/mail?env=${process.env.NODE_ENV}`,
     window: {
       show: false,
       width: 1240,

@@ -301,13 +301,13 @@ export default function MessageList(props: Props) {
           {currentAliasName || currentFolderName || ''}
           <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
         </div>
-        <div className="items-end flex text-gray-400">
-          <div className="flex flex-row text-xs rounded px-2 py-1 text-gray-300 content-center">
-            <div className="px-2 py-1 bg-gray-100 text-gray-400 rounded shadow-inner mr-2">Unread</div>
+        <div className="items-end flex">
+          {/* <div className="flex flex-row text-xs rounded px-2 py-1 text-gray-300 content-center">
+            <div className="px-2 py-1 bg-gray-100 text-gray-400 rounded shadow mr-2">Unread</div>
             <div className="px-2 py-1 mr-2">Read</div>
             <div className="px-2 py-1">All</div>
-          </div>
-          {/* <div style={{ cursor: 'pointer' }}>
+          </div> */}
+          {/* <div style={{ cursor: 'pointer' }} onClick={toggleSort}>
             <SortIcon color="#9333ea" order={sort} />
           </div> */}
           {/* <Filter2 set="broken" size="small" style={{ cursor: 'pointer' }} /> */}

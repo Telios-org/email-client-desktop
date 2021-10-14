@@ -96,7 +96,7 @@ export default function AliasModal(props: Props) {
                 #<span className="text-purple-600">mymadeupalias</span>
                 {`@${domain}`}
               </span>
-              and provide that to the service, website, newsletter or perosn in
+              and provide that to the service, website, newsletter or person in
               lieu of your primary email.
             </p>
             <p className="leading-relaxed text-xs flex flex-row">
