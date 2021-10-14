@@ -132,7 +132,7 @@ electron-build:mac:
     - docker
   stage: deploy
   only:
-    - prod
+    - master
   image:
     name: registry.gitlab.com/telios2/telios-devops/ansible/prd:latest
     entrypoint: ['/bin/bash', '-c', '/bin/bash']
