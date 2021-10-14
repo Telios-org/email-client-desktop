@@ -34,14 +34,14 @@ code_quality:
     - yarn test
   allow_failure: true
 
-version:
+.set_version:
   tags:
     - docker
   stage: version
   image: alpine:latest
   script:
-    - sed -i "s/\(.version.:..[0-9]*.[0-9]*.\)[0-9]*/\1${CI_PIPELINE_IID}/g" package.json
-    - sed -i "s/\(.version.:..[0-9]*.[0-9]*.\)[0-9]*/\1${CI_PIPELINE_IID}/g" app/package.json
+    - sed -i "s/\(.version.:..[0-9]*.[0-9]*.\)[0-9]*/\1${CI_PIPELINE_IID}${CHANNEL}/g" package.json
+    - sed -i "s/\(.version.:..[0-9]*.[0-9]*.\)[0-9]*/\1${CI_PIPELINE_IID}${CHANNEL}/g" app/package.json
     - echo ${CI_PIPELINE_IID}
   artifacts:
     untracked: false
@@ -49,6 +49,20 @@ version:
     paths:
       - 'package.json'
       - 'app/package.json'
+
+version:
+  extends:
+    - .set_version
+  only:
+    - master
+
+version:
+  extends:
+    - .set_version
+  only:
+    - beta
+  variables:
+    CHANNEL: "-beta"
 
 .electron-release-build:
   stage: build
@@ -132,7 +146,9 @@ electron-build:mac:
     - docker
   stage: deploy
   only:
-    - master
+    refs:
+      - master
+      - beta
   image:
     name: registry.gitlab.com/telios2/telios-devops/ansible/prd:latest
     entrypoint: ['/bin/bash', '-c', '/bin/bash']
