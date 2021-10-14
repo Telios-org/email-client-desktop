@@ -364,7 +364,7 @@ class Register extends Component<Props, State> {
   handleNextStep(nextStep: number) {
     const { step } = this.state;
 
-    if (nextStep === 5) {
+    if (nextStep === 6) {
       return this.showMainWindow();
     }
 
