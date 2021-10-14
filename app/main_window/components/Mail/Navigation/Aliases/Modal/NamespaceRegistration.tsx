@@ -141,7 +141,7 @@ export default function AliasModal(props: Props) {
               below.
             </p>
             <p className="text-sm text-center bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded">
-              <b className="text-purple-500">
+              <b className="text-blue-500">
                 {formValue.namespace.length === 0
                   ? 'namespace'
                   : formValue.namespace}

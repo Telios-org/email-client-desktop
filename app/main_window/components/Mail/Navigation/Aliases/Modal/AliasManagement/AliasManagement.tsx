@@ -114,7 +114,7 @@ export default function AliasModal(props: Props) {
               Click the
 {' '}
               <span className="leading-relaxed bg-white shadow-sm border border-coolGray-300 rounded px-1 mx-1 font-bold">
-                + add alias
+                + Add alias
               </span>
 {' '}
               button below

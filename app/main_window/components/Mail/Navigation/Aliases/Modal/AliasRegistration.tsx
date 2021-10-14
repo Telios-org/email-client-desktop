@@ -198,6 +198,15 @@ export default function AliasModal(props: Props) {
               {`@${domain}`}
             </p>
           </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-normal">
+              All emails sent to this alias will appear in your Telios inbox.
+            </span>
+            <span className="text-sm font-normal mt-2">
+              Optionally, you can add forwarding addresses below to have email
+              sent to this alias forwarded to additional email addresses
+            </span>
+          </div>
           <Form
             fluid
             ref={formEl}
@@ -251,7 +260,7 @@ export default function AliasModal(props: Props) {
             </FormGroup>
             <FormGroup controlId="fwdAddresses" className="mb-0 w-full">
               <ControlLabel className="text-coolGray-600 font-semibold text-sm">
-                Forwarding Addresses
+                Forwarding Address(es)
               </ControlLabel>
               <FormControl
                 name="fwdAddresses"

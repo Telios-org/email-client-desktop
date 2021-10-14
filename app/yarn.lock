@@ -1144,9 +1144,9 @@ hyperswarm@^2.11.2:
     shuffled-priority-queue "^2.1.0"
     utp-native "^2.1.7"
 
-"hyperswarm@git+https://github.com/Telios-org/hyperswarm.git#v3":
+"hyperswarm@git+https://github.com/Telios-org/hyperswarm#v3":
   version "3.0.0-beta3"
-  resolved "git+https://github.com/Telios-org/hyperswarm.git#bfbcf07f5f068d393907cf89258ced9e11b5390e"
+  resolved "git+https://github.com/Telios-org/hyperswarm#bfbcf07f5f068d393907cf89258ced9e11b5390e"
   dependencies:
     "@hyperswarm/dht" next
     shuffled-priority-queue "^2.1.0"
@@ -1649,9 +1649,9 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-"multi-hyperbee@git+https://github.com/Telios-org/multi-hyperbee.git":
+"multi-hyperbee@git+https://github.com/Telios-org/multi-hyperbee":
   version "0.2.12"
-  resolved "git+https://github.com/Telios-org/multi-hyperbee.git#2d2915d65d7ff43c2f9447ebe2a5f6c2cda35e48"
+  resolved "git+https://github.com/Telios-org/multi-hyperbee#2d2915d65d7ff43c2f9447ebe2a5f6c2cda35e48"
   dependencies:
     automerge "^0.14.1"
     hyperbee "1.5.3"
