@@ -12,9 +12,7 @@ import { clearActiveMessage } from '../../../actions/mailbox/messages';
 import { toggleEditor } from '../../../actions/global';
 
 // Selectors
-import {
-  activeFolderId
-} from '../../../selectors/mail';
+import { activeFolderId } from '../../../selectors/mail';
 
 // Components IMPORTS
 import MessageList from '../../../components/Mail/MessageList/MessageList';
@@ -46,38 +44,41 @@ export default function MailPage() {
 
     return () => {
       ipcRenderer.removeAllListeners('realTimeDelivery');
-    }
+    };
   }, []);
 
-  const syncMail = (opts: { fullSync: boolean }) => {
-    dispatch(sync(opts));
-  }
+  const syncMail = async (opts: { fullSync: boolean }) => {
+    await dispatch(sync(opts));
+  };
 
   const toggleEditorState = (editorAction: string, forcedStatus?: boolean) => {
-    dispatch(toggleEditor(editorAction, forcedStatus))
-  }
+    dispatch(toggleEditor(editorAction, forcedStatus));
+  };
 
   const clearSelectedMessage = async (folderId: number) => {
     dispatch(clearActiveMessage(folderId));
-  }
+  };
 
   // Storing Panel Size on resize to maintain size upon screen changes
-  const handlePanelResizeEnd = (panels: [{ size: number }], param: 'nav' | 'msgList') => {
+  const handlePanelResizeEnd = (
+    panels: [{ size: number }],
+    param: 'nav' | 'msgList'
+  ) => {
     const currentState = panelWidths;
     currentState[param] = panels[0].size;
     setPanelWidths(currentState);
-  }
+  };
 
   // Methods Handling Composer Window/Panel
   // eslint-disable-next-line class-methods-use-this
-  const handleComposerClose = (opts) => {
+  const handleComposerClose = opts => {
     let params;
     if (opts.action) {
       params = opts;
     }
     ipcRenderer.send('RENDERER::closeComposerWindow', params);
     clearSelectedMessage(folderId);
-  }
+  };
 
   const handleInlineComposerMaximize = async () => {
     const { mailbox, toggleEditorState } = this.props;
@@ -87,31 +88,34 @@ export default function MailPage() {
       mailbox,
       editorAction: 'maximize'
     });
-  }
+  };
 
   // Sync State Handler
   const toggleSyncInProgress = (bool: boolean) => {
     setIsSyncInProgress(bool);
-  }
+  };
 
   // REFRESHING THE STATE OF THE MAIL PAGE
   const refresh = async (full: any) => {
     setLoading(true);
-
     await syncMail({ fullSync: !isSyncInProgress || full });
 
-    setLoading(false);
-  }
+    setTimeout(() => setLoading(false), 1000);
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <PanelGroup
         spacing={0}
         onResizeEnd={(panels: [{ size: number }, { size: number }]) =>
-          handlePanelResizeEnd(panels, 'nav')
-        }
+          handlePanelResizeEnd(panels, 'nav')}
         panelWidths={[
-          { size: panelWidths.nav, minSize: 200, maxSize: 300, resize: 'dynamic' },
+          {
+            size: panelWidths.nav,
+            minSize: 200,
+            maxSize: 300,
+            resize: 'dynamic'
+          },
           { minSize: 250, resize: 'stretch' }
         ]}
       >
@@ -131,8 +135,7 @@ export default function MailPage() {
             onComposerMaximize={handleInlineComposerMaximize}
           />
           <PanelGroup
-            onResizeEnd={panels =>
-              handlePanelResizeEnd(panels, 'msgList')}
+            onResizeEnd={panels => handlePanelResizeEnd(panels, 'msgList')}
             spacing={0}
             panelWidths={[
               { size: panelWidths.msgList, minSize: 330, resize: 'dynamic' },
