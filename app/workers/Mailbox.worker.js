@@ -712,11 +712,12 @@ module.exports = env => {
                     namespaceKey: aliasNamespace.name,
                     count: 0,
                     disabled: false,
+                    fwdAddresses: null,
                     whitelisted: 1
                   });
 
                   aliasId = alias.aliasId;
-                  newAliases.push(alias);
+                  newAliases.push({ ...alias.dataValues, fwdAddresses: [] });
                 } else {
                   aliasId = aliasAddrs[aliasIndex].aliasId;
                 }
@@ -787,6 +788,7 @@ module.exports = env => {
               msgArr.push(msg);
             }
           });
+
           return process.send({
             event: 'MAILBOX WORKER::saveMessageToDB',
             data: {
@@ -837,7 +839,7 @@ module.exports = env => {
             where: { emailId: msg.emailId },
             individualHooks: true
           })
-            .then(res => { })
+            .then(res => {})
             .catch(e => {
               process.send({ event: 'removeMessages', error: e.message });
             });

@@ -17,7 +17,6 @@ import {
 } from '../../../../../../selectors/mail';
 
 import i18n from '../../../../../../../i18n/i18n';
-import { namespace } from '../../../../../../../app.global.less';
 
 const { StringType } = Schema.Types;
 
@@ -97,7 +96,7 @@ export default function AliasModal(props: Props) {
                 #<span className="text-purple-600">mymadeupalias</span>
                 {`@${domain}`}
               </span>
-              and provide that to the service, website, newsletter or perosn in
+              and provide that to the service, website, newsletter or person in
               lieu of your primary email.
             </p>
             <p className="leading-relaxed text-xs flex flex-row">
@@ -115,7 +114,7 @@ export default function AliasModal(props: Props) {
               Click the
 {' '}
               <span className="leading-relaxed bg-white shadow-sm border border-coolGray-300 rounded px-1 mx-1 font-bold">
-                + add alias
+                + Add alias
               </span>
 {' '}
               button below
@@ -132,7 +131,7 @@ export default function AliasModal(props: Props) {
 
         <div className="mb-3 flex flex-row-reverse">
           <Button
-            onClick={onCreateAlias}
+            onClick={onCreateAlias} 
             className="tracking-wide bg-purple-600 text-white border-color-purple-800 shadow-s "
           >
             <Icon icon="plus" className="mr-1 text-xs" />
