@@ -47,7 +47,7 @@
     node-pre-gyp "^0.11.0"
     request "^2.88.2"
 
-"@telios/client-sdk@^1.0.7":
+"@telios/client-sdk@^1.0.9":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-1.0.9.tgz#f2e089ba98f633594fa56e390094829fbf5ba19e"
   integrity sha512-0tZvAZzwx4nWnn9ceF/HqAm5MhrwReX/Bk7QWlm8PCxFKBVRacoRVCbG1vJAkTAjJdO0IxmwJ7m9quoffGNKRg==
@@ -74,7 +74,7 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
-"@telios/nebula-drive@^1.0.7", "@telios/nebula-drive@^1.0.9":
+"@telios/nebula-drive@^1.0.9":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-1.0.9.tgz#76e376fa4b5217937b4b327c2f2c995306f8d7f6"
   integrity sha512-HTCMCFu0Y9pfXIUmFitczFqGBva7S3SYLyghLEivPCuQttYHu6+rctfvPr1/0Sij4strp77PzSHh+LBrJ2weow==
