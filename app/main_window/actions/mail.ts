@@ -424,8 +424,8 @@ export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
     let folderCounts = {};
     const aliasCounts = {};
 
-    console.log('::::::MESSAGES::::::', messages);
-    console.log('::::::NEW ALIASES::::::', newAliases);
+    // console.log('::::::MESSAGES::::::', messages);
+    // console.log('::::::NEW ALIASES::::::', newAliases);
 
     if (newAliases.length) {
       // add new aliases to redux
