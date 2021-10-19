@@ -825,7 +825,7 @@ class Register extends Component<Props, State> {
                     type={`${visiblePassword ? 'text' : 'password'}`}
                   />
                   <InputGroup.Addon>
-                    {visiblePassword && (
+                    {!visiblePassword && (
                       <Hide
                         size="small"
                         set="broken"
@@ -834,7 +834,7 @@ class Register extends Component<Props, State> {
                         style={{ cursor: 'pointer' }}
                       />
                     )}
-                    {!visiblePassword && (
+                    {visiblePassword && (
                       <Show
                         size="small"
                         set="broken"
