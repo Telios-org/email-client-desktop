@@ -48,7 +48,7 @@ if (
 
 const createMainWindow = async () => {
   const mainWindow = await windowManager.create('mainWindow', {
-    url: `file://${__dirname}/main_window/app.html#/mail?env=${process.env.NODE_ENV}`,
+    url: `file://${__dirname}/main_window/app.html?env=${process.env.NODE_ENV}#/mail`,
     window: {
       show: false,
       width: 1240,

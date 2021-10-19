@@ -40,6 +40,8 @@ const Login = require('../../services/login.service');
 const params = window.location.search.replace('?', '');
 const env = params.split('=')[1];
 
+console.log('ENV VAR::', env);
+
 const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
 const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
 
@@ -825,7 +827,7 @@ class Register extends Component<Props, State> {
                     type={`${visiblePassword ? 'text' : 'password'}`}
                   />
                   <InputGroup.Addon>
-                    {visiblePassword && (
+                    {!visiblePassword && (
                       <Hide
                         size="small"
                         set="broken"
@@ -834,7 +836,7 @@ class Register extends Component<Props, State> {
                         style={{ cursor: 'pointer' }}
                       />
                     )}
-                    {!visiblePassword && (
+                    {visiblePassword && (
                       <Show
                         size="small"
                         set="broken"
