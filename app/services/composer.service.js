@@ -42,13 +42,7 @@ class ComposerService {
 
   static async save(email, type, isInline, mailProps) {
     if (isInline) {
-      MailService.save({ messages: [email], type, sync: true })
-        .then(res => {
-          return true;
-        })
-        .catch(e => {
-          console.error(e);
-        });
+      await MailService.save({ messages: [email], type, sync: true });
     } else {
       ipcRenderer
         .invoke('COMPOSER SERVICE::saveMessageToDB', {

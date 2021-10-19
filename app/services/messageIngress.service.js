@@ -64,15 +64,17 @@ class MessageIngressService extends EventEmitter {
     });
 
     mainWorker.on('fetchError', async m => {
-      const { error } = m;
+      const { data } = m;
 
-      if (error.file && error.file.failed < this.MAX_RETRY) {
-        this.retryQueue.push(error.file);
+      console.log('MessageIngess.service::fetchError', m);
+
+      if (data.file && data.file.failed < this.MAX_RETRY) {
+        this.retryQueue.push(data.file);
         this.handleDone();
       }
 
-      if (error.file && error.file.failed === this.MAX_RETRY) {
-        console.log(`File ${error.file.hash} failed all attempts!`);
+      if (data.file && data.file.failed === this.MAX_RETRY) {
+        console.log(`File ${data.file.hash} failed all attempts!`);
 
         // Goes into drive's dead letter queue
 

@@ -27,7 +27,7 @@ class MesssageIngress {
     this.drive.on('fetch-error', async e => {
       process.send({
         event: 'fetchError',
-        error: {
+        data: {
           message: e.message,
           stack: e.stack
         }
@@ -86,7 +86,7 @@ class MesssageIngress {
 
           process.send({
             event: 'fetchError',
-            error: {
+            data: {
               file,
               message: err.message,
               stack: err.stack
@@ -144,7 +144,7 @@ class MesssageIngress {
 
         process.send({
           event: 'fetchError',
-          error: {
+          data: {
             file: fileMeta,
             message: err.message,
             stack: err.stack
@@ -180,7 +180,7 @@ class MesssageIngress {
     } catch (err) {
       process.send({
         event: 'fetchError',
-        error: {
+        data: {
           file: fileMeta,
           message: err.message,
           stack: err.stack
