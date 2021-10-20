@@ -64,9 +64,9 @@ export const hiddenMsgIds = (state: StateType) =>
   state.globalState.hiddenMsgIds;
 export const selectAllMessages = (state: StateType) => state.mail.messages;
 
-export const selectMessages = createSelector([selectAllMessages], messages => {
-  return messages;
-});
+// export const selectMessages = createSelector([selectAllMessages], messages => {
+//   return messages;
+// });
 
 export const activeMessageId = createSelector(
   [activeMsgIdObj, selectAllFolders, activeFolderIndex],
@@ -132,14 +132,14 @@ const activeAliasIndex = (state: StateType) =>
 export const activeAliasId = createSelector(
   [selectAllAliases, activeAliasIndex],
   (aliases, activeAlias) => {
-    return aliases.allIds[activeAlias];
+    return aliases.allIds[activeAlias] || null;
   }
 );
 
 export const selectActiveAliasName = createSelector(
   [selectAllAliases, activeAliasId],
   (aliases, activeAlias) => {
-    return aliases.byId[activeAlias] ? aliases.byId[activeAlias].name : '';
+    return activeAliasId !== null && aliases.byId[activeAlias] ? aliases.byId[activeAlias].name : '';
   }
 );
 
@@ -149,3 +149,35 @@ export const aliasFolderIndex = createSelector([selectAllFolders], folders => {
   // }
   return folders.allIds.indexOf(0);
 });
+
+export const currentMessageList = createSelector(
+  [selectAllMessages, activeAliasId, activeFolderId],
+  (rootMessages, aliasId, folderId) => {
+    const { byId, allIds } = rootMessages;
+    const filteredArr = allIds.filter(
+      m => byId[m].folderId === folderId && byId[m].aliasId === aliasId
+    );
+
+    const newByIds = {};   
+    filteredArr.forEach(m => {
+      newByIds[m] = {
+        ...byId[m]
+      };
+    });
+
+    console.log(
+      'MESSAGE LIST::',
+      newByIds,
+      filteredArr,
+      rootMessages,
+      aliasId,
+      folderId
+    );
+
+    return {
+      loading: rootMessages.loading,
+      byId: newByIds,
+      allIds: [...filteredArr]
+    };
+  }
+);

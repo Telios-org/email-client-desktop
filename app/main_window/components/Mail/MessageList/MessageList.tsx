@@ -34,7 +34,8 @@ import {
 import {
   selectActiveFolderName,
   selectGlobalState,
-  selectMessages,
+  selectAllMessages,
+  currentMessageList,
   activeMessageId,
   activeMessageSelectedRange,
   activeFolderId,
@@ -60,7 +61,7 @@ export default function MessageList(props: Props) {
   const [sort, setSort] = useState('');
   const currentFolderName = useSelector(selectActiveFolderName);
   const currentAliasName = useSelector(selectActiveAliasName);
-  const messages = useSelector(selectMessages);
+  const messages = useSelector(currentMessageList);
   const activeMsgId = useSelector(activeMessageId);
   const activeSelectedRange = useSelector(activeMessageSelectedRange);
   const folderId = useSelector(activeFolderId);
@@ -95,7 +96,6 @@ export default function MessageList(props: Props) {
     if (virtualLoaderRef.current) {
       virtualLoaderRef.current.resetloadMoreItemsCache();
     }
-
   }, [currentFolderName, currentAliasName, messages]);
 
   useEffect(() => {
@@ -141,9 +141,10 @@ export default function MessageList(props: Props) {
       clearSelectedMessage(folderId);
 
       Alert.success(
-        `Moved ${activeSelectedRange.items.length
-          ? activeSelectedRange.items.length
-          : 1
+        `Moved ${
+          activeSelectedRange.items.length
+            ? activeSelectedRange.items.length
+            : 1
         } message(s) to ${dropResult.name}.`
       );
     });
@@ -177,9 +178,12 @@ export default function MessageList(props: Props) {
   };
 
   const Row = memo(({ data, index, style }) => {
+    const keyId = data?.messages?.allIds[index];
+    console.log('MESSAGE LIST ROW::', data, index);
     return (
       <MessagePreview
         index={index}
+        key={keyId}
         onMsgClick={handleSelectMessage}
         onDropResult={handleDropResult}
         previewStyle={style}
@@ -296,7 +300,7 @@ export default function MessageList(props: Props) {
 
   return (
     <div className="flex-1 flex w-full flex-col rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
-      <div className="h-10 w-full text-lg font-semibold justify-center py-2 pl-4 pr-4 mb-2 text-gray-600 flex flex-row justify-between">
+      <div className="w-full text-lg font-semibold py-2 pl-4 pr-2 mb-2 text-gray-600 flex flex-row justify-between">
         <div className="flex-1 select-none">
           {currentAliasName || currentFolderName || ''}
           <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
