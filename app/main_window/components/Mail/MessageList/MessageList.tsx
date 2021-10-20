@@ -34,7 +34,8 @@ import {
 import {
   selectActiveFolderName,
   selectGlobalState,
-  selectMessages,
+  selectAllMessages,
+  currentMessageList,
   activeMessageId,
   activeMessageSelectedRange,
   activeFolderId,
@@ -60,7 +61,7 @@ export default function MessageList(props: Props) {
   const [sort, setSort] = useState('');
   const currentFolderName = useSelector(selectActiveFolderName);
   const currentAliasName = useSelector(selectActiveAliasName);
-  const messages = useSelector(selectMessages);
+  const messages = useSelector(currentMessageList);
   const activeMsgId = useSelector(activeMessageId);
   const activeSelectedRange = useSelector(activeMessageSelectedRange);
   const folderId = useSelector(activeFolderId);
@@ -177,9 +178,12 @@ export default function MessageList(props: Props) {
   };
 
   const Row = memo(({ data, index, style }) => {
+    const keyId = data?.messages?.allIds[index];
+    console.log('MESSAGE LIST ROW::', data, index);
     return (
       <MessagePreview
         index={index}
+        key={keyId}
         onMsgClick={handleSelectMessage}
         onDropResult={handleDropResult}
         previewStyle={style}
