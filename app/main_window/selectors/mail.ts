@@ -93,15 +93,6 @@ export const activeMessageObject = createSelector(
   }
 );
 
-export const selectMessageByIndex = createSelector(
-  selectAllMessages,
-  (_, index: number) => index,
-  (messages, index) => {
-    const msgId = messages.allIds[index];
-    return messages.byId[msgId];
-  }
-);
-
 export const selectIndexForMessageId = createSelector(
   selectAllMessages,
   (_, id: string) => id,
@@ -170,5 +161,14 @@ export const currentMessageList = createSelector(
       byId: newByIds,
       allIds: [...filteredArr]
     };
+  }
+);
+
+export const selectMessageByIndex = createSelector(
+  currentMessageList,
+  (_, index: number) => index,
+  (messages, index) => {
+    const msgId = messages.allIds[index];
+    return messages.byId[msgId];
   }
 );

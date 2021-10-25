@@ -23,7 +23,8 @@ import {
   activeMessageId as activeMsgId,
   activeMessageSelectedRange,
   selectActiveAliasName,
-  activeAliasId
+  activeAliasId,
+  currentMessageList
 } from '../../../../selectors/mail';
 
 // REDUX ACTIONS
@@ -62,7 +63,7 @@ export default function MessagePreview(props: Props) {
   const [displayLoader, setLoader] = useState(false);
   const [isRead, setIsRead] = useState(false);
 
-  const messages = useSelector(state => state.mail.messages);
+  const messages = useSelector(currentMessageList);
   const currentFolderId = useSelector(activeFolderId);
   const currentAliasId = useSelector(activeAliasId);
   const selected = useSelector(activeMessageSelectedRange);
