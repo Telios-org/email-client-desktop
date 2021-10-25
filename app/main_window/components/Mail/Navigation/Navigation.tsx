@@ -398,7 +398,7 @@ export default function Navigation(props: Props) {
             appearance="primary"
             onClick={newMessageAction}
             block
-            className="bg-gradient-to-tr from-purple-700 to-purple-500 rounded text-sm flex flex-row w-40 justify-center shadow active:shadow-sm"
+            className="bg-gradient-to-bl from-purple-600 to-purple-500 rounded text-sm flex flex-row w-40 justify-center shadow active:shadow-sm"
           >
             <span>New Message</span>
             <EditSquare

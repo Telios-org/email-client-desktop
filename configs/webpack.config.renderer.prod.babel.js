@@ -37,6 +37,16 @@ export default merge.smart(baseConfig, {
 
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true
+          }
+        }
+      },
       // Extract all .global.css to style.css as is
       {
         test: /\.global\.css$/,
@@ -132,13 +142,13 @@ export default merge.smart(baseConfig, {
                 sourceMap: true
               }
             }
-          },
-          {
-            loader: 'text-transform-loader',
-            options: {
-              prependText: "@import (reference) '/app/app.global.less';\n\n"
-            }
           }
+          // {
+          //   loader: 'text-transform-loader',
+          //   options: {
+          //     prependText: "@import (reference) '/app/app.global.less';\n\n"
+          //   }
+          // }
         ]
       },
       // WOFF Font
@@ -163,22 +173,22 @@ export default merge.smart(baseConfig, {
           }
         }
       },
-      // TTF Font
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/octet-stream'
-          }
-        }
-      },
-      // EOT Font
-      {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
-      },
+      // // TTF Font
+      // {
+      //   test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+      //   use: {
+      //     loader: 'url-loader',
+      //     options: {
+      //       limit: 10000,
+      //       mimetype: 'application/octet-stream'
+      //     }
+      //   }
+      // },
+      // // EOT Font
+      // {
+      //   test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+      //   use: 'file-loader'
+      // },
       // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,

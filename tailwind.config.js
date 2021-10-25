@@ -115,6 +115,11 @@ const plugins = [require('@tailwindcss/line-clamp')];
 
 module.exports = {
   darkMode: 'class',
+  purge: [
+    './app/main_window/**/*.tsx',
+    './app/login_window/**/*.tsx',
+    './app/composer_window/**/*.tsx'
+  ],
   important: true,
   theme,
   variants,

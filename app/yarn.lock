@@ -10,9 +10,9 @@
     hypercore "^9.0.0"
 
 "@hyperswarm/dht@next":
-  version "5.0.0-rc.12"
-  resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-5.0.0-rc.12.tgz#59a047899a7faf74effb3dac55092091a2075e88"
-  integrity sha512-bNVj/Uwf6YeFzWBYzKuganDbD00/bJ9br23dTSN/TIIlb0xemPTiFFR7U2lzVdRiwQZgMBz2tJz6zJ0fR041Jw==
+  version "5.0.0-rc.13"
+  resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-5.0.0-rc.13.tgz#ae0311a01787a204200237a60506e98fadfe5370"
+  integrity sha512-uIq27mKkZfjCe32hEKpxDDbpPD6iHK1F9ymtt8Kxo/jCgy1alKn4ualyfcsckQgr2GO0XyDzalS899Exftc5nA==
   dependencies:
     "@hyperswarm/secret-stream" "^5.0.0"
     bind-easy "^1.0.1"
@@ -1565,9 +1565,9 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-"multi-hyperbee@git+https://github.com/Telios-org/multi-hyperbee":
+"multi-hyperbee@git+https://github.com/Telios-org/multi-hyperbee.git":
   version "0.2.12"
-  resolved "git+https://github.com/Telios-org/multi-hyperbee#2d2915d65d7ff43c2f9447ebe2a5f6c2cda35e48"
+  resolved "git+https://github.com/Telios-org/multi-hyperbee.git#2d2915d65d7ff43c2f9447ebe2a5f6c2cda35e48"
   dependencies:
     automerge "^0.14.1"
     hyperbee "1.5.3"
@@ -1695,9 +1695,9 @@ nodemailer@6.4.11:
   integrity sha512-BVZBDi+aJV4O38rxsUh164Dk1NCqgh6Cm0rQSb9SK/DHGll/DrCMnycVDD7msJgZCnmVa8ASo8EZzR7jsgTukQ==
 
 noise-curve-ed@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/noise-curve-ed/-/noise-curve-ed-1.0.2.tgz#ad18d5335100ad35cd18f6b85b51f4e954548d68"
-  integrity sha512-oUaibvHZ2RVsbv4k2VHCH6vL9dQBaGt7bHHlf/aSFSwzi2/GMcOWknvb739bdbTq3YD1wOyvzH1LpJZribnrKA==
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/noise-curve-ed/-/noise-curve-ed-1.0.3.tgz#39468e4cfa1d5e6f403ca30d2a361c8d6e1e9097"
+  integrity sha512-1btubOWpqiI3WPXMmnotTfFsKXGeQBfTu94t4+ViBtPQfz6mciF7Kdlfg1YrXehvVThWY28HfJURCkQyJjHM6w==
   dependencies:
     nanoassert "^2.0.0"
     sodium-native "^3.2.1"

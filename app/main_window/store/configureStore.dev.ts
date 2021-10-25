@@ -68,6 +68,7 @@ const configureStore = initialState => {
   const store = createStore(rootReducer, initialState, enhancer);
 
   if (module.hot) {
+    console.log('it works');
     module.hot.accept(
       '../reducers',
       // eslint-disable-next-line global-require

@@ -28,6 +28,7 @@ const manifest = path.resolve(dll, 'renderer.json');
 const requiredByDLLConfig = module.parent.filename.includes(
   'webpack.config.renderer.dev.dll'
 );
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 /**
  * Warn if the DLL is not built
@@ -50,21 +51,21 @@ export default merge.smart(baseConfig, {
 
   entry: {
     main: [
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
+      // ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
+      // `webpack-dev-server/client?http://localhost:${port}/`,
+      // 'webpack/hot/only-dev-server',
       require.resolve('../app/main_window/index.tsx')
     ],
     login: [
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
+      // ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
+      // `webpack-dev-server/client?http://localhost:${port}/`,
+      // 'webpack/hot/only-dev-server',
       require.resolve('../app/login_window/index.tsx')
     ],
     composer: [
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
+      // ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
+      // `webpack-dev-server/client?http://localhost:${port}/`,
+      // 'webpack/hot/only-dev-server',
       require.resolve('../app/composer_window/index.tsx')
     ]
   },
@@ -78,6 +79,17 @@ export default merge.smart(baseConfig, {
 
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: require.resolve('babel-loader'),
+          options: {
+            cacheDirectory: true,
+            plugins: [require.resolve('react-refresh/babel')]
+          }
+        }
+      },
       {
         test: /\.global\.css$/,
         use: [
@@ -171,13 +183,13 @@ export default merge.smart(baseConfig, {
                 sourceMap: true
               }
             }
-          },
-          {
-            loader: 'text-transform-loader',
-            options: {
-              prependText: "@import (reference) '/app/app.global.less';\n\n"
-            }
           }
+          // {
+          //   loader: 'text-transform-loader',
+          //   options: {
+          //     prependText: "@import (reference) '/app/app.global.less';\n\n"
+          //   }
+          // }
         ]
       },
       // WOFF Font
@@ -202,22 +214,22 @@ export default merge.smart(baseConfig, {
           }
         }
       },
-      // TTF Font
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/octet-stream'
-          }
-        }
-      },
-      // EOT Font
-      {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
-      },
+      // // TTF Font
+      // {
+      //   test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+      //   use: {
+      //     loader: 'url-loader',
+      //     options: {
+      //       limit: 10000,
+      //       mimetype: 'application/octet-stream'
+      //     }
+      //   }
+      // },
+      // // EOT Font
+      // {
+      //   test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+      //   use: 'file-loader'
+      // },
       // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
@@ -236,11 +248,11 @@ export default merge.smart(baseConfig, {
       }
     ]
   },
-  resolve: {
-    alias: {
-      'react-dom': '@hot-loader/react-dom'
-    }
-  },
+  // resolve: {
+  //   alias: {
+  //     'react-dom': '@hot-loader/react-dom'
+  //   }
+  // },
   plugins: [
     requiredByDLLConfig
       ? null
@@ -275,7 +287,8 @@ export default merge.smart(baseConfig, {
 
     new webpack.LoaderOptionsPlugin({
       debug: true
-    })
+    }),
+    new ReactRefreshWebpackPlugin()
   ],
 
   node: {
@@ -307,7 +320,10 @@ export default merge.smart(baseConfig, {
     },
     before() {
       if (process.env.START_HOT) {
-        console.log('Starting Main Process...');
+        console.log('Starting Main WebPack Dev Server Process...');
+        console.log('NODE_ENV=', process.env?.NODE_ENV);
+        console.log('START_HOT=', process.env?.START_HOT);
+        console.log('PLAIN_HMR=', process.env?.PLAIN_HMR);
         spawn('npm', ['run', 'start-main-dev'], {
           shell: true,
           env: process.env,

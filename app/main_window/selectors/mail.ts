@@ -158,7 +158,7 @@ export const currentMessageList = createSelector(
       m => byId[m].folderId === folderId && byId[m].aliasId === aliasId
     );
 
-    const newByIds = {};   
+    const newByIds = {};
     filteredArr.forEach(m => {
       newByIds[m] = {
         ...byId[m]
