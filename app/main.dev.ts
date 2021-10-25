@@ -47,18 +47,19 @@ if (
   require('electron-debug')();
 }
 
-if (process.env.NODE_ENV === 'development') {
-  try {
-    // console.log('ENV VARS', process.env);
-    console.log('ELECTRON RELOADER - ON');
-    require('electron-reloader')(module, {
-      debug: true,
-      watchRenderer: false
-    });
-  } catch (_) {
-    console.log('Error');
-  }
-}
+// Turning that off for now
+// if (process.env.NODE_ENV === 'development') {
+//   try {
+//     // console.log('ENV VARS', process.env);
+//     console.log('ELECTRON RELOADER - ON');
+//     require('electron-reloader')(module, {
+//       debug: true,
+//       watchRenderer: false
+//     });
+//   } catch (_) {
+//     console.log('Error');
+//   }
+// }
 
 const createMainWindow = async () => {
   const mainWindow = await windowManager.create('mainWindow', {

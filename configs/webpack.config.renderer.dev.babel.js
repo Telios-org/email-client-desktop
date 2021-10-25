@@ -323,7 +323,7 @@ export default merge.smart(baseConfig, {
         console.log('Starting Main WebPack Dev Server Process...');
         console.log('NODE_ENV=', process.env?.NODE_ENV);
         console.log('START_HOT=', process.env?.START_HOT);
-        console.log('PLAIN_HMR=', process.env?.PLAIN_HMR);
+        // console.log('PLAIN_HMR=', process.env?.PLAIN_HMR);
         spawn('npm', ['run', 'start-main-dev'], {
           shell: true,
           env: process.env,

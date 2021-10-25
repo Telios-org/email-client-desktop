@@ -165,15 +165,6 @@ export const currentMessageList = createSelector(
       };
     });
 
-    console.log(
-      'MESSAGE LIST::',
-      newByIds,
-      filteredArr,
-      rootMessages,
-      aliasId,
-      folderId
-    );
-
     return {
       loading: rootMessages.loading,
       byId: newByIds,
