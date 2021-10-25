@@ -179,7 +179,6 @@ export default function MessageList(props: Props) {
 
   const Row = memo(({ data, index, style }) => {
     const keyId = data?.messages?.allIds[index];
-    console.log('MESSAGE LIST ROW::', data, index);
     return (
       <MessagePreview
         index={index}

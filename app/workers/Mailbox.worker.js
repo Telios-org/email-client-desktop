@@ -624,7 +624,7 @@ module.exports = env => {
       for await (const msg of messages) {
         const attachments = [];
         let folderId;
-        let aliasId;
+        let aliasId = null;
 
         if (!msg.email) {
           msg.email = msg;
