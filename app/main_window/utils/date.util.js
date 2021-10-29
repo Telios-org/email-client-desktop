@@ -40,7 +40,7 @@ export const formatTimeOnly = date => {
 };
 
 export const ISOtimestamp = () => {
-  return DateTime.local().toISO();
+  return DateTime.local({ zone: 'utc' }).toISO();
 };
 
 export const fullDatefromJS = date => {

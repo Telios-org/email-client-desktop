@@ -7,7 +7,7 @@ import CustomIcon from '../../Mail/Navigation/NavIcons';
 import {
   messageSelection,
   setHighlightValue,
-  selectSearchedMsg
+  selectSearched
 } from '../../../actions/mail';
 import {
   activeFolderId,
@@ -27,6 +27,7 @@ const SearchBar = (props: Props) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [results, setResults] = useState([] as string[]);
+  const [folderIdxResults, setFolderIdxResults] = useState([] as string[]);
   const activeFolder = useSelector(activeFolderId);
   const activeAlias = useSelector(activeAliasId);
   const allFolders = useSelector(selectAllFoldersById);
@@ -45,7 +46,10 @@ const SearchBar = (props: Props) => {
           const data = callResults[i];
           data.type = 'email';
 
-          if (data.aliasId === null) {
+          if (
+            data.aliasId === null ||
+            allFolders[data.folderId]?.name === 'Trash'
+          ) {
             transform[data.folderId] = {
               type: 'folder',
               name: allFolders[data.folderId]?.name,
@@ -78,46 +82,66 @@ const SearchBar = (props: Props) => {
 
         const keys = Object.keys(transform);
         const final: string[] = [];
+        const folderArr: any[] = [];
         let extIndex = 0;
         keys.forEach((key, index) => {
           const res = { ...transform[key] };
           res.index = extIndex;
           extIndex += 1;
           final.push(JSON.stringify(res));
+          folderArr.push({
+            folderId: res.folderId,
+            aliasId: res.aliasId,
+            name: res.name,
+            messages: res.messages.map(m => m.id)
+          });
 
-          if (activeFolder == res.folderId) {
+          if (
+            (activeFolder === res.folderId && activeAlias === res.aliasId) ||
+            (allFolders[activeFolder]?.name === 'Trash' &&
+              activeFolder === res.folderId)
+          ) {
             // we only want the 4 most recent messages for that folder.
-            res.messages.slice(0, 4).forEach((m, idx) => {
-              const msg = { ...m };
-              msg.index = extIndex;
-              extIndex += 1;
-              if (idx === 0 && res.messages.length - 1 !== idx) {
-                msg.order = 'start';
-              } else if (res.messages.length - 1 !== idx) {
-                msg.order = 'middle';
-              } else {
-                msg.order = 'cap';
-              }
-              final.push(JSON.stringify(msg));
-            });
+            res.messages
+              .slice(0, 4)
+              .sort((a, b) => {
+                return new Date(b.date) - new Date(a.date);
+              })
+              .forEach((m, idx) => {
+                const msg = { ...m };
+                msg.index = extIndex;
+                extIndex += 1;
+                if (idx === 0 && res.messages.length - 1 !== idx) {
+                  msg.order = 'start';
+                } else if (res.messages.length - 1 !== idx) {
+                  msg.order = 'middle';
+                } else {
+                  msg.order = 'cap';
+                }
+                final.push(JSON.stringify(msg));
+              });
           }
         });
 
         console.log('SEARCH TRANSFORM::', final);
 
         setResults(final);
+        setFolderIdxResults(folderArr);
+        console.log(folderArr);
         setSearchQuery(searchQuery);
       }
     } else {
       setResults([]);
+      setFolderIdxResults({});
     }
   };
 
   const handleSelect = async (selected, event) => {
     const val = JSON.parse(selected.value);
-    await dispatch(
-      selectSearchedMsg(val, activeFolder, activeAlias, searchQuery)
-    );
+    const payload = folderIdxResults.filter(
+      m => m.aliasId === val.aliasId && m.folderId === val.folderId
+    )[0];
+    await dispatch(selectSearch(payload, searchQuery));
     setTimeout(() => {
       setSearchValue('');
     });

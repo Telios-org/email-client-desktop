@@ -871,12 +871,18 @@ export const sync = (opts: { fullSync: boolean }) => {
   };
 };
 
-export const selectSearchedMsg = (
-  message: MailMessageType,
-  currentFolderId: number,
-  currentAliasId: string,
+export const SET_SEARCH_FILTER = 'GLOBAL::SET_SEARCH_FILTER';
+export const setSearchFilter = (payload: string[]) => {
+  return {
+    type: SET_SEARCH_FILTER,
+    payload
+  };
+};
+
+export const selectSearch = (
+  payload: any,
   searchQuery: string
-) => {
+): (dispatch: Dispatch, getState: GetState) => Promise<void> => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       mail: {
@@ -887,32 +893,34 @@ export const selectSearchedMsg = (
     } = getState();
 
     if (
-      message.folderId !== currentFolderId &&
-      message.aliasId !== currentAliasId
+      payload.folderId !== currentFolderId &&
+      payload.aliasId !== currentAliasId
     ) {
-      const isAlias = message.aliasId !== null;
+      const isAlias = payload.aliasId !== null && payload.name !== 'Trash';
       if (isAlias) {
-        const aliasIndex = aliasAllIds.indexOf(message.aliasId);
+        const aliasIndex = aliasAllIds.indexOf(payload.aliasId);
         await dispatch(aliasSelection(aliasIndex));
       } else {
-        const folderIndex = foldersAllIds.indexOf(message.folderId);
+        const folderIndex = foldersAllIds.indexOf(payload.folderId);
         await dispatch(folderSelection(folderIndex));
       }
     }
 
-    const selected = {
-      startIdx: index,
-      endIdx: index,
-      exclude: [],
-      items: [message.id]
-    };
+    dispatch(setSearchFilter(payload.messages));
 
-    if (editorIsOpen) {
-      ipcRenderer.send('RENDERER::closeComposerWindow', { action: 'save' });
-    }
+    // const selected = {
+    //   startIdx: index,
+    //   endIdx: index,
+    //   exclude: [],
+    //   items: [message.id]
+    // };
+
+    // if (editorIsOpen) {
+    //   ipcRenderer.send('RENDERER::closeComposerWindow', { action: 'save' });
+    // }
 
     await dispatch(setHighlightValue(searchQuery));
-    dispatch(messageSelection(message));
-    dispatch(selectMessageRange(selected, message.folderId));
+    // dispatch(messageSelection(message));
+    // dispatch(selectMessageRange(selected, message.folderId));
   };
 };

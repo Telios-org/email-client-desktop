@@ -43,6 +43,7 @@ const initialState = {
   // NOT THE ID
   activeFolderIndex: 0,
   activeAliasIndex: null,
+  searchFilteredMsg: [],
   loading: false,
   status: 'online',
   error: '',
