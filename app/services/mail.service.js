@@ -434,10 +434,13 @@ class MailService {
   }
 
   static search(searchQuery) {
-    worker.send({ event: 'searchMailbox', payload: { searchQuery } });
+    worker.send({
+      event: 'MAIL_SERVICE::searchMailbox',
+      payload: { searchQuery }
+    });
 
     return new Promise((resolve, reject) => {
-      worker.once('searchMailbox', m => {
+      worker.once('MAILBOX_WORKER::searchMailbox', m => {
         const { data, error } = m;
 
         if (error) return reject(error);

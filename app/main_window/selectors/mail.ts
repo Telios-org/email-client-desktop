@@ -35,7 +35,7 @@ export const selectDisplayFolders = createSelector(
   }
 );
 
-const activeFolderIndex = (state: StateType) =>
+export const activeFolderIndex = (state: StateType) =>
   state.globalState.activeFolderIndex;
 
 export const activeFolderId = createSelector(
@@ -130,7 +130,9 @@ export const activeAliasId = createSelector(
 export const selectActiveAliasName = createSelector(
   [selectAllAliases, activeAliasId],
   (aliases, activeAlias) => {
-    return activeAliasId !== null && aliases.byId[activeAlias] ? aliases.byId[activeAlias].name : '';
+    return activeAliasId !== null && aliases.byId[activeAlias]
+      ? aliases.byId[activeAlias].name
+      : '';
   }
 );
 
@@ -146,7 +148,9 @@ export const currentMessageList = createSelector(
   (rootMessages, aliasId, folderId) => {
     const { byId, allIds } = rootMessages;
     const filteredArr = allIds.filter(
-      m => byId[m].folderId === folderId && byId[m].aliasId === aliasId
+      m =>
+        (byId[m].folderId === folderId && byId[m].aliasId === aliasId) ||
+        byId[m].folderId === 4
     );
 
     const newByIds = {};

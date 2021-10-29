@@ -73,7 +73,7 @@ export default function MessageList(props: Props) {
   let isLoading = false;
 
   const selectMessage = (message: MailMessageType) => {
-    return dispatch(messageSelection(message, ''));
+    return dispatch(messageSelection(message));
   };
 
   const selectMessageRange = async (

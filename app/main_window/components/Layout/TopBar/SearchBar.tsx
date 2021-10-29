@@ -1,37 +1,123 @@
 import React, { useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AutoComplete, InputGroup, Icon } from 'rsuite';
-import { Search } from 'react-iconly'
+import { Search } from 'react-iconly';
 import Highlighter from 'react-highlight-words';
-import { StateType, Dispatch, MailMessageType } from '../../../reducers/types';
-import { messageSelection, setHighlightValue } from '../../../actions/mail';
+import CustomIcon from '../../Mail/Navigation/NavIcons';
+import {
+  messageSelection,
+  setHighlightValue,
+  selectSearchedMsg
+} from '../../../actions/mail';
+import {
+  activeFolderId,
+  activeAliasId,
+  selectAllFoldersById,
+  selectAllAliasesById
+} from '../../../selectors/mail';
+import { search } from '../../../../services/mail.service';
+
+import styles from './SearchBar.less';
 
 const Mail = require('../../../../services/mail.service');
+const { formatDateDisplay } = require('../../../utils/date.util');
 
 const SearchBar = (props: Props) => {
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchValue, setSearchValue] = useState('');
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState([] as string[]);
+  const activeFolder = useSelector(activeFolderId);
+  const activeAlias = useSelector(activeAliasId);
+  const allFolders = useSelector(selectAllFoldersById);
+  const allAliases = useSelector(selectAllAliasesById);
 
   const handleSearch = async searchQuery => {
     setSearchValue(searchQuery);
-    let callResults = await Mail.search(searchQuery);
-    if (callResults) {
-      callResults = callResults.map((item, index) => {
-        const result = { ...item };
-        result.index = index;
-        return JSON.stringify(result);
-      });
+    if (searchQuery.replace(/\s/g, '').length !== 0) {
+      const callResults = await Mail.search(searchQuery);
+      console.log('SEARCH RESULTS::', callResults);
+      if (callResults) {
+        // Transforming data for easier ingestion by UI
+        const transform = {};
 
-      setResults(callResults);
-      setSearchQuery(searchQuery);
+        for (let i = 0; i < callResults.length; i += 1) {
+          const data = callResults[i];
+          data.type = 'email';
+
+          if (data.aliasId === null) {
+            transform[data.folderId] = {
+              type: 'folder',
+              name: allFolders[data.folderId]?.name,
+              icon: allFolders[data.folderId]?.icon,
+              folderId: data.folderId,
+              aliasId: null,
+              count: transform[data.folderId]?.count
+                ? transform[data.folderId]?.count + 1
+                : 1,
+              messages: transform[data.folderId]?.messages
+                ? [...transform[data.folderId]?.messages, data]
+                : [data]
+            };
+          } else {
+            transform[data.aliasId] = {
+              type: 'alias',
+              name: allAliases[data.aliasId]?.name,
+              icon: 'alias',
+              folderId: data.folderId,
+              aliasId: data.aliasId,
+              count: transform[data.aliasId]?.count
+                ? transform[data.aliasId]?.count + 1
+                : 1,
+              messages: transform[data.aliasId]?.messages
+                ? [...transform[data.aliasId]?.messages, data]
+                : [data]
+            };
+          }
+        }
+
+        const keys = Object.keys(transform);
+        const final: string[] = [];
+        let extIndex = 0;
+        keys.forEach((key, index) => {
+          const res = { ...transform[key] };
+          res.index = extIndex;
+          extIndex += 1;
+          final.push(JSON.stringify(res));
+
+          if (activeFolder == res.folderId) {
+            // we only want the 4 most recent messages for that folder.
+            res.messages.slice(0, 4).forEach((m, idx) => {
+              const msg = { ...m };
+              msg.index = extIndex;
+              extIndex += 1;
+              if (idx === 0 && res.messages.length - 1 !== idx) {
+                msg.order = 'start';
+              } else if (res.messages.length - 1 !== idx) {
+                msg.order = 'middle';
+              } else {
+                msg.order = 'cap';
+              }
+              final.push(JSON.stringify(msg));
+            });
+          }
+        });
+
+        console.log('SEARCH TRANSFORM::', final);
+
+        setResults(final);
+        setSearchQuery(searchQuery);
+      }
+    } else {
+      setResults([]);
     }
   };
 
-  const handleSelect = (selected, event) => {
-    const { selectMessage, highlightSearch } = props;
-    highlightSearch(searchQuery);
-    selectMessage(JSON.parse(selected.value), 'showMaxDisplay');
+  const handleSelect = async (selected, event) => {
+    const val = JSON.parse(selected.value);
+    await dispatch(
+      selectSearchedMsg(val, activeFolder, activeAlias, searchQuery)
+    );
     setTimeout(() => {
       setSearchValue('');
     });
@@ -55,38 +141,79 @@ const SearchBar = (props: Props) => {
         placeholder="Search"
         onChange={handleSearch}
         onSelect={handleSelect}
+        filterBy={(value, item) => true} // by design (rsuite) the dropdown only shows if the string matches the content, we need it to always show
         onClose={handleExit}
         renderItem={item => {
-          const email = JSON.parse(item.label);
-          let bodyArr = email.bodyAsText.split(' ');
-          bodyArr = bodyArr.slice(0, 30);
-          const bodyAsText = bodyArr.join(' ');
-          return (
-            <div className="z-100">
-              <div className="flex">
-                <div className="flex-initial">
-                  <Icon icon="envelope" className="mr-3" />
+          const {
+            type,
+            name,
+            icon,
+            subject,
+            date,
+            count,
+            fromJSON,
+            toJSON,
+            order
+          } = JSON.parse(item.label);
+
+          if (type !== 'email') {
+            const IconTag = CustomIcon[icon];
+
+            return (
+              <div className="z-100 sm:w-54 md:w-72 lg:w-96">
+                <div className="flex">
+                  <div className="mr-3 w-4">
+                    <IconTag
+                      size="small"
+                      set="broken"
+                      className="text-purple-700 mt-0.5"
+                    />
+                  </div>
+                  <div className="flex-grow font-semibold text-sm mt-auto">
+                    <span className="border-b pb-0.5">{name}</span>
+                  </div>
+                  <div className="text-xs mt-auto text-coolGray-400">
+                    <span className="mr-1">{`${count}`}</span>
+                    <span className="">email(s)</span>
+                  </div>
                 </div>
-                <div className="flex-grow-0">
-                  <strong>
-                    <Highlighter
-                      highlightClassName="bg-yellow-300"
-                      searchWords={searchValue.split(' ')}
-                      autoEscape
-                      textToHighlight={email.subject}
-                    />
-                  </strong>
-                  <p
-                    className="text-gray-500"
-                    style={{ width: '500px', maxWidth: '500px' }}
-                  >
-                    <Highlighter
-                      highlightClassName="bg-yellow-300"
-                      searchWords={searchValue.split(' ')}
-                      autoEscape
-                      textToHighlight={bodyAsText}
-                    />
-                  </p>
+              </div>
+            );
+          }
+
+          const senderEmail = JSON.parse(fromJSON)[0].address;
+          const parsedSender = JSON.parse(fromJSON)[0].name || senderEmail;
+          const parsedDate = formatDateDisplay(date);
+          const parsedRecipient = JSON.parse(toJSON).reduce(function(
+            previous: string,
+            current: { name: string; address: string }
+          ) {
+            const val = current.name || current.address;
+            return `${previous + val} `;
+          },
+          'To: ');
+
+          return (
+            <div className="z-100 sm:w-54 md:w-72 lg:w-96 relative w-full">
+              <div
+                className={`flex flex-col ${
+                  order === 'cap' ? styles.searchSvgLast : styles.searchSvg
+                } relative w-full`}
+              >
+                <div className="ml-6 flex-row flex pb-1 font-medium text-xs">
+                  <div className="flex-auto leading-tight line-clamp-1 break-all font-bold">
+                    {name === 'Sent' || name === 'Drafts'
+                      ? parsedRecipient
+                      : parsedSender}
+                  </div>
+
+                  <div className="ml-2 text-xs font-bold flex self-end text-trueGray-500">
+                    {parsedDate}
+                  </div>
+                </div>
+                {/* <div className="mr-3 -my-2 overflow-hidden w-1 border-coolGray-400 border-r-2" /> */}
+                <div className="ml-6 flex-grow flex-1 leading-tight overflow-hidden text-xs break-all line-clamp-1">
+                  {subject}
                 </div>
               </div>
             </div>
@@ -97,24 +224,4 @@ const SearchBar = (props: Props) => {
   );
 };
 
-const mapStateToProps = (state: StateType) => ({});
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    selectMessage: async (message: MailMessageType, action: string) => {
-      await dispatch(messageSelection(message, action));
-    },
-    highlightSearch: (searchQuery: string) => {
-      dispatch(setHighlightValue(searchQuery));
-    }
-  };
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux & {
-  // this object would hold any props not coming from redux
-};
-
-export default connector(SearchBar);
+export default SearchBar;

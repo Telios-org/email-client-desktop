@@ -230,7 +230,6 @@ export type GlobalType = {
   loading: boolean;
   editorIsOpen: boolean;
   editorAction: string;
-  showMaximizedMessageDisplay?: boolean;
   highlightText?: string;
   error: string | Error;
 };
@@ -276,7 +275,6 @@ export type ClientAction = {
   index?: number;
   payload: ClientType;
   accounts?: Array<string>;
-  showMaximizedMessageDisplay?: boolean;
   forcedStatus?: boolean;
   searchQuery?: string;
   status?: string;
@@ -299,7 +297,6 @@ export type MailAction = {
   folderId?: number;
   message?: MailMessageType;
   password?: string;
-  showMaximizedMessageDisplay?: boolean;
   forcedStatus?: boolean;
   error?: string | Error;
 };
