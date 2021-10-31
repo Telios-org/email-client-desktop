@@ -40,7 +40,8 @@ import {
   activeMessageSelectedRange,
   activeFolderId,
   activeAliasId,
-  selectActiveAliasName
+  selectActiveAliasName,
+  searchFilteredMessages
 } from '../../../selectors/mail';
 
 // TS TYPES
@@ -66,6 +67,7 @@ export default function MessageList(props: Props) {
   const activeSelectedRange = useSelector(activeMessageSelectedRange);
   const folderId = useSelector(activeFolderId);
   const aliasId = useSelector(activeAliasId);
+  const searchFilter = useSelector(searchFilteredMessages);
   const { editorIsOpen } = useSelector(selectGlobalState);
 
   const virtualLoaderRef = useRef(null);
@@ -299,10 +301,19 @@ export default function MessageList(props: Props) {
 
   return (
     <div className="flex-1 flex w-full flex-col rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
-      <div className="w-full text-lg font-semibold py-2 pl-4 pr-2 mb-2 text-gray-600 flex flex-row justify-between">
-        <div className="flex-1 select-none">
-          {currentAliasName || currentFolderName || ''}
-          <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
+      <div className="w-full py-2 pl-4 pr-2 mb-2 flex flex-row justify-between">
+        <div className="flex-1 flex select-none flex-row text-gray-600">
+          <div className="flex flex-col text-lg font-semibold">
+            {currentAliasName || currentFolderName || ''}
+            <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
+          </div>
+          {searchFilter.length > 0 && (
+            <div className="flex items-center ml-2 ">
+              <span className="text-xs text-coolGray-400">
+                ( search )
+              </span>
+            </div>
+          )}
         </div>
         <div className="items-end flex">
           {/* <div className="flex flex-row text-xs rounded px-2 py-1 text-gray-300 content-center">

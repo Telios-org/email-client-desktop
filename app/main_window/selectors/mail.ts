@@ -143,18 +143,29 @@ export const aliasFolderIndex = createSelector([selectAllFolders], folders => {
   return folders.allIds.indexOf(0);
 });
 
+export const searchFilteredMessages = (state: StateType) =>
+  state.globalState.searchFilteredMsg;
+
 export const currentMessageList = createSelector(
-  [selectAllMessages, activeAliasId, activeFolderId],
-  (rootMessages, aliasId, folderId) => {
+  [selectAllMessages, activeAliasId, activeFolderId, searchFilteredMessages],
+  (rootMessages, aliasId, folderId, filter) => {
     const { byId, allIds } = rootMessages;
     const filteredArr = allIds.filter(
-      m =>
-        (byId[m].folderId === folderId && byId[m].aliasId === aliasId) ||
-        byId[m].folderId === 4
+      id =>
+        (byId[id].folderId === folderId && byId[id].aliasId === aliasId) ||
+        byId[id].folderId === 4
     );
 
+    let finalArray;
+
+    if (filter.length > 0) {
+      finalArray = filteredArr.filter(id => filter.includes(id));
+    } else {
+      finalArray = [...filteredArr];
+    }
+
     const newByIds = {};
-    filteredArr.forEach(m => {
+    finalArray.forEach(m => {
       newByIds[m] = {
         ...byId[m]
       };
@@ -163,7 +174,7 @@ export const currentMessageList = createSelector(
     return {
       loading: rootMessages.loading,
       byId: newByIds,
-      allIds: [...filteredArr]
+      allIds: [...finalArray]
     };
   }
 );

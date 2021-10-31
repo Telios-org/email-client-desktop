@@ -215,6 +215,7 @@ export type GlobalType = {
   activeFolderIndex: number;
   activeAliasIndex: number;
   activeAccountIndex: number;
+  searchFilteredMsg: string[];
   activeMsgId: {
     [index: number]: {
       id: string | null;

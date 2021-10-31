@@ -7,7 +7,7 @@ import CustomIcon from '../../Mail/Navigation/NavIcons';
 import {
   messageSelection,
   setHighlightValue,
-  selectSearched
+  selectSearch
 } from '../../../actions/mail';
 import {
   activeFolderId,
@@ -141,7 +141,13 @@ const SearchBar = (props: Props) => {
     const payload = folderIdxResults.filter(
       m => m.aliasId === val.aliasId && m.folderId === val.folderId
     )[0];
-    await dispatch(selectSearch(payload, searchQuery));
+
+    let msg = null;
+
+    if(val.type === 'email') {
+      msg = val;
+    }
+    await dispatch(selectSearch(payload, msg, searchQuery));
     setTimeout(() => {
       setSearchValue('');
     });

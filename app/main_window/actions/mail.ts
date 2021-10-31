@@ -881,8 +881,9 @@ export const setSearchFilter = (payload: string[]) => {
 
 export const selectSearch = (
   payload: any,
+  msg: MailMessageType,
   searchQuery: string
-): (dispatch: Dispatch, getState: GetState) => Promise<void> => {
+): ((dispatch: Dispatch, getState: GetState) => Promise<void>) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       mail: {
@@ -892,35 +893,33 @@ export const selectSearch = (
       globalState: { editorIsOpen }
     } = getState();
 
-    if (
-      payload.folderId !== currentFolderId &&
-      payload.aliasId !== currentAliasId
-    ) {
-      const isAlias = payload.aliasId !== null && payload.name !== 'Trash';
-      if (isAlias) {
-        const aliasIndex = aliasAllIds.indexOf(payload.aliasId);
-        await dispatch(aliasSelection(aliasIndex));
-      } else {
-        const folderIndex = foldersAllIds.indexOf(payload.folderId);
-        await dispatch(folderSelection(folderIndex));
-      }
+    const isAlias = payload.aliasId !== null && payload.name !== 'Trash';
+    if (isAlias) {
+      const aliasIndex = aliasAllIds.indexOf(payload.aliasId);
+      await dispatch(aliasSelection(aliasIndex));
+    } else {
+      const folderIndex = foldersAllIds.indexOf(payload.folderId);
+      await dispatch(folderSelection(folderIndex));
     }
 
     dispatch(setSearchFilter(payload.messages));
-
-    // const selected = {
-    //   startIdx: index,
-    //   endIdx: index,
-    //   exclude: [],
-    //   items: [message.id]
-    // };
-
-    // if (editorIsOpen) {
-    //   ipcRenderer.send('RENDERER::closeComposerWindow', { action: 'save' });
-    // }
-
     await dispatch(setHighlightValue(searchQuery));
-    // dispatch(messageSelection(message));
-    // dispatch(selectMessageRange(selected, message.folderId));
+
+    // If we actually select a specific message and not just a folder.
+    if (msg !== null) {
+
+      // const selected = {
+      //   startIdx: index,
+      //   endIdx: index,
+      //   exclude: [],
+      //   items: [message.id]
+      // };
+
+      if (editorIsOpen) {
+        ipcRenderer.send('RENDERER::closeComposerWindow', { action: 'save' });
+      }
+      dispatch(messageSelection(msg));
+      // dispatch(selectMessageRange(selected, message.folderId));
+    }
   };
 };
