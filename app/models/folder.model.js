@@ -89,7 +89,7 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('Folder');
+  const collection = await drive.db.collection('Folder');
 
   Folder.addHook('afterCreate', async (folder, options) => {
     try {

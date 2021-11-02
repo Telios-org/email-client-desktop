@@ -13,7 +13,7 @@ const model = {
     type: Sequelize.STRING,
     allowNull: false
   },
-  hyperDBSecret: {
+  driveEncryptionKey: {
     type: Sequelize.STRING,
     allowNull: false
   },

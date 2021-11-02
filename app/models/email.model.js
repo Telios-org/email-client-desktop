@@ -76,7 +76,7 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('Email');
+  const collection = await drive.db.collection('Email');
 
   Email.addHook('afterFind', async (email, options) => {
     process.send({ event: 'findEmail', email });
