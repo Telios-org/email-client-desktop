@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AutoComplete, InputGroup, Icon } from 'rsuite';
 import { Search } from 'react-iconly';
@@ -27,17 +27,20 @@ const SearchBar = (props: Props) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [results, setResults] = useState([] as string[]);
+  const [active, setStatus] = useState(false);
   const [folderIdxResults, setFolderIdxResults] = useState([] as string[]);
   const activeFolder = useSelector(activeFolderId);
   const activeAlias = useSelector(activeAliasId);
   const allFolders = useSelector(selectAllFoldersById);
   const allAliases = useSelector(selectAllAliasesById);
+  const ref = useRef();
 
-  const handleSearch = async searchQuery => {
-    setSearchValue(searchQuery);
-    if (searchQuery.replace(/\s/g, '').length !== 0) {
-      const callResults = await Mail.search(searchQuery);
-      console.log('SEARCH RESULTS::', callResults);
+  const handleSearch = async (searchQueryStr: string) => {
+    setSearchValue(searchQueryStr);
+    setSearchQuery(searchQueryStr);
+    if (searchQueryStr.replace(/\s/g, '').length !== 0) {
+      const callResults = await Mail.search(searchQueryStr);
+      // console.log('SEARCH RESULTS::', callResults);
       if (callResults) {
         // Transforming data for easier ingestion by UI
         const transform = {};
@@ -81,14 +84,14 @@ const SearchBar = (props: Props) => {
         }
 
         const keys = Object.keys(transform);
-        const final: string[] = [];
+        const final: any[] = [];
         const folderArr: any[] = [];
         let extIndex = 0;
         keys.forEach((key, index) => {
           const res = { ...transform[key] };
           res.index = extIndex;
           extIndex += 1;
-          final.push(JSON.stringify(res));
+          final.push({ value: JSON.stringify(res), label: searchQueryStr });
           folderArr.push({
             folderId: res.folderId,
             aliasId: res.aliasId,
@@ -118,17 +121,21 @@ const SearchBar = (props: Props) => {
                 } else {
                   msg.order = 'cap';
                 }
-                final.push(JSON.stringify(msg));
+                final.push({ value: JSON.stringify(msg), label: searchQueryStr });
               });
           }
         });
 
-        console.log('SEARCH TRANSFORM::', final);
+        // console.log('SEARCH TRANSFORM::', final);
 
         setResults(final);
         setFolderIdxResults(folderArr);
-        console.log(folderArr);
-        setSearchQuery(searchQuery);
+        // console.log(folderArr);
+        ref.current.focusNextMenuItem(
+          new KeyboardEvent('keypress', {
+            key: 'ArrowDown'
+          })
+        );
       }
     } else {
       setResults([]);
@@ -144,7 +151,7 @@ const SearchBar = (props: Props) => {
 
     let msg = null;
 
-    if(val.type === 'email') {
+    if (val.type === 'email') {
       msg = val;
     }
     await dispatch(selectSearch(payload, msg, searchQuery));
@@ -159,98 +166,107 @@ const SearchBar = (props: Props) => {
     setResults([]);
   };
 
-  return (
-    <InputGroup inside>
-      <InputGroup.Addon>
-        <Search size="small" set="broken" className="text-sm" />
-      </InputGroup.Addon>
-      <AutoComplete
-        className="text-sm"
-        data={results}
-        value={searchValue}
-        placeholder="Search"
-        onChange={handleSearch}
-        onSelect={handleSelect}
-        filterBy={(value, item) => true} // by design (rsuite) the dropdown only shows if the string matches the content, we need it to always show
-        onClose={handleExit}
-        renderItem={item => {
-          const {
-            type,
-            name,
-            icon,
-            subject,
-            date,
-            count,
-            fromJSON,
-            toJSON,
-            order
-          } = JSON.parse(item.label);
+  const activate = () => {
+    setStatus(true);
+    console.log('SEARCH ACTIVATION::', active);
+  };
 
-          if (type !== 'email') {
-            const IconTag = CustomIcon[icon];
+  return (
+    <div onClick={activate}>
+      {/* SHOULDN'T BE USING RSUITE COMPONENT - HACKY COMPONENT - TODO:REWRITE FROM SCRATCH */}
+      <InputGroup inside className="SearchArea">
+        <InputGroup.Addon>
+          <Search size="small" set="broken" className="text-sm" />
+        </InputGroup.Addon>
+        <AutoComplete
+          ref={ref}
+          className="text-sm SearchInput"
+          data={results}
+          value={searchValue}
+          placeholder="Search"
+          onChange={handleSearch}
+          onSelect={handleSelect}
+          filterBy={(value, item) => true} // by design (rsuite) the dropdown only shows if the string matches the content, we need it to always show
+          onClose={handleExit}
+          renderItem={item => {
+            const {
+              type,
+              name,
+              icon,
+              subject,
+              date,
+              count,
+              fromJSON,
+              toJSON,
+              order
+            } = JSON.parse(item.value);
+
+            if (type !== 'email') {
+              const IconTag = CustomIcon[icon];
+
+              return (
+                <div className="z-100 sm:w-54 md:w-72 lg:w-96">
+                  <div className="flex">
+                    <div className="mr-3 w-4">
+                      <IconTag
+                        size="small"
+                        set="broken"
+                        className="text-purple-700 mt-0.5"
+                      />
+                    </div>
+                    <div className="flex-grow font-semibold text-sm mt-auto">
+                      <span className="border-b pb-0.5">{name}</span>
+                    </div>
+                    <div className="text-xs mt-auto text-coolGray-400">
+                      <span className="mr-1">{`${count}`}</span>
+                      <span className="">email(s)</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            const senderEmail = JSON.parse(fromJSON)[0].address;
+            const parsedSender = JSON.parse(fromJSON)[0].name || senderEmail;
+            const parsedDate = formatDateDisplay(date);
+            const parsedRecipient = JSON.parse(toJSON).reduce(function(
+              previous: string,
+              current: { name: string; address: string }
+            ) {
+              const val = current.name || current.address;
+              return `${previous + val} `;
+            },
+            'To: ');
 
             return (
-              <div className="z-100 sm:w-54 md:w-72 lg:w-96">
-                <div className="flex">
-                  <div className="mr-3 w-4">
-                    <IconTag
-                      size="small"
-                      set="broken"
-                      className="text-purple-700 mt-0.5"
-                    />
+              <div className="z-100 sm:w-54 md:w-72 lg:w-96 relative w-full">
+                <div
+                  className={`flex flex-col ${
+                    order === 'cap' ? styles.searchSvgLast : styles.searchSvg
+                  } relative w-full`}
+                >
+                  <div className="ml-6 flex-row flex pb-1 font-medium text-xs">
+                    <div className="flex-auto leading-tight line-clamp-1 break-all font-bold">
+                      {name === 'Sent' || name === 'Drafts'
+                        ? parsedRecipient
+                        : parsedSender}
+                    </div>
+
+                    <div className="ml-2 text-xs font-bold flex self-end text-trueGray-500">
+                      {parsedDate}
+                    </div>
                   </div>
-                  <div className="flex-grow font-semibold text-sm mt-auto">
-                    <span className="border-b pb-0.5">{name}</span>
-                  </div>
-                  <div className="text-xs mt-auto text-coolGray-400">
-                    <span className="mr-1">{`${count}`}</span>
-                    <span className="">email(s)</span>
+                  {/* <div className="mr-3 -my-2 overflow-hidden w-1 border-coolGray-400 border-r-2" /> */}
+                  <div className="ml-6 flex-grow flex-1 leading-tight overflow-hidden text-xs break-all line-clamp-1">
+                    {subject}
                   </div>
                 </div>
               </div>
             );
-          }
-
-          const senderEmail = JSON.parse(fromJSON)[0].address;
-          const parsedSender = JSON.parse(fromJSON)[0].name || senderEmail;
-          const parsedDate = formatDateDisplay(date);
-          const parsedRecipient = JSON.parse(toJSON).reduce(function(
-            previous: string,
-            current: { name: string; address: string }
-          ) {
-            const val = current.name || current.address;
-            return `${previous + val} `;
-          },
-          'To: ');
-
-          return (
-            <div className="z-100 sm:w-54 md:w-72 lg:w-96 relative w-full">
-              <div
-                className={`flex flex-col ${
-                  order === 'cap' ? styles.searchSvgLast : styles.searchSvg
-                } relative w-full`}
-              >
-                <div className="ml-6 flex-row flex pb-1 font-medium text-xs">
-                  <div className="flex-auto leading-tight line-clamp-1 break-all font-bold">
-                    {name === 'Sent' || name === 'Drafts'
-                      ? parsedRecipient
-                      : parsedSender}
-                  </div>
-
-                  <div className="ml-2 text-xs font-bold flex self-end text-trueGray-500">
-                    {parsedDate}
-                  </div>
-                </div>
-                {/* <div className="mr-3 -my-2 overflow-hidden w-1 border-coolGray-400 border-r-2" /> */}
-                <div className="ml-6 flex-grow flex-1 leading-tight overflow-hidden text-xs break-all line-clamp-1">
-                  {subject}
-                </div>
-              </div>
-            </div>
-          );
-        }}
-      />
-    </InputGroup>
+          }}
+        />
+      </InputGroup>
+    </div>
   );
 };
 

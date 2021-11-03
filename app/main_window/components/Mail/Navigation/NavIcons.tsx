@@ -6,7 +6,8 @@ import {
   Delete,
   Star,
   Message,
-  Bookmark
+  Bookmark,
+  Document
 } from 'react-iconly';
 
 const Hash = props => {
@@ -22,7 +23,8 @@ const CustomIcon = {
   'trash-o': Delete,
   'folder-o': Bookmark,
   ban: Danger,
-  alias: Hash
+  alias: Hash,
+  msg: Document
 };
 
 export { CustomIcon as default };
