@@ -18,13 +18,42 @@ import styles from './SearchBar.less';
 const Mail = require('../../../../services/mail.service');
 const { formatDateDisplay } = require('../../../utils/date.util');
 
+enum Focus {
+  /** Focus the first non-disabled item. */
+  First,
+
+  /** Focus the previous non-disabled item. */
+  Previous,
+
+  /** Focus the next non-disabled item. */
+  Next,
+
+  /** Focus the last non-disabled item. */
+  Last,
+
+  /** Focus a specific item based on the `id` of the item. */
+  Specific,
+
+  /** Focus no items at all. */
+  Nothing
+}
+
+const mod = (val, mod) => {
+  return ((val % mod) + mod) % mod;
+};
+
+const assertNever = (x: number): never => {
+  throw new Error(`Unexpected object: ${x}`);
+};
+
 const Search = () => {
   const dispatch = useDispatch();
   const [isOpen, setStatus] = useState(false);
   const [isFocused, setFocus] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   // const [loadingSearch, setLoadingIndicator] = useState(false);
-  const [results, setResults] = useState([] as any[]);
+  const [items, setItems] = useState([] as any[]);
+  const [activeIndex, setActiveIndex] = useState(null);
   const [folderIdxResults, setFolderIdxResults] = useState([] as string[]);
   const activeFolder = useSelector(activeFolderId);
   const activeAlias = useSelector(activeAliasId);
@@ -33,6 +62,7 @@ const Search = () => {
 
   const menuRef = useRef();
 
+  // Controls the Open state of the Menu
   useEffect(() => {
     if (searchQuery.length > 0 && isFocused) {
       setStatus(true);
@@ -41,10 +71,9 @@ const Search = () => {
     }
   }, [searchQuery, isFocused]);
 
+  // Accounting for Blur event outside of the Input and Menu
   useEffect(() => {
-    console.log('SEARCH USEEFFECT', menuRef);
     const handleOutsideClick = e => {
-      console.log('HANDLEOUTSIDECLICK', e);
       if (!menuRef?.current?.contains(e.target)) {
         setFocus(false);
       }
@@ -55,6 +84,7 @@ const Search = () => {
     };
   }, [menuRef]);
 
+  // Handle Input Search with call to the Index DB
   const handleSearch = async event => {
     const {
       target: { value: searchQueryStr }
@@ -128,8 +158,9 @@ const Search = () => {
               activeFolder === res.folderId)
           ) {
             // we only want the 4 most recent messages for that folder.
+            const maxDisplay = 4;
             res.messages
-              .slice(0, 4)
+              .slice(0, maxDisplay)
               .sort((a, b) => {
                 return new Date(b.date) - new Date(a.date);
               })
@@ -137,9 +168,16 @@ const Search = () => {
                 const msg = { ...m };
                 msg.index = extIndex;
                 extIndex += 1;
-                if (idx === 0 && res.messages.length - 1 !== idx) {
+                if (
+                  idx === 0 &&
+                  res.messages.length - 1 !== idx &&
+                  idx !== maxDisplay - 1
+                ) {
                   msg.order = 'start';
-                } else if (res.messages.length - 1 !== idx) {
+                } else if (
+                  res.messages.length - 1 !== idx &&
+                  idx !== maxDisplay - 1
+                ) {
                   msg.order = 'middle';
                 } else {
                   msg.order = 'cap';
@@ -151,11 +189,11 @@ const Search = () => {
 
         // console.log('SEARCH TRANSFORM::', final);
 
-        setResults(final);
+        setItems(final);
         setFolderIdxResults(folderArr);
       }
     } else {
-      setResults([]);
+      setItems([]);
       setFolderIdxResults({});
     }
     // setTimeout(() => {
@@ -164,6 +202,7 @@ const Search = () => {
     // setLoadingIndicator(false);
   };
 
+  // Handles Selecting of a Search Result
   const handleSelect = async (event, selected) => {
     const payload = folderIdxResults.filter(
       m => m.aliasId === selected.aliasId && m.folderId === selected.folderId
@@ -178,16 +217,107 @@ const Search = () => {
     setFocus(false);
   };
 
-  const inputBlur = event => {
-    console.log('INPUTBLUR', event);
-    // if (!menuRef?.current?.contains(event.target)) {
-    //   setFocus(false);
-    // }
-  };
-
+  // When input is given to the input field.
   const inputFocus = event => {
     setFocus(true);
   };
+
+  // Pseudo-Focus Controls for Menu Items, determine the highlighting
+  const calculateActiveIndex = (focus: Focus) => {
+    if (items.length <= 0) return null;
+
+    const nextActiveIndex = (() => {
+      switch (focus) {
+        case Focus.First:
+          return items.findIndex(item => true);
+
+        case Focus.Previous: {
+          return mod(activeIndex - 1, items.length);
+        }
+
+        case Focus.Next:
+          return mod(activeIndex + 1, items.length);
+
+        case Focus.Last: {
+          return items.length - 1;
+        }
+
+        case Focus.Nothing:
+          return null;
+
+        default:
+          assertNever(focus);
+      }
+    })();
+
+    return nextActiveIndex;
+  };
+
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    // switch (event.key) {
+    //   // Ref: https://www.w3.org/TR/wai-aria-practices-1.2/#keyboard-interaction-12
+
+    //   // @ts-expect-error Fallthrough is expected here
+    //   case Keys.Space:
+    //     if (searchQuery !== '') {
+    //       event.preventDefault()
+    //       event.stopPropagation()
+    //       return dispatch({ type: ActionTypes.Search, value: event.key })
+    //     }
+    //   // When in type ahead mode, fallthrough
+    //   case Keys.Enter:
+    //     event.preventDefault()
+    //     event.stopPropagation()
+    //     dispatch({ type: ActionTypes.CloseMenu })
+    //     if (state.activeItemIndex !== null) {
+    //       let { id } = state.items[state.activeItemIndex]
+    //       document.getElementById(id)?.click()
+    //     }
+    //     disposables().nextFrame(() => state.buttonRef.current?.focus({ preventScroll: true }))
+    //     break
+
+    //   case Keys.ArrowDown:
+    //     event.preventDefault()
+    //     event.stopPropagation()
+    //     return dispatch({ type: ActionTypes.GoToItem, focus: Focus.Next })
+
+    //   case Keys.ArrowUp:
+    //     event.preventDefault()
+    //     event.stopPropagation()
+    //     return dispatch({ type: ActionTypes.GoToItem, focus: Focus.Previous })
+
+    //   case Keys.Home:
+    //   case Keys.PageUp:
+    //     event.preventDefault()
+    //     event.stopPropagation()
+    //     return dispatch({ type: ActionTypes.GoToItem, focus: Focus.First })
+
+    //   case Keys.End:
+    //   case Keys.PageDown:
+    //     event.preventDefault()
+    //     event.stopPropagation()
+    //     return dispatch({ type: ActionTypes.GoToItem, focus: Focus.Last })
+
+    //   case Keys.Escape:
+    //     event.preventDefault()
+    //     event.stopPropagation()
+    //     dispatch({ type: ActionTypes.CloseMenu })
+    //     disposables().nextFrame(() => state.buttonRef.current?.focus({ preventScroll: true }))
+    //     break
+
+    //   case Keys.Tab:
+    //     event.preventDefault()
+    //     event.stopPropagation()
+    //     break
+
+    //   default:
+    //     if (event.key.length === 1) {
+    //       dispatch({ type: ActionTypes.Search, value: event.key })
+    //       searchDisposables.setTimeout(() => dispatch({ type: ActionTypes.ClearSearch }), 350)
+    //     }
+    //     break
+    // }
+  }
 
   return (
     <div
@@ -204,7 +334,6 @@ const Search = () => {
           minLength={1}
           debounceTimeout={300}
           onFocus={inputFocus}
-          onBlur={inputBlur}
         />
         {/* <button className="border border-coolGray-500 bg-coolGray-300">
           Cancel
@@ -240,12 +369,12 @@ const Search = () => {
                 </svg>
               </li>
             )} */}
-            {results.length === 0 && (
+            {items.length === 0 && (
               <li className="text-sm text-center text-coolGray-300 w-full py-2 mx-auto">
-                No results
+                No items
               </li>
             )}
-            {results.map(item => {
+            {items.map(item => {
               const {
                 type,
                 name,
@@ -332,7 +461,7 @@ const Search = () => {
                           className="text-purple-700 transform translate-y-0.5"
                         />
                       </div>
-                      <div className="flex flex-col">
+                      <div className="flex flex-grow flex-col">
                         <div className="flex-row flex pb-1 font-medium text-xs">
                           <div className="flex-auto leading-tight line-clamp-1 break-all font-bold">
                             {name === 'Sent' || name === 'Drafts'
