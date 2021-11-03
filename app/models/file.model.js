@@ -64,7 +64,7 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('__File'); // Use default file collection from drive. Creating another one would be duplicative
+  const collection = await drive.db.collection('__File'); // Use default file collection from drive. Creating another one would be duplicative
 
   File.addHook('beforeDestroy', async (file, options) => {
     try {

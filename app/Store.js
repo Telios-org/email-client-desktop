@@ -16,6 +16,7 @@ class Store {
     };
 
     this.drive = null;
+    this.encryptionKey = null;
     this.acctPath = null;
     this.accountSecrets = {};
     this.account = null;
@@ -33,10 +34,13 @@ class Store {
     this.teliosPubKey = 'fa8932f0256a4233dde93195d24a6ae4d93cc133d966f3c9f223e555953c70c1';
   }
 
-  setDrive({ name, keyPair, secret, acl = [] }) {
+  setDrive({ name, keyPair, encryptionKey, acl = [] }) {
+    this.encryptionKey = encryptionKey
+    if(!Buffer.isBuffer(encryptionKey)) this.encryptionKey = Buffer.from(encryptionKey, 'hex')
+    
     this.drive = new Drive(name, null, {
       keyPair,
-      secret,
+      encryptionKey: this.encryptionKey,
       swarmOpts: {
         server: true,
         client: true,

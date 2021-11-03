@@ -95,7 +95,7 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('Contact');
+  const collection = await drive.db.collection('Contact');
 
   Contact.addHook('afterCreate', async (contact, options) => {
     try {

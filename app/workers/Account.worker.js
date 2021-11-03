@@ -24,13 +24,13 @@ module.exports = userDataPath => {
 
         // Generate account key bundle
         const { secretBoxKeypair, signingKeypair, mnemonic } = SDK.Account.makeKeys();
-        const secret = SDK.Crypto.generateAEDKey();
+        const encryptionKey = SDK.Crypto.generateAEDKey();
 
         // Create account Nebula drive
         const drive = store.setDrive(
           {
             name: `${acctPath}/Drive`,
-            secret,
+            encryptionKey,
             keyPair: {
               publicKey: Buffer.from(signingKeypair.publicKey, 'hex'),
               secretKey: Buffer.from(signingKeypair.privateKey, 'hex')
@@ -45,7 +45,6 @@ module.exports = userDataPath => {
             account_key: secretBoxKeypair.publicKey,
             recovery_email: payload.recoveryEmail,
             device_drive_key: drive.publicKey,
-            device_drive_diff_key: drive.diffFeedKey,
             device_signing_key: signingKeypair.publicKey
           },
         };
@@ -59,10 +58,10 @@ module.exports = userDataPath => {
           vcode: payload.vcode,
         };
 
-        const { _sig: serverSig, _drive_diff_key: diffKey } = await Account.register(registerPayload);
+        const { _sig: serverSig } = await Account.register(registerPayload);
 
         // Add server's drive as a peer to start replicating
-        await drive.addPeer(diffKey);
+        // await drive.addPeer(diffKey);
 
         const connection = new Models(acctPath, payload.password, { sync: true, sparse: false });
 
@@ -74,7 +73,7 @@ module.exports = userDataPath => {
           uid: accountUID,
           secretBoxPubKey: secretBoxKeypair.publicKey,
           secretBoxPrivKey: secretBoxKeypair.privateKey,
-          hyperDBSecret: secret,
+          driveEncryptionKey: encryptionKey,
           deviceSigningPubKey: signingKeypair.publicKey,
           deviceSigningPrivKey: signingKeypair.privateKey,
           serverSig: serverSig,
@@ -125,8 +124,7 @@ module.exports = userDataPath => {
           connection = new Models(acctPath, payload.password, { sync: false, sparse: true });
         }
 
-        // Initialize drive
-        const drive = store.setDrive({ name: `${acctPath}/Drive` });
+        
 
         // Initialize Account table
         await connection.initAccount();
@@ -134,13 +132,17 @@ module.exports = userDataPath => {
         // Load account
         acct = await AccountModel.findOne({ raw: true });
 
-        drive.keyPair = {
-          publicKey: Buffer.from(acct.deviceSigningPubKey, 'hex'),
-          secretKey: Buffer.from(acct.deviceSigningPrivKey, 'hex')
-        }
+        // Initialize drive
+        drive = store.setDrive({ 
+          name: `${acctPath}/Drive`, 
+          encryptionKey: acct.driveEncryptionKey, 
+          keyPair: {
+            publicKey: Buffer.from(acct.deviceSigningPubKey, 'hex'),
+            secretKey: Buffer.from(acct.deviceSigningPrivKey, 'hex')
+          }
+        });
 
-        // Set drive secret
-        drive.setSecret(acct.hyperDBSecret);
+        await drive.ready()
 
         // Initialize remaing tables now that our encryption key is set
         await connection.initAll();
