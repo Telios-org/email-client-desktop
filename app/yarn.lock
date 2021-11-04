@@ -75,7 +75,7 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
-"@telios/nebula-drive@^2.0.0", "@telios/nebula-drive@^2.1.0":
+"@telios/nebula-drive@^2.0.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-2.1.0.tgz#3b983c8c2257efe5c4c00983eb5c015e99ebe573"
   integrity sha512-o+BH0OKCTqtWZqOe5+MiFzfhPiZSGYZs/YFPeKlHJH830x+l4ktJNx653snsFvl8CIRv62QyUFbbdpwon5Y+IQ==
@@ -89,6 +89,28 @@
     dat-encoding "^5.0.1"
     hyperbee "^1.6.3"
     hypercore "^10.0.0-alpha.9"
+    hyperswarm "^3.0.0"
+    memorystream "^0.3.1"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    rimraf "^3.0.2"
+    sodium-native "^3.2.0"
+    uuid "^8.2.0"
+
+"@telios/nebula-drive@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-2.2.0.tgz#cff235bcfe598e298c18ffb088ed337c4d81ff14"
+  integrity sha512-saWDEsi+7McLGBh4L8FtHE/HSOobGgbVw6CGagQJWpPKzv5W69cU6Xl67CenuPgoWSzuGc7fFbDX9zJiYsagSA==
+  dependencies:
+    "@geut/hypercore-promise" "^2.1.1"
+    async "^3.2.0"
+    autobase "^1.0.0-alpha.0"
+    blakejs "^1.1.0"
+    bson "^4.5.0"
+    chokidar "^3.5.1"
+    dat-encoding "^5.0.1"
+    hyperbee "^1.6.3"
+    hypercore "^10.0.0-alpha.10"
     hyperswarm "^3.0.0"
     memorystream "^0.3.1"
     pump "^3.0.0"
@@ -1062,7 +1084,7 @@ hypercore-streams@^1.0.1:
   dependencies:
     streamx "^2.6.0"
 
-hypercore@^10.0.0-alpha.9:
+hypercore@^10.0.0-alpha.10, hypercore@^10.0.0-alpha.9:
   version "10.0.0-alpha.10"
   resolved "https://registry.yarnpkg.com/hypercore/-/hypercore-10.0.0-alpha.10.tgz#907152e3971edd2aaae340a548ad85157de940fb"
   integrity sha512-/If4KoamTJf1bFPuZgKqC4czgaMu3Fzpk0C8CpLg64uvJgHFJXFiheG8l+JSS+ehZE56Bd8DurDEXmHJfjiDnw==
