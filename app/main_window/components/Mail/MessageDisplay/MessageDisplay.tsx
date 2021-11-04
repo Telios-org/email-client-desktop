@@ -31,7 +31,7 @@ import stringToHslColor from '../../../utils/avatar.util';
 import Attachments from '../../../../composer_window/components/Attachments/Attachments';
 
 // STYLES
-// import styles from './MessageDisplay.less';
+// import styles from './MessageDisplay.css';
 
 // REDUX ACTIONS
 import {

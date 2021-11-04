@@ -10,7 +10,7 @@ import { DragPreviewImage, useDrag, useDragLayer } from 'react-dnd';
 import { AiOutlinePaperClip } from 'react-icons/ai';
 
 // CSS/LESS STYLES
-import styles from './MessagePreview.less';
+import styles from './MessagePreview.css';
 
 // BASE64 IMAGE
 import { envelope } from '../../envelope';

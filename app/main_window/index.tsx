@@ -4,7 +4,7 @@ import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { configureStore, history } from './store/configureStore';
 // import 'tailwindcss/tailwind.css';
-import '../app.global.less';
+import '../app.global.css';
 
 const store = configureStore();
 

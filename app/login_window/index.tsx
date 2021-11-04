@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import LoginPage from './containers/LoginPage';
 // import '../app.tailwind.css';
-import '../app.global.less';
+import '../app.global.css';
 
 const { nativeTheme } = require('electron').remote;
 

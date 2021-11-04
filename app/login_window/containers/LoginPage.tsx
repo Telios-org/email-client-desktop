@@ -6,7 +6,7 @@ import WavyHeader from '../components/designElements/WavyHeader';
 import WavyFooter from '../components/designElements/WavyFooter';
 import FirstTimeScreen from '../components/FirstTimeScreen';
 import PasswordTile from '../components/PasswordTile';
-import styles from './LoginPage.less';
+import styles from './LoginPage.css';
 
 const themeUtils = require('../../utils/themes.util');
 const LoginService = require('../../services/login.service');

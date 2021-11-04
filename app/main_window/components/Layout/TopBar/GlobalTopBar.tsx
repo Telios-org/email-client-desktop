@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { MailboxType } from '../../../reducers/types';
-import Profile from './Profile--D';
 import Search from './Search';
 import WindowControls from '../../../../global_components/WindowControls/WindowControls';
-import styles from './GlobalTopBar.less';
+import styles from './GlobalTopBar.css';
 
 type Props = {
   // this object would hold any props not coming from redux

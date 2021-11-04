@@ -1,0 +1,13 @@
+.navItem {
+  user-select: none;
+}
+.navItem:hover {
+  cursor: pointer;
+}
+.chevron {
+  width: 22px;
+  height: 22px;
+  padding: 2px;
+}
+
+

@@ -23,7 +23,7 @@ import NewFolderModal from './NewFolderModal';
 import AliasSection from './Aliases/AliasSection';
 
 // CSS/LESS STYLES
-import styles from './Navigation.less';
+import styles from './Navigation.css';
 
 // INTERNATIONALIZATION
 import i18n from '../../../../i18n/i18n';

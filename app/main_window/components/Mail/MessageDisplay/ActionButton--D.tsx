@@ -1,7 +1,7 @@
 import React from 'react';
 import { Loader } from 'rsuite';
 import { BsReplyAll, BsReply, BsForward, BsTrash } from 'react-icons/bs';
-import styles from './ActionButton.less';
+import styles from './ActionButton.css';
 
 type Props = {
   action: string;

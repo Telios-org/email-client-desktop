@@ -17,7 +17,7 @@ import {
 } from '../../../selectors/mail';
 import { search } from '../../../../services/mail.service';
 
-import styles from './SearchBar.less';
+import styles from './SearchBar.css';
 
 const Mail = require('../../../../services/mail.service');
 const { formatDateDisplay } = require('../../../utils/date.util');

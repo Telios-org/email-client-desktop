@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DebounceInput } from 'react-debounce-input';
+import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { Search as SearchIcon } from 'react-iconly';
 import { setTimeout } from 'timers';
 import CustomIcon from '../../Mail/Navigation/NavIcons';
@@ -13,7 +14,7 @@ import {
 } from '../../../selectors/mail';
 import { search } from '../../../../services/mail.service';
 
-import styles from './SearchBar.less';
+import styles from './SearchBar.css';
 
 const Mail = require('../../../../services/mail.service');
 const { formatDateDisplay } = require('../../../utils/date.util');
@@ -257,7 +258,7 @@ const Search = () => {
     setSearchQuery('');
     setItems([]);
     setFolderIdxResults({});
-    await dispatch(clearSearchFilter);
+    await dispatch(clearSearchFilter());
   };
 
   // Pseudo-Focus Controls for Menu Items, determine the highlighting
@@ -301,12 +302,11 @@ const Search = () => {
     setActiveIndex(newIdx);
   };
 
-  const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     switch (event.key) {
       // Ref: https://www.w3.org/TR/wai-aria-practices-1.2/#keyboard-interaction-12
 
       // @ts-expect-error Fallthrough is expected here
-      case Keys.Space:
       case Keys.Enter:
         if (searchQuery !== '' && activeIndex !== null) {
           event.preventDefault();
@@ -357,11 +357,24 @@ const Search = () => {
     }
   };
 
+  const handleGlobalKeyDown = async (
+    key: string,
+    event: React.KeyboardEvent<HTMLDivElement>
+  ) => {
+    if (!isOpen && key === 'esc') {
+      await clearSearch();
+    }
+  };
+
   return (
     <div
       className="w-full bg-white rounded relative inline-block"
       ref={menuRef}
     >
+      <KeyboardEventHandler
+        handleKeys={['esc']}
+        onKeyEvent={handleGlobalKeyDown}
+      />
       <div>
         <DebounceInput
           className="h-7 w-full rounded outline-none pl-4 text-sm text-black"

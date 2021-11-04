@@ -6,7 +6,7 @@ import AttachmentPreview from './AttachmentPreview';
 
 import ComposerService from '../../../services/composer.service';
 import { AttachmentType } from '../../../main_window/reducers/types';
-import styles from './Attachments.less';
+import styles from './Attachments.css';
 
 const mime = require('mime-types');
 const path = require('path');

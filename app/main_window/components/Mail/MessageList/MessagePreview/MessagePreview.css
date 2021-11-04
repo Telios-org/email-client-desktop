@@ -1,0 +1,16 @@
+.lineClamp {
+	 display: -webkit-box;
+	 -webkit-line-clamp: 1;
+	 -webkit-box-orient: vertical;
+	 overflow: hidden;
+	 word-break: break-all;
+}
+ .row {
+	 user-select: none;
+}
+ .row .lock {
+	 color: #80d74e;
+	 font-size: 14px;
+	 text-align: center;
+}
+ 
