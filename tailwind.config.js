@@ -44,9 +44,10 @@ const theme = {
     '4xl': '80px'
   },
   extend: {
-    // fontSize: {
-    //   '2xs': '.70rem'
-    // },
+    transitionProperty: {
+      height: 'height',
+      spacing: 'margin, padding'
+    },
     backgroundImage: {
       'search-t':
         "url('data:image/svg+xml,%3Csvg width='12' height='200' viewBox='0 0 12 200' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 1 0 V 200 M 1 100 H 12' stroke='%23a1a1aa' stroke-width='2'/%3E%3C/svg%3E%0A')",

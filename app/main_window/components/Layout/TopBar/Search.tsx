@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DebounceInput } from 'react-debounce-input';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { Search as SearchIcon } from 'react-iconly';
-import { setTimeout } from 'timers';
 import CustomIcon from '../../Mail/Navigation/NavIcons';
 import { selectSearch, clearSearchFilter } from '../../../actions/mail';
 import {
@@ -12,7 +11,6 @@ import {
   selectAllFoldersById,
   selectAllAliasesById
 } from '../../../selectors/mail';
-import { search } from '../../../../services/mail.service';
 
 import styles from './SearchBar.css';
 
@@ -255,6 +253,7 @@ const Search = () => {
 
   const clearSearch = async () => {
     setFocus(false);
+    inputRef?.current?.blur();
     setSearchQuery('');
     setItems([]);
     setFolderIdxResults({});
@@ -368,16 +367,31 @@ const Search = () => {
 
   return (
     <div
-      className="w-full bg-white rounded relative inline-block"
+      className={`w-full transition-colors rounded relative inline-block mt-0.5 ${
+        isFocused || searchQuery !== '' ? 'bg-white' : 'bg-coolGray-800 cursor-pointer'
+      }`}
       ref={menuRef}
     >
       <KeyboardEventHandler
         handleKeys={['esc']}
         onKeyEvent={handleGlobalKeyDown}
       />
-      <div>
+      <div className="flex flex-row text-coolGray-500 items-center">
+        <div
+          className={`${
+            isFocused || searchQuery !== ''
+              ? styles.activeSearch
+              : styles.iddleSearch
+          }`}
+        >
+          <SearchIcon
+            set="broken"
+            size="small"
+            className="ml-2 text-coolGray-400"
+          />
+        </div>
         <DebounceInput
-          className="h-7 w-full rounded outline-none pl-4 text-sm text-black"
+          className="placeholder-coolGray-400 h-7 w-full rounded outline-none bg-transparent pl-1 text-xs"
           style={{ cursor: 'text' }}
           placeholder="Search"
           value={searchQuery}
@@ -388,9 +402,14 @@ const Search = () => {
           onKeyDown={handleKeyDown}
           inputRef={inputRef}
         />
-        {/* <button className="border border-coolGray-500 bg-coolGray-300">
-          Cancel
-        </button> */}
+        {(isFocused || searchQuery !== '') && (
+          <button
+            type="button"
+            className={`outline-none ${styles.keyboardActions}`}
+          >
+            Cancel
+          </button>
+        )}
       </div>
       {isOpen && (
         <div
@@ -398,33 +417,9 @@ const Search = () => {
       right-0 mt-2 origin-top-right z-50 shadow-lg outline-none border border-gray-200"
         >
           <ul className="mb-0 text-coolGray-600 py-0.5">
-            {/* {loadingSearch && (
-              <li className="text-sm text-coolGray-300 w-full py-2">
-                <svg
-                  className="animate-spin h-5 w-5 mx-auto"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-              </li>
-            )} */}
             {items.length === 0 && (
-              <li className="text-sm text-center text-coolGray-300 w-full py-2 mx-auto">
-                No items
+              <li className="text-sm text-center text-coolGray-400 w-full py-2 mx-auto">
+                No results
               </li>
             )}
             {items.map(item => {
@@ -456,15 +451,16 @@ const Search = () => {
                     key={`folder_search_key_${folderkey}`}
                   >
                     <div
-                      className={`flex rounded p-2 ${
+                      className={`flex rounded p-2 outline-none ${
                         activeIndex === index ? 'bg-violet-50' : ''
                       }`}
                       style={{ cursor: 'pointer' }}
                       role="menuitem"
                       onClick={e => handleSelect(index)}
+                      tabIndex={0}
+                      onKeyDown={handleKeyDown}
                       onMouseEnter={() =>
-                        calculateActiveIndex(Focus.Specific, index)
-                      }
+                        calculateActiveIndex(Focus.Specific, index)}
                       onMouseLeave={() => calculateActiveIndex(Focus.Nothing)}
                     >
                       <div className="mr-3 w-4 relative">
@@ -509,15 +505,16 @@ const Search = () => {
                     } relative w-full`}
                   >
                     <div
-                      className={`ml-7 flex flex-row rounded p-2 pl-1 ${
+                      className={`ml-7 flex flex-row outline-none rounded p-2 pl-1 ${
                         activeIndex === index ? 'bg-violet-50' : ''
                       } `}
                       style={{ cursor: 'pointer' }}
                       role="menuitem"
+                      tabIndex={0}
+                      onKeyDown={handleKeyDown}
                       onClick={e => handleSelect(index)}
                       onMouseEnter={() =>
-                        calculateActiveIndex(Focus.Specific, index)
-                      }
+                        calculateActiveIndex(Focus.Specific, index)}
                       onMouseLeave={() => calculateActiveIndex(Focus.Nothing)}
                     >
                       <div className="mr-2 w-4 relative flex items-center">

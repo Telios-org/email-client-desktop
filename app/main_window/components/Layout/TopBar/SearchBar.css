@@ -21,3 +21,32 @@
     background-repeat: no-repeat;
     background-position: 0;
 }
+
+.keyboardActions {
+    flex: none;
+    font-size: 0;
+    border-radius: .2rem;
+    background-color: #f9fafb;
+    border: 1px solid #d1d5db;
+    padding: .075rem .375rem;
+    margin: 0.25rem;
+}
+
+.keyboardActions::before {
+    content: "esc";
+    color: #9ca3af;
+    font-size: .75rem;
+    line-height: .75rem;
+}
+
+.iddleSearch{
+    padding-left: 43%!important;
+    transition: padding 0.3s ease;
+    cursor: 'pointer'!important;
+}
+
+.activeSearch{
+    padding-left: 0px!important;
+    transition: padding 0.3s ease;
+    cursor: 'text'!important;
+}
