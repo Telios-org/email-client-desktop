@@ -4,7 +4,7 @@ import { DebounceInput } from 'react-debounce-input';
 import { Search as SearchIcon } from 'react-iconly';
 import { setTimeout } from 'timers';
 import CustomIcon from '../../Mail/Navigation/NavIcons';
-import { selectSearch } from '../../../actions/mail';
+import { selectSearch, clearSearchFilter } from '../../../actions/mail';
 import {
   activeFolderId,
   activeAliasId,
@@ -38,6 +38,27 @@ enum Focus {
   Nothing
 }
 
+// Ref: https://www.w3.org/TR/uievents-key/#named-key-attribute-values
+enum Keys {
+  Space = ' ',
+  Enter = 'Enter',
+  Escape = 'Escape',
+  Backspace = 'Backspace',
+
+  ArrowLeft = 'ArrowLeft',
+  ArrowUp = 'ArrowUp',
+  ArrowRight = 'ArrowRight',
+  ArrowDown = 'ArrowDown',
+
+  Home = 'Home',
+  End = 'End',
+
+  PageUp = 'PageUp',
+  PageDown = 'PageDown',
+
+  Tab = 'Tab'
+}
+
 const mod = (val, mod) => {
   return ((val % mod) + mod) % mod;
 };
@@ -53,7 +74,7 @@ const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   // const [loadingSearch, setLoadingIndicator] = useState(false);
   const [items, setItems] = useState([] as any[]);
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0 as number | null);
   const [folderIdxResults, setFolderIdxResults] = useState([] as string[]);
   const activeFolder = useSelector(activeFolderId);
   const activeAlias = useSelector(activeAliasId);
@@ -61,6 +82,7 @@ const Search = () => {
   const allAliases = useSelector(selectAllAliasesById);
 
   const menuRef = useRef();
+  const inputRef = useRef();
 
   // Controls the Open state of the Menu
   useEffect(() => {
@@ -84,12 +106,15 @@ const Search = () => {
     };
   }, [menuRef]);
 
+  // ADD EVENT LISTENER FOR ESCAPE TO CLEAR SEARCH
+
   // Handle Input Search with call to the Index DB
   const handleSearch = async event => {
     const {
       target: { value: searchQueryStr }
     } = event;
     setSearchQuery(searchQueryStr);
+    setActiveIndex(0);
     // setLoadingIndicator(true);
     if (searchQueryStr.replace(/\s/g, '').length !== 0) {
       const callResults = await Mail.search(searchQueryStr);
@@ -203,18 +228,23 @@ const Search = () => {
   };
 
   // Handles Selecting of a Search Result
-  const handleSelect = async (event, selected) => {
-    const payload = folderIdxResults.filter(
-      m => m.aliasId === selected.aliasId && m.folderId === selected.folderId
-    )[0];
+  const handleSelect = async index => {
+    if (items.length > 0) {
+      const selected = items[index];
+      const payload = folderIdxResults.filter(
+        m => m.aliasId === selected.aliasId && m.folderId === selected.folderId
+      )[0];
 
-    let msg = null;
+      let msg = null;
 
-    if (selected.type === 'email') {
-      msg = selected;
+      if (selected.type === 'email') {
+        msg = selected;
+      }
+      await dispatch(selectSearch(payload, msg, searchQuery));
+      setFocus(false);
+      // Blurring the input field when closing the menu
+      inputRef?.current?.blur();
     }
-    await dispatch(selectSearch(payload, msg, searchQuery));
-    setFocus(false);
   };
 
   // When input is given to the input field.
@@ -222,8 +252,16 @@ const Search = () => {
     setFocus(true);
   };
 
+  const clearSearch = async () => {
+    setFocus(false);
+    setSearchQuery('');
+    setItems([]);
+    setFolderIdxResults({});
+    await dispatch(clearSearchFilter);
+  };
+
   // Pseudo-Focus Controls for Menu Items, determine the highlighting
-  const calculateActiveIndex = (focus: Focus) => {
+  const calculateActiveIndex = (focus: Focus, id: number | null = null) => {
     if (items.length <= 0) return null;
 
     const nextActiveIndex = (() => {
@@ -232,14 +270,24 @@ const Search = () => {
           return items.findIndex(item => true);
 
         case Focus.Previous: {
+          if (activeIndex === null) return items.length - 1;
           return mod(activeIndex - 1, items.length);
         }
 
-        case Focus.Next:
+        case Focus.Next: {
+          if (activeIndex === null) return 0;
           return mod(activeIndex + 1, items.length);
+        }
 
-        case Focus.Last: {
+        case Focus.Last:
           return items.length - 1;
+
+        case Focus.Specific: {
+          const idx = items.findIndex(item => {
+            return item.index === id;
+          });
+
+          return idx;
         }
 
         case Focus.Nothing:
@@ -249,75 +297,65 @@ const Search = () => {
           assertNever(focus);
       }
     })();
-
-    return nextActiveIndex;
+    const newIdx = nextActiveIndex !== undefined ? nextActiveIndex : null;
+    setActiveIndex(newIdx);
   };
 
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
-    // switch (event.key) {
-    //   // Ref: https://www.w3.org/TR/wai-aria-practices-1.2/#keyboard-interaction-12
+    switch (event.key) {
+      // Ref: https://www.w3.org/TR/wai-aria-practices-1.2/#keyboard-interaction-12
 
-    //   // @ts-expect-error Fallthrough is expected here
-    //   case Keys.Space:
-    //     if (searchQuery !== '') {
-    //       event.preventDefault()
-    //       event.stopPropagation()
-    //       return dispatch({ type: ActionTypes.Search, value: event.key })
-    //     }
-    //   // When in type ahead mode, fallthrough
-    //   case Keys.Enter:
-    //     event.preventDefault()
-    //     event.stopPropagation()
-    //     dispatch({ type: ActionTypes.CloseMenu })
-    //     if (state.activeItemIndex !== null) {
-    //       let { id } = state.items[state.activeItemIndex]
-    //       document.getElementById(id)?.click()
-    //     }
-    //     disposables().nextFrame(() => state.buttonRef.current?.focus({ preventScroll: true }))
-    //     break
+      // @ts-expect-error Fallthrough is expected here
+      case Keys.Space:
+      case Keys.Enter:
+        if (searchQuery !== '' && activeIndex !== null) {
+          event.preventDefault();
+          event.stopPropagation();
+          handleSelect(activeIndex);
+        }
+        break;
 
-    //   case Keys.ArrowDown:
-    //     event.preventDefault()
-    //     event.stopPropagation()
-    //     return dispatch({ type: ActionTypes.GoToItem, focus: Focus.Next })
+      case Keys.ArrowDown:
+        event.preventDefault();
+        event.stopPropagation();
+        calculateActiveIndex(Focus.Next);
+        break;
 
-    //   case Keys.ArrowUp:
-    //     event.preventDefault()
-    //     event.stopPropagation()
-    //     return dispatch({ type: ActionTypes.GoToItem, focus: Focus.Previous })
+      case Keys.ArrowUp:
+        event.preventDefault();
+        event.stopPropagation();
+        calculateActiveIndex(Focus.Previous);
+        break;
 
-    //   case Keys.Home:
-    //   case Keys.PageUp:
-    //     event.preventDefault()
-    //     event.stopPropagation()
-    //     return dispatch({ type: ActionTypes.GoToItem, focus: Focus.First })
+      case Keys.Home:
+      case Keys.PageUp:
+        event.preventDefault();
+        event.stopPropagation();
+        calculateActiveIndex(Focus.First);
+        break;
 
-    //   case Keys.End:
-    //   case Keys.PageDown:
-    //     event.preventDefault()
-    //     event.stopPropagation()
-    //     return dispatch({ type: ActionTypes.GoToItem, focus: Focus.Last })
+      case Keys.End:
+      case Keys.PageDown:
+        event.preventDefault();
+        event.stopPropagation();
+        calculateActiveIndex(Focus.Last);
+        break;
 
-    //   case Keys.Escape:
-    //     event.preventDefault()
-    //     event.stopPropagation()
-    //     dispatch({ type: ActionTypes.CloseMenu })
-    //     disposables().nextFrame(() => state.buttonRef.current?.focus({ preventScroll: true }))
-    //     break
+      case Keys.Escape:
+        event.preventDefault();
+        event.stopPropagation();
+        clearSearch();
+        break;
 
-    //   case Keys.Tab:
-    //     event.preventDefault()
-    //     event.stopPropagation()
-    //     break
+      case Keys.Tab:
+        event.preventDefault();
+        event.stopPropagation();
+        break;
 
-    //   default:
-    //     if (event.key.length === 1) {
-    //       dispatch({ type: ActionTypes.Search, value: event.key })
-    //       searchDisposables.setTimeout(() => dispatch({ type: ActionTypes.ClearSearch }), 350)
-    //     }
-    //     break
-    // }
-  }
+      default:
+        break;
+    }
+  };
 
   return (
     <div
@@ -334,6 +372,8 @@ const Search = () => {
           minLength={1}
           debounceTimeout={300}
           onFocus={inputFocus}
+          onKeyDown={handleKeyDown}
+          inputRef={inputRef}
         />
         {/* <button className="border border-coolGray-500 bg-coolGray-300">
           Cancel
@@ -387,7 +427,8 @@ const Search = () => {
                 order,
                 folderId,
                 aliasId,
-                id
+                id,
+                index
               } = item;
 
               if (type !== 'email') {
@@ -402,10 +443,16 @@ const Search = () => {
                     key={`folder_search_key_${folderkey}`}
                   >
                     <div
-                      className="flex rounded p-2 hover:bg-violet-50"
+                      className={`flex rounded p-2 ${
+                        activeIndex === index ? 'bg-violet-50' : ''
+                      }`}
                       style={{ cursor: 'pointer' }}
                       role="menuitem"
-                      onClick={e => handleSelect(e, item)}
+                      onClick={e => handleSelect(index)}
+                      onMouseEnter={() =>
+                        calculateActiveIndex(Focus.Specific, index)
+                      }
+                      onMouseLeave={() => calculateActiveIndex(Focus.Nothing)}
                     >
                       <div className="mr-3 w-4 relative">
                         <IconTag
@@ -449,10 +496,16 @@ const Search = () => {
                     } relative w-full`}
                   >
                     <div
-                      className="ml-7 rounded p-2 pl-1 flex flex-row hover:bg-violet-50"
+                      className={`ml-7 flex flex-row rounded p-2 pl-1 ${
+                        activeIndex === index ? 'bg-violet-50' : ''
+                      } `}
                       style={{ cursor: 'pointer' }}
                       role="menuitem"
-                      onClick={e => handleSelect(e, item)}
+                      onClick={e => handleSelect(index)}
+                      onMouseEnter={() =>
+                        calculateActiveIndex(Focus.Specific, index)
+                      }
+                      onMouseLeave={() => calculateActiveIndex(Focus.Nothing)}
                     >
                       <div className="mr-2 w-4 relative flex items-center">
                         <IconTag

@@ -879,6 +879,13 @@ export const setSearchFilter = (payload: string[]) => {
   };
 };
 
+export const CLEAR_SEARCH_FILTER = 'GLOBAL::CLEAR_SEARCH_FILTER';
+export const clearSearchFilter = () => {
+  return {
+    type: CLEAR_SEARCH_FILTER
+  };
+};
+
 export const selectSearch = (
   payload: any,
   msg: MailMessageType,

@@ -16,7 +16,8 @@ import {
   FOLDER_SELECTION_FLOW_SUCCESS,
   HIGHLIGHT_SEARCH_QUERY,
   MSG_RANGE_SELECTION,
-  SET_SEARCH_FILTER
+  SET_SEARCH_FILTER,
+  CLEAR_SEARCH_FILTER
 } from '../actions/mail';
 
 import {
@@ -111,7 +112,7 @@ const globalState = (
       return {
         ...state,
         activeMsgId: {
-          // ...state.activeMsgId, 
+          // ...state.activeMsgId,
           [action.folderId]: {
             id: null
           }
@@ -179,7 +180,13 @@ const globalState = (
       return {
         ...state,
         searchFilteredMsg: action.payload
-      }
+      };
+    case CLEAR_SEARCH_FILTER:
+      return {
+        ...state,
+        searchFilteredMsg: [],
+        highlightText: ''
+      };
     case UPDATE_NETWORK_STATUS:
       return {
         ...state,
