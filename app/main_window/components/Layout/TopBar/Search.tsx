@@ -249,6 +249,7 @@ const Search = () => {
   // When input is given to the input field.
   const inputFocus = event => {
     setFocus(true);
+    inputRef?.current?.focus();
   };
 
   const clearSearch = async () => {
@@ -367,10 +368,14 @@ const Search = () => {
 
   return (
     <div
-      className={`w-full transition-colors rounded relative inline-block mt-0.5 ${
+      className={`outline-none w-full transition-colors rounded relative inline-block mt-0.5 ${
         isFocused || searchQuery !== '' ? 'bg-white' : 'bg-coolGray-800 cursor-pointer'
       }`}
       ref={menuRef}
+      role="searchbox"
+      tabIndex={0}
+      onClick={inputFocus}
+      onKeyDown={handleKeyDown}
     >
       <KeyboardEventHandler
         handleKeys={['esc']}
@@ -398,14 +403,13 @@ const Search = () => {
           onChange={handleSearch}
           minLength={1}
           debounceTimeout={300}
-          onFocus={inputFocus}
-          onKeyDown={handleKeyDown}
           inputRef={inputRef}
         />
         {(isFocused || searchQuery !== '') && (
           <button
             type="button"
-            className={`outline-none ${styles.keyboardActions}`}
+            className={`hover:text-purple-400 hover:border-purple-400 outline-none ${styles.keyboardActions}`}
+            onClick={clearSearch}
           >
             Cancel
           </button>

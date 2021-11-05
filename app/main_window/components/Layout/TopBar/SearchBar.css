@@ -28,13 +28,14 @@
     border-radius: .2rem;
     background-color: #f9fafb;
     border: 1px solid #d1d5db;
+    color: #9ca3af;
     padding: .075rem .375rem;
     margin: 0.25rem;
 }
 
+
 .keyboardActions::before {
     content: "esc";
-    color: #9ca3af;
     font-size: .75rem;
     line-height: .75rem;
 }
