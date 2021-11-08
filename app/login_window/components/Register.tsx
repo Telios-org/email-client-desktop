@@ -856,7 +856,7 @@ class Register extends Component<Props, State> {
                 <div className="flex flex-col font-medium text-gray-500 cursor-help select-none">
                   <div>Time to Crack Password</div>
                   <div
-                    className={`h-9 rounded-md my-2 text-md
+                    className={`h-9 rounded-md my-2 text-sm
                    font-semibold flex items-center justify-center border-gray-300
                    ${this.passwordStrengthlass()}
                    `}
