@@ -28,7 +28,7 @@
       "steps": {
         "0": {
           "header": "Beta Access",
-          "description": "Enter your Beta Access Code. What?? you didn't get an invite! If you haven't done so already go to our website and hop on the waitlist. We'll notify you as soon as we're ready for you."
+          "description": "Enter your Beta Access Code. If you don’t have a beta access code please join our waitlist by visiting our website. We’ll notify you with a beta access code via email as soon as we’re ready for you."
         },
         "1": {
           "header": "Beta Consent",
@@ -82,12 +82,12 @@
       "aliases": "Aliases",
       "accountNamespace": "Account Namespace"
     },
-    "aliasing":{
+    "aliasing": {
       "ns_choose": "Choose your alias namespace",
       "alias_management": "Alias Management",
       "alias_registration": "Create New Alias"
     },
-    "messageToolbar":{
+    "messageToolbar": {
       "saveDraft": "Save & Close",
       "openWindow": "Pop Out",
       "discardDraft": "Discard",
