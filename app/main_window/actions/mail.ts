@@ -488,10 +488,9 @@ export const fetchNewMessageRequest = () => {
 };
 
 export const FETCH_NEW_MESSAGE_SUCCESS = 'MAILPAGE::FETCH_NEW_MESSAGE_SUCCESS';
-export const fetchNewMessageSuccess = (messages: ExternalMailMessageType[]) => {
+export const fetchNewMessageSuccess = () => {
   return {
-    type: FETCH_NEW_MESSAGE_SUCCESS,
-    messages
+    type: FETCH_NEW_MESSAGE_SUCCESS
   };
 };
 
@@ -504,39 +503,27 @@ export const fetchNewMessageFailure = (error: string) => {
 };
 
 export function fetchNewMessages() {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      client,
-      globalState: { activeFolderIndex },
-      mail: {
-        folders: { byId, allIds: foldersArray }
-      }
-    } = getState();
-
+  return async (dispatch: Dispatch) => {
+    dispatch(fetchNewMessageRequest());
     let messages;
     try {
-      Mail.getNewMail()
-        .then(data => {
-          if (data.meta.length > 0) {
-            return MessageIngress.decipherMailMeta({
-              async: false,
-              meta: data.meta,
-              account: data.account
-            });
-          }
+      const data = await Mail.getNewMail();
 
-          return true;
-        })
-        .catch(err => {
-          return err;
+      if (data.meta.length > 0) {
+        await MessageIngress.decipherMailMeta({
+          async: false,
+          meta: data.meta,
+          account: data.account
         });
+      }
+
     } catch (err) {
       console.log(err);
       dispatch(fetchNewMessageFailure(err));
       return err;
     }
 
-    // dispatch(fetchNewMessageSuccess(messages));
+    dispatch(fetchNewMessageSuccess());
     return messages;
   };
 }
@@ -853,24 +840,6 @@ export const setHighlightValue = (query: string) => {
   };
 };
 
-export const sync = (opts: { fullSync: boolean }) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    console.time('Sync Mailboxes');
-
-    if (opts.fullSync) {
-      await dispatch(fetchNewMessages());
-    }
-
-    try {
-      await dispatch(loadMailboxes(opts));
-    } catch (error) {
-      return error;
-    }
-    console.timeEnd('Sync Mailboxes');
-    return true;
-  };
-};
-
 export const SET_SEARCH_FILTER = 'GLOBAL::SET_SEARCH_FILTER';
 export const setSearchFilter = (payload: string[]) => {
   return {
@@ -914,7 +883,6 @@ export const selectSearch = (
 
     // If we actually select a specific message and not just a folder.
     if (msg !== null) {
-
       // const selected = {
       //   startIdx: index,
       //   endIdx: index,

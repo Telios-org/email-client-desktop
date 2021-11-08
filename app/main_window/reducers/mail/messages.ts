@@ -29,6 +29,8 @@ export default function messages(
   state: MailType = initialState,
   action: MailAction
 ) {
+  let _byId;
+  let _allIds;
   switch (action.type) {
     case MSG_SELECTION_FLOW_SUCCESS:
       if (action.message) {
@@ -102,8 +104,8 @@ export default function messages(
         allIds: [...idFromArrayDict(action.messages)]
       };
     case UPDATE_MESSAGE_LIST:
-      const _byId = { ...state.byId };
-      let _allIds = [...state.allIds];
+      _byId = { ...state.byId };
+      _allIds = [...state.allIds];
 
       if (
         action.messages &&

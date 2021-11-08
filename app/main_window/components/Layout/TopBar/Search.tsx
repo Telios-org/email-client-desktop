@@ -12,7 +12,7 @@ import {
   selectAllAliasesById
 } from '../../../selectors/mail';
 
-import styles from './SearchBar.css';
+import styles from './Search.css';
 
 const Mail = require('../../../../services/mail.service');
 const { formatDateDisplay } = require('../../../utils/date.util');

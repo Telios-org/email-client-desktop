@@ -6,7 +6,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 // REDUX ACTIONS
-import { sync } from '../../../actions/mail';
+import { fetchNewMessages, loadMailboxes } from '../../../actions/mail';
 
 import { clearActiveMessage } from '../../../actions/mailbox/messages';
 import { toggleEditor } from '../../../actions/global';
@@ -34,8 +34,9 @@ export default function MailPage() {
   const [isSyncInProgress, setIsSyncInProgress] = useState(false);
 
   useEffect(() => {
-    ipcRenderer.on('initMailbox', async (event, opts) => {
-      await syncMail(opts);
+    ipcRenderer.on('IPC::initMailbox', async (event, opts) => {
+      await dispatch(loadMailboxes(opts));
+      // await dispatch(fetchNewMessages());
     });
 
     ipcRenderer.on('closeInlineComposer', async event => {
@@ -46,10 +47,6 @@ export default function MailPage() {
       ipcRenderer.removeAllListeners('realTimeDelivery');
     };
   }, []);
-
-  const syncMail = async (opts: { fullSync: boolean }) => {
-    await dispatch(sync(opts));
-  };
 
   const toggleEditorState = (editorAction: string, forcedStatus?: boolean) => {
     dispatch(toggleEditor(editorAction, forcedStatus));
@@ -98,8 +95,9 @@ export default function MailPage() {
   // REFRESHING THE STATE OF THE MAIL PAGE
   const refresh = async (full: any) => {
     setLoading(true);
-    await syncMail({ fullSync: !isSyncInProgress || full });
-
+    if (!isSyncInProgress) {
+      await dispatch(fetchNewMessages());
+    }
     setTimeout(() => setLoading(false), 1000);
   };
 
@@ -154,7 +152,7 @@ export default function MailPage() {
       </PanelGroup>
       <MessageSyncNotifier
         onRefresh={() => {
-          syncMail({ fullSync: false });
+          refresh(true);
         }}
         inProgress={toggleSyncInProgress}
       />

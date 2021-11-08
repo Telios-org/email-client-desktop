@@ -40,7 +40,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
     ipcMain.on('showMainWindow', () => {
       const loginWindow = windowManager.getWindow('loginWindow');
-      mainWin.webContents.send('initMailbox', { fullSync: true });
+      mainWin.webContents.send('IPC::initMailbox', { fullSync: true });
       mainWin.show();
       loginWindow.systemClose = true;
       windowManager.updateWindow('loginWindow', loginWindow);
@@ -62,7 +62,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
     ipcMain.on('showMainWindow', () => {
       const loginWindow = windowManager.getWindow('loginWindow');
-      mainWin.webContents.send('initMailbox', { fullSync: true });
+      mainWin.webContents.send('IPC::initMailbox', { fullSync: true });
       mainWin.show();
       loginWindow.systemClose = true;
       windowManager.updateWindow('loginWindow', loginWindow);
@@ -84,7 +84,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     const mainWindow = windowManager.getWindow('mainWindow');
     const loginWindow = windowManager.getWindow('loginWindow');
 
-    mainWindow.webContents.send('initMailbox', { fullSync: true });
+    mainWindow.webContents.send('IPC::initMailbox', { fullSync: true });
     mainWindow.show();
     loginWindow.systemClose = true;
     windowManager.updateWindow('loginWindow', loginWindow);
@@ -95,7 +95,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
   ipcMain.on('syncMail', () => {
     const mainWindow = windowManager.getWindow('mainWindow');
-    mainWindow.webContents.send('initMailbox', { fullSync: true });
+    mainWindow.webContents.send('IPC::initMailbox', { fullSync: true });
   });
 
   ipcMain.handle('RENDERER::showComposerWindow', async (event, content) => {

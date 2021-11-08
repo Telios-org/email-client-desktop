@@ -223,7 +223,7 @@ module.exports = async (userDataPath) => {
       await messageIngressWorker.initDrive();
     }
 
-    if (event === 'newMessageBatch') {
+    if (event === 'MESSAGE_INGRESS_SERVICE::newMessageBatch') {
       const { meta, account } = payload;
       messageIngressWorker.fetchBatch(meta, account);
     }
