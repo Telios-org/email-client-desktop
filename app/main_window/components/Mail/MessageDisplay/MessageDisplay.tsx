@@ -1,8 +1,7 @@
 import { ipcRenderer } from 'electron';
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { createPortal } from 'react-dom';
-import { useDispatch } from 'react-redux';
 import { debounce } from 'lodash';
 
 // EXTERNAL LIBRAIRIES
@@ -40,9 +39,7 @@ import {
 } from '../../../actions/mailbox/messages';
 
 // REDUX STATE SELECTORS
-import {
-  selectActiveMailbox
-} from '../../../selectors/mail';
+import { selectActiveMailbox } from '../../../selectors/mail';
 
 // TYPESCRIPT TYPES
 import { MailMessageType, MailboxType } from '../../../reducers/types';
@@ -74,7 +71,7 @@ function MessageDisplay(props: Props) {
 
   useEffect(() => {
     setLoaded(false);
-  }, [bodyAsHtml])
+  }, [bodyAsHtml]);
 
   let files = [];
 
@@ -101,7 +98,7 @@ function MessageDisplay(props: Props) {
     senderInitials = senderArr[0][0].toUpperCase();
   }
 
-  const parsedRecipientTo = JSON.parse(toJSON).reduce(function (
+  const parsedRecipientTo = JSON.parse(toJSON).reduce(function(
     previous: string,
     current: { name: string; address: string }
   ) {
@@ -110,9 +107,9 @@ function MessageDisplay(props: Props) {
     }
     return `${previous} ${current.address}; `;
   },
-    'To: ');
+  'To: ');
 
-  const parsedRecipientCC = JSON.parse(ccJSON).reduce(function (
+  const parsedRecipientCC = JSON.parse(ccJSON).reduce(function(
     previous: string,
     current: { name: string; address: string }
   ) {
@@ -121,25 +118,34 @@ function MessageDisplay(props: Props) {
     }
     return `${previous} ${current.address}; `;
   },
-    'Cc: ');
+  'Cc: ');
 
   const formattedDate = formatFullDate(date);
   const time = formatTimeOnly(date);
 
+  const transform = (node, index) => {
+    // all links must open in a new window
+    if (node.type === 'tag' && node.name === 'a') {
+      node.attribs.target = '_blank';
+      return convertNodeToElement(node, index, transform);
+    }
+
+    if (highlight && node.data) {
+      return (
+        <Highlighter
+          highlightClassName="bg-yellow-300"
+          searchWords={highlight.split(' ')}
+          autoEscape
+          textToHighlight={node.data}
+        />
+      );
+    }
+  };
+
   const renderHTML = html => {
     const output = ReactHtmlParser(html, {
-      transform: (node, index) => {
-        if (highlight && node.data) {
-          return (
-            <Highlighter
-              highlightClassName="bg-yellow-300"
-              searchWords={highlight.split(' ')}
-              autoEscape
-              textToHighlight={node.data}
-            />
-          );
-        }
-      }
+      decodeEntities: true,
+      transform
     });
 
     return output;
@@ -280,9 +286,7 @@ function MessageDisplay(props: Props) {
         <div className="h-full flex-grow">
           <div className="h-full">
             <div className="mb-2 h-full px-4 pt-4">
-              {!loaded && (
-                <Loader size="lg" backdrop vertical />
-              )}
+              {!loaded && <Loader size="lg" backdrop vertical />}
 
               <IFrame className="w-full h-full">
                 {bodyAsHtml && (
