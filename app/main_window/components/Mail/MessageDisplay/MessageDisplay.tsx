@@ -12,6 +12,7 @@ import ReactHtmlParser, {
   convertNodeToElement,
   htmlparser2
 } from 'react-html-parser';
+
 import { Scrollbars } from 'react-custom-scrollbars';
 
 // ICONS
@@ -43,6 +44,8 @@ import { selectActiveMailbox } from '../../../selectors/mail';
 
 // TYPESCRIPT TYPES
 import { MailMessageType, MailboxType } from '../../../reducers/types';
+
+type DomElement = htmlparser2.DomElement;
 
 type Props = {
   message: MailMessageType;
@@ -123,8 +126,42 @@ function MessageDisplay(props: Props) {
   const formattedDate = formatFullDate(date);
   const time = formatTimeOnly(date);
 
+  function isDescendantTableTag(parent: Pick<DomElement, 'name'>, node: Pick<DomElement, 'name'>): boolean {
+    const descendants: Record<string, string[]> = {
+      table: ['colgroup', 'thead', 'tbody'],
+      colgroup: ['col'],
+      thead: ['tr'],
+      tbody: ['tr'],
+      tr: ['th', 'td'],
+    };
+  
+    if (!parent.name || !node.name) {
+      return false;
+    }
+  
+    return (descendants[parent.name] || []).indexOf(node.name) >= 0;
+  }
+  
   const transform = (node, index) => {
-    // all links must open in a new window
+    if (node.type === 'text' && node.parent) {
+      let isDescTag;
+
+      if (node.next) {
+        isDescTag = isDescendantTableTag(node.parent, node.next);
+      }
+      if (node.prev) {
+        isDescTag = isDescendantTableTag(node.parent, node.prev);
+      }
+
+      if(isDescTag) {
+        return null;
+      }
+    }
+
+    if(node.data === " ") {
+      return null;
+    }
+    
     if (node.type === 'tag' && node.name === 'a') {
       node.attribs.target = '_blank';
       return convertNodeToElement(node, index, transform);
