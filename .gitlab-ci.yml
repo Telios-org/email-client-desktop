@@ -93,6 +93,7 @@ filesystemFix:win:
   before_script:
     - $ENV:PATH="$ENV:PATH;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin"
   script:
+    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com
     - docker run -v $PWD":/repo/" -w /repo/ registry.gitlab.com/telios2/telios-devops/bash/prd rm -rf ./release
 
 electron-build:win:
