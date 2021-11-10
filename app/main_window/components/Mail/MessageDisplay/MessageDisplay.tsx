@@ -126,22 +126,26 @@ function MessageDisplay(props: Props) {
   const formattedDate = formatFullDate(date);
   const time = formatTimeOnly(date);
 
-  function isDescendantTableTag(parent: Pick<DomElement, 'name'>, node: Pick<DomElement, 'name'>): boolean {
+  // Prevent white spaces from being included between table tags causing a React warning
+  const isDescendantTableTag = (
+    parent: Pick<DomElement, 'name'>,
+    node: Pick<DomElement, 'name'>
+  ): boolean => {
     const descendants: Record<string, string[]> = {
       table: ['colgroup', 'thead', 'tbody'],
       colgroup: ['col'],
       thead: ['tr'],
       tbody: ['tr'],
-      tr: ['th', 'td'],
+      tr: ['th', 'td']
     };
-  
+
     if (!parent.name || !node.name) {
       return false;
     }
-  
+
     return (descendants[parent.name] || []).indexOf(node.name) >= 0;
-  }
-  
+  };
+
   const transform = (node, index) => {
     if (node.type === 'text' && node.parent) {
       let isDescTag;
@@ -153,15 +157,15 @@ function MessageDisplay(props: Props) {
         isDescTag = isDescendantTableTag(node.parent, node.prev);
       }
 
-      if(isDescTag) {
+      if (isDescTag) {
         return null;
       }
     }
 
-    if(node.data === " ") {
+    if (node.data === ' ') {
       return null;
     }
-    
+
     if (node.type === 'tag' && node.name === 'a') {
       node.attribs.target = '_blank';
       return convertNodeToElement(node, index, transform);

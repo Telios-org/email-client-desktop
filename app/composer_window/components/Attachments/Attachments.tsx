@@ -36,9 +36,11 @@ const AttachmentItem = ({
     key={`${item.filename}`}
     className="flex px-2 flex-row items-center group cursor-pointer pt-4 w-auto"
   >
-    <AttachmentPreview attachment={item} key={item.filename}/>
+    <AttachmentPreview attachment={item} key={item.filename} />
     <div className="pl-4 pr-2 flex flex-col">
-      <div className="text-sm font-medium text-gray-600">{item.filename}</div>
+      <div className="text-sm font-medium text-gray-600 w-40 overflow-ellipsis overflow-hidden">
+        {item.filename}
+      </div>
       <div>
         <span className="text-gray-400 px-1 text-sm">&#9679; </span>
         {item.readableSize}

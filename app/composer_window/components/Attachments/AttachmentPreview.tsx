@@ -44,11 +44,9 @@ export default class AttachmentPreview extends Component<Props, State> {
 
     return (
       <div>
-        {!showImagePreview && (
-          <Paper set="bulk" size="large" className="mb-1 -mr-1"/>
-        )}
+        <Paper set="bulk" size="large" className="mb-1 -mr-1"/>
 
-        {showImagePreview && content === "" && (
+        {/* {showImagePreview && content === "" && (
           <div className="flex w-28 h-20 overflow-hidden bg-gray-600 bg-opacity-5">
             <div className="m-auto">
               <Loader size="sm" />
@@ -60,7 +58,7 @@ export default class AttachmentPreview extends Component<Props, State> {
           <div className="w-28 h-20 overflow-hidden">
             <img className="object-fit object-center" src={`data:${attachment.contentType};base64, ${content}`} alt={filename} />
           </div>
-        )}
+        )} */}
       </div>
     );
   }
