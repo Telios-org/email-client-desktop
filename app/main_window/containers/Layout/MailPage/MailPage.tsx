@@ -149,13 +149,13 @@ export default function MailPage() {
             </div>
           </PanelGroup>
         </div>
-      </PanelGroup>
+      </PanelGroup >
       <MessageSyncNotifier
         onRefresh={() => {
           refresh(true);
         }}
         inProgress={toggleSyncInProgress}
       />
-    </DndProvider>
+    </DndProvider >
   );
 }

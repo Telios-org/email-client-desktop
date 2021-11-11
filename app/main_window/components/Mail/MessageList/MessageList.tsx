@@ -329,6 +329,7 @@ export default function MessageList(props: Props) {
       </div>
       {messages.allIds.length > 0 && (
         <div className="flex-1 flex w-full">
+
           <AutoSizer>
             {({ height, width }) => (
               <InfiniteLoader
@@ -355,6 +356,7 @@ export default function MessageList(props: Props) {
               </InfiniteLoader>
             )}
           </AutoSizer>
+
         </div>
       )}
 

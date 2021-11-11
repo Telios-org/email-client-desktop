@@ -56,7 +56,7 @@ version:
   only:
     - master
 
-version:
+version-beta:
   extends:
     - .set_version
   only:
@@ -160,7 +160,6 @@ spaces:win:
   extends:
     - .spaces
   needs:
-    - version
     - electron-build:win
   script:
     - ansible-playbook playbooks/site.yml --tags update,upload,win
@@ -169,7 +168,6 @@ spaces:mac:
   extends:
     - .spaces
   needs:
-    - version
     - electron-build:mac
   script:
     - ansible-playbook playbooks/site.yml --tags update,upload,mac
@@ -178,7 +176,6 @@ spaces:linux:
   extends:
     - .spaces
   needs:
-    - version
     - electron-build:linux
   script:
     - ansible-playbook playbooks/site.yml --tags update,upload,linux
