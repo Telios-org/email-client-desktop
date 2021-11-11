@@ -1,8 +1,7 @@
 import { ipcRenderer } from 'electron';
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { createPortal } from 'react-dom';
-import { useDispatch } from 'react-redux';
 import { debounce } from 'lodash';
 
 // EXTERNAL LIBRAIRIES
@@ -13,6 +12,7 @@ import ReactHtmlParser, {
   convertNodeToElement,
   htmlparser2
 } from 'react-html-parser';
+
 import { Scrollbars } from 'react-custom-scrollbars';
 
 // ICONS
@@ -31,7 +31,7 @@ import stringToHslColor from '../../../utils/avatar.util';
 import Attachments from '../../../../composer_window/components/Attachments/Attachments';
 
 // STYLES
-// import styles from './MessageDisplay.less';
+// import styles from './MessageDisplay.css';
 
 // REDUX ACTIONS
 import {
@@ -40,12 +40,12 @@ import {
 } from '../../../actions/mailbox/messages';
 
 // REDUX STATE SELECTORS
-import {
-  selectActiveMailbox
-} from '../../../selectors/mail';
+import { selectActiveMailbox } from '../../../selectors/mail';
 
 // TYPESCRIPT TYPES
 import { MailMessageType, MailboxType } from '../../../reducers/types';
+
+type DomElement = htmlparser2.DomElement;
 
 type Props = {
   message: MailMessageType;
@@ -74,7 +74,7 @@ function MessageDisplay(props: Props) {
 
   useEffect(() => {
     setLoaded(false);
-  }, [bodyAsHtml])
+  }, [bodyAsHtml]);
 
   let files = [];
 
@@ -101,7 +101,7 @@ function MessageDisplay(props: Props) {
     senderInitials = senderArr[0][0].toUpperCase();
   }
 
-  const parsedRecipientTo = JSON.parse(toJSON).reduce(function (
+  const parsedRecipientTo = JSON.parse(toJSON).reduce(function(
     previous: string,
     current: { name: string; address: string }
   ) {
@@ -110,9 +110,9 @@ function MessageDisplay(props: Props) {
     }
     return `${previous} ${current.address}; `;
   },
-    'To: ');
+  'To: ');
 
-  const parsedRecipientCC = JSON.parse(ccJSON).reduce(function (
+  const parsedRecipientCC = JSON.parse(ccJSON).reduce(function(
     previous: string,
     current: { name: string; address: string }
   ) {
@@ -121,25 +121,72 @@ function MessageDisplay(props: Props) {
     }
     return `${previous} ${current.address}; `;
   },
-    'Cc: ');
+  'Cc: ');
 
   const formattedDate = formatFullDate(date);
   const time = formatTimeOnly(date);
 
+  // Prevent white spaces from being included between table tags causing a React warning
+  const isDescendantTableTag = (
+    parent: Pick<DomElement, 'name'>,
+    node: Pick<DomElement, 'name'>
+  ): boolean => {
+    const descendants: Record<string, string[]> = {
+      table: ['colgroup', 'thead', 'tbody'],
+      colgroup: ['col'],
+      thead: ['tr'],
+      tbody: ['tr'],
+      tr: ['th', 'td']
+    };
+
+    if (!parent.name || !node.name) {
+      return false;
+    }
+
+    return (descendants[parent.name] || []).indexOf(node.name) >= 0;
+  };
+
+  const transform = (node, index) => {
+    if (node.type === 'text' && node.parent) {
+      let isDescTag;
+
+      if (node.next) {
+        isDescTag = isDescendantTableTag(node.parent, node.next);
+      }
+      if (node.prev) {
+        isDescTag = isDescendantTableTag(node.parent, node.prev);
+      }
+
+      if (isDescTag) {
+        return null;
+      }
+    }
+
+    if (node.data === ' ') {
+      return null;
+    }
+
+    if (node.type === 'tag' && node.name === 'a') {
+      node.attribs.target = '_blank';
+      return convertNodeToElement(node, index, transform);
+    }
+
+    if (highlight && node.data) {
+      return (
+        <Highlighter
+          highlightClassName="bg-yellow-300"
+          searchWords={highlight.split(' ')}
+          autoEscape
+          textToHighlight={node.data}
+        />
+      );
+    }
+  };
+
   const renderHTML = html => {
     const output = ReactHtmlParser(html, {
-      transform: (node, index) => {
-        if (highlight && node.data) {
-          return (
-            <Highlighter
-              highlightClassName="bg-yellow-300"
-              searchWords={highlight.split(' ')}
-              autoEscape
-              textToHighlight={node.data}
-            />
-          );
-        }
-      }
+      decodeEntities: true,
+      transform
     });
 
     return output;
@@ -280,9 +327,7 @@ function MessageDisplay(props: Props) {
         <div className="h-full flex-grow">
           <div className="h-full">
             <div className="mb-2 h-full px-4 pt-4">
-              {!loaded && (
-                <Loader size="lg" backdrop vertical />
-              )}
+              {!loaded && <Loader size="lg" backdrop vertical />}
 
               <IFrame className="w-full h-full">
                 {bodyAsHtml && (

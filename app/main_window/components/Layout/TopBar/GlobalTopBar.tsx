@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { MailboxType } from '../../../reducers/types';
-import Profile from './Profile--D';
-import SearchBar from './SearchBar';
+import Search from './Search';
 import WindowControls from '../../../../global_components/WindowControls/WindowControls';
-import styles from './GlobalTopBar.less';
+import styles from './GlobalTopBar.css';
 
 type Props = {
   // this object would hold any props not coming from redux
@@ -19,19 +18,19 @@ class GlobalTopBar extends Component<Props, State> {
 
   render() {
     return (
-      <div
+      <header
         className={`w-full flex flex-row items-center ${styles.globalTopBar}`}
       >
         <div className={`flex-grow-0 w-1/3 ${styles.draggable}`} />
         <div className="flex-grow">
-          <SearchBar />
+          <Search />
         </div>
         <div
           className={`flex-grow-0 flex flex-row items-center w-1/3 ${styles.avatar} ${styles.draggable} justify-end`}
         >
           <WindowControls />
         </div>
-      </div>
+      </header>
     );
   }
 }

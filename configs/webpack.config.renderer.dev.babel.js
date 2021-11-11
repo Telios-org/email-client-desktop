@@ -28,6 +28,7 @@ const manifest = path.resolve(dll, 'renderer.json');
 const requiredByDLLConfig = module.parent.filename.includes(
   'webpack.config.renderer.dev.dll'
 );
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 /**
  * Warn if the DLL is not built
@@ -49,24 +50,9 @@ export default merge.smart(baseConfig, {
   target: 'electron-renderer',
 
   entry: {
-    main: [
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
-      require.resolve('../app/main_window/index.tsx')
-    ],
-    login: [
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
-      require.resolve('../app/login_window/index.tsx')
-    ],
-    composer: [
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
-      require.resolve('../app/composer_window/index.tsx')
-    ]
+    main: [require.resolve('../app/main_window/index.tsx')],
+    login: [require.resolve('../app/login_window/index.tsx')],
+    composer: [require.resolve('../app/composer_window/index.tsx')]
   },
 
   output: {
@@ -78,6 +64,17 @@ export default merge.smart(baseConfig, {
 
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+            plugins: [require.resolve('react-refresh/babel')]
+          }
+        }
+      },
       {
         test: /\.global\.css$/,
         use: [
@@ -116,70 +113,6 @@ export default merge.smart(baseConfig, {
           }
         ]
       },
-      // SASS support - compile all .global.scss files and pipe it to style.css
-      {
-        test: /\.global\.less$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
-          },
-          {
-            loader: 'postcss-loader'
-          },
-          {
-            loader: 'less-loader',
-            options: {
-              lessOptions: {
-                javascriptEnabled: true,
-                sourceMap: true
-              }
-            }
-          }
-        ]
-      },
-      // SASS support - compile all other .scss files and pipe it to style.css
-      {
-        test: /^((?!\.global).)*\.less$/,
-        use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]'
-              },
-              sourceMap: true,
-              importLoaders: 1
-            }
-          },
-          {
-            loader: 'postcss-loader'
-          },
-          {
-            loader: 'less-loader',
-            options: {
-              lessOptions: {
-                javascriptEnabled: true,
-                sourceMap: true
-              }
-            }
-          },
-          {
-            loader: 'text-transform-loader',
-            options: {
-              prependText: "@import (reference) '/app/app.global.less';\n\n"
-            }
-          }
-        ]
-      },
       // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
@@ -202,22 +135,6 @@ export default merge.smart(baseConfig, {
           }
         }
       },
-      // TTF Font
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            mimetype: 'application/octet-stream'
-          }
-        }
-      },
-      // EOT Font
-      {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
-      },
       // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
@@ -236,11 +153,6 @@ export default merge.smart(baseConfig, {
       }
     ]
   },
-  resolve: {
-    alias: {
-      'react-dom': '@hot-loader/react-dom'
-    }
-  },
   plugins: [
     requiredByDLLConfig
       ? null
@@ -255,7 +167,8 @@ export default merge.smart(baseConfig, {
     }),
 
     new TypedCssModulesPlugin({
-      globPattern: 'app/**/*.{css,less}'
+      globPattern: 'app/**/*.{css}',
+      postCssPlugins: defaultPlugins => [require('postcss'), ...defaultPlugins]
     }),
     /**
      * Create global constants which can be configured at compile time.
@@ -275,7 +188,8 @@ export default merge.smart(baseConfig, {
 
     new webpack.LoaderOptionsPlugin({
       debug: true
-    })
+    }),
+    new ReactRefreshWebpackPlugin()
   ],
 
   node: {
@@ -307,7 +221,10 @@ export default merge.smart(baseConfig, {
     },
     before() {
       if (process.env.START_HOT) {
-        console.log('Starting Main Process...');
+        console.log('Starting Main WebPack Dev Server Process...');
+        console.log('NODE_ENV=', process.env?.NODE_ENV);
+        console.log('START_HOT=', process.env?.START_HOT);
+        // console.log('PLAIN_HMR=', process.env?.PLAIN_HMR);
         spawn('npm', ['run', 'start-main-dev'], {
           shell: true,
           env: process.env,

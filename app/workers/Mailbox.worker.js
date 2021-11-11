@@ -315,17 +315,16 @@ module.exports = env => {
     }
 
     if (event === 'MAIL_SERVICE::registerAliasAddress') {
-      try {
-        const {
-          namespaceName,
-          namespaceKey,
-          domain,
-          address,
-          description,
-          fwdAddresses,
-          disabled
-        } = payload;
+      const {
+        namespaceName,
+        domain,
+        address,
+        description,
+        fwdAddresses,
+        disabled
+      } = payload;
 
+      try {
         const mailbox = store.getMailbox();
 
         const { registered } = await mailbox.registerAliasAddress({
@@ -356,7 +355,13 @@ module.exports = env => {
           error: {
             name: e.name,
             message: e.message,
-            stacktrace: e.stack
+            stacktrace: e.stack,
+            data: {
+              alias_address: `${namespaceName}#${address}@${domain}`,
+              forwards_to: fwdAddresses,
+              whitelisted: true,
+              disabled
+            }
           }
         });
       }
@@ -625,7 +630,7 @@ module.exports = env => {
       for await (const msg of messages) {
         const attachments = [];
         let folderId;
-        let aliasId;
+        let aliasId = null;
 
         if (!msg.email) {
           msg.email = msg;
@@ -958,7 +963,7 @@ module.exports = env => {
       }
     }
 
-    if (event === 'searchMailbox') {
+    if (event === 'MAIL_SERVICE::searchMailbox') {
       const { searchQuery } = payload;
 
       try {
@@ -967,6 +972,9 @@ module.exports = env => {
             return Email.findAll({
               attributes: [
                 ['emailId', 'id'],
+                'folderId',
+                'date',
+                'aliasId',
                 'subject',
                 'bodyAsText',
                 'fromJSON',
@@ -977,8 +985,7 @@ module.exports = env => {
               where: {
                 [Op.or]: [{ fromJSON: { [Op.like]: `%${searchQuery}%` } }]
               },
-              raw: true,
-              limit: 5
+              raw: true
             });
           }
 
@@ -987,6 +994,9 @@ module.exports = env => {
               attributes: [
                 ['emailId', 'id'],
                 'subject',
+                'aliasId',
+                'folderId',
+                'date',
                 'bodyAsText',
                 'fromJSON',
                 'toJSON',
@@ -996,8 +1006,7 @@ module.exports = env => {
               where: {
                 toJSON: { [Op.like]: `%${searchQuery}%` }
               },
-              raw: true,
-              limit: 5
+              raw: true
             });
           }
 
@@ -1005,6 +1014,9 @@ module.exports = env => {
             attributes: [
               ['emailId', 'id'],
               'subject',
+              'aliasId',
+              'folderId',
+              'date',
               'bodyAsText',
               'fromJSON',
               'toJSON',
@@ -1021,15 +1033,17 @@ module.exports = env => {
                 { attachments: { [Op.like]: `%${searchQuery}%` } }
               ]
             },
-            raw: true,
-            limit: 5
+            raw: true
           });
 
-          process.send({ event: 'searchMailbox', data: results });
+          process.send({
+            event: 'MAILBOX_WORKER::searchMailbox',
+            data: results
+          });
         }
       } catch (e) {
         process.send({
-          event: 'searchMailbox',
+          event: 'MAILBOX_WORKER::searchMailbox',
           error: {
             name: e.name,
             message: e.message,

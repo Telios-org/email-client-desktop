@@ -10,7 +10,7 @@ import { DragPreviewImage, useDrag, useDragLayer } from 'react-dnd';
 import { AiOutlinePaperClip } from 'react-icons/ai';
 
 // CSS/LESS STYLES
-import styles from './MessagePreview.less';
+import styles from './MessagePreview.css';
 
 // BASE64 IMAGE
 import { envelope } from '../../envelope';
@@ -23,7 +23,8 @@ import {
   activeMessageId as activeMsgId,
   activeMessageSelectedRange,
   selectActiveAliasName,
-  activeAliasId
+  activeAliasId,
+  currentMessageList
 } from '../../../../selectors/mail';
 
 // REDUX ACTIONS
@@ -62,7 +63,7 @@ export default function MessagePreview(props: Props) {
   const [displayLoader, setLoader] = useState(false);
   const [isRead, setIsRead] = useState(false);
 
-  const messages = useSelector(state => state.mail.messages);
+  const messages = useSelector(currentMessageList);
   const currentFolderId = useSelector(activeFolderId);
   const currentAliasId = useSelector(activeAliasId);
   const selected = useSelector(activeMessageSelectedRange);

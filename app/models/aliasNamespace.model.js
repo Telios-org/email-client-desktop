@@ -48,7 +48,7 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('Namespace');
+  const collection = await drive.db.collection('Namespace');
 
   AliasNamespace.addHook('afterCreate', async (ns, options) => {
     try {

@@ -13,10 +13,11 @@ import {
   FETCH_MAIL_DATA_SUCCESS,
   FETCH_MAIL_DATA_FAILURE,
   MSG_SELECTION_FLOW,
-  SHOW_MAXIMIZED_MESSAGE_DISPLAY,
   FOLDER_SELECTION_FLOW_SUCCESS,
   HIGHLIGHT_SEARCH_QUERY,
-  MSG_RANGE_SELECTION
+  MSG_RANGE_SELECTION,
+  SET_SEARCH_FILTER,
+  CLEAR_SEARCH_FILTER
 } from '../actions/mail';
 
 import {
@@ -44,14 +45,13 @@ const initialState = {
   // NOT THE ID
   activeFolderIndex: 0,
   activeAliasIndex: null,
+  searchFilteredMsg: [],
   loading: false,
   status: 'online',
   error: '',
   editorIsOpen: false,
   editorAction: '',
   highlightText: '',
-  // This below is to indicate the Message Display take the room of the Message List, it is not currently implemented.
-  showMaximizedMessageDisplay: false,
   accounts: []
 };
 
@@ -112,12 +112,13 @@ const globalState = (
       return {
         ...state,
         activeMsgId: {
-          // ...state.activeMsgId, 
+          // ...state.activeMsgId,
           [action.folderId]: {
             id: null
           }
         },
         highlightText: '',
+        searchFilteredMsg: [],
         activeFolderIndex: action.index,
         activeAliasIndex: null
       };
@@ -132,6 +133,7 @@ const globalState = (
           }
         },
         highlightText: '',
+        searchFilteredMsg: [],
         activeFolderIndex: 4,
         activeAliasIndex: action.index
       };
@@ -158,12 +160,6 @@ const globalState = (
 
       return newState;
     }
-    case SHOW_MAXIMIZED_MESSAGE_DISPLAY:
-      return {
-        ...state,
-        showMaximizedMessageDisplay: action.showMaximizedMessageDisplay
-      };
-
     case CLEAR_ACTIVE_MESSAGE:
       return {
         ...state,
@@ -173,13 +169,23 @@ const globalState = (
             id: null
           }
         },
-        highlightText: '',
-        showMaximizedMessageDisplay: false
+        highlightText: ''
       };
     case HIGHLIGHT_SEARCH_QUERY:
       return {
         ...state,
         highlightText: action.searchQuery
+      };
+    case SET_SEARCH_FILTER:
+      return {
+        ...state,
+        searchFilteredMsg: action.payload
+      };
+    case CLEAR_SEARCH_FILTER:
+      return {
+        ...state,
+        searchFilteredMsg: [],
+        highlightText: ''
       };
     case UPDATE_NETWORK_STATUS:
       return {

@@ -215,6 +215,7 @@ export type GlobalType = {
   activeFolderIndex: number;
   activeAliasIndex: number;
   activeAccountIndex: number;
+  searchFilteredMsg: string[];
   activeMsgId: {
     [index: number]: {
       id: string | null;
@@ -230,7 +231,6 @@ export type GlobalType = {
   loading: boolean;
   editorIsOpen: boolean;
   editorAction: string;
-  showMaximizedMessageDisplay?: boolean;
   highlightText?: string;
   error: string | Error;
 };
@@ -276,7 +276,6 @@ export type ClientAction = {
   index?: number;
   payload: ClientType;
   accounts?: Array<string>;
-  showMaximizedMessageDisplay?: boolean;
   forcedStatus?: boolean;
   searchQuery?: string;
   status?: string;
@@ -299,7 +298,6 @@ export type MailAction = {
   folderId?: number;
   message?: MailMessageType;
   password?: string;
-  showMaximizedMessageDisplay?: boolean;
   forcedStatus?: boolean;
   error?: string | Error;
 };

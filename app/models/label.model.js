@@ -39,7 +39,7 @@ module.exports.init = async (sequelize, opts) => {
   Label.belongsTo(Mailbox);
 
   const drive = store.getDrive();
-  const collection = await drive.collection('Label');
+  const collection = await drive.db.collection('Label');
 
   return Label;
 };

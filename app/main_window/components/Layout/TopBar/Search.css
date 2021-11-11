@@ -1,0 +1,53 @@
+.searchSvg::before{
+    content: "";
+    position: absolute;
+    top: 0rem;
+    bottom: -0.3rem;
+    left: .9rem;
+    width: 1.25rem;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='200' viewBox='0 0 12 200' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 1 0 V 200 M 1 100 H 12' stroke='%23a1a1aa' stroke-width='2'/%3E%3C/svg%3E%0A");
+    background-repeat: no-repeat;
+    background-position: 0;
+}
+
+.searchSvgLast::before{
+    content: "";
+    position: absolute;
+    top: -0.5rem;
+    bottom: -0.8rem;
+    left: .9rem;
+    width: 1.25rem;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='200' viewBox='0 0 12 200' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 1 0 V 89 Q 1 100 12 100' stroke='%23a1a1aa' stroke-width='2'/%3E%3C/svg%3E%0A");
+    background-repeat: no-repeat;
+    background-position: 0;
+}
+
+.keyboardActions {
+    flex: none;
+    font-size: 0;
+    border-radius: .2rem;
+    background-color: #f9fafb;
+    border: 1px solid #d1d5db;
+    color: #9ca3af;
+    padding: .075rem .375rem;
+    margin: 0.25rem;
+}
+
+
+.keyboardActions::before {
+    content: "esc";
+    font-size: .75rem;
+    line-height: .75rem;
+}
+
+.iddleSearch{
+    padding-left: 43%!important;
+    transition: padding 0.3s ease;
+    cursor: 'pointer'!important;
+}
+
+.activeSearch{
+    padding-left: 0px!important;
+    transition: padding 0.3s ease;
+    cursor: 'text'!important;
+}

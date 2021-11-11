@@ -54,25 +54,27 @@ export default function aliases(
         let messageArr = [];
 
         const msg = action.messages.filter(
-          m => m.aliasId && m.aliasId === action.activeAliasId
+          m => m?.aliasId === action.activeAliasId
         );
 
         if (msg.length) {
           messageArr = [...msg];
 
+          // eslint-disable-next-line no-restricted-syntax
           for (const key in state.byId) {
-            messageArr.push(state.byId[key]);
+            if ({}.hasOwnProperty.call(state.byId, key)) {
+              messageArr.push(state.byId[key]);
+            }
           }
 
           const sortedMessages = messageArr.sort((a, b) => b.date - a.date);
 
-
           return {
             ...state,
             byId: {
-              ...arrayToObject(sortedMessages)
+              ...arrayToObject(sortedMessages, 'aliasId')
             },
-            allIds: [...idFromArrayDict(sortedMessages)],
+            allIds: [...idFromArrayDict(sortedMessages, 'aliasId')],
             fwdAddresses: [...state.fwdAddresses]
           };
         }

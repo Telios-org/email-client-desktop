@@ -31,7 +31,7 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('EmailLabel');
+  const collection = await drive.db.collection('EmailLabel');
 
   return EmailLabel;
 };

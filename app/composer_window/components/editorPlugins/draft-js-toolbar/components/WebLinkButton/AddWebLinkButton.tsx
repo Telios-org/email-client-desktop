@@ -16,7 +16,7 @@ import {
 } from 'rsuite';
 import EditorUtils from 'draft-js-plugins-utils';
 import PropTypes from 'prop-types';
-import styles from './WebLink.less';
+import styles from './WebLink.css';
 // import clsx from 'clsx';
 // import ButtonTooltip from '../../utils/ButtonTooltip';
 

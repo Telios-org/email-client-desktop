@@ -81,6 +81,15 @@ export const registerAlias = (
     dispatch(startAliasRegistration(`${namespaceName}#${address}@${domain}`));
     let alias;
     try {
+      console.log(
+        'ALIAS DATA::',
+        namespaceName,
+        domain,
+        address,
+        description,
+        fwdAddresses,
+        disabled
+      );
       alias = await Mail.registerAliasAddress({
         namespaceName,
         domain,
@@ -327,7 +336,6 @@ export const fetchAliasMessages = (id: string) => {
   };
 };
 
-
 export const FETCH_MORE_ALIAS_MESSAGES_SUCCESS =
   'MAILPAGE::FETCH_MORE_ALIAS_MESSAGES_SUCCESS';
 export const fetchMoreAliasMessagesSuccess = (messages: MailMessageType[]) => {
@@ -352,8 +360,6 @@ export const fetchMoreAliasMessages = (id: number, offset: number) => {
     return Promise.resolve(messages);
   };
 };
-
-
 
 export const ALIAS_SELECTION_FLOW = 'MAILPAGE::ALIAS_SELECTION_FLOW';
 export const aliasSelectionFlow = (id: string) => {
@@ -390,7 +396,6 @@ export const aliasSelectionFlowFailure = (error: Error) => {
 export const aliasSelection = (aliasIndex: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(aliasSelectionFlow(aliasIndex));
-    // dispatch(showMaximizedMessageDisplay(false));
 
     const { mail, globalState } = getState();
     const aliasesArray = mail.aliases.allIds;

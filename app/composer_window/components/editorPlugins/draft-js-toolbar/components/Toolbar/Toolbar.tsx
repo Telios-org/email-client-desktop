@@ -18,7 +18,7 @@ import {
 import { HeadersButtons } from '../DropdownButtons';
 import { SendButton, AddAttachmentsButton } from '../ActionButtons';
 import { AddWebLinkButton } from '../WebLinkButton';
-import styles from './Toolbar.less';
+import styles from './Toolbar.css';
 
 class Toolbar extends React.Component {
   // eslint-disable-next-line react/static-property-placement

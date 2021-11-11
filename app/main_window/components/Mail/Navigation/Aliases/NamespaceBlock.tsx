@@ -27,7 +27,7 @@ import { Dropdown, Icon } from 'rsuite';
 import i18n from '../../../../../i18n/i18n';
 
 // CSS/LESS STYLES
-import styles from '../Navigation.less';
+import styles from '../Navigation.css';
 
 // STATE SELECTORS
 import {

@@ -18,7 +18,7 @@ module.exports = windowManager => {
     return new Promise((resolve, reject) => {
       mainWindow.webContents.once('ipc-message', (e, channel, data) => {
         if (channel === 'ACCOUNT SERVICE::saveMessageToDBResponse') {
-          mainWindow.webContents.send('initMailbox', { fullSync: false });
+          mainWindow.webContents.send('IPC::initMailbox', { fullSync: false });
           resolve(data);
         }
 

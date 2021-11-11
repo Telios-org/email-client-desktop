@@ -1,4 +1,5 @@
-const { dialog } = require('electron').remote;
+const { dialog, app } = require('electron').remote;
+const path = require('path');
 const worker = require('../workers/main.worker');
 const Login = require('./login.service');
 
@@ -100,7 +101,10 @@ class MailService {
       options = {
         title: 'Select Path',
         buttonLabel: 'Save Attachment',
-        defaultPath: attachments[0].filename,
+        defaultPath: path.join(
+          app.getPath('downloads'),
+          attachments[0].filename
+        ),
         properties: ['showOverwriteConfirmation', 'createDirectory']
       };
     } else {
@@ -434,10 +438,13 @@ class MailService {
   }
 
   static search(searchQuery) {
-    worker.send({ event: 'searchMailbox', payload: { searchQuery } });
+    worker.send({
+      event: 'MAIL_SERVICE::searchMailbox',
+      payload: { searchQuery }
+    });
 
     return new Promise((resolve, reject) => {
-      worker.once('searchMailbox', m => {
+      worker.once('MAILBOX_WORKER::searchMailbox', m => {
         const { data, error } = m;
 
         if (error) return reject(error);

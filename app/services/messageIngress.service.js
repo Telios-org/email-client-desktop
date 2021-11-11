@@ -94,10 +94,10 @@ class MessageIngressService extends EventEmitter {
       this.finished = 0;
       this.msgBatchSize = meta.length;
 
-      this.emit('messageSyncStarted', meta.length);
+      this.emit('MESSAGE_INGRESS_SERVICE::messageSyncStarted', meta.length);
 
       mainWorker.send({
-        event: 'newMessageBatch',
+        event: 'MESSAGE_INGRESS_SERVICE::newMessageBatch',
         payload: { meta, account }
       });
     }
@@ -125,7 +125,7 @@ class MessageIngressService extends EventEmitter {
     }
 
     if (this.finished < this.msgBatchSize) {
-      this.emit('messageSynced', {
+      this.emit('MESSAGE_INGRESS_SERVICE::messageSynced', {
         index: this.finished,
         total: this.msgBatchSize,
         done: false
@@ -138,7 +138,7 @@ class MessageIngressService extends EventEmitter {
         this.syncIds = [];
       }
 
-      this.emit('messageSynced', {
+      this.emit('MESSAGE_INGRESS_SERVICE::messageSynced', {
         index: this.finished,
         total: this.msgBatchSize,
         messages: this.incomingMsgBatch,

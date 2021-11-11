@@ -30,7 +30,7 @@ import close20 from './img/close-w-20.png';
 import close24 from './img/close-k-24.png';
 import close30 from './img/close-k-30.png';
 
-import styles from './WindowControls.less';
+import styles from './WindowControls.css';
 
 const { remote, ipcRenderer } = require('electron');
 

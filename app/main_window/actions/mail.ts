@@ -2,7 +2,8 @@
 import { updateFolderCount, updateAliasCount } from './mailbox/folders';
 import {
   aliasRegistrationSuccess,
-  fetchAliasMessages
+  fetchAliasMessages,
+  aliasSelection
 } from './mailbox/aliases';
 import {
   Dispatch,
@@ -17,10 +18,17 @@ import {
   SelectionRange
 } from '../reducers/types';
 
-import { activeMessageId, selectAllFoldersById } from '../selectors/mail';
+import {
+  activeMessageId,
+  selectAllFoldersById,
+  currentMessageList
+} from '../selectors/mail';
 
 import Mail from '../../services/mail.service';
 import MessageIngress from '../../services/messageIngress.service';
+
+// ELECTRON IPC IMPORT
+const { ipcRenderer } = require('electron');
 
 // ASYNC REGISTER EMAIL ADDRESS WITH AWS SERVICES
 export const MAILBOX_REGISTRATION = 'MAILPAGE::MAILBOX_REGISTRATION';
@@ -389,7 +397,7 @@ export const saveIncomingMessagesRequest = () => {
 
 export const SAVE_INCOMING_MESSAGES_SUCCESS =
   'MAILPAGE::SAVE_INCOMING_MESSAGES_SUCCESS';
-export const saveIncomingMessagesSuccess = function (
+export const saveIncomingMessagesSuccess = function(
   messages: MailMessageType[],
   activeFolderId: number,
   activeAliasId: string
@@ -480,10 +488,9 @@ export const fetchNewMessageRequest = () => {
 };
 
 export const FETCH_NEW_MESSAGE_SUCCESS = 'MAILPAGE::FETCH_NEW_MESSAGE_SUCCESS';
-export const fetchNewMessageSuccess = (messages: ExternalMailMessageType[]) => {
+export const fetchNewMessageSuccess = () => {
   return {
-    type: FETCH_NEW_MESSAGE_SUCCESS,
-    messages
+    type: FETCH_NEW_MESSAGE_SUCCESS
   };
 };
 
@@ -496,39 +503,27 @@ export const fetchNewMessageFailure = (error: string) => {
 };
 
 export function fetchNewMessages() {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      client,
-      globalState: { activeFolderIndex },
-      mail: {
-        folders: { byId, allIds: foldersArray }
-      }
-    } = getState();
-
+  return async (dispatch: Dispatch) => {
+    dispatch(fetchNewMessageRequest());
     let messages;
     try {
-      Mail.getNewMail()
-        .then(data => {
-          if (data.meta.length > 0) {
-            return MessageIngress.decipherMailMeta({
-              async: false,
-              meta: data.meta,
-              account: data.account
-            });
-          }
+      const data = await Mail.getNewMail();
 
-          return true;
-        })
-        .catch(err => {
-          return err;
+      if (data.meta.length > 0) {
+        await MessageIngress.decipherMailMeta({
+          async: false,
+          meta: data.meta,
+          account: data.account
         });
+      }
+
     } catch (err) {
       console.log(err);
       dispatch(fetchNewMessageFailure(err));
       return err;
     }
 
-    // dispatch(fetchNewMessageSuccess(messages));
+    dispatch(fetchNewMessageSuccess());
     return messages;
   };
 }
@@ -588,15 +583,6 @@ export const fetchMsg = (messageId: string) => {
   };
 };
 
-export const SHOW_MAXIMIZED_MESSAGE_DISPLAY =
-  'MESSAGES::SHOW_MAXIMIZED_MESSAGE_DISPLAY';
-export const showMaximizedMessageDisplay = (bool: boolean) => {
-  return {
-    type: SHOW_MAXIMIZED_MESSAGE_DISPLAY,
-    showMaximizedMessageDisplay: bool
-  };
-};
-
 // END OF THIS MAY BE IN THE WRONG ACTION CREATOR FOLDER
 // END OF CLEANUP TO FOLLOW REDUX PATTERN
 
@@ -633,14 +619,9 @@ export const msgSelectionFlowFailure = (error: Error) => {
   };
 };
 
-export const messageSelection = (message: MailMessageType, action: string) => {
+export const messageSelection = (message: MailMessageType) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(msgSelectionFlow(message.id, message.folderId));
-
-    if (action === 'showMaxDisplay') {
-      dispatch(showMaximizedMessageDisplay(true));
-    }
-
     try {
       const fullMsg = await dispatch(fetchMsg(message.id));
       dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
@@ -698,7 +679,6 @@ export const folderSelectionFlowFailure = (error: Error) => {
 export const folderSelection = (folderIndex: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(folderSelectionFlow(folderIndex));
-    // dispatch(showMaximizedMessageDisplay(false));
 
     const { mail, globalState } = getState();
     const foldersArray = mail.folders.allIds;
@@ -860,20 +840,61 @@ export const setHighlightValue = (query: string) => {
   };
 };
 
-export const sync = (opts: { fullSync: boolean }) => {
+export const SET_SEARCH_FILTER = 'GLOBAL::SET_SEARCH_FILTER';
+export const setSearchFilter = (payload: string[]) => {
+  return {
+    type: SET_SEARCH_FILTER,
+    payload
+  };
+};
+
+export const CLEAR_SEARCH_FILTER = 'GLOBAL::CLEAR_SEARCH_FILTER';
+export const clearSearchFilter = () => {
+  return {
+    type: CLEAR_SEARCH_FILTER
+  };
+};
+
+export const selectSearch = (
+  payload: any,
+  msg: MailMessageType,
+  searchQuery: string
+): ((dispatch: Dispatch, getState: GetState) => Promise<void>) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    console.time('Sync Mailboxes');
+    const {
+      mail: {
+        folders: { allIds: foldersAllIds },
+        aliases: { allIds: aliasAllIds }
+      },
+      globalState: { editorIsOpen }
+    } = getState();
 
-    if (opts.fullSync) {
-      await dispatch(fetchNewMessages());
+    const isAlias = payload.aliasId !== null && payload.name !== 'Trash';
+    if (isAlias) {
+      const aliasIndex = aliasAllIds.indexOf(payload.aliasId);
+      await dispatch(aliasSelection(aliasIndex));
+    } else {
+      const folderIndex = foldersAllIds.indexOf(payload.folderId);
+      await dispatch(folderSelection(folderIndex));
     }
 
-    try {
-      await dispatch(loadMailboxes(opts));
-    } catch (error) {
-      return error;
+    dispatch(setSearchFilter(payload.messages));
+    await dispatch(setHighlightValue(searchQuery));
+
+    // If we actually select a specific message and not just a folder.
+    if (msg !== null) {
+      // const selected = {
+      //   startIdx: index,
+      //   endIdx: index,
+      //   exclude: [],
+      //   items: [message.id]
+      // };
+
+      if (editorIsOpen) {
+        ipcRenderer.send('RENDERER::closeComposerWindow', { action: 'save' });
+      }
+      dispatch(messageSelection(msg));
+      // dispatch(selectMessageRange(selected, message.folderId));
     }
-    console.timeEnd('Sync Mailboxes');
-    return true;
   };
 };

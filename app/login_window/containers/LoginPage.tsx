@@ -1,5 +1,4 @@
 import { ipcRenderer } from 'electron';
-import { hot } from 'react-hot-loader/root';
 import React, { Component } from 'react';
 import Login from '../components/Login';
 import Register from '../components/Register';
@@ -7,7 +6,7 @@ import WavyHeader from '../components/designElements/WavyHeader';
 import WavyFooter from '../components/designElements/WavyFooter';
 import FirstTimeScreen from '../components/FirstTimeScreen';
 import PasswordTile from '../components/PasswordTile';
-import styles from './LoginPage.less';
+import styles from './LoginPage.css';
 
 const themeUtils = require('../../utils/themes.util');
 const LoginService = require('../../services/login.service');
@@ -113,4 +112,4 @@ class LoginPage extends Component<Props, State> {
   }
 }
 
-export default hot(LoginPage);
+export default LoginPage;

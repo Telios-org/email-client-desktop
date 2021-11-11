@@ -2,16 +2,11 @@
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@import '~@fortawesome/fontawesome-free/css/all.css';
-@import '~rsuite/lib/styles/themes/default/index.less';
-@import '~draft-js/dist/Draft.css';
+@import './tailwind.global.css';
+@import 'rsuite/dist/styles/rsuite-default.css';
+@import 'draft-js/dist/Draft.css';
  /* PRIMSJS Theme is for the codeblock for the editor. */
-@import '~prismjs/themes/prism-tomorrow.css';
+@import 'prismjs/themes/prism-tomorrow.css';
 
 /* @reset-import: false;
 

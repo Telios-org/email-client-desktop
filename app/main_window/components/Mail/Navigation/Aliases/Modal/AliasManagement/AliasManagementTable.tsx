@@ -21,7 +21,7 @@ import {
 
 // CSS Style
 
-import styles from './AliasManagementTable.less';
+import styles from './AliasManagementTable.css';
 
 type Props = {
   domain: string;

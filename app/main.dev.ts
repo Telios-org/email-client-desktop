@@ -16,6 +16,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
 const Store = require('electron-store');
+
 const store = new Store();
 
 export default class AppUpdater {
@@ -46,6 +47,20 @@ if (
   require('electron-debug')();
 }
 
+// Turning that off for now
+// if (process.env.NODE_ENV === 'development') {
+//   try {
+//     // console.log('ENV VARS', process.env);
+//     console.log('ELECTRON RELOADER - ON');
+//     require('electron-reloader')(module, {
+//       debug: true,
+//       watchRenderer: false
+//     });
+//   } catch (_) {
+//     console.log('Error');
+//   }
+// }
+
 const createMainWindow = async () => {
   const mainWindow = await windowManager.create('mainWindow', {
     url: `file://${__dirname}/main_window/app.html?env=${process.env.NODE_ENV}#/mail`,
@@ -59,13 +74,13 @@ const createMainWindow = async () => {
       titleBarStyle: 'hiddenInset',
       webPreferences:
         process.env.NODE_ENV === 'development' ||
-          process.env.E2E_BUILD === 'true'
+        process.env.E2E_BUILD === 'true'
           ? {
-            nodeIntegration: true
-          }
+              nodeIntegration: true
+            }
           : {
-            preload: path.join(__dirname, 'dist/main.renderer.prod.js')
-          }
+              preload: path.join(__dirname, 'dist/main.renderer.prod.js')
+            }
     },
     clearWindowOnClose: true,
     hideWhenReady: true
@@ -90,13 +105,13 @@ const createLoginWindow = async () => {
       titleBarStyle: 'hiddenInset',
       webPreferences:
         process.env.NODE_ENV === 'development' ||
-          process.env.E2E_BUILD === 'true'
+        process.env.E2E_BUILD === 'true'
           ? {
-            nodeIntegration: true
-          }
+              nodeIntegration: true
+            }
           : {
-            preload: path.join(__dirname, 'dist/login.renderer.prod.js')
-          }
+              preload: path.join(__dirname, 'dist/login.renderer.prod.js')
+            }
     },
     clearWindowOnClose: false,
     hideWhenReady: false
@@ -146,5 +161,6 @@ app.on('activate', async () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (windowManager.getWindow('mainWindow') === null) await createMainWindow();
-  if (windowManager.getWindow('loginWindow') === null) await createLoginWindow();
+  if (windowManager.getWindow('loginWindow') === null)
+    await createLoginWindow();
 });

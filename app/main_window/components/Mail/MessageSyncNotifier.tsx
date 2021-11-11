@@ -19,14 +19,14 @@ export default function MessageSyncNotifier(props: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    MessageIngress.on('messageSyncStarted', t => {
+    MessageIngress.on('MESSAGE_INGRESS_SERVICE::messageSyncStarted', t => {
       setLoaded(0);
       setTotal(t);
       inProgress(true);
       setIsLoading(true);
     });
 
-    MessageIngress.on('messageSynced', data => {
+    MessageIngress.on('MESSAGE_INGRESS_SERVICE::messageSynced', data => {
       setLoaded(data.index);
       setTotal(data.total);
 

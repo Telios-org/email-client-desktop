@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import WindowControls from '../../../global_components/WindowControls/WindowControls';
-import styles from './ComposerTopBar.less';
+import styles from './ComposerTopBar.css';
 
 type Props = {
   // this object would hold any props not coming from redux

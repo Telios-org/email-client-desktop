@@ -35,7 +35,7 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   const drive = store.getDrive();
-  const collection = await drive.collection('Mailbox');
+  const collection = await drive.db.collection('Mailbox');
 
   Mailbox.addHook('afterCreate', async (mailbox, options) => {
     try {
