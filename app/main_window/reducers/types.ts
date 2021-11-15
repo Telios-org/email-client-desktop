@@ -218,7 +218,7 @@ export type GlobalType = {
   searchFilteredMsg: string[];
   msgListFilters:{
     [index: number | string]: any;
-  }
+  };
   activeMsgId: {
     [index: number]: {
       id: string | null;

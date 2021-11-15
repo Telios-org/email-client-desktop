@@ -72,6 +72,7 @@ export default function MessageList(props: Props) {
   const aliasId = useSelector(activeAliasId);
   const searchFilter = useSelector(searchFilteredMessages);
   const readFilter = useSelector(msgFilter);
+
   const { editorIsOpen } = useSelector(selectGlobalState);
 
   console.log('READFILTER', readFilter);
