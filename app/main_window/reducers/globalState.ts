@@ -27,7 +27,11 @@ import {
 
 import { ALIAS_SELECTION_FLOW_SUCCESS } from '../actions/mailbox/aliases';
 
-import { TOGGLE_EDITOR, UPDATE_NETWORK_STATUS } from '../actions/global';
+import {
+  TOGGLE_EDITOR,
+  UPDATE_NETWORK_STATUS,
+  SET_MSGLIST_FILTER
+} from '../actions/global';
 
 const initialState = {
   activeMsgId: {},
@@ -46,6 +50,7 @@ const initialState = {
   activeFolderIndex: 0,
   activeAliasIndex: null,
   searchFilteredMsg: [],
+  msgListFilters: {},
   loading: false,
   status: 'online',
   error: '',
@@ -83,6 +88,16 @@ const globalState = (
           [action.folderId]: {
             ...state.activeMsgId[action.folderId],
             selected: action.payload
+          }
+        }
+      };
+    case SET_MSGLIST_FILTER:
+      return {
+        ...state,
+        msgListFilters: {
+          ...state.msgListFilters,
+          [action.aliasId || action.folderId]: {
+            ...action.conditions
           }
         }
       };

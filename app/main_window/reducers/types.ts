@@ -216,6 +216,9 @@ export type GlobalType = {
   activeAliasIndex: number;
   activeAccountIndex: number;
   searchFilteredMsg: string[];
+  msgListFilters:{
+    [index: number | string]: any;
+  };
   activeMsgId: {
     [index: number]: {
       id: string | null;

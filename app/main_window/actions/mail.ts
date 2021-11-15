@@ -516,7 +516,6 @@ export function fetchNewMessages() {
           account: data.account
         });
       }
-
     } catch (err) {
       console.log(err);
       dispatch(fetchNewMessageFailure(err));
@@ -832,6 +831,7 @@ export const loadMailboxes = (opts: { fullSync: boolean }) => async (
   return { mailboxes, folders, messages, namespaces, aliases };
 };
 
+// ALL BELOW SHOULD BE PLACE IN THE global.ts actions file
 export const HIGHLIGHT_SEARCH_QUERY = 'GLOBAL::HIGHLIGHT_SEARCH_QUERY';
 export const setHighlightValue = (query: string) => {
   return {
@@ -898,3 +898,4 @@ export const selectSearch = (
     }
   };
 };
+// END OF WHAT SHOULD BE MOVED TO OTHER FILE.
