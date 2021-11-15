@@ -95,7 +95,7 @@ function PreviewIconBar(props: Props) {
               set="broken"
               style={{ width: '1.25em', height: '1.25em', cursor: 'pointer' }}
               className="ml-0.5 text-trueGray-500 hover:text-trueGray-700"
-              onClick={() => moveToFolder(5, 'Trash')}
+              onClick={() => moveToFolder(4, 'Trash')}
             />
           </Whisper>
         </>
