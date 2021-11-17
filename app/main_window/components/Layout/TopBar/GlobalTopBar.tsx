@@ -21,12 +21,12 @@ class GlobalTopBar extends Component<Props, State> {
       <header
         className={`w-full flex flex-row items-center ${styles.globalTopBar}`}
       >
-        <div className={`flex-grow-0 w-1/3 ${styles.draggable}`} />
-        <div className="flex-grow">
+        <div className={`flex-grow-0 w-1/3 h-full ${styles.draggable}`} />
+        <div className={`flex-grow ${styles.notdraggable}`}>
           <Search />
         </div>
         <div
-          className={`flex-grow-0 flex flex-row items-center w-1/3 ${styles.avatar} ${styles.draggable} justify-end`}
+          className={`flex-grow-0 flex flex-row items-center h-full w-1/3 ${styles.avatar} ${styles.draggable} justify-end`}
         >
           <WindowControls />
         </div>

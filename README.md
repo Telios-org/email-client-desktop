@@ -10,10 +10,6 @@ Telios is an offline-capabale e2e encrypted email service built on [hypercore-pr
 
 ![client_screenshot.png](repo/client_screenshot.png)
 
-## ⚠️ This project is not production ready ⚠️
-
-Features are still being built and optimized. While functional in it's current state, it is not recommended for regular use.
-
 
 ## Starting Development
 

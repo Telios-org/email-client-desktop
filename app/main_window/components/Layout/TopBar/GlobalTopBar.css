@@ -1,12 +1,16 @@
 .globalTopBar {
-    -webkit-app-region: drag;
-    color: #F9FDFE;
+  /* -webkit-app-region: drag; */
+  color: #F9FDFE;
 }
 
 .avatar {
-  -webkit-app-region: no-drag;
+-webkit-app-region: no-drag;
 }
 
 .draggable {
-  -webkit-app-region: drag;
+-webkit-app-region: drag;
+}
+
+.notdraggable {
+-webkit-app-region: no-drag;
 }
