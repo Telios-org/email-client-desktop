@@ -65,7 +65,7 @@
       "timeDescription": "Is roughly how long it would take to crack this password at 10k guesses per second",
       "tooWeakErr": "This password is too weak to safely use.",
       "emailNotAvailable": "This email is not available.",
-      "betaCodeNotValid": "Invalid Beta Access Code.",
+      "betaCodeNotValid": "Invalid Beta Access Code. If you received this code from us, please reach out to Support.",
       "connecting": "Connecting to peer network..."
     },
     "mailbox": {
