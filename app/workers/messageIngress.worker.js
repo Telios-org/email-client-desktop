@@ -97,7 +97,6 @@ class MesssageIngress {
         });
 
         stream.on('end', () => {
-          process.send({ content });
           content = JSON.parse(content);
 
           process.send({

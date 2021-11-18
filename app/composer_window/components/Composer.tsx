@@ -464,8 +464,8 @@ class Composer extends Component<Props, State> {
 
     const fromArr = email.fromJSON ? JSON.parse(email.fromJSON) : [];
     let toArr = email.toJSON ? JSON.parse(email.toJSON) : [];
-    const toCC = email.ccJSON ? JSON.parse(email.ccJSON) : [];
-    const toBCC = email.bccJSON ? JSON.parse(email.bccJSON) : [];
+    let toCC = email.ccJSON ? JSON.parse(email.ccJSON) : [];
+    let toBCC = email.bccJSON ? JSON.parse(email.bccJSON) : [];
 
     switch (action) {
       case 'replyAll': {
@@ -478,9 +478,14 @@ class Composer extends Component<Props, State> {
 
       case 'reply':
         toArr = fromArr;
+        toCC = [];
+        toBCC = [];
         break;
 
       default:
+        toArr = [];
+        toCC = [];
+        toBCC = [];
         break;
     }
 

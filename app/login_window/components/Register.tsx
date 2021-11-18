@@ -649,7 +649,7 @@ class Register extends Component<Props, State> {
                     <p className="text-sm">
                       I understand that my Telios account will receive occasional emails containing important product updates and surveys that will help us make this beta a success.
                     </p>
-                    <p>
+                    <p className="text-sm">
                       Telios will never sell or distribute your email address to any third party at any time.
                     </p>
                     <p>

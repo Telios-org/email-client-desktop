@@ -36,7 +36,7 @@ export default function MailPage() {
   useEffect(() => {
     ipcRenderer.on('IPC::initMailbox', async (event, opts) => {
       await dispatch(loadMailboxes(opts));
-      // await dispatch(fetchNewMessages());
+      await dispatch(fetchNewMessages());
     });
 
     ipcRenderer.on('closeInlineComposer', async event => {
