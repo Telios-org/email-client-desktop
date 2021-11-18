@@ -1,4 +1,6 @@
-import { updateFolderCount, updateAliasCount } from './folders';
+import { updateFolderCount } from './folders';
+import { updateAliasCount } from './aliases';
+
 import { toggleEditor } from '../global';
 
 import Mail from '../../../services/mail.service';

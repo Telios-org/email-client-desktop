@@ -7,10 +7,9 @@ import {
 import {
   UPDATE_ALIAS_SUCCESS,
   REGISTER_ALIAS_SUCCESS,
-  REMOVE_ALIAS_SUCCESS
+  REMOVE_ALIAS_SUCCESS,
+  UPDATE_ALIAS_COUNT
 } from '../../actions/mailbox/aliases';
-
-import { UPDATE_ALIAS_COUNT } from '../../actions/mailbox/folders';
 
 const initialState = {
   byId: {},

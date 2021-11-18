@@ -1,9 +1,11 @@
 /* eslint-disable promise/no-nesting */
-import { updateFolderCount, updateAliasCount } from './mailbox/folders';
+import { updateFolderCount } from './mailbox/folders';
+
 import {
   aliasRegistrationSuccess,
   fetchAliasMessages,
-  aliasSelection
+  aliasSelection,
+  updateAliasCount
 } from './mailbox/aliases';
 import {
   Dispatch,
@@ -464,12 +466,12 @@ export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
 
     // Update Folder Counts
     for (const key in folderCounts) {
-      dispatch(updateFolderCount(parseInt(key), folderCounts[key]));
+      await dispatch(updateFolderCount(parseInt(key), folderCounts[key]));
     }
 
     // Update Alias Counts
     for (const key in aliasCounts) {
-      dispatch(updateAliasCount(key, aliasCounts[key]));
+      await dispatch(updateAliasCount(key, aliasCounts[key]));
     }
 
     return Promise.resolve('done');
@@ -567,9 +569,9 @@ export const fetchMsg = (messageId: string) => {
 
       if (isUnread) {
         if (email.aliasId !== null) {
-          dispatch(updateAliasCount(email.aliasId, -1));
+          await dispatch(updateAliasCount(email.aliasId, -1));
         } else {
-          dispatch(updateFolderCount(email.folderId, -1));
+          await dispatch(updateFolderCount(email.folderId, -1));
         }
       }
     } catch (err) {
