@@ -48,14 +48,14 @@
     node-pre-gyp "^0.11.0"
     request "^2.88.2"
 
-"@telios/client-sdk@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-2.0.0.tgz#16e89044286e3224f4bbe8a7051a4f686aa37433"
-  integrity sha512-DsbKWjVmFyjRs9r4iyiZY56FpuwztlcGomhPr/kdD8tY3pCu4HMq9Ku2KQ/RUT2w+xwjjFmIUwloUSdhOrZaIg==
+"@telios/client-sdk@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-3.0.0.tgz#22fb6520abf83cc03cd2a78a40f9ec648f35bea6"
+  integrity sha512-FkRIh9zBJmXqH5nzZbrce+/qXGd4kYGb07cmVgS2rDIwSZNbQVC07nimezhTBYlXeF/J02Cy4cqGp2IG3lSJnA==
   dependencies:
     "@geut/hypercore-promise" "^2.1.1"
     "@hyperswarm/dht" next
-    "@telios/nebula-drive" "^2.0.0"
+    "@telios/nebula-drive" "^3.0.0"
     async "^3.2.0"
     axios "^0.21.1"
     bip39 "^3.0.4"
@@ -75,42 +75,20 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
-"@telios/nebula-drive@^2.0.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-2.1.0.tgz#3b983c8c2257efe5c4c00983eb5c015e99ebe573"
-  integrity sha512-o+BH0OKCTqtWZqOe5+MiFzfhPiZSGYZs/YFPeKlHJH830x+l4ktJNx653snsFvl8CIRv62QyUFbbdpwon5Y+IQ==
+"@telios/nebula-drive@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-3.0.0.tgz#48ff8ad6fc3dc1387ff627bb60cbc363c00e11a1"
+  integrity sha512-9CmiUX2wwHcCh5sJ7tEyhWmKgPqVd5oB7xoa1c1IQ4J6+eUQ40Uug4qO5WBdxRd2oExiv6d9FULNwkwkAouuZQ==
   dependencies:
     "@geut/hypercore-promise" "^2.1.1"
     async "^3.2.0"
-    autobase "^1.0.0-alpha.0"
+    autobase "^1.0.0-alpha.1"
     blakejs "^1.1.0"
     bson "^4.5.0"
     chokidar "^3.5.1"
     dat-encoding "^5.0.1"
     hyperbee "^1.6.3"
-    hypercore "^10.0.0-alpha.9"
-    hyperswarm "^3.0.0"
-    memorystream "^0.3.1"
-    pump "^3.0.0"
-    random-access-memory "^3.1.1"
-    rimraf "^3.0.2"
-    sodium-native "^3.2.0"
-    uuid "^8.2.0"
-
-"@telios/nebula-drive@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-2.2.0.tgz#cff235bcfe598e298c18ffb088ed337c4d81ff14"
-  integrity sha512-saWDEsi+7McLGBh4L8FtHE/HSOobGgbVw6CGagQJWpPKzv5W69cU6Xl67CenuPgoWSzuGc7fFbDX9zJiYsagSA==
-  dependencies:
-    "@geut/hypercore-promise" "^2.1.1"
-    async "^3.2.0"
-    autobase "^1.0.0-alpha.0"
-    blakejs "^1.1.0"
-    bson "^4.5.0"
-    chokidar "^3.5.1"
-    dat-encoding "^5.0.1"
-    hyperbee "^1.6.3"
-    hypercore "^10.0.0-alpha.10"
+    hypercore "^10.0.0-alpha.13"
     hyperswarm "^3.0.0"
     memorystream "^0.3.1"
     pump "^3.0.0"
@@ -251,7 +229,7 @@ atomic-batcher@^1.0.2:
   resolved "https://registry.yarnpkg.com/atomic-batcher/-/atomic-batcher-1.0.2.tgz#d16901d10ccec59516c197b9ccd8930689b813b4"
   integrity sha1-0WkB0QzOxZUWwZe5zNiTBom4E7Q=
 
-autobase@^1.0.0-alpha.0:
+autobase@^1.0.0-alpha.1:
   version "1.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/autobase/-/autobase-1.0.0-alpha.1.tgz#8946fcdd058c1165fcaf97069ddd37b46c37bf81"
   integrity sha512-Lud+y1I8uSshaTsCDFY4bQVOsb8lBTA45WmRVF4uEWtzwft+1s1Z7bDFjQyhjkjchmx4OpnbgFgtKMCTBgoGWQ==
@@ -521,7 +499,7 @@ compact-encoding-net@^1.0.1:
   dependencies:
     compact-encoding "^2.4.1"
 
-compact-encoding@^2.0.0, compact-encoding@^2.1.0, compact-encoding@^2.4.1, compact-encoding@^2.5.0:
+compact-encoding@^2.0.0, compact-encoding@^2.1.0, compact-encoding@^2.4.1, compact-encoding@^2.5.0, compact-encoding@^2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/compact-encoding/-/compact-encoding-2.5.1.tgz#ebbd9d6d174620ef023597a82a91adaf931b063a"
   integrity sha512-AffyBQj5gzEXdau9l8CZKwG+nVz4EGlAAlAfOriLr0/Y48ySdKFUV9DkxP5Kr2LhieUme/IBOs1RZbOriGghyg==
@@ -1036,7 +1014,7 @@ hypercore-cache@^1.0.1:
   resolved "https://registry.yarnpkg.com/hypercore-cache/-/hypercore-cache-1.0.2.tgz#f170a5fda597437533e1563f39dd60dbbd56056d"
   integrity sha512-AJ/q7y6EOrXnOH/4+DVcfDygsh1ZXMRGvNc67GBNqwCt22oSCOWhRI6EJ+3HEJciM9M2oSm1WX3qg6kgRhT/Gw==
 
-hypercore-crypto@^2.0.0, hypercore-crypto@^2.1.0, hypercore-crypto@^2.1.1:
+hypercore-crypto@^2.0.0, hypercore-crypto@^2.1.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/hypercore-crypto/-/hypercore-crypto-2.3.1.tgz#92320550f294e413fbf69e5db42b7758dec0f5f7"
   integrity sha512-KyfhMG3XBkUj/i7Avhgeb7nGeT3kw0272kvvSsVE08gMNjQf16Ivd4gzvFOYFDj88FSjAIiktMWhaWkZ8G6X4A==
@@ -1044,6 +1022,15 @@ hypercore-crypto@^2.0.0, hypercore-crypto@^2.1.0, hypercore-crypto@^2.1.1:
     b4a "^1.1.0"
     sodium-universal "^3.0.0"
     uint64be "^3.0.0"
+
+hypercore-crypto@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/hypercore-crypto/-/hypercore-crypto-3.1.0.tgz#6eedbd2a200e2b16b2e4fa04d0ae9d97c7f51b38"
+  integrity sha512-GY2hZmmgk5Oby1I4bUgwA3tv1qdfd5uIp/uMYUkImPk6zXy9lXVfVYNWZ27n8/0k2lTSSDN5tt8/DFDVXwwUmg==
+  dependencies:
+    b4a "^1.1.0"
+    compact-encoding "^2.5.1"
+    sodium-universal "^3.0.0"
 
 hypercore-default-storage@^1.1.1:
   version "1.1.1"
@@ -1084,10 +1071,10 @@ hypercore-streams@^1.0.1:
   dependencies:
     streamx "^2.6.0"
 
-hypercore@^10.0.0-alpha.10, hypercore@^10.0.0-alpha.9:
-  version "10.0.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/hypercore/-/hypercore-10.0.0-alpha.10.tgz#907152e3971edd2aaae340a548ad85157de940fb"
-  integrity sha512-/If4KoamTJf1bFPuZgKqC4czgaMu3Fzpk0C8CpLg64uvJgHFJXFiheG8l+JSS+ehZE56Bd8DurDEXmHJfjiDnw==
+hypercore@^10.0.0-alpha.13:
+  version "10.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/hypercore/-/hypercore-10.0.0-alpha.14.tgz#52a3ede7bb46fbd414aa32937a587b1f85052322"
+  integrity sha512-3wPCb/IrUX440UqKQzgnxeEy5+udaetE5nOG9zQc4+ZJWU44Q04SqmjpIimC5nQniwSTu4PWUYIt3ZXgec6hTQ==
   dependencies:
     "@hyperswarm/secret-stream" "^5.0.0"
     b4a "^1.1.0"
@@ -1096,7 +1083,7 @@ hypercore@^10.0.0-alpha.10, hypercore@^10.0.0-alpha.9:
     compact-encoding "^2.5.0"
     crc32-universal "^1.0.1"
     flat-tree "^1.9.0"
-    hypercore-crypto "^2.1.1"
+    hypercore-crypto "^3.1.0"
     is-options "^1.0.1"
     random-access-file "^2.1.4"
     random-array-iterator "^1.0.0"
