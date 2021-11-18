@@ -45,10 +45,18 @@ class MessageIngressService extends EventEmitter {
           async: true
         })
           .then(msg => {
-            this.incomingMsgBatch = [...msg.msgArr, ...this.incomingMsgBatch];
+            msg.msgArr.forEach(msg => {
+              if(!this.incomingMsgBatch.some(m => m.id === msg.id)) {
+                this.incomingMsgBatch.push(msg);
+              }
+            })
 
             if (msg.newAliases.length > 0) {
-              this.newAliases = [...msg.newAliases, ...this.newAliases];
+              msg.newAliases.forEach(alias => {
+                if(!this.newAliases.some(a => a.name === alias.name))  {
+                  this.newAliases.push(alias)
+                }
+              })
             }
 
             if (data._id) {
