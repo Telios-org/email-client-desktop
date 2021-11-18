@@ -47,7 +47,7 @@ export default function MessageInputs(props: Props) {
   };
 
   return (
-    <div className="px-3">
+    <div className="px-3 z-10">
       <div className="border-b flex relative">
         <div className="w-8 text-gray-600 p-2">To</div>
         <div className="w-full">

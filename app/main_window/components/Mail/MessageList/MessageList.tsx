@@ -75,7 +75,7 @@ export default function MessageList(props: Props) {
 
   const { editorIsOpen } = useSelector(selectGlobalState);
 
-  console.log('READFILTER', readFilter);
+  // console.log('READFILTER', readFilter);
 
   const virtualLoaderRef = useRef(null);
 
