@@ -91,6 +91,7 @@ class Toolbar extends React.Component {
         onAction={onSend}
         disable={!isSendActive || isLoading}
         appearance={isSendActive ? 'primary' : 'subtle'}
+        className="font-bold tracking-wider shadow hover:shadow-sm"
         loading={isLoading}
       />
     </ButtonToolbar>
