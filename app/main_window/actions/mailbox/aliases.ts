@@ -1,6 +1,36 @@
 import Mail from '../../../services/mail.service';
 import { MailMessageType, Dispatch, GetState } from '../../reducers/types';
 
+export const UPDATE_ALIAS_COUNT = 'GLOBAL::UPDATE_ALIAS_COUNT';
+const updateCount = (id: number, amount: number) => {
+  return {
+    type: UPDATE_ALIAS_COUNT,
+    id,
+    amount
+  };
+};
+
+export const updateAliasCount = (id: number, amount: number) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      mail: { aliases }
+    } = getState();
+
+    const currCount = aliases?.byId[id].count;
+
+    let change = amount;
+
+    // Make sure we cna never go below 0
+    if (amount < 0 && Math.abs(amount) > Math.abs(currCount)) {
+      change = -1 * currCount;
+    }
+
+    Mail.updateAliasCount({ id, amount: change });
+
+    dispatch(updateCount(id, change));
+  };
+};
+
 export const REGISTER_NAMESPACE = 'ALIASES::REGISTER_NAMESPACE';
 export const startNamespaceRegistration = () => {
   return {

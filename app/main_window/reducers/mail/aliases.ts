@@ -7,10 +7,9 @@ import {
 import {
   UPDATE_ALIAS_SUCCESS,
   REGISTER_ALIAS_SUCCESS,
-  REMOVE_ALIAS_SUCCESS
+  REMOVE_ALIAS_SUCCESS,
+  UPDATE_ALIAS_COUNT
 } from '../../actions/mailbox/aliases';
-
-import { UPDATE_ALIAS_COUNT } from '../../actions/mailbox/folders';
 
 const initialState = {
   byId: {},
@@ -49,37 +48,6 @@ export default function aliases(
         allIds: [...idFromArrayDict(action.aliases, 'aliasId')],
         fwdAddresses: uniqueFwd
       };
-    case SAVE_INCOMING_MESSAGES_SUCCESS:
-      if (action.messages !== undefined && action.messages.length > 0) {
-        let messageArr = [];
-
-        const msg = action.messages.filter(
-          m => m?.aliasId === action.activeAliasId
-        );
-
-        if (msg.length) {
-          messageArr = [...msg];
-
-          // eslint-disable-next-line no-restricted-syntax
-          for (const key in state.byId) {
-            if ({}.hasOwnProperty.call(state.byId, key)) {
-              messageArr.push(state.byId[key]);
-            }
-          }
-
-          const sortedMessages = messageArr.sort((a, b) => b.date - a.date);
-
-          return {
-            ...state,
-            byId: {
-              ...arrayToObject(sortedMessages, 'aliasId')
-            },
-            allIds: [...idFromArrayDict(sortedMessages, 'aliasId')],
-            fwdAddresses: [...state.fwdAddresses]
-          };
-        }
-      }
-      return { ...state };
     case REGISTER_ALIAS_SUCCESS:
       return {
         byId: {

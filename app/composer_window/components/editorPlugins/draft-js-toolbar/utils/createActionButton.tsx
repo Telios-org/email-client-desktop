@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 // import clsx from 'clsx';
 import ButtonTooltip from './ButtonTooltip';
 
-const createActionButton = ({ icon, tooltip, iconSub }) => {
+const createActionButton = ({ icon, tooltip, iconSub, text }) => {
   const ActionButton = ({
     onAction,
     appearance,
@@ -29,7 +29,10 @@ const createActionButton = ({ icon, tooltip, iconSub }) => {
           disabled={disable}
           loading={loading}
           size="sm"
-        />
+          placement="left"
+        >
+          {text}
+        </IconButton>
       </ButtonTooltip>
     );
   };
