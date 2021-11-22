@@ -69,9 +69,10 @@ class LoginPage extends Component<Props, State> {
 
     return (
       <div
-        className={`absolute w-full h-full flex flex-col overflow-hidden ${styles.container}`}
+        className={`absolute w-full h-full flex flex-col overflow-hidden`}
       >
         <div className="h-full w-full">
+          <div className={`absolute h-16 w-full ${styles.drag}`} />
           {activeWindow === 'first-screen' && (
             <FirstTimeScreen
               isLoading={isLoading}
