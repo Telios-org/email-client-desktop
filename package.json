@@ -101,7 +101,9 @@
       "target": [
         "nsis"
       ],
-      "verifyUpdateCodeSignature": false
+      "verifyUpdateCodeSignature": true,
+      "publisherName": "Telios Technologies, Inc",
+      "signAndEditExecutable": true
     },
     "linux": {
       "target": [
