@@ -98,9 +98,6 @@
       ]
     },
     "win": {
-      "target": [
-        "nsis"
-      ],
       "verifyUpdateCodeSignature": true,
       "publisherName": "Telios Technologies, Inc",
       "signAndEditExecutable": true,
