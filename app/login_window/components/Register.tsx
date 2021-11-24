@@ -899,7 +899,7 @@ class Register extends Component<Props, State> {
 
           {step === 5 && (
             <div>
-              <div className="text-sm text-gray-600 font-medium rounded p-4 mb-8 bg-gray-200 break-words">
+              <div className="select-all text-sm text-gray-600 font-medium rounded p-4 mb-8 bg-gray-200 break-words">
                 {account.mnemonic}
               </div>
 

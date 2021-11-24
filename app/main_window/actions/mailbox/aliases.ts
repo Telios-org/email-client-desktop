@@ -20,11 +20,20 @@ export const updateAliasCount = (id: number, amount: number) => {
 
     let change = amount;
 
-    // Make sure we cna never go below 0
+    // Make sure we can never go below 0
     if (amount < 0 && Math.abs(amount) > Math.abs(currCount)) {
       change = -1 * currCount;
     }
 
+    // Self-heal if count ever gets stuck below 0
+    if(currCount < 0) {
+      if(amount > 0) {
+        change = Math.abs(currCount) + amount;
+      } else {
+        change = Math.abs(currCount);
+      }
+    }
+    
     Mail.updateAliasCount({ id, amount: change });
 
     dispatch(updateCount(id, change));
