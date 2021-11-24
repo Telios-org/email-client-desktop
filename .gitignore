@@ -33,6 +33,9 @@ node_modules
 # OSX
 .DS_Store
 
+#Win Signing
+./telios_csc.p12
+
 # App packaged
 release
 app/main.prod.js
