@@ -101,7 +101,7 @@
       "target": [
         "nsis"
       ],
-      "certificateFile": "C:/gitlab-runner/build/telios_csc.p12",
+      "certificateFile": "telios_csc.p12",
       "verifyUpdateCodeSignature": true,
       "publisherName": "Telios Technologies, Inc",
       "signAndEditExecutable": true,
