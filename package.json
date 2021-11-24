@@ -102,7 +102,6 @@
         "nsis"
       ],
       "certificateFile": "C:/gitlab-runner/build/telios_csc.p12",
-      "certificatePassword": "",
       "verifyUpdateCodeSignature": true,
       "publisherName": "Telios Technologies, Inc",
       "signAndEditExecutable": true,
