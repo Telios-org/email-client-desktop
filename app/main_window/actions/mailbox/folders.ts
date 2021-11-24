@@ -21,7 +21,7 @@ export const updateFolderCount = (id: number, amount: number) => {
 
     let change = amount;
 
-    // Make sure we can never go below 0
+    // Make sure we cna never go below 0
     if (amount < 0 && Math.abs(amount) > Math.abs(currCount)) {
       change = -1 * currCount;
     }

@@ -33,7 +33,7 @@ export const updateAliasCount = (id: number, amount: number) => {
         change = Math.abs(currCount);
       }
     }
-
+    
     Mail.updateAliasCount({ id, amount: change });
 
     dispatch(updateCount(id, change));
