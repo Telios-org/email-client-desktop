@@ -459,9 +459,10 @@ class Register extends Component<Props, State> {
     this.setState({ formError, formSuccess, passwordStrength, crackTime });
   }
 
-  onChangeRecoveryEmail(formValue) {
+  onChangeRecoveryEmail = debounce(async formValue => {
     const state = { ...this.state };
     const { formSuccess, formError } = state;
+    let recovResp;
 
     if (!formValue.recoveryemail) {
       delete formSuccess.recoveryemail;
@@ -473,14 +474,20 @@ class Register extends Component<Props, State> {
     delete formError.recoveryemail;
     delete formSuccess.recoveryemail;
 
-    if (validateEmail(formValue.recoveryemail)) {
+    try {
+      recovResp = await mailbox.isValidRecoveryEmail(formValue.recoveryemail);
+    } catch(err) {
+      // handle error
+    }
+
+    if (validateEmail(formValue.recoveryemail) && recovResp && recovResp.isValid) {
       formSuccess.recoveryemail = true;
     } else {
       formError.recoveryemail = i18n.t('form.recoveryEmailInvalid');
     }
 
     this.setState({ formError, formSuccess });
-  }
+  }, 500);
 
   isNextStepDisabled(currentStep: number) {
     const { formSuccess } = this.state;
