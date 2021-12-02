@@ -106,7 +106,9 @@
       "verifyUpdateCodeSignature": true,
       "publisherName": "Telios Technologies, Inc",
       "signAndEditExecutable": true,
-      "signingHashAlgorithms": ["sha256"]
+      "signingHashAlgorithms": [
+        "sha256"
+      ]
     },
     "linux": {
       "target": [
@@ -286,6 +288,7 @@
     "clsx": "^1.1.1",
     "connected-react-router": "^6.6.1",
     "core-js": "^3.6.4",
+    "del": "^6.0.0",
     "devtron": "^1.4.0",
     "draft-js": "^0.11.7",
     "draft-js-code": "^0.3.0",
@@ -386,4 +389,4 @@
       "bliss"
     ]
   }
-} 
+}

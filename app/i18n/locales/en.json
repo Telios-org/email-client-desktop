@@ -100,6 +100,7 @@
       "emailRequired": "Email is required.",
       "recoveryRequired": "Recovery Email is required.",
       "recoveryEmailInvalid": "Recovery email is invalid.",
+      "recoveryEmaiAlreadyUsed": "Recovery email is already in use.",
       "masterPassRequired": "Master password is required.",
       "weakPass": "Password is too weak.",
       "passMismatch": "Passwords do not match.",

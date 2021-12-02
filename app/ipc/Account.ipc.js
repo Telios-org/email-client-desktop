@@ -2,22 +2,21 @@ const { ipcMain } = require('electron');
 const store = require('../Store');
 
 module.exports = windowManager => {
-  ipcMain.handle('createAccount', async (event, payload) => {
+  ipcMain.handle('LOGIN_SERVICE::createAccount', async (event, payload) => {
     const mainWindow = windowManager.getWindow('mainWindow');
-    mainWindow.webContents.send('createAccount', payload);
+    mainWindow.webContents.send('ACCOUNT_IPC::createAccount', payload);
 
     return new Promise((resolve, reject) => {
       mainWindow.webContents.on('ipc-message', (e, channel, data) => {
-        if (channel === 'createAccountResponse') {
+        if (channel === 'ACCOUNT_SERVICE::createAccountResponse') {
           store.setAccountSecrets({
             password: payload.password,
             email: payload.email
           });
           resolve(data);
         }
-
-        if (channel === 'createAccountError') {
-          reject(data);
+        if (channel === 'ACCOUNT_SERVICE::createAccountError') {
+          reject(JSON.stringify(data.error));
         }
       });
     });

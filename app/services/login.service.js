@@ -1,5 +1,7 @@
 const { remote, ipcRenderer } = require('electron');
 const fs = require('fs');
+const worker = require('../workers/main.worker');
+const { extractJSON } = require('../utils/string.util');
 
 const { app } = remote;
 
@@ -20,12 +22,17 @@ class LoginService {
   static async createAccount(payload) {
     return new Promise((resolve, reject) => {
       ipcRenderer
-        .invoke('createAccount', payload)
+        .invoke('LOGIN_SERVICE::createAccount', payload)
         .then(data => {
           return resolve(data);
         })
         .catch(err => {
-          return reject(err);
+          worker.send({ event: 'LOGIN_SERVICE::removeAccount', payload });
+          // The error is string is serialized coming back from the IPC
+          // to get the actual error messsage we will need to extract the JSON obj
+          // and parse it.
+          const error = extractJSON(err.toString());
+          return reject(error);
         });
     });
   }

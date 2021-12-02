@@ -795,7 +795,7 @@ module.exports = env => {
           });
 
           return process.send({
-            event: 'MAILBOX WORKER::saveMessageToDB',
+            event: 'MAILBOX_WORKER::saveMessageToDB',
             data: {
               msgArr,
               newAliases
@@ -804,7 +804,7 @@ module.exports = env => {
         })
         .catch(e => {
           process.send({
-            event: 'MAILBOX WORKER::saveMessageToDB',
+            event: 'MAILBOX_WORKER::saveMessageToDB',
             error: {
               name: e.name,
               message: e.message,
