@@ -138,7 +138,7 @@ class MailService {
 
     if (opts.async) {
       return new Promise((resolve, reject) => {
-        worker.once('MAILBOX WORKER::saveMessageToDB', m => {
+        worker.once('MAILBOX_WORKER::saveMessageToDB', m => {
           const { data, error } = m;
 
           if (error) return reject(error);

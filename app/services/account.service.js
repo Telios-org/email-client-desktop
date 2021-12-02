@@ -6,17 +6,22 @@ const MessageIngressService = require('./messageIngress.service');
 
 class AccountService {
   constructor() {
-    ipcRenderer.once('createAccount', async (evt, data) => {
+    ipcRenderer.once('ACCOUNT_IPC::createAccount', async (evt, data) => {
       try {
         const account = await AccountService.createAccount(data);
 
         // Start incoming message listener
         MessageIngressService.initMessageListener();
 
-        ipcRenderer.send('createAccountResponse', account);
+        ipcRenderer.send('ACCOUNT_SERVICE::createAccountResponse', account);
       } catch (e) {
-        console.log(e);
-        ipcRenderer.send('createAccountError', e);
+        ipcRenderer.send('ACCOUNT_SERVICE::createAccountError', {
+          error: {
+            name: e.name,
+            message: e.message,
+            stacktrace: e.stack
+          }
+        });
       }
     });
 
@@ -134,10 +139,10 @@ class AccountService {
   }
 
   static createAccount(payload) {
-    worker.send({ event: 'createAccount', payload });
+    worker.send({ event: 'ACCOUNT_SERVICE::createAccount', payload });
 
     return new Promise((resolve, reject) => {
-      worker.once('createAccount', async m => {
+      worker.once('ACCOUNT_WORKER::createAccount', async m => {
         const { data, error } = m;
         if (error) return reject(error);
 

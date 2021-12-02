@@ -285,6 +285,9 @@ class Register extends Component<Props, State> {
           recoveryEmail: formValue.recoveryemail,
           vcode: formValue.betacode
         });
+
+        console.log(acct);
+
         this.setState({ account: acct, loading: false });
         this.handleNextStep(step + 1);
 
@@ -292,13 +295,15 @@ class Register extends Component<Props, State> {
         store.set('lastAccount', email);
       } catch (e) {
         console.log('ERROR', e);
-        this.setState({
-          formError: {
-            ...formError,
-            email: i18n.t('register.emailNotAvailable')
-          },
-          loading: false
-        });
+        setTimeout(() => {
+          this.setState({
+            formError: {
+              ...formError,
+              recoveryemail: e?.message
+            },
+            loading: false
+          });
+        }, 600);
       }
     }
   }
@@ -476,14 +481,16 @@ class Register extends Component<Props, State> {
 
     try {
       recovResp = await mailbox.isValidRecoveryEmail(formValue.recoveryemail);
-    } catch(err) {
+    } catch (err) {
       // handle error
     }
 
-    if (validateEmail(formValue.recoveryemail) && recovResp && recovResp.isValid) {
+    if (validateEmail(formValue.recoveryemail) && recovResp?.isValid) {
       formSuccess.recoveryemail = true;
-    } else {
+    } else if (recovResp?.isValid) {
       formError.recoveryemail = i18n.t('form.recoveryEmailInvalid');
+    } else {
+      formError.recoveryemail = i18n.t('form.recoveryEmaiAlreadyUsed');
     }
 
     this.setState({ formError, formSuccess });
@@ -642,7 +649,10 @@ class Register extends Component<Props, State> {
                     {/* <BsCheck className="mr-1 text-gray-400" /> */}
                   </InputGroup.Addon>
                 </InputGroup>
-                <div style={errorStyles(formError.betacode)}>
+                <div
+                  className="text-sm"
+                  style={errorStyles(formError.betacode)}
+                >
                   {formError.betacode}
                 </div>
               </FormGroup>
@@ -654,26 +664,30 @@ class Register extends Component<Props, State> {
                 <FormControl name="checkbox" accepter={CheckboxGroup}>
                   <Checkbox value="emailComm">
                     <p className="text-sm">
-                      I understand that my Telios account will receive occasional emails containing important product updates and surveys that will help us make this beta a success.
+                      I understand that my Telios account will receive
+                      occasional emails containing important product updates and
+                      surveys that will help us make this beta a success.
                     </p>
                     <p className="text-sm">
-                      Telios will never sell or distribute your email address to any third party at any time.
+                      Telios will never sell or distribute your email address to
+                      any third party at any time.
                     </p>
                     <p>
-                      If you wish to unsubscribe from future emails, you can do so at any time.
+                      If you wish to unsubscribe from future emails, you can do
+                      so at any time.
                     </p>
                   </Checkbox>
                   <Checkbox value="termAndPrivacy">
                     <p className="text-sm">
                       I agree to the Telios
-                      {' '}
+{' '}
                       <a href="https://docs.google.com/document/u/1/d/e/2PACX-1vQXqRRpBkB-7HqwLd2XtsWVDLjCUnBUIeNQADb56FuKHdj_IF9wbmsl4G7RLxR2_yKYMhnSO1M-X39H/pub">
                         {' '}
                         Terms of Service
                       </a>
-                      {' '}
+{' '}
                       and
-                      {' '}
+{' '}
                       <a href="https://docs.google.com/document/u/1/d/e/2PACX-1vTIL7a6NbUhBDxHmRy5tW0e5H4YoBWXUO1WvPseVuEATSLHMIemVAG6nnRe_xIJZ-s5YYPh2C05JwKR/pub">
                         Privacy Policy
                       </a>
@@ -694,14 +708,16 @@ class Register extends Component<Props, State> {
                     {!emailCheckLoading && !formSuccess.email && (
                       <FaRegEnvelope
                         className={`text-gray-400
-                    ${formError.email && !formSuccess.email
-                            ? 'text-red-600'
-                            : ''
-                          }
-                    ${formSuccess.email && !formError.email
-                            ? 'text-green-500'
-                            : ''
-                          }`}
+                    ${
+                      formError.email && !formSuccess.email
+                        ? 'text-red-600'
+                        : ''
+                    }
+                    ${
+                      formSuccess.email && !formError.email
+                        ? 'text-green-500'
+                        : ''
+                    }`}
                       />
                     )}
                     {emailCheckLoading &&
@@ -724,14 +740,15 @@ class Register extends Component<Props, State> {
                   <InputGroup.Addon>
                     {' '}
                     <div
-                      className={`${loading ? 'text-gray-400 select-none' : ''
-                        }`}
+                      className={`${
+                        loading ? 'text-gray-400 select-none' : ''
+                      }`}
                     >
                       {`@${mailDomain}`}
                     </div>
                   </InputGroup.Addon>
                 </InputGroup>
-                <div style={errorStyles(formError.email)}>
+                <div className="text-sm" style={errorStyles(formError.email)}>
                   {formError.email}
                 </div>
               </FormGroup>
@@ -785,32 +802,37 @@ class Register extends Component<Props, State> {
               </FormGroup>
               <div className="flex flex-row h-1 w-full mt-1 mb-3 px-1">
                 <div
-                  className={`flex-1  mr-2 rounded ${passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
-                    }`}
+                  className={`flex-1  mr-2 rounded ${
+                    passwordStrength !== null ? 'bg-red-400' : 'bg-gray-300'
+                  }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 1
-                    ? 'bg-red-400'
-                    : 'bg-gray-300'
-                    }`}
+                  className={`flex-1  mr-2 rounded ${
+                    passwordStrength !== null && passwordStrength >= 1
+                      ? 'bg-red-400'
+                      : 'bg-gray-300'
+                  }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 2
-                    ? 'bg-orange-400'
-                    : 'bg-gray-300'
-                    }`}
+                  className={`flex-1  mr-2 rounded ${
+                    passwordStrength !== null && passwordStrength >= 2
+                      ? 'bg-orange-400'
+                      : 'bg-gray-300'
+                  }`}
                 />
                 <div
-                  className={`flex-1  mr-2 rounded ${passwordStrength !== null && passwordStrength >= 3
-                    ? 'bg-yellow-400'
-                    : 'bg-gray-300'
-                    }`}
+                  className={`flex-1  mr-2 rounded ${
+                    passwordStrength !== null && passwordStrength >= 3
+                      ? 'bg-yellow-400'
+                      : 'bg-gray-300'
+                  }`}
                 />
                 <div
-                  className={`flex-1 rounded ${passwordStrength !== null && passwordStrength === 4
-                    ? 'bg-green-400'
-                    : 'bg-gray-300'
-                    }`}
+                  className={`flex-1 rounded ${
+                    passwordStrength !== null && passwordStrength === 4
+                      ? 'bg-green-400'
+                      : 'bg-gray-300'
+                  }`}
                 />
               </div>
 
@@ -854,9 +876,10 @@ class Register extends Component<Props, State> {
                     )}
                   </InputGroup.Addon>
                 </InputGroup>
-                <div className="text-red-500">
-                  {`${formError.masterpass ? formError.masterpass : ''} ${formError.confirmpass ? formError.confirmpass : ''
-                    }`}
+                <div className="text-red-500 text-sm">
+                  {`${formError.masterpass ? formError.masterpass : ''} ${
+                    formError.confirmpass ? formError.confirmpass : ''
+                  }`}
                 </div>
               </FormGroup>
               <Whisper placement="top" trigger="hover" speaker={tooltip}>
@@ -886,14 +909,17 @@ class Register extends Component<Props, State> {
               <InputGroup className="bg-transparent" inside>
                 <InputGroup.Addon>
                   <AiOutlineHistory
-                    className={`mr-1 text-gray-400
+                    className={`mr-1 text-gray-400 text-sm
                       ${formError.recoveryemail ? 'text-red-600' : ''}
                       ${formSuccess.recoveryemail ? 'text-green-500' : ''}`}
                   />
                 </InputGroup.Addon>
                 <FormControl disabled={loading} name="recoveryemail" />
               </InputGroup>
-              <div style={errorStyles(formError.recoveryemail)}>
+              <div
+                className="text-sm max-h-16 overflow-scroll"
+                style={errorStyles(formError.recoveryemail)}
+              >
                 {formError.recoveryemail}
               </div>
               {loading && (
