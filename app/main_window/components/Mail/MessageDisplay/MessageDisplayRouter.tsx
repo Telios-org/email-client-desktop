@@ -6,7 +6,7 @@ import teliosLogoSVG from '../../../../../resources/img/telios_logo.svg';
 
 // COMPONENTS
 import MessageDisplay from './MessageDisplay';
-import Composer from '../../../../composer_window/components/Composer';
+import Composer from '../../../../composer_window/Composer';
 
 // REDUX STATE SELECTORS
 import {
@@ -31,9 +31,7 @@ function MessageDisplayRouter(props: Props) {
     state => state.globalState.editorIsOpen
   );
 
-  const highlight = useSelector(
-    state => state.globalState.highlightText
-  );
+  const highlight = useSelector(state => state.globalState.highlightText);
 
   const mailbox = useSelector(selectActiveMailbox);
   const folderId = useSelector(activeFolderId);
@@ -55,23 +53,21 @@ function MessageDisplayRouter(props: Props) {
           />
           {selectedItems.length > 1 && (
             <div className="text-lg mt-2">
-              You have
-              {' '}
+              You have{' '}
               <span className="text-purple-600 text-bold">
                 {selectedItems.length}
-              </span>
-              {' '}
+              </span>{' '}
               emails selected.
             </div>
           )}
         </div>
       )}
-      {message.id !== null && selectedItems.length < 2 && message.fromJSON && !showComposer && (
-        <MessageDisplay
-          highlight={highlight}
-          message={message}
-        />
-      )}
+      {message.id !== null &&
+        selectedItems.length < 2 &&
+        message.fromJSON &&
+        !showComposer && (
+          <MessageDisplay highlight={highlight} message={message} />
+        )}
       {showComposer && (
         <Composer
           onClose={onComposerClose}

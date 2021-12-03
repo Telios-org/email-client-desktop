@@ -30,7 +30,11 @@ export default merge.smart(baseConfig, {
   module: require('./webpack.config.renderer.dev.babel').default.module,
 
   entry: {
-    renderer: Object.keys(dependencies || {})
+    renderer: [
+      ...Object.keys(dependencies || {}),
+      '@heroicons/react/solid',
+      '@heroicons/react/outline'
+    ].filter(key => key !== '@heroicons/react')
   },
 
   output: {

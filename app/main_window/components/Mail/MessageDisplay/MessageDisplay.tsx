@@ -28,7 +28,7 @@ import {
 import stringToHslColor from '../../../utils/avatar.util';
 
 // COMPONENTS
-import Attachments from '../../../../composer_window/components/Attachments/Attachments';
+import Attachments from '../../../../composer_window/components/attachments/Attachments';
 
 // STYLES
 // import styles from './MessageDisplay.css';
