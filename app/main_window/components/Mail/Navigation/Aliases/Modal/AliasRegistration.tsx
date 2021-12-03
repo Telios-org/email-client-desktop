@@ -101,7 +101,7 @@ export default function AliasModal(props: Props) {
 
     setLoading(true);
     const res = await dispatch(
-      registerAlias(namespaceName, domain, address, description, fwd, disabled)
+      registerAlias(namespaceName.toLowerCase(), domain, address.toLowerCase(), description, fwd, disabled)
     );
     setLoading(false);
 
