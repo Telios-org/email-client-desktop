@@ -281,8 +281,8 @@ class Register extends Component<Props, State> {
       try {
         const acct = await Login.createAccount({
           password: formValue.masterpass,
-          email,
-          recoveryEmail: formValue.recoveryemail,
+          email: email.toLowerCase(),
+          recoveryEmail: formValue.recoveryemail.toLowerCase(),
           vcode: formValue.betacode
         });
 

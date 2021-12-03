@@ -81,7 +81,7 @@ export default function AliasModal(props: Props) {
     });
 
     const { status, success } = await dispatch(
-      registerNamespace(id, namespace)
+      registerNamespace(id, namespace.toLowerCase())
     );
 
     if (!success && status === 'already-registered') {
