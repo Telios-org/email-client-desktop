@@ -8,7 +8,9 @@ module.exports = {
       } 
     }).then(mailbox => {
       // Sanitize mailboxes that were created with capitalized chars
-      return mailbox.update({ address: mailbox.address.toLowerCase() });
+      if(mailbox && mailbox.address) {
+        return mailbox.update({ address: mailbox.address.toLowerCase() });
+      }
     });
   },
   down: async query => {
