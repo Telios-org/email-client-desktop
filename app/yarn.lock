@@ -10,9 +10,9 @@
     hypercore "^9.0.0"
 
 "@hyperswarm/dht@next":
-  version "5.0.8"
-  resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-5.0.8.tgz#f03bd4f80b9abf6c168ce2c2cd9d75c4959f9915"
-  integrity sha512-6yObpRT8+9nLeXiCM4SXQ+7fnLGuHKC1XE0C2i0PD6AnSZ4ZUcv7R99sAXLZJyKn1Z1Yn4fPCQnetvrGkXnNEw==
+  version "5.0.11"
+  resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-5.0.11.tgz#f21ac6c72ba331caabfb518f40156fb530415fa7"
+  integrity sha512-U/xE7Jf+2DcFZONtd76QHcczr7xKRYDeoFN5PIkI/BRFxpx0QQ+NxAdg+FQoYMX5tFZAKwhiK/s3s4X/ektqpQ==
   dependencies:
     "@hyperswarm/secret-stream" "^5.1.0"
     bind-easy "^1.0.1"
@@ -70,14 +70,12 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@telios/client-sdk@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-3.1.0.tgz#afc90300e4aad77b09a411506e40d54c30932c9f"
-  integrity sha512-O40hBXvZC32GZn1EigTPFODIYnlw8Pu6awRkdS2SYwtPkR02lYmzhySGR43gbqTowWDF5YQB3brB9XhWe1A+xg==
+"@telios/client-sdk@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-3.2.0.tgz#457f4fab97d0843601b4b8e0639f80ad9913370c"
+  integrity sha512-Y7yDqR7Rdj0pUwF7vbRytNmSaGyu7IcoXvY7QoMm11EOXAwHpk37Uf1zK102aisoosSvK53w3ZrpaeqmSXhYDg==
   dependencies:
-    "@geut/hypercore-promise" "^2.1.1"
-    "@hyperswarm/dht" next
-    "@telios/nebula-drive" "^3.0.0"
+    "@telios/nebula-drive" "^5.0.0"
     async "^3.2.0"
     axios "^0.21.1"
     bip39 "^3.0.4"
@@ -97,10 +95,10 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
-"@telios/nebula-drive@^3.0.0", "@telios/nebula-drive@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-3.0.2.tgz#375d888d1d1f6e6aa033d69cc92b91e4f17a07ff"
-  integrity sha512-2diwz2woeOvRdx9SC4JiVfjUQnRnP4auYJWTW9FgeVspYV9F1NQsPCAXKESd3dcbKWLGnKXuoZ99Lr7/31Xsow==
+"@telios/nebula-drive@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-5.0.0.tgz#a3cee9caff27ce40368550a3360c04e466b996dd"
+  integrity sha512-uQOLvty6qIqp2XFruNWx7hADJd6hg+tsX1or3pJKhvst1wOMHngaSahEk97UPWYy7pZXaPgM3R6ZRGtSLBNGEw==
   dependencies:
     "@geut/hypercore-promise" "^2.1.1"
     async "^3.2.0"
@@ -111,7 +109,7 @@
     dat-encoding "^5.0.1"
     hyperbee "^1.6.3"
     hypercore "10.0.0-alpha.13"
-    hyperswarm "^3.0.0"
+    hyperswarm "^3.0.1"
     memorystream "^0.3.1"
     pump "^3.0.0"
     random-access-memory "^3.1.1"
@@ -125,9 +123,9 @@
   integrity sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==
 
 "@types/node@*":
-  version "16.11.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.10.tgz#2e3ad0a680d96367103d3e670d41c2fed3da61ae"
-  integrity sha512-3aRnHa1KlOEEhJ6+CvyHKK5vE9BcLGjtUpwvqYLRvYNQKMfabu3BwfJaA/SLW8dxe28LsNDjtHwePTuzn3gmOA==
+  version "16.11.11"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.11.tgz#6ea7342dfb379ea1210835bada87b3c512120234"
+  integrity sha512-KB0sixD67CeecHC33MYn+eYARkqTheIRNuu97y2XMjR7Wu3XibO1vaY6VBV6O/a89SPI81cEUIYT87UqUWlZNw==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -521,13 +519,6 @@ codecs@^2.0.0, codecs@^2.1.0, codecs@^2.2.0:
   resolved "https://registry.yarnpkg.com/codecs/-/codecs-2.2.0.tgz#9efe60f367482a9f9d69b4daebb73b421038ab37"
   integrity sha512-+xi2ENsvchtUNa8oBUU58gHgmyN6BEEeZ8NIEgeQ0XnC+AoyihivgZYe+OOiNi+fLy/NUowugwV5gP8XWYDm0Q==
 
-codecs@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/codecs/-/codecs-3.0.0.tgz#bbb37610c904263ea949f8da6a182b8fc4cc24fc"
-  integrity sha512-tYnev/H2/q+dedb6/sDDvJLwzD2GqYIe8d7fKnyM2KxUKJ3xf/D7xG0nO/4WCT1yU1HQTvTq1o43QSQGmHcEmA==
-  dependencies:
-    b4a "^1.1.1"
-
 combined-stream@^1.0.6, combined-stream@~1.0.6:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.8.tgz#c3d45a8b34fd730631a110a8a2520682b31d5a7f"
@@ -712,9 +703,9 @@ detect-libc@^1.0.2:
   integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
 
 dht-rpc@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/dht-rpc/-/dht-rpc-5.0.1.tgz#b27ad8506cb3774dd849c010c4603306fe355501"
-  integrity sha512-mlzGzv+UEuybvAsBA780yi5tlxgs1CItZDOsJ9B3xUWRWnZMfcfiiWSTtp/JPHT9SNIouI4KtSlcs+OAXmdyFA==
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/dht-rpc/-/dht-rpc-5.0.2.tgz#8314050e8a750a7bfd099d0298834b333fa243bf"
+  integrity sha512-yXC8/9gzTG+xaTJ6MsKRw8ogMf3aSK/AWpDFMlUK14Cy6Gd+KYNJ78sy44ESuYw4v/TclD3gQOiOM3fvKvFtTA==
   dependencies:
     bind-easy "^1.0.0"
     compact-encoding "^2.1.0"
@@ -1226,12 +1217,13 @@ hypercore@^9.0.0, hypercore@^9.4.1, hypercore@^9.6.0:
     unordered-array-remove "^1.0.2"
     unordered-set "^2.0.0"
 
-hyperswarm@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/hyperswarm/-/hyperswarm-3.0.0.tgz#efc59efbad2f477b0f660487d1e4b22b7c87ffdc"
-  integrity sha512-i3PXhzLWfK827gCXTAlIibZQRZArTs1SEk8xzTSKIabF8Y7+L/N411IkxtZPzlmjBS+FnooiMn2YfHnbrGcXsQ==
+hyperswarm@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/hyperswarm/-/hyperswarm-3.0.1.tgz#de930a8b14b6fe91eb806d882b0dd0aaa582813c"
+  integrity sha512-Nlx+97fd8fE52Te4A5C5czYsfKc95ha6BD+K2YtV8idmuoP7Sem+bIXey3SPqOWCVPOK+yR6q5QL0apE0zKuwA==
   dependencies:
     "@hyperswarm/dht" next
+    events "^3.3.0"
     shuffled-priority-queue "^2.1.0"
 
 "hypertrie@https://github.com/Telios-org/hypertrie.git":
