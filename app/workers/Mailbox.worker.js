@@ -938,7 +938,7 @@ module.exports = env => {
             const writeStream = fs.createWriteStream(filepath);
 
             const file = await File.findByPk(attachment.id, {
-              attributes: ['id', 'drive', 'path', 'key', 'header'],
+              attributes: ['id', 'drive', 'path', 'key', 'header', 'hash'],
               raw: true
             });
 
@@ -946,6 +946,7 @@ module.exports = env => {
               drive,
               path: file.path,
               key: file.key,
+              hash: file.hash,
               header: file.header
             });
           })

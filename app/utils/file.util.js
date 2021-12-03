@@ -20,18 +20,19 @@ module.exports.saveEmailToDrive = async opts => {
 module.exports.saveFileToDrive = async opts => {
   return new Promise((resolve, reject) => {
     const readStream = new MemoryStream();
-    readStream.end(Buffer.from(opts.content));
+    readStream.end(Buffer.from(opts.content, 'base64'));
 
     opts.drive.writeFile(opts.file.path, readStream, { encrypted: true })
       .then(file => {
         opts.file.contentType = file.mimetype;
         opts.file.key = file.key.toString('hex');
         opts.file.header = file.header.toString('hex');
+        opts.file.hash = file.hash;
         opts.file.drive = file.discoveryKey;
 
         File.create(opts.file)
           .then(() => {
-            resolve()
+            resolve(file)
           })
           .catch(err => {
             reject(err);
