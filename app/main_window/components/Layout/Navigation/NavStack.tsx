@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 // EXTERNAL LIBRAIRIES
-import { Whisper, Tooltip } from 'rsuite';
-import { Logout, Setting, User } from 'react-iconly';
+import { Whisper, Tooltip, Avatar } from 'rsuite';
+import { User } from 'react-iconly';
 
 // COMPOMENT IMPORT
 import NavIcon from './NavIcon';
-import SettingsMenu from './SettingsMenu';
+import ProfileMenu from './ProfileMenu';
 
 // ELECTRON LIBRAIRIES
 const { ipcRenderer } = require('electron');
@@ -24,41 +24,56 @@ const NavStack = (props: Props) => {
     ipcRenderer.send('logout');
   };
 
-  const settingsSelect = (item: string) => {
-    triggerRef.current.hide();
+  const onSelectItem = item => {
+    if (item !== 'theme' && item !== 'status') {
+      triggerRef.current.hide();
+    }
+
+    if (item === 'settings') {
+      onSelect('settings');
+      triggerRef.current.hide();
+    }
+
+    if (item === 'signout') {
+      onSignout();
+    }
   };
 
   return (
     <>
       <div className="flex flex-col items-center flex-1">
-        <NavIcon active={active} eventKey="mail" onClick={onSelect} />
-        <NavIcon active={active} eventKey="contacts" onClick={onSelect} />
+        <Whisper
+          trigger="hover"
+          placement="right"
+          delayShow={500}
+          speaker={(<Tooltip>Mail</Tooltip>)}
+        >
+          <NavIcon active={active} eventKey="mail" onClick={onSelect} />
+        </Whisper>
+
+        <Whisper
+          trigger="hover"
+          placement="right"
+          delayShow={500}
+          speaker={(<Tooltip>Contacts</Tooltip>)}
+        >
+          <NavIcon active={active} eventKey="contacts" onClick={onSelect} />
+        </Whisper>
       </div>
       <div className="flex flex-col items-center w-full justify-center mb-6">
         <Whisper
           trigger="click"
           triggerRef={triggerRef}
-          placement="autoHorizontalEnd"
-          speaker={<SettingsMenu onSelect={settingsSelect} />}
+          placement="rightEnd"
+          speaker={(
+            <ProfileMenu onSelect={onSelectItem} />
+          )}
         >
-          <Setting
-            set="broken"
-            style={{ cursor: 'pointer' }}
-            className="hover:text-purple-500 text-gray-400 mb-6"
-          />
-        </Whisper>
-        <Whisper
-          trigger="hover"
-          placement="right"
-          delayShow={1000}
-          speaker={<Tooltip>Logout</Tooltip>}
-        >
-          <Logout
-            set="broken"
-            style={{ cursor: 'pointer' }}
-            className="hover:text-red-500 text-gray-400 ml-1"
-            onClick={onSignout}
-          />
+          <div className="w-full h-12 flex justify-center items-center cursor-pointer outline-none relative">
+            <Avatar style={{ cursor: 'pointer' }} circle>
+              <User />
+            </Avatar>
+          </div>
         </Whisper>
       </div>
     </>

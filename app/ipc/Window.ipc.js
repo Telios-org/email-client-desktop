@@ -1,4 +1,4 @@
-const { ipcMain, nativeTheme, dialog } = require('electron');
+const { ipcMain, nativeTheme, dialog, BrowserView } = require('electron');
 const path = require('path');
 const store = require('../Store');
 
@@ -236,4 +236,15 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
     return true;
   });
+
+  // ipcMain.handle('showPaymentsWindow', async (event, payload) => {
+  //   const mainWindow = windowManager.getWindow('mainWindow');
+
+  //   console.log(payload);
+
+  //   const view = new BrowserView()
+  //   win.setBrowserView(view)
+  //   view.setBounds({ x: 0, y: 0, width: 300, height: 300 })
+  //   view.webContents.loadURL('https://electronjs.org');
+  // });
 };
