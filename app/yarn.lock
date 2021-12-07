@@ -29,9 +29,9 @@
     xache "^1.0.0"
 
 "@hyperswarm/secret-stream@^5.0.0", "@hyperswarm/secret-stream@^5.1.0":
-  version "5.1.3"
-  resolved "https://registry.yarnpkg.com/@hyperswarm/secret-stream/-/secret-stream-5.1.3.tgz#92adb65d7966005b69aa8042470f037556699507"
-  integrity sha512-fKimuDS3DTtqNLrX66Hm++Ti2CS7booZbscnYPrEDo/IxeZi4GE5EjJCo+glyyWj8JJVWXB7frYV9eTRM4iYbA==
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/@hyperswarm/secret-stream/-/secret-stream-5.1.4.tgz#830b186da8db772d5d4d7635ce7544c107b349e0"
+  integrity sha512-SIbQLqeIyJrPO1J9+KCrZRM3VoOjkPNCEvsMm9yVfKe8BNzFgAogOmH/wNTqK0GguU8H+k58ZuyFbWJRX2BbjQ==
   dependencies:
     b4a "^1.1.0"
     noise-curve-ed "^1.0.2"
@@ -95,10 +95,10 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
-"@telios/nebula-drive@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-5.0.0.tgz#a3cee9caff27ce40368550a3360c04e466b996dd"
-  integrity sha512-uQOLvty6qIqp2XFruNWx7hADJd6hg+tsX1or3pJKhvst1wOMHngaSahEk97UPWYy7pZXaPgM3R6ZRGtSLBNGEw==
+"@telios/nebula-drive@^5.0.0", "@telios/nebula-drive@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-5.0.1.tgz#fd34778bfc26ae0f7e3f697220ff4171248fa2e2"
+  integrity sha512-F26UbnJs11ycnIaJalsTWLRVrGZLGfPXZ6J87gW/L0JEj/yJjEUFuwWTLWIi38Nl8Kctw7hO5IELURZZ2y8gpA==
   dependencies:
     "@geut/hypercore-promise" "^2.1.1"
     async "^3.2.0"
