@@ -67,6 +67,7 @@ const EditorIframe = (props: Props, ref: Ref<EditorType>) => {
       editor.addEventListener('input', handleInput);
       // editor.addEventListener('willPaste', );
       // editor.addEventListener('cursor', );
+      console.log('EMAIL DATA 2', defaultEmailData);
 
       return () => {
         // editor.removeEventListener('focus', );

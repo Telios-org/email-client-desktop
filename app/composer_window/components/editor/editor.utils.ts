@@ -51,6 +51,7 @@ export const initEditor = async (
       a: { target: '_blank' }
     }
   });
+  console.log('INITWDITOR', emailData);
   editor.setHTML(emailData);
 
   return editor;
