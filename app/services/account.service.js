@@ -7,6 +7,8 @@ const MessageIngressService = require('./messageIngress.service');
 
 class AccountService extends EventEmitter {
   constructor() {
+    super();
+    
     ipcRenderer.once('ACCOUNT_IPC::createAccount', async (evt, data) => {
       try {
         const account = await AccountService.createAccount(data);

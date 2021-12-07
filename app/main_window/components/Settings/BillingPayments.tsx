@@ -130,7 +130,7 @@ export default function BillingsPayemnts(props: Props) {
                 paymentWebview = webview
               }}
               // Your source
-              src={`http://localhost:3001/client/subscribe?token=${authToken}`}
+              src={`http://localhost:3000/client/subscribe?token=${authToken}`}
 
               // Using events
               onDidAttach={() => {
