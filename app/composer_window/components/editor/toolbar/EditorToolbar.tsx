@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import React, {
   useState,
   MutableRefObject,
@@ -6,8 +7,8 @@ import React, {
 } from 'react';
 import { ButtonToolbar } from 'rsuite';
 import _ from 'lodash';
-import { useHandler } from '../../hooks/useHandler';
-import useIsMounted from '../../hooks/useIsMounted';
+import { useHandler } from '../../../../utils/hooks/useHandler';
+import useIsMounted from '../../../../utils/hooks/useIsMounted';
 import {
   getPathInfo,
   listenToCursor,
@@ -47,6 +48,7 @@ interface Props {
   editorRef: MutableRefObject<EditorType>;
   editorReady: boolean;
   isSendActive: boolean;
+  loading?: boolean;
   onSend: () => void;
   onAttachment: () => void;
 }
@@ -54,9 +56,10 @@ interface Props {
 const EditorToolbar = (props: Props) => {
   const isMounted = useIsMounted();
   const {
-    className,
+    className = '',
     editorRef,
     editorReady,
+    loading = false,
     isSendActive,
     onAttachment,
     onSend
@@ -237,6 +240,7 @@ const EditorToolbar = (props: Props) => {
           onAction={onSend}
           disable={!isSendActive}
           appearance={isSendActive ? 'primary' : 'subtle'}
+          loading={loading}
           className="font-bold tracking-wider shadow hover:shadow-sm"
         />
       </ButtonToolbar>

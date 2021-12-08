@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, forwardRef, Ref } from 'react';
 import { EditorType } from './types';
-import { useHandler } from '../hooks/useHandler';
-import { initEditor, getEditorRef, setEditorRef } from './editor.utils';
+import { useHandler } from '../../../utils/hooks/useHandler';
+import { initEditor, getEditorRef, setEditorRef, scrollIntoViewIfNeeded } from './editor.utils';
 
 interface Props {
   id?: string;
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const EditorIframe = (props: Props, ref: Ref<EditorType>) => {
-  const { id, className, defaultEmailData, onReady, onInput } = props;
+  const { id, className, defaultEmailData, onReady, onInput, onFocus } = props;
 
   const [iframeReady, setIframeReady] = useState(false);
   const [editorReady, setEditorReady] = useState(false);
@@ -55,25 +55,29 @@ const EditorIframe = (props: Props, ref: Ref<EditorType>) => {
 
   const handleInput = useHandler(() => {
     const content = getEditorRef(ref).getHTML();
-    console.log('THIS IS THE CONTENT', content);
     onInput(content);
   });
+
+  const handleFocus = useHandler(() => {
+    onFocus();
+  });
+
+  const handleCursor = () => scrollIntoViewIfNeeded(getEditorRef(ref));
 
   useEffect(() => {
     if (editorReady) {
       const editor = getEditorRef(ref);
 
-      // editor.addEventListener('focus', );
+      editor.addEventListener('focus', handleFocus);
       editor.addEventListener('input', handleInput);
       // editor.addEventListener('willPaste', );
-      // editor.addEventListener('cursor', );
-      console.log('EMAIL DATA 2', defaultEmailData);
+      editor.addEventListener('cursor', handleCursor);
 
       return () => {
-        // editor.removeEventListener('focus', );
+        editor.removeEventListener('focus', handleFocus);
         editor.removeEventListener('input', handleInput);
         // editor.removeEventListener('willPaste', );
-        // editor.removeEventListener('cursor', );
+        editor.removeEventListener('cursor', handleCursor);
       };
     }
   }, [editorReady, handleInput, ref]);

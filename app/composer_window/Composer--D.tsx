@@ -132,7 +132,7 @@ class Composer extends Component<Props, State> {
     }
 
     // The below is triggerred on Reply, ReplyAll, Forward and when Email is popped out.
-    ipcRenderer.on('contentReady', (event, content, windowID) => {
+    ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
       // console.log('MESSAGE RECEIVED from IPC', content, windowID);
       // NEED TO REFACTOR TO STRIP the JSON before saving to State
       // JSON is needed for setRecipients
@@ -141,10 +141,6 @@ class Composer extends Component<Props, State> {
         mailbox: content.mailbox,
         windowID
       });
-
-      // Focusing the editor somehow causes all the decorators to be lost
-      // unless I do a timeout.
-      // setTimeout(() => this.focusEditor());
 
       // Setting the to, cc and from
       this.setRecipients(content.mailbox, content.editorAction);
@@ -183,7 +179,7 @@ class Composer extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    ipcRenderer.removeAllListeners('contentReady');
+    ipcRenderer.removeAllListeners('WINDOW_IPC::contentReady');
     remote.getCurrentWindow().removeAllListeners('close');
   }
 

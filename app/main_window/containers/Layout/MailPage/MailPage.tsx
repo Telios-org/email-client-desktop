@@ -12,7 +12,7 @@ import { clearActiveMessage } from '../../../actions/mailbox/messages';
 import { toggleEditor } from '../../../actions/global';
 
 // Selectors
-import { activeFolderId } from '../../../selectors/mail';
+import { activeFolderId, selectActiveMailbox } from '../../../selectors/mail';
 
 // Components IMPORTS
 import MessageList from '../../../components/Mail/MessageList/MessageList';
@@ -28,6 +28,7 @@ export default function MailPage() {
   const dispatch = useDispatch();
 
   const folderId = useSelector(activeFolderId);
+  const mailbox = useSelector(selectActiveMailbox);
 
   const [loading, setLoading] = useState(false);
   const [panelWidths, setPanelWidths] = useState({ nav: 200, msgList: 445 });
@@ -78,8 +79,6 @@ export default function MailPage() {
   };
 
   const handleInlineComposerMaximize = async () => {
-    const { mailbox, toggleEditorState } = this.props;
-    // this.setState({ showComposerInline: false });
     toggleEditorState('composerMaximize', false);
     await ipcRenderer.invoke('RENDERER::showComposerWindow', {
       mailbox,

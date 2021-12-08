@@ -1,5 +1,5 @@
 import React, { Ref, MutableRefObject, RefObject } from 'react';
-import { getElement } from '../helpers/dom';
+import { getElement } from '../../../utils/helpers/dom';
 import { EditorType, LinkData } from './types';
 import {
   DEFAULT_LINK,
@@ -51,7 +51,6 @@ export const initEditor = async (
       a: { target: '_blank' }
     }
   });
-  console.log('INITWDITOR', emailData);
   editor.setHTML(emailData);
 
   return editor;

@@ -6,12 +6,15 @@ import { AutoSizer } from 'react-virtualized';
 import { DebounceInput } from 'react-debounce-input';
 import { Notification, Divider } from 'rsuite';
 import { DateTime } from 'luxon';
+import usePrevious from '../utils/hooks/usePrevious';
 import {
   Editor,
   MessageInputs,
   ComposerTopBar,
   Attachments
 } from './components';
+
+import { recipientTransform, emailTransform } from './utils/draft.utils';
 
 import { ISOtimestamp } from '../main_window/utils/date.util';
 // import editorHTMLexport from './utils/messageEditor/htmlExportOptions';
@@ -20,13 +23,15 @@ import ComposerService from '../services/composer.service';
 
 // TYPESCRIPT TYPES
 import {
-  FolderType,
-  MailMessageType,
   Email,
-  MailboxType,
   AttachmentType,
-  Recipients
+  Recipients,
+  FolderType,
+  MailboxType,
+  MailMessageType
 } from '../main_window/reducers/types';
+
+import { EditorIframeRef } from './components/editor/types';
 
 const clone = require('rfdc')();
 
@@ -72,43 +77,174 @@ const mailboxTemplate = {
 type Props = {
   onClose: (options: { action: string }) => void;
   onMaximmize: () => void;
+  isInline: boolean;
   folder: FolderType;
   mailbox: MailboxType;
   message: MailMessageType;
-  isInline: boolean;
-};
-
-type State = {
-  activeSendButton: boolean;
-  email: Email;
-  mailbox: MailboxType;
-  prefillRecipients: Recipients;
-  editorReady: boolean;
-  editorState: string;
-  windowID: string | null;
-  loading: boolean;
 };
 
 const Composer = (props: Props) => {
-  const { isInline, message, folder, mailbox: StateMailbox, onClose } = props;
+  const {
+    isInline,
+    onClose,
+    onMaximmize,
+    folder,
+    message,
+    mailbox: mb
+  } = props;
 
-  const editorRef = useRef(null);
+  const editorRef = useRef<EditorIframeRef>(null);
+  const skipNextInputRef = useRef(false);
+  // When a draft is already open we need a way to tell the Editor the content has change
+  // Therefore we're checking to see if the id has changed and if it has it will trigger
+  // the useEffect that sets the editorRef content.
+  const prevMsgIdRef = useRef(message.emailId);
   const [activeSendButton, setActiveSendButton] = useState(false);
-  const [email, setEmail] = useState<Email>();
+  const [email, setEmail] = useState<Email>(emailTemplate);
   const [mailbox, setMailbox] = useState<MailboxType>(mailboxTemplate);
   const [prefillRecipients, setPrefillRecipients] = useState(
     prefillRecipientsTemplate
   );
   const [editorReady, setEditorReady] = useState(false);
   const [composerReady, setComposerReady] = useState(false);
-  const [editorState, setEditorState] = useState('');
+  const [editorState, setEditorState] = useState<string | undefined>();
   const [windowId, setWindowId] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const handleEmailUpdate = (
+    msg?: Email,
+    content?: string,
+    mbox?: MailboxType
+  ) => {
+    const draft = msg ?? email;
+    const htmlBody = content ?? editorState;
+    const owner = mbox ?? mailbox;
+
+    // Getting timestamp for email
+    const time = ISOtimestamp();
+    // Getting the plain text off the htmlBody
+    const plaintext = ''; // NEED TO FIX THIS
+
+    const eml = {
+      ...clone(draft),
+      date: time,
+      from: [
+        {
+          address: owner.address,
+          name: owner.name ? owner.name : owner.address
+        }
+      ],
+      bodyAsText: plaintext,
+      bodyAsHtml: htmlBody
+    };
+
+    if (htmlBody !== editorState) {
+      setEditorState(htmlBody);
+    }
+    setEmail(eml);
+    ipcRenderer.send('updateComposerDraft', eml);
+  };
+
+  // When in the Draft folder and Inline, message is set through the Selector
+  useEffect(() => {
+    console.log('COMPOSER', message, mb, folder);
+    if (isInline && message?.bodyAsHtml && folder.name === 'Drafts') {
+      const draft = emailTransform(message, 'draftEdit', false);
+      const rcp = recipientTransform(mb, draft, 'draftEdit');
+      draft.to = rcp.data.to;
+      draft.cc = rcp.data.cc;
+      draft.bcc = rcp.data.bcc;
+      draft.from = rcp.data.from;
+      handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
+      setMailbox(mb);
+      setPrefillRecipients(rcp.ui);
+      if (draft.to.length > 0) {
+        setActiveSendButton(true);
+      }
+
+      if (prevMsgIdRef.current !== draft.emailId){
+        prevMsgIdRef.current = draft.emailId;
+      }
+    }
+  }, [isInline, folder.name, message.bodyAsHtml, message.emailId]);
+
+  // When not in the draft folder, and replying, forwarding or popping out the message
+  // We get the draft email from the IPC Draft storage that was initialized by 'RENDERER::ingestDraftForInlineComposer' or 'RENDERER::showComposerWindow'
+  // In another electron window, the redux store is unavailable
+  useEffect(() => {
+    if (folder.name !== 'Drafts') {
+      ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
+        // The email has already been formatted according to the editorAction
+        // it happened in the Window IPC.
+        const draft = clone(content.message);
+        const rcp = recipientTransform(
+          content.mailbox,
+          draft,
+          content.editorAction
+        );
+        draft.to = rcp.data.to;
+        draft.cc = rcp.data.cc;
+        draft.bcc = rcp.data.bcc;
+        draft.from = rcp.data.from;
+
+        handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
+        setMailbox(content.mailbox);
+        setPrefillRecipients(rcp.ui);
+        setWindowId(windowID);
+
+        if (draft.to.length > 0) {
+          setActiveSendButton(true);
+        }
+      });
+    }
+
+    return () => {
+      ipcRenderer.removeAllListeners('WINDOW_IPC::contentReady');
+    };
+  }, [folder.name]);
+
+  // The below is to handle when the popOut window is closing.
+  useEffect(() => {
+    if (!isInline) {
+      remote.getCurrentWindow().on('close', () => {
+        //   this.updateEmail('close');
+      });
+    }
+    return () => {
+      remote.getCurrentWindow().removeAllListeners('close');
+    };
+  }, [isInline]);
+
+  useEffect(() => {
+    if (editorState !== undefined && !composerReady) {
+      console.log('COMPOSER READY', message);
+      setComposerReady(true);
+    }
+  }, [editorState]);
+
+  useEffect(() => {
+    if (
+      editorReady &&
+      composerReady &&
+      editorRef.current &&
+      editorState !== undefined
+    ) {
+      console.log(
+        'INITIALIZING EDITOR CONTENT',
+        editorState,
+        message,
+        prevMsgIdRef.current
+      );
+      skipNextInputRef.current = true;
+      editorRef.current.value = editorState;
+      editorRef.current.focus();
+    }
+  }, [editorReady, composerReady, prevMsgIdRef.current]);
+
   const onUpdateRecipients = (recipients: Recipients, updateState = true) => {
-    let toArr: { address: string; name: string }[] = [];
-    let ccArr: { address: string; name: string }[] = [];
-    let bccArr: { address: string; name: string }[] = [];
+    let toArr = [];
+    let ccArr = [];
+    let bccArr = [];
 
     if (recipients.to.arr.length > 0) {
       setActiveSendButton(true);
@@ -137,228 +273,21 @@ const Composer = (props: Props) => {
         });
     }
 
-    if (updateState) {
-      const content = {
-        ...email,
-        to: toArr,
-        cc: ccArr,
-        bcc: bccArr
-      };
-      setEmail(content);
-    }
-
-    return {
+    const draft = {
+      ...email,
       to: toArr,
       cc: ccArr,
-      bcc: bccArr
-    };
-  };
-
-  const setRecipients = (mb: MailboxType, msg: Email, action: string) => {
-    const fromArr = msg?.fromJSON ? JSON.parse(msg.fromJSON) : [];
-    let toArr = msg?.toJSON ? JSON.parse(msg.toJSON) : [];
-    let toCC = msg?.ccJSON ? JSON.parse(msg.ccJSON) : [];
-    let toBCC = msg?.bccJSON ? JSON.parse(msg.bccJSON) : [];
-
-    switch (action) {
-      case 'replyAll': {
-        setActiveSendButton(true);
-        toArr = fromArr;
-        const toJSON = msg?.toJSON ? JSON.parse(msg.toJSON) : [];
-        const arr = toJSON.filter((recip: any) => recip.address !== mb.address);
-        toArr = [...toArr, ...arr];
-        break;
-      }
-
-      case 'reply':
-        setActiveSendButton(true);
-        toArr = fromArr;
-        toCC = [];
-        toBCC = [];
-        break;
-
-      default:
-        toArr = [];
-        toCC = [];
-        toBCC = [];
-        break;
-    }
-
-    const recipients = {
-      to: {
-        arr: toArr.map((recip: any) => {
-          return {
-            label: recip.name || recip.address,
-            value: recip.address,
-            preFill: true
-          };
-        })
-      },
-      cc: {
-        show: toCC.length > 0,
-        arr: toCC.map((recip: any) => {
-          return {
-            label: recip.name || recip.address,
-            value: recip.address,
-            preFill: true
-          };
-        })
-      },
-      bcc: {
-        show: toBCC.length > 0,
-        arr: toBCC.map((recip: any) => {
-          return {
-            label: recip.name || recip.address,
-            value: recip.address,
-            preFill: true
-          };
-        })
-      }
-    };
-
-    setPrefillRecipients(recipients);
-    return onUpdateRecipients(recipients, false);
-  };
-
-  const updateComposer = (mb: MailboxType, msg: Email) => {
-    setEmail(msg);
-    setMailbox(mb);
-    setRecipients(mailbox, msg, '');
-    setEditorState(email?.bodyAsHtml ?? '');
-  };
-
-  const updateEmail = (action: string) => {
-    // Now extracting the plaintext
-    if (mailbox) {
-      // Getting timestamp for email
-      const time = ISOtimestamp();
-
-      // Setting HTML Body
-      const htmlBody = editorState;
-      // Getting the plain text off the htmlBody
-      /* ATTENTION NEEDED HERE */
-      const plaintext = ''; // NEED TO FIX THIS
-
-      const eml = {
-        ...email,
-        date: time,
-        from: [
-          {
-            address: mailbox.address,
-            name: mailbox.name ? mailbox.name : mailbox.address
-          }
-        ],
-        bodyAsText: plaintext,
-        bodyAsHtml: htmlBody
-      };
-
-      setEmail(eml);
-
-      if (plaintext.trim().length > 0 && action === 'editor') {
-        ipcRenderer.send('updateComposerDraft', eml);
-      }
-    }
-  };
-
-  useEffect(() => {
-    updateEmail('editor');
-  }, [editorState]);
-
-  const attr = (msg: Email) => {
-    const from = JSON.parse(msg?.fromJSON)[0];
-    const dt = DateTime.fromISO(msg?.date, {
-      zone: 'utc'
-    }).toLocal();
-    const date = dt.toLocaleString(DateTime.DATETIME_FULL);
-
-    return `
-        On ${date} <a
-          href="mailto:${from.address}"
-          target="_blank"
-          rel="noreferrer nofollow noopener"
-        > ${from.address}</a> wrote:
-      <br />
-    `;
-  };
-
-  useEffect(() => {
-    setMailbox(StateMailbox);
-
-    if (isInline && message && message.ccJSON && folder.name === 'Drafts') {
-      updateComposer(mailbox, message);
-    }
-
-    // The below is triggerred on Reply, ReplyAll, Forward and when Email is popped out.
-    ipcRenderer.on('contentReady', (event, content, windowID) => {
-      // NEED TO REFACTOR TO STRIP the JSON before saving to State
-      // JSON is needed for setRecipients
-      const emailDraft = content.message ?? emailTemplate;
-      emailDraft.from = [
+      bcc: bccArr,
+      from: [
         {
-          address: content.mailbox.address,
-          name: content.mailbox.name ?? content.mailbox.address
+          address: mailbox.address,
+          name: mailbox.name ? mailbox.name : mailbox.address
         }
-      ];
-
-      setMailbox(content.mailbox);
-      setWindowId(windowID);
-
-      const { editorAction } = content;
-      // Setting the to, cc and from
-      const recp = setRecipients(
-        content.mailbox,
-        emailDraft,
-        content.editorAction
-      );
-      emailDraft.to = recp.to;
-      emailDraft.cc = recp.cc;
-      emailDraft.bcc = recp.bcc;
-
-      // Setting the Subjet line with Fwd: and Re:
-      if (editorAction === 'reply' || editorAction === 'replyAll') {
-        emailDraft.subject = `Re: ${emailDraft.subject}`;
-      }
-
-      if (editorAction === 'forward') {
-        emailDraft.subject = `Fwd: ${emailDraft.subject}`;
-      }
-
-      if (!editorAction && !emailDraft.subject) {
-        emailDraft.subject = '';
-      }
-
-      // Setting the body of the Email, when email is being popped out we don't want
-      // to repeat the ---Original Email--- preface
-      if (content.editorAction && content.editorAction === 'maximize') {
-        setEditorState(emailDraft?.bodyAsHtml ?? '');
-      } else {
-        const reply = `
-        <br />
-        <div>‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐</div>
-        <br />
-        ${attr(emailDraft)}
-        <div>
-            ${emailDraft?.bodyAsHtml ?? ''}
-        </div>`;
-        setEditorState(reply);
-      }
-
-      console.log('INIT DATA', editorAction, emailDraft);
-      setEmail(emailDraft);
-    });
-
-    // When popped out we want to add listener for when window is closed
-    if (!isInline) {
-      remote.getCurrentWindow().on('close', () => {
-        updateEmail('close');
-      });
-    }
-
-    return () => {
-      ipcRenderer.removeAllListeners('contentReady');
-      remote.getCurrentWindow().removeAllListeners('close');
+      ]
     };
-  }, [isInline, message, folder, mailbox]);
+
+    handleEmailUpdate(draft, undefined, undefined);
+  };
 
   const onSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -366,12 +295,8 @@ const Composer = (props: Props) => {
     const newEmail = clone(email);
     newEmail.subject = value;
 
-    setEmail(newEmail);
+    handleEmailUpdate(newEmail);
   };
-
-  useEffect(() => {
-    ipcRenderer.send('updateComposerDraft', email);
-  }, [email]);
 
   const handleEditorReady = useCallback(() => setEditorReady(true), []);
 
@@ -381,8 +306,20 @@ const Composer = (props: Props) => {
       attachments: [...newArray]
     };
 
-    setEmail(newEmail);
+    handleEmailUpdate(newEmail);
   };
+
+  const handleInputChange = useCallback(
+    (content: string) => {
+      if (skipNextInputRef.current) {
+        skipNextInputRef.current = false;
+        return;
+      }
+      console.log('HANDLEINPUTCHANGE TRIGGERED', content);
+      handleEmailUpdate(undefined, content, undefined);
+    },
+    [handleEmailUpdate]
+  );
 
   const openDialog = async () => {
     let attachments = [];
@@ -395,52 +332,41 @@ const Composer = (props: Props) => {
         attachments = [...newAttachments];
       }
 
-      const newEmail = {
-        ...email,
-        attachments
-      };
-      setEmail(newEmail);
+      const draft = clone(email);
+      draft.attachments = attachments;
+
+      handleEmailUpdate(draft);
     } catch (err) {
       console.log(err);
     }
   };
 
   const sendEmail = async () => {
-    updateEmail('send');
+    setLoading(true);
+    try {
+      await ComposerService.send(email, isInline);
 
-    setTimeout(async () => {
-      setLoading(true);
-      const finalDraft = clone(email);
+      setLoading(false);
 
-      if (folder.name !== 'Sent') {
-        finalDraft.emailId = null;
+      Notification.success({
+        title: 'Email Sent',
+        placement: 'bottomEnd'
+      });
+
+      if (isInline) {
+        onClose({ action: 'send' });
+      } else {
+        remote.getCurrentWindow().close();
       }
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
 
-      try {
-        await ComposerService.send(email, isInline);
-
-        setLoading(false);
-
-        Notification.success({
-          title: 'Email Sent',
-          placement: 'bottomEnd'
-        });
-
-        if (isInline) {
-          onClose({ action: 'send' });
-        } else {
-          remote.getCurrentWindow().close();
-        }
-      } catch (err) {
-        setLoading(false);
-        console.error(err);
-
-        Notification.error({
-          title: 'Failed to Send',
-          placement: 'bottomEnd'
-        });
-      }
-    });
+      Notification.error({
+        title: 'Failed to Send',
+        placement: 'bottomEnd'
+      });
+    }
   };
 
   return (
@@ -486,10 +412,12 @@ const Composer = (props: Props) => {
             className="border-gray-500 w-full h-full"
             toolbarClassName=""
             editorClassName=""
-            defaultEmailData={editorState}
             isSendActive={activeSendButton}
-            onInput={setEditorState}
+            onInput={handleInputChange}
             onReady={handleEditorReady}
+            onSend={sendEmail}
+            loading={loading}
+            onAttachment={openDialog}
           />
         </div>
         {/* <div className="flex bg-red-800 h-12"></div> */}

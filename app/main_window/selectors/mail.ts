@@ -89,7 +89,7 @@ export const activeMessageSelectedRange = createSelector(
 export const activeMessageObject = createSelector(
   [selectAllMessages, activeMessageId],
   (messages, activeMsgId) => {
-    return messages.byId[activeMsgId] || { id: null };
+    return messages.byId[activeMsgId] || { id: null, emailId: null };
   }
 );
 

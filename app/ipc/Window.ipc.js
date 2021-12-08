@@ -1,3 +1,5 @@
+import { emailTransform } from '../composer_window/utils/draft.utils';
+
 const { ipcMain, nativeTheme, dialog } = require('electron');
 const path = require('path');
 const store = require('../Store');
@@ -105,7 +107,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     const win = await windowManager.create(windowID, {
       url:
         process.env.NODE_ENV === 'development' ||
-          process.env.E2E_BUILD === 'true'
+        process.env.E2E_BUILD === 'true'
           ? `file://${path.join(__dirname, '..')}/composer_window/index.html`
           : `file://${__dirname}/composer_window/index.html`,
       window: {
@@ -117,13 +119,13 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
         titleBarStyle: 'hiddenInset',
         webPreferences:
           process.env.NODE_ENV === 'development' ||
-            process.env.E2E_BUILD === 'true'
+          process.env.E2E_BUILD === 'true'
             ? {
-              nodeIntegration: true
-            }
+                nodeIntegration: true
+              }
             : {
-              preload: path.join(__dirname, 'dist/composer.renderer.prod.js')
-            }
+                preload: path.join(__dirname, 'dist/composer.renderer.prod.js')
+              }
       },
       clearWindowOnClose: true,
       hideWhenReady: false,
@@ -138,18 +140,19 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     if (draftEmail) {
       composerContent = {
         ...content,
-        message: {
-          emailId: draftEmail.emailId,
-          date: draftEmail.date,
-          toJSON: JSON.stringify(draftEmail.to),
-          fromJSON: JSON.stringify(draftEmail.from),
-          ccJSON: JSON.stringify(draftEmail.cc),
-          bccJSON: JSON.stringify(draftEmail.bcc),
-          subject: draftEmail.subject,
-          bodyAsText: draftEmail.bodyAsText || draftEmail.text_body,
-          bodyAsHtml: draftEmail.bodyAsHtml || draftEmail.html_body,
-          attachments: draftEmail.attachments
-        }
+        // message: {
+        //   emailId: draftEmail.emailId,
+        //   date: draftEmail.date,
+        //   toJSON: JSON.stringify(draftEmail.to),
+        //   fromJSON: JSON.stringify(draftEmail.from),
+        //   ccJSON: JSON.stringify(draftEmail.cc),
+        //   bccJSON: JSON.stringify(draftEmail.bcc),
+        //   subject: draftEmail.subject,
+        //   bodyAsText: draftEmail.bodyAsText || draftEmail.text_body,
+        //   bodyAsHtml: draftEmail.bodyAsHtml || draftEmail.html_body,
+        //   attachments: draftEmail.attachments
+        // }
+        message: emailTransform(draftEmail, 'popOut', false)
       };
     } else {
       composerContent = { ...content };
@@ -186,12 +189,16 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
       store.setDraftDirty(false);
     });
 
-    nativeTheme.on('updated', function theThemeHasChanged() {
-      win.webContents.send('dark-mode', nativeTheme.shouldUseDarkColors);
-    });
+    // nativeTheme.on('updated', function theThemeHasChanged() {
+    //   win.webContents.send('dark-mode', nativeTheme.shouldUseDarkColors);
+    // });
 
     win.once('ready-to-show', () => {
-      win.webContents.send('contentReady', composerContent, windowID);
+      win.webContents.send(
+        'WINDOW_IPC::contentReady',
+        composerContent,
+        windowID
+      );
     });
 
     return true;
@@ -199,41 +206,36 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
   // Goal of this handler is to ingest the email, save it as a draft on the ipc Store
   // then signal to the Composer that it is ready to go
-  ipcMain.handle('ingestDraftForInlineComposer', async (event, content) => {
-    const { message, mailbox, editorAction } = content;
+  ipcMain.handle(
+    'RENDERER::ingestDraftForInlineComposer',
+    async (event, content) => {
+      const { message, mailbox, editorAction } = content;
 
-    const newDraft = {
-      emailId: null, // stripping the id before turning it into a draft.
-      headers: [],
-      subject: message.subject,
-      date: message.date,
-      toJSON: JSON.stringify(message.to) || message.toJSON,
-      fromJSON: JSON.stringify(message.from) || message.fromJSON,
-      ccJSON: JSON.stringify(message.cc) || message.ccJSON,
-      bccJSON: JSON.stringify(message.bcc) || message.bccJSON,
-      bodyAsText: message.text_body || message.bodyAsText,
-      bodyAsHtml: message.html_body || message.bodyAsHtml,
-      attachments: message.attachments
-    };
+      const newDraft = emailTransform(message, editorAction);
 
-    store.setInitialDraft(newDraft);
-    store.setNewDraft(null);
-    store.setDraftDirty(false);
+      store.setInitialDraft(newDraft);
+      store.setNewDraft(null);
+      store.setDraftDirty(false);
 
-    const mainWindow = windowManager.getWindow('mainWindow');
+      const mainWindow = windowManager.getWindow('mainWindow');
 
-    const newContent = {
-      mailbox,
-      editorAction,
-      message: {
-        ...newDraft
-      }
-    }; // Newly transformed payload.
+      const newContent = {
+        mailbox,
+        editorAction,
+        message: {
+          ...newDraft
+        }
+      }; // Newly transformed payload.
 
-    // Email in content should already the format we are looking for with the toJSON, fromJSON, ...
-    // We are sending a message to the Composer Component in the Main Window
-    mainWindow.webContents.send('contentReady', newContent, 'mainWindow');
+      // Email in content should already the format we are looking for with the toJSON, fromJSON, ...
+      // We are sending a message to the Composer Component in the Main Window
+      mainWindow.webContents.send(
+        'WINDOW_IPC::contentReady',
+        newContent,
+        'mainWindow'
+      );
 
-    return true;
-  });
+      return true;
+    }
+  );
 };

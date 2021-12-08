@@ -124,6 +124,7 @@ export const DEFAULT_CSS = `
         body {
             box-sizing: border-box;
             font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+            -webkit-font-smoothing: antialiased;
             font-size: .875rem; /* 14 */
             line-height: 1.65;
             color: #222;
@@ -139,7 +140,7 @@ export const DEFAULT_CSS = `
 
         [id="editor"] {
             outline: none;
-            padding: 1.25rem 1rem 1rem 1.25rem; // TODO: check other integrations
+            padding: 0rem 1rem 1rem 1.25rem; // TODO: check other integrations
         }
 
         blockquote {

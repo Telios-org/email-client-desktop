@@ -54,6 +54,12 @@ export interface EditorType {
   getCursorPosition: () => DOMRect;
 }
 
+export interface EditorIframeRef {
+  focus: () => void;
+  value: string;
+  document?: Element;
+}
+
 export interface LinkData {
   link: string;
   title: string;

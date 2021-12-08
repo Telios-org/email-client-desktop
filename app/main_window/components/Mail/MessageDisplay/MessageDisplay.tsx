@@ -194,7 +194,7 @@ function MessageDisplay(props: Props) {
 
   const reply = async () => {
     dispatch(replyMessage(false));
-    await ipcRenderer.invoke('ingestDraftForInlineComposer', {
+    await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
       message,
       editorAction: 'reply'
@@ -203,7 +203,7 @@ function MessageDisplay(props: Props) {
 
   const replyAll = async () => {
     dispatch(replyMessage(true));
-    await ipcRenderer.invoke('ingestDraftForInlineComposer', {
+    await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
       message,
       editorAction: 'replyAll'
@@ -212,7 +212,7 @@ function MessageDisplay(props: Props) {
 
   const forward = async () => {
     dispatch(forwardMessage());
-    await ipcRenderer.invoke('ingestDraftForInlineComposer', {
+    await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
       message,
       editorAction: 'forward'

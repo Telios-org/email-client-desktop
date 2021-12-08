@@ -159,7 +159,7 @@ module.exports = windowManager => {
     });
   });
 
-  ipcMain.on('updateComposerDraft', async (event, email) => {
+  ipcMain.on('RENDERER::updateComposerDraft', async (event, email) => {
     const initialDraft = store.getInitialDraft();
 
     const newVal = {

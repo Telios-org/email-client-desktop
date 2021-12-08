@@ -11,7 +11,6 @@ import Composer from '../../../../composer_window/Composer';
 // REDUX STATE SELECTORS
 import {
   selectActiveFolder,
-  activeFolderId,
   activeMessageObject,
   activeMessageSelectedRange,
   selectActiveMailbox
@@ -23,7 +22,6 @@ type Props = {
 };
 
 function MessageDisplayRouter(props: Props) {
-  const currentFolder = useSelector(selectActiveFolder);
 
   const { onComposerClose, onComposerMaximize } = props;
 
@@ -34,7 +32,7 @@ function MessageDisplayRouter(props: Props) {
   const highlight = useSelector(state => state.globalState.highlightText);
 
   const mailbox = useSelector(selectActiveMailbox);
-  const folderId = useSelector(activeFolderId);
+  const currentFolder = useSelector(selectActiveFolder);
   const message = useSelector(activeMessageObject);
   const selectedItems = useSelector(activeMessageSelectedRange).items;
 

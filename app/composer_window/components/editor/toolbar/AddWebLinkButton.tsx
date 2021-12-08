@@ -6,7 +6,7 @@ import { Icon, IconButton, Input, InputGroup, Button } from 'rsuite';
 import { Popover } from '@headlessui/react';
 import { usePopper } from 'react-popper';
 import ButtonTooltip from './utils/ButtonTooltip';
-import { stripLinkPrefix, addLinkPrefix } from '../../helpers/url';
+import { stripLinkPrefix, addLinkPrefix } from '../../../../utils/helpers/url';
 import { LinkData } from '../types';
 
 interface Props {
