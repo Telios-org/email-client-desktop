@@ -132,6 +132,10 @@ app.on('window-all-closed', () => {
   }
 });
 
+app.on('will-quit', e => {
+  process.exit(0);
+});
+
 app.on('ready', async () => {
   if (!fs.existsSync(`${app.getPath('userData')}/Accounts`)) {
     fs.mkdirSync(`${app.getPath('userData')}/Accounts`);
