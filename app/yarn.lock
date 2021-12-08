@@ -95,10 +95,10 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
-"@telios/nebula-drive@^5.0.0", "@telios/nebula-drive@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-5.0.1.tgz#fd34778bfc26ae0f7e3f697220ff4171248fa2e2"
-  integrity sha512-F26UbnJs11ycnIaJalsTWLRVrGZLGfPXZ6J87gW/L0JEj/yJjEUFuwWTLWIi38Nl8Kctw7hO5IELURZZ2y8gpA==
+"@telios/nebula-drive@^5.0.0", "@telios/nebula-drive@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-5.0.3.tgz#b41fb394958e5236a637e6ef68161e2b2a5c9369"
+  integrity sha512-bVPYiztdMvFXVs5t3y526GX+Zf1/KqzMA8+OZ8IwzjlJNGpwiKO2B41T9XMFu53XCOeMEghaoYYrJJbAe3hcsw==
   dependencies:
     "@geut/hypercore-promise" "^2.1.1"
     async "^3.2.0"
@@ -123,9 +123,9 @@
   integrity sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==
 
 "@types/node@*":
-  version "16.11.11"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.11.tgz#6ea7342dfb379ea1210835bada87b3c512120234"
-  integrity sha512-KB0sixD67CeecHC33MYn+eYARkqTheIRNuu97y2XMjR7Wu3XibO1vaY6VBV6O/a89SPI81cEUIYT87UqUWlZNw==
+  version "16.11.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.12.tgz#ac7fb693ac587ee182c3780c26eb65546a1a3c10"
+  integrity sha512-+2Iggwg7PxoO5Kyhvsq9VarmPbIelXP070HMImEpbtGCoyWNINQj4wzjbQCXzdHTRXnqufutJb5KAURZANNBAw==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -904,9 +904,9 @@ flat-tree@^1.3.0, flat-tree@^1.6.0, flat-tree@^1.9.0:
   integrity sha512-WRu5/q9fcdL9f7L6Ahq8fR153e5Zr5aU6plPHupN6JDWuvEJbMjrEQprge3/I7ytndHC6/GUNg5Rg8XEisuv5w==
 
 follow-redirects@^1.14.0:
-  version "1.14.5"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.5.tgz#f09a5848981d3c772b5392309778523f8d85c381"
-  integrity sha512-wtphSXy7d4/OR+MvIFbCVBDzZ5520qV8XfPklSN5QtxuMUJZ+b0Wnst1e1lCDocfzuCkHqj8k0FpZqO+UIaKNA==
+  version "1.14.6"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.6.tgz#8cfb281bbc035b3c067d6cd975b0f6ade6e855cd"
+  integrity sha512-fhUl5EwSJbbl8AR+uYL2KQDxLkdSjZGR36xy46AO7cOMTrCMON6Sa28FmAnC2tRTDbd/Uuzz3aJBv7EBN7JH8A==
 
 forever-agent@~0.6.1:
   version "0.6.1"
