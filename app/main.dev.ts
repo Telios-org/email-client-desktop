@@ -68,6 +68,8 @@ const createMainWindow = async () => {
       show: false,
       width: 1240,
       height: 735,
+      minWidth: 1150,
+      minHeight: 650,
       resizable: true,
       frame: false,
       backgroundColor: '#FFF',

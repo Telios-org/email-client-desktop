@@ -622,7 +622,7 @@ module.exports = env => {
 
       const { messages, type, newMessage } = payload;
 
-      process.send({ event: 'emailupdate1', payload });
+      // process.send({ event: 'emailupdate1', payload });
 
       const asyncMsgs = [];
       const asyncFolders = [];
@@ -765,10 +765,9 @@ module.exports = env => {
           path: msg.email.path
         };
 
-        process.send({ event: 'emailupdate2', msgObj, type });
+        // process.send({ event: 'emailupdate2', msgObj, type });
 
         if (msg.email.emailId && type !== 'incoming') {
-          process.send({ event: 'emailupdate3 in IF statement' });
           asyncMsgs.push(
             Email.update(msgObj, {
               where: { emailId: msg.email.emailId },

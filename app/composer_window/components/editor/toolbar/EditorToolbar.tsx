@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useCallback
 } from 'react';
+import useDimensions from 'react-cool-dimensions';
 import { ButtonToolbar } from 'rsuite';
 import _ from 'lodash';
 import { useHandler } from '../../../../utils/hooks/useHandler';
@@ -40,6 +41,7 @@ import {
 } from './StyleButtons';
 import { AddAttachmentsButton, SendEmailButton } from './ActionButtons';
 import AddWebLinkButton from './AddWebLinkButton';
+import PopoverButtonBar from './utils/PopoverButtonBar';
 import { FontSizeButton, FontFamilyButton } from './ListBoxButtons';
 import { DEFAULT_FONT_FACE, DEFAULT_FONT_SIZE } from '../editor.config';
 
@@ -75,6 +77,19 @@ const EditorToolbar = (props: Props) => {
   const [linkData, setLinkData] = useState<{ link: string; title: string }>({
     link: '',
     title: ''
+  });
+  const [compactDesign, setCompactDesign] = useState(false);
+
+  const { observe, currentBreakpoint } = useDimensions({
+    breakpoints: { XS: 1, SM: 465, LG: 615 },
+    updateOnBreakpointChange: false,
+    onResize: ({ cb }) => {
+      if (cb === 'XS') {
+        setCompactDesign(true);
+      } else {
+        setCompactDesign(false);
+      }
+    }
   });
 
   const handleCursor = useHandler(() => {
@@ -181,9 +196,10 @@ const EditorToolbar = (props: Props) => {
 
   return (
     <div
-      className={`justify-between max-h-12 min-h-12 w-full text-sm text-gray-500 h-full px-2 flex items-center border-t z-10 bg-white ${className}`}
+      className={`justify-between max-h-12 min-h-12 w-full text-sm h-full px-2 flex items-center border-t z-10 bg-white min-w-min ${className}`}
+      ref={observe}
     >
-      <div className="flex flex-row">
+      <div className="flex flex-nowrap flex-row">
         <FontSizeButton
           setSelected={handleFontSizeChange}
           selected={fontSize}
@@ -192,53 +208,93 @@ const EditorToolbar = (props: Props) => {
           setSelected={handleFontFaceChange}
           selected={fontFamily}
         />
-        <ButtonToolbar className="pl-1 self-center">
+        <ButtonToolbar className="pl-1 self-center flex flex-nowrap">
           <BoldButton onClick={handleBold} isActive={editorInfos.bold} />
           <ItalicButton onClick={handleItalic} isActive={editorInfos.italic} />
           <UnderlineButton
             onClick={handleUnderline}
             isActive={editorInfos.underline}
           />
-          <StrikethroughButton
-            onClick={handleStrikethrough}
-            isActive={editorInfos.strikethrough}
-          />
-          {/* <HeadersButtons
-                        onClick={() => {}}
-                        isActive={false}
-                    /> */}
-          <UnorderedListButton
-            onClick={handleUnorderedList}
-            isActive={editorInfos.unorderedList}
-          />
-          <OrderedListButton
-            onClick={handleOrderedList}
-            isActive={editorInfos.orderedList}
-          />
-          <CodeButton
-            onClick={handleCode}
-            isActive={editorInfos.code || editorInfos.pre}
-          />
-          <BlockquoteButton
-            onClick={handleBlockquote}
-            isActive={editorInfos.blockquote}
-          />
+          {currentBreakpoint === 'LG' && (
+            <StrikethroughButton
+              onClick={handleStrikethrough}
+              isActive={editorInfos.strikethrough}
+            />
+          )}
+          {['LG', 'SM'].includes(currentBreakpoint) && (
+            <>
+              <UnorderedListButton
+                onClick={handleUnorderedList}
+                isActive={editorInfos.unorderedList}
+              />
+              <OrderedListButton
+                onClick={handleOrderedList}
+                isActive={editorInfos.orderedList}
+              />
+            </>
+          )}
+          {currentBreakpoint === 'LG' && (
+            <>
+              <CodeButton
+                onClick={handleCode}
+                isActive={editorInfos.code || editorInfos.pre}
+              />
+              <BlockquoteButton
+                onClick={handleBlockquote}
+                isActive={editorInfos.blockquote}
+              />
+            </>
+          )}
         </ButtonToolbar>
         <AddWebLinkButton
           linkData={linkData}
           onClick={handleEditLink}
           onInsert={handleAddLink}
         />
+        {/* RENDERING ISSUES WITH THE BELOW THE BREAK POINT STOP WORKING WHEN ADDING THE BELOW */}
+        {/* {['XS', 'SM'].includes(currentBreakpoint) && (
+          <PopoverButtonBar className="flex">
+            <ButtonToolbar className="pl-1 self-center flex flex-nowrap">
+              {['XS', 'SM'].includes(currentBreakpoint) && (
+                <>
+                  <UnorderedListButton
+                    onClick={handleUnorderedList}
+                    isActive={editorInfos.unorderedList}
+                  />
+                  <OrderedListButton
+                    onClick={handleOrderedList}
+                    isActive={editorInfos.orderedList}
+                  />
+                </>
+              )}
+              {['XS', 'SM'].includes(currentBreakpoint) && (
+                <>
+                  <CodeButton
+                    onClick={handleCode}
+                    isActive={editorInfos.code || editorInfos.pre}
+                  />
+                  <BlockquoteButton
+                    onClick={handleBlockquote}
+                    isActive={editorInfos.blockquote}
+                  />
+                </>
+              )}
+            </ButtonToolbar>
+          </PopoverButtonBar>
+        )} */}
       </div>
-
-      <ButtonToolbar className="self-center">
-        <AddAttachmentsButton onAction={onAttachment} />
+      <ButtonToolbar className="self-center flex flex-nowrap">
+        <AddAttachmentsButton
+          appearance="ghost"
+          className="hover:shadow shadow-sm"
+          onAction={onAttachment}
+        />
         <SendEmailButton
           onAction={onSend}
           disable={!isSendActive}
           appearance={isSendActive ? 'primary' : 'subtle'}
-          loading={loading}
-          className="font-bold tracking-wider shadow hover:shadow-sm"
+          className="font-bold tracking-wider shadow-sm hover:shadow-sm"
+          compact={compactDesign}
         />
       </ButtonToolbar>
     </div>

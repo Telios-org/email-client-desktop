@@ -62,7 +62,7 @@ const AddWebLinkButton = (props: Props) => {
           <Popover.Button ref={setReferenceElement}>
             <ButtonTooltip text="Add Hyperlink/URL" placement="right">
               <IconButton
-                className=""
+                className="ml-1"
                 appearance="subtle"
                 onClick={onClick}
                 icon={<Icon icon="link" />}

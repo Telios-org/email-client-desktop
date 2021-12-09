@@ -20,6 +20,7 @@ interface Props {
   className?: string;
   disable?: boolean;
   loading?: boolean;
+  compact?: boolean;
 }
 
 const createActionButton = ({ icon, tooltip, text }: CreatorProps) => {
@@ -28,12 +29,15 @@ const createActionButton = ({ icon, tooltip, text }: CreatorProps) => {
     appearance = 'subtle',
     className = '',
     disable = false,
-    loading = false
+    loading = false,
+    compact = true
   }: Props) => {
     const doAction = (event: SyntheticEvent<Element, Event>) => {
       event.preventDefault();
       onAction();
     };
+
+    const label = compact ? undefined : text;
 
     return (
       <ButtonTooltip text={tooltip}>
@@ -47,7 +51,7 @@ const createActionButton = ({ icon, tooltip, text }: CreatorProps) => {
           size="sm"
           placement="left"
         >
-          {text}
+          {label}
         </IconButton>
       </ButtonTooltip>
     );

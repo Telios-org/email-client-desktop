@@ -115,7 +115,7 @@ export default function MailPage() {
             maxSize: 300,
             resize: 'dynamic'
           },
-          { minSize: 250, resize: 'stretch' }
+          { resize: 'stretch' }
         ]}
       >
         <div className="w-full">
@@ -138,7 +138,7 @@ export default function MailPage() {
             spacing={0}
             panelWidths={[
               { size: panelWidths.msgList, minSize: 330, resize: 'dynamic' },
-              { minSize: 200, resize: 'dynamic' }
+              { minSize: 250, resize: 'dynamic' }
             ]}
           >
             <MessageList />
