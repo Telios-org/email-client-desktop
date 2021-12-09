@@ -34,24 +34,26 @@ export default function MailPage() {
   const [panelWidths, setPanelWidths] = useState({ nav: 200, msgList: 445 });
   const [isSyncInProgress, setIsSyncInProgress] = useState(false);
 
+  const toggleEditorState = (editorAction: string, forcedStatus?: boolean) => {
+    dispatch(toggleEditor(editorAction, forcedStatus));
+  };
+
   useEffect(() => {
     ipcRenderer.on('IPC::initMailbox', async (event, opts) => {
       await dispatch(loadMailboxes(opts));
       await dispatch(fetchNewMessages());
     });
 
-    ipcRenderer.on('closeInlineComposer', async event => {
+    ipcRenderer.on('COMPOSER_IPC::closeInlineComposer', async event => {
       toggleEditorState('closeInlineComposer', false);
     });
 
     return () => {
       ipcRenderer.removeAllListeners('realTimeDelivery');
+      ipcRenderer.removeAllListeners('IPC::initMailbox');
+      ipcRenderer.removeAllListeners('COMPOSER_IPC::closeInlineComposer');
     };
   }, []);
-
-  const toggleEditorState = (editorAction: string, forcedStatus?: boolean) => {
-    dispatch(toggleEditor(editorAction, forcedStatus));
-  };
 
   const clearSelectedMessage = async (folderId: number) => {
     dispatch(clearActiveMessage(folderId));

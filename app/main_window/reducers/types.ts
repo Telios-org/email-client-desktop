@@ -288,12 +288,16 @@ export type RegisterAction = {
   recoveryEmail: string;
 };
 
+// Email and MailMessageType are so similar they should just be ONE TYPE
+// This is going to be fun to clean up
 export type Email = {
   emailId?: number | null;
   id?: number | null;
   headers?: any[];
   subject: string;
   date: string;
+  folderId: number;
+  aliasId: string;
   to: { name: string; address: string }[];
   from: {
     address: string;
@@ -315,6 +319,7 @@ export type Email = {
   html_body?: string; //this needs to be cleaned up it's confusing having this and bodyAsHtml.
   bodyAsText?: string;
   bodyAsHtml?: string;
+  path: string;
   attachments: {
     filename: string;
     fileblob: string;
@@ -344,6 +349,7 @@ export type MailMessageType = {
   bodyAsText: string;
   unread: number;
   labels: Array<LabelType>;
+  path: string;
   attachments: Array<AttachmentType>;
 };
 

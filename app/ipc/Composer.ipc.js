@@ -207,6 +207,8 @@ module.exports = windowManager => {
     const draft = store.getNewDraft();
     const isDirty = store.getDraftDirty();
 
+    // console.log('RENDERER::closeComposerWindow', action, draft, isDirty);
+
     if (isDirty && !action) {
       windowManager
         .showMessageBox({ event, browserWindow: null, draft })
@@ -226,12 +228,13 @@ module.exports = windowManager => {
           console.error(e);
         });
     } else if (isDirty && action === 'save') {
+      console.log('DRAFT', draft.emailId);
       saveMessage({ messages: [draft], type: 'Draft', sync: true });
     }
 
     clearDraft();
 
-    mainWindow.webContents.send('closeInlineComposer');
+    mainWindow.webContents.send('COMPOSER_IPC::closeInlineComposer');
   });
 
   ipcMain.handle('createContacts', async (event, payload) => {

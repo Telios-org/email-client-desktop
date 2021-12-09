@@ -211,7 +211,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     async (event, content) => {
       const { message, mailbox, editorAction } = content;
 
-      const newDraft = emailTransform(message, editorAction);
+      const newDraft = emailTransform(message, editorAction, true);
 
       store.setInitialDraft(newDraft);
       store.setNewDraft(null);

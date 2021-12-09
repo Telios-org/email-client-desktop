@@ -172,7 +172,7 @@ export const emailTransform = (
   action: string,
   resetId = true
 ): Email => {
-  const id = resetId ? null : message.id ?? message.emailId;
+  const id = resetId ? null : message.emailId ?? message.id;
 
   let subject = message.subject ?? '';
   let body = message?.html_body || message.bodyAsHtml;
@@ -202,6 +202,7 @@ export const emailTransform = (
     bccJSON: JSON.stringify(message.bcc) || message.bccJSON,
     bodyAsText: message?.text_body || message.bodyAsText,
     bodyAsHtml: body,
+    path: message.path,
     attachments:
       typeof message.attachments === 'string'
         ? JSON.parse(message.attachments)

@@ -6,7 +6,7 @@ import { AutoSizer } from 'react-virtualized';
 import { DebounceInput } from 'react-debounce-input';
 import { Notification, Divider } from 'rsuite';
 import { DateTime } from 'luxon';
-import usePrevious from '../utils/hooks/usePrevious';
+import { useHandler } from '../utils/hooks/useHandler';
 import {
   Editor,
   MessageInputs,
@@ -34,6 +34,7 @@ import {
 import { EditorIframeRef } from './components/editor/types';
 
 const clone = require('rfdc')();
+const htmlToText = require('html-to-text');
 
 const emailTemplate = {
   emailId: null,
@@ -123,7 +124,7 @@ const Composer = (props: Props) => {
     // Getting timestamp for email
     const time = ISOtimestamp();
     // Getting the plain text off the htmlBody
-    const plaintext = ''; // NEED TO FIX THIS
+    const plaintext = htmlToText.fromString(htmlBody);
 
     const eml = {
       ...clone(draft),
@@ -142,12 +143,12 @@ const Composer = (props: Props) => {
       setEditorState(htmlBody);
     }
     setEmail(eml);
-    ipcRenderer.send('updateComposerDraft', eml);
+    console.log('Draft', eml);
+    ipcRenderer.send('RENDERER::updateComposerDraft', eml);
   };
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
-    console.log('COMPOSER', message, mb, folder);
     if (isInline && message?.bodyAsHtml && folder.name === 'Drafts') {
       const draft = emailTransform(message, 'draftEdit', false);
       const rcp = recipientTransform(mb, draft, 'draftEdit');
@@ -162,7 +163,7 @@ const Composer = (props: Props) => {
         setActiveSendButton(true);
       }
 
-      if (prevMsgIdRef.current !== draft.emailId){
+      if (prevMsgIdRef.current !== draft.emailId) {
         prevMsgIdRef.current = draft.emailId;
       }
     }
@@ -207,6 +208,7 @@ const Composer = (props: Props) => {
   useEffect(() => {
     if (!isInline) {
       remote.getCurrentWindow().on('close', () => {
+        console.log('CLOSING WINDOWS');
         //   this.updateEmail('close');
       });
     }
@@ -217,7 +219,6 @@ const Composer = (props: Props) => {
 
   useEffect(() => {
     if (editorState !== undefined && !composerReady) {
-      console.log('COMPOSER READY', message);
       setComposerReady(true);
     }
   }, [editorState]);
@@ -229,74 +230,74 @@ const Composer = (props: Props) => {
       editorRef.current &&
       editorState !== undefined
     ) {
-      console.log(
-        'INITIALIZING EDITOR CONTENT',
-        editorState,
-        message,
-        prevMsgIdRef.current
-      );
       skipNextInputRef.current = true;
       editorRef.current.value = editorState;
       editorRef.current.focus();
     }
   }, [editorReady, composerReady, prevMsgIdRef.current]);
 
-  const onUpdateRecipients = (recipients: Recipients, updateState = true) => {
-    let toArr = [];
-    let ccArr = [];
-    let bccArr = [];
+  const onUpdateRecipients = useHandler(
+    (recipients: Recipients, updateState = true) => {
+      let toArr = [];
+      let ccArr = [];
+      let bccArr = [];
 
-    if (recipients.to.arr.length > 0) {
-      setActiveSendButton(true);
-      toArr = recipients.to.arr
-        .filter(eml => eml.isValid || eml.preFill)
-        .map(eml => {
-          return { address: eml.value, name: eml.label };
-        });
-    } else {
-      setActiveSendButton(false);
-    }
+      if (recipients.to.arr.length > 0) {
+        setActiveSendButton(true);
+        toArr = recipients.to.arr
+          .filter(eml => eml.isValid || eml.preFill)
+          .map(eml => {
+            return { address: eml.value, name: eml.label };
+          });
+      } else {
+        setActiveSendButton(false);
+      }
 
-    if (recipients.cc.arr.length > 0) {
-      ccArr = recipients.cc.arr
-        .filter(eml => eml.isValid || eml.preFill)
-        .map(eml => {
-          return { address: eml.value, name: eml.label };
-        });
-    }
+      if (recipients.cc.arr.length > 0) {
+        ccArr = recipients.cc.arr
+          .filter(eml => eml.isValid || eml.preFill)
+          .map(eml => {
+            return { address: eml.value, name: eml.label };
+          });
+      }
 
-    if (recipients.bcc.arr.length > 0) {
-      bccArr = recipients.bcc.arr
-        .filter(eml => eml.isValid || eml.preFill)
-        .map(eml => {
-          return { address: eml.value, name: eml.label };
-        });
-    }
+      if (recipients.bcc.arr.length > 0) {
+        bccArr = recipients.bcc.arr
+          .filter(eml => eml.isValid || eml.preFill)
+          .map(eml => {
+            return { address: eml.value, name: eml.label };
+          });
+      }
 
-    const draft = {
-      ...email,
-      to: toArr,
-      cc: ccArr,
-      bcc: bccArr,
-      from: [
-        {
-          address: mailbox.address,
-          name: mailbox.name ? mailbox.name : mailbox.address
-        }
-      ]
-    };
+      const draft = {
+        ...email,
+        to: toArr,
+        cc: ccArr,
+        bcc: bccArr,
+        from: [
+          {
+            address: mailbox.address,
+            name: mailbox.name ? mailbox.name : mailbox.address
+          }
+        ]
+      };
 
-    handleEmailUpdate(draft, undefined, undefined);
-  };
+      handleEmailUpdate(draft, undefined, undefined);
+    },
+    { debounce: 250 }
+  );
 
-  const onSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+  const onSubjectChange = useHandler(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
 
-    const newEmail = clone(email);
-    newEmail.subject = value;
+      const newEmail = clone(email);
+      newEmail.subject = value;
 
-    handleEmailUpdate(newEmail);
-  };
+      handleEmailUpdate(newEmail);
+    },
+    { debounce: 250 }
+  );
 
   const handleEditorReady = useCallback(() => setEditorReady(true), []);
 
@@ -309,16 +310,15 @@ const Composer = (props: Props) => {
     handleEmailUpdate(newEmail);
   };
 
-  const handleInputChange = useCallback(
+  const handleInputChange = useHandler(
     (content: string) => {
       if (skipNextInputRef.current) {
         skipNextInputRef.current = false;
         return;
       }
-      console.log('HANDLEINPUTCHANGE TRIGGERED', content);
       handleEmailUpdate(undefined, content, undefined);
     },
-    [handleEmailUpdate]
+    { debounce: 250 }
   );
 
   const openDialog = async () => {
@@ -343,30 +343,33 @@ const Composer = (props: Props) => {
 
   const sendEmail = async () => {
     setLoading(true);
-    try {
-      await ComposerService.send(email, isInline);
+    handleEmailUpdate();
+    setTimeout(async () => {
+      try {
+        await ComposerService.send(email, isInline);
 
-      setLoading(false);
+        setLoading(false);
 
-      Notification.success({
-        title: 'Email Sent',
-        placement: 'bottomEnd'
-      });
+        Notification.success({
+          title: 'Email Sent',
+          placement: 'bottomEnd'
+        });
 
-      if (isInline) {
-        onClose({ action: 'send' });
-      } else {
-        remote.getCurrentWindow().close();
+        if (isInline) {
+          onClose({ action: 'send' });
+        } else {
+          remote.getCurrentWindow().close();
+        }
+      } catch (err) {
+        setLoading(false);
+        console.error(err);
+
+        Notification.error({
+          title: 'Failed to Send',
+          placement: 'bottomEnd'
+        });
       }
-    } catch (err) {
-      setLoading(false);
-      console.error(err);
-
-      Notification.error({
-        title: 'Failed to Send',
-        placement: 'bottomEnd'
-      });
-    }
+    });
   };
 
   return (
@@ -391,7 +394,7 @@ const Composer = (props: Props) => {
               className="pl-1 focus:outline-none w-full py-2 text-gray-800 bg-transparent"
               minLength={1}
               value={email?.subject ?? ''}
-              debounceTimeout={500}
+              debounceTimeout={250}
               type="text"
               data-name="subject"
               onChange={onSubjectChange}

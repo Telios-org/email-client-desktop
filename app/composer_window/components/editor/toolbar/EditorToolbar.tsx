@@ -87,7 +87,6 @@ const EditorToolbar = (props: Props) => {
         fontFamily: ff?.value || DEFAULT_FONT_FACE.value,
         fontSize: fs?.value || DEFAULT_FONT_SIZE.value
       };
-      console.log(infos);
       if (!_.isEqual(editorInfos, infos)) {
         setEditorInfos(infos);
 
@@ -172,9 +171,7 @@ const EditorToolbar = (props: Props) => {
   }, []);
 
   const handleEditLink = useCallback(() => {
-    console.log('CLICKING IT DOWN');
     const link: LinkData = getLinkAtCursor(editorRef.current);
-    console.log(link);
     setLinkData(link);
   }, []);
 
