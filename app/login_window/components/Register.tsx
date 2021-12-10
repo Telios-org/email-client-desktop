@@ -28,6 +28,7 @@ import {
 import { Mailbox } from '@telios/client-sdk';
 import Store from 'electron-store';
 import i18n from '../../i18n/i18n';
+import { validateEmail, validateTeliosEmail } from '../../utils/helpers/regex';
 
 const { ipcRenderer, remote } = require('electron');
 
@@ -58,15 +59,7 @@ const errorStyles = errorVisible => {
   };
 };
 
-const validateTeliosEmail = (email: string) => {
-  const re = /^\w+([\.]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/g; // eslint-disable-line
-  return re.test(email);
-};
 
-const validateEmail = (email: string) => {
-  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; // eslint-disable-line
-  return re.test(email);
-};
 
 type Props = {
   onUpdateActive: (value: string) => void;
