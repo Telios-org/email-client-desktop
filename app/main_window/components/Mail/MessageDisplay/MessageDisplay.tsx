@@ -28,7 +28,7 @@ import {
 import stringToHslColor from '../../../utils/avatar.util';
 
 // COMPONENTS
-import Attachments from '../../../../composer_window/components/attachments/Attachments';
+import Attachments from '../../../../composer_window/components/Attachments/Attachments';
 
 // STYLES
 // import styles from './MessageDisplay.css';
@@ -194,7 +194,7 @@ function MessageDisplay(props: Props) {
 
   const reply = async () => {
     dispatch(replyMessage(false));
-    await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
+    await ipcRenderer.invoke('ingestDraftForInlineComposer', {
       mailbox,
       message,
       editorAction: 'reply'
@@ -203,7 +203,7 @@ function MessageDisplay(props: Props) {
 
   const replyAll = async () => {
     dispatch(replyMessage(true));
-    await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
+    await ipcRenderer.invoke('ingestDraftForInlineComposer', {
       mailbox,
       message,
       editorAction: 'replyAll'
@@ -212,7 +212,7 @@ function MessageDisplay(props: Props) {
 
   const forward = async () => {
     dispatch(forwardMessage());
-    await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
+    await ipcRenderer.invoke('ingestDraftForInlineComposer', {
       mailbox,
       message,
       editorAction: 'forward'

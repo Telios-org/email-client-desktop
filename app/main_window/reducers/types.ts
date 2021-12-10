@@ -137,6 +137,29 @@ export type ExternalMailMessageType = {
   key: string;
 };
 
+export type MailMessageType = {
+  // the _id that is assigned to the raw message when delivered
+  _id?: string;
+  id: string;
+  folderId: number;
+  isPreview: boolean;
+  aliasId: string;
+  // mailboxId: number; THIS WILL BE NEEDED WHEN MULTIPLE MAILBOX ARE PRESENT
+  headers: any;
+  active: boolean;
+  subject: string;
+  date: string;
+  toJSON: string;
+  fromJSON: string;
+  ccJSON: string;
+  bccJSON: string;
+  bodyAsHtml: string;
+  bodyAsText: string;
+  unread: number;
+  labels: Array<LabelType>;
+  attachments: Array<AttachmentType>;
+};
+
 export type NamespaceType = {
   name: string;
   mailboxId: number;
@@ -288,17 +311,13 @@ export type RegisterAction = {
   recoveryEmail: string;
 };
 
-// Email and MailMessageType are so similar they should just be ONE TYPE
-// This is going to be fun to clean up
 export type Email = {
   emailId?: number | null;
   id?: number | null;
   headers?: any[];
   subject: string;
   date: string;
-  folderId: number;
-  aliasId: string;
-  to: { name: string; address: string }[];
+  to: { name: string; adress: string }[];
   from: {
     address: string;
     name: string;
@@ -311,46 +330,15 @@ export type Email = {
     address: string;
     name: string;
   }[];
-  toJSON: string;
-  fromJSON: string;
-  ccJSON: string;
-  bccJSON: string;
-  text_body?: string; //this needs to be cleaned up it's confusing having this and bodyAsText.
-  html_body?: string; //this needs to be cleaned up it's confusing having this and bodyAsHtml.
+  text_body?: string;
+  html_body?: string;
   bodyAsText?: string;
   bodyAsHtml?: string;
-  path: string;
   attachments: {
     filename: string;
     fileblob: string;
     mimetype: string;
   }[];
-};
-
-export type MailMessageType = {
-  // the _id that is assigned to the raw message when delivered
-  _id?: string;
-  id: string;
-  folderId: number;
-  isPreview: boolean;
-  aliasId: string;
-  createdAt: string;
-  updatedAt: string;
-  // mailboxId: number; THIS WILL BE NEEDED WHEN MULTIPLE MAILBOX ARE PRESENT
-  headers: any;
-  active: boolean;
-  subject: string;
-  date: string;
-  toJSON: string;
-  fromJSON: string;
-  ccJSON: string;
-  bccJSON: string;
-  bodyAsHtml: string;
-  bodyAsText: string;
-  unread: number;
-  labels: Array<LabelType>;
-  path: string;
-  attachments: Array<AttachmentType>;
 };
 
 export type SelectionRange = {

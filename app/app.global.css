@@ -4,6 +4,7 @@
  */
 @import './tailwind.global.css';
 @import 'rsuite/dist/styles/rsuite-default.css';
+@import 'draft-js/dist/Draft.css';
  /* PRIMSJS Theme is for the codeblock for the editor. */
 @import 'prismjs/themes/prism-tomorrow.css';
 
@@ -27,33 +28,6 @@ body {
   height: 100vh;
   overflow-y: hidden;
   font-size: 16px;
-  --scrollbar-thumb-color: rgba(0, 0, 0, 0.35);
-  --scrollbar-thumb-hover-color: rgba(0, 0, 0, 0.5);
-}
-
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb-color) transparent;
-}
-*::-webkit-scrollbar {
-    width: 0.625rem; /* 10px */
-    height: 0.625rem;
-}
-*::-webkit-scrollbar-thumb {
-    border: .125rem solid transparent; /* 2px */
-    background-clip: padding-box;
-    border-radius: .3125rem; /* 5px */
-    background-color: var(--scrollbar-thumb-color, rgba(0, 0, 0, 0.35) );
-}
-*::-webkit-scrollbar-track {
-    background-color: transparent;
-}
-*::-webkit-scrollbar-thumb:horizontal:hover,
-*::-webkit-scrollbar-thumb:vertical:hover {
-    background-color: var(--scrollbar-thumb-hover-color, rgba(0, 0, 0, 0.5) );
-}
-*::-webkit-scrollbar-corner {
-    visibility: hidden;
 }
 
 h1 {

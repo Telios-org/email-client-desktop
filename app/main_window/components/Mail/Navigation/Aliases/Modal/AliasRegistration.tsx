@@ -32,8 +32,6 @@ import {
 
 import i18n from '../../../../../../i18n/i18n';
 
-import { validateString } from '../../../../../../utils/helpers/regex';
-
 const { v4: uuidv4 } = require('uuid');
 
 const { StringType } = Schema.Types;
@@ -98,37 +96,23 @@ export default function AliasModal(props: Props) {
       domain,
       address,
       description,
-      fwd,
-      validateString
+      fwd
     );
 
     setLoading(true);
-    if (validateString(address)) {
-      const res = await dispatch(
-        registerAlias(
-          namespaceName.toLowerCase(),
-          domain,
-          address.toLowerCase(),
-          description,
-          fwd,
-          disabled
-        )
-      );
-      if (res.success) {
-        onShowManagement();
-      } else {
-        setErrorBlock({
-          showError: true,
-          msg: res.message
-        });
-      }
+    const res = await dispatch(
+      registerAlias(namespaceName.toLowerCase(), domain, address.toLowerCase(), description, fwd, disabled)
+    );
+    setLoading(false);
+
+    if (res.success) {
+      onShowManagement();
     } else {
       setErrorBlock({
         showError: true,
-        msg: 'Malformed Alias, special characters not allowed.'
+        msg: res.message
       });
     }
-    setLoading(false);
   };
 
   const handleChange = val => {
