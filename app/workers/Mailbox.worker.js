@@ -649,6 +649,9 @@ module.exports = env => {
 
         if (msg.email.attachments.length > 0) {
           msg.email.attachments.forEach(file => {
+            
+            process.send({ event: 'SAVE FILE ATTACHMENT', file })
+            
             const fileId = file.fileId || uuidv4();
             const fileObj = {
               id: fileId,
@@ -662,13 +665,15 @@ module.exports = env => {
 
             attachments.push(fileObj);
 
-            asyncMsgs.push(
-              fileUtil.saveFileToDrive({
-                drive,
-                content: file.content,
-                file: fileObj
-              })
-            );
+            if(file.content) {
+              asyncMsgs.push(
+                fileUtil.saveFileToDrive({
+                  drive,
+                  content: file.content,
+                  file: fileObj
+                })
+              );
+            }
           });
         }
 
