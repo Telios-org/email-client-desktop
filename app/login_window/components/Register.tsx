@@ -59,8 +59,6 @@ const errorStyles = errorVisible => {
   };
 };
 
-
-
 type Props = {
   onUpdateActive: (value: string) => void;
   firstAccount: boolean;
