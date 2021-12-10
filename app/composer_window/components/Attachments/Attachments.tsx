@@ -69,7 +69,7 @@ const AttachmentItem = ({
   </li>
 );
 
-export default function Attachments(props: Props) {
+const Attachments = (props: Props) => {
   const { attachments = [], onAttachmentChange, displayStatus } = props;
   let attClone = [];
 
@@ -170,3 +170,5 @@ export default function Attachments(props: Props) {
 Attachments.defaultProps = {
   onAttachmentChange: (newArray: AttachmentType[]) => {}
 };
+
+export default Attachments;
