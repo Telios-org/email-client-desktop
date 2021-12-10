@@ -22,7 +22,8 @@ import {
   Whisper,
   Tooltip,
   CheckboxGroup,
-  Checkbox
+  Checkbox,
+  HelpBlock
 } from 'rsuite';
 import { Mailbox } from '@telios/client-sdk';
 import Store from 'electron-store';
@@ -58,7 +59,7 @@ const errorStyles = errorVisible => {
 };
 
 const validateTeliosEmail = (email: string) => {
-  const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/g; // eslint-disable-line
+  const re = /^\w+([\.]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/g; // eslint-disable-line
   return re.test(email);
 };
 
@@ -703,51 +704,56 @@ class Register extends Component<Props, State> {
                 <ControlLabel className="font-medium mb-2 text-gray-500 select-none">
                   {i18n.t('global.email')}
                 </ControlLabel>
-                <InputGroup className="w-full">
-                  <InputGroup.Addon className="bg-transparent">
-                    {!emailCheckLoading && !formSuccess.email && (
-                      <FaRegEnvelope
-                        className={`text-gray-400
-                    ${
-                      formError.email && !formSuccess.email
-                        ? 'text-red-600'
-                        : ''
-                    }
-                    ${
-                      formSuccess.email && !formError.email
-                        ? 'text-green-500'
-                        : ''
-                    }`}
-                      />
-                    )}
-                    {emailCheckLoading &&
-                      !formSuccess.email &&
-                      !formError.email && (
-                        <AiOutlineLoading3Quarters className="loading-indicator" />
-                      )}
-
-                    {!emailCheckLoading &&
-                      formSuccess.email &&
-                      !formError.email && (
-                        <BsCheckCircle className="text-green-500" />
-                      )}
-                  </InputGroup.Addon>
-                  <FormControl
-                    onChange={this.onChangeEmail}
-                    disabled={loading}
-                    name="email"
-                  />
-                  <InputGroup.Addon>
-                    {' '}
-                    <div
-                      className={`${
-                        loading ? 'text-gray-400 select-none' : ''
+                <div className="flex flex-row items-center">
+                  <InputGroup className="w-full">
+                    <InputGroup.Addon className="bg-transparent">
+                      {!emailCheckLoading && !formSuccess.email && (
+                        <FaRegEnvelope
+                          className={`text-gray-400
+                      ${
+                        formError.email && !formSuccess.email
+                          ? 'text-red-600'
+                          : ''
+                      }
+                      ${
+                        formSuccess.email && !formError.email
+                          ? 'text-green-500'
+                          : ''
                       }`}
-                    >
-                      {`@${mailDomain}`}
-                    </div>
-                  </InputGroup.Addon>
-                </InputGroup>
+                        />
+                      )}
+                      {emailCheckLoading &&
+                        !formSuccess.email &&
+                        !formError.email && (
+                          <AiOutlineLoading3Quarters className="loading-indicator" />
+                        )}
+
+                      {!emailCheckLoading &&
+                        formSuccess.email &&
+                        !formError.email && (
+                          <BsCheckCircle className="text-green-500" />
+                        )}
+                    </InputGroup.Addon>
+                    <FormControl
+                      onChange={this.onChangeEmail}
+                      disabled={loading}
+                      name="email"
+                    />
+                    <InputGroup.Addon>
+                      {' '}
+                      <div
+                        className={`${
+                          loading ? 'text-gray-400 select-none' : ''
+                        }`}
+                      >
+                        {`@${mailDomain}`}
+                      </div>
+                    </InputGroup.Addon>
+                  </InputGroup>
+                  <HelpBlock tooltip>
+                    No special characters other than .
+                  </HelpBlock>
+                </div>
                 <div className="text-sm" style={errorStyles(formError.email)}>
                   {formError.email}
                 </div>
