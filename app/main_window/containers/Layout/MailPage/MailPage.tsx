@@ -12,7 +12,7 @@ import { clearActiveMessage } from '../../../actions/mailbox/messages';
 import { toggleEditor } from '../../../actions/global';
 
 // Selectors
-import { activeFolderId } from '../../../selectors/mail';
+import { activeFolderId, selectActiveMailbox } from '../../../selectors/mail';
 
 // Components IMPORTS
 import MessageList from '../../../components/Mail/MessageList/MessageList';
@@ -28,10 +28,15 @@ export default function MailPage() {
   const dispatch = useDispatch();
 
   const folderId = useSelector(activeFolderId);
+  const mailbox = useSelector(selectActiveMailbox);
 
   const [loading, setLoading] = useState(false);
   const [panelWidths, setPanelWidths] = useState({ nav: 200, msgList: 445 });
   const [isSyncInProgress, setIsSyncInProgress] = useState(false);
+
+  const toggleEditorState = (editorAction: string, forcedStatus?: boolean) => {
+    dispatch(toggleEditor(editorAction, forcedStatus));
+  };
 
   useEffect(() => {
     ipcRenderer.on('IPC::initMailbox', async (event, opts) => {
@@ -39,18 +44,16 @@ export default function MailPage() {
       await dispatch(fetchNewMessages());
     });
 
-    ipcRenderer.on('closeInlineComposer', async event => {
+    ipcRenderer.on('COMPOSER_IPC::closeInlineComposer', async event => {
       toggleEditorState('closeInlineComposer', false);
     });
 
     return () => {
       ipcRenderer.removeAllListeners('realTimeDelivery');
+      ipcRenderer.removeAllListeners('IPC::initMailbox');
+      ipcRenderer.removeAllListeners('COMPOSER_IPC::closeInlineComposer');
     };
   }, []);
-
-  const toggleEditorState = (editorAction: string, forcedStatus?: boolean) => {
-    dispatch(toggleEditor(editorAction, forcedStatus));
-  };
 
   const clearSelectedMessage = async (folderId: number) => {
     dispatch(clearActiveMessage(folderId));
@@ -78,8 +81,6 @@ export default function MailPage() {
   };
 
   const handleInlineComposerMaximize = async () => {
-    const { mailbox, toggleEditorState } = this.props;
-    // this.setState({ showComposerInline: false });
     toggleEditorState('composerMaximize', false);
     await ipcRenderer.invoke('RENDERER::showComposerWindow', {
       mailbox,
@@ -114,7 +115,7 @@ export default function MailPage() {
             maxSize: 300,
             resize: 'dynamic'
           },
-          { minSize: 250, resize: 'stretch' }
+          { resize: 'stretch' }
         ]}
       >
         <div className="w-full">
@@ -137,7 +138,7 @@ export default function MailPage() {
             spacing={0}
             panelWidths={[
               { size: panelWidths.msgList, minSize: 330, resize: 'dynamic' },
-              { minSize: 200, resize: 'dynamic' }
+              { minSize: 250, resize: 'dynamic' }
             ]}
           >
             <MessageList />

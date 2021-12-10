@@ -25,6 +25,8 @@ import {
 
 import i18n from '../../../../../../i18n/i18n';
 
+import { validateString } from '../../../../../../utils/helpers/regex';
+
 const { StringType } = Schema.Types;
 
 const formModel = Schema.Model({
@@ -80,15 +82,25 @@ export default function AliasModal(props: Props) {
       }
     });
 
-    const { status, success } = await dispatch(
-      registerNamespace(id, namespace.toLowerCase())
-    );
+    if (validateString(namespace)) {
+      const { status, success } = await dispatch(
+        registerNamespace(id, namespace.toLowerCase())
+      );
 
-    if (!success && status === 'already-registered') {
+      if (!success && status === 'already-registered') {
+        setErrorBlock({
+          namespace: {
+            showError: true,
+            msg: 'Namespace is unavailable.'
+          }
+        });
+      }
+    } else {
       setErrorBlock({
         namespace: {
           showError: true,
-          msg: 'Namespace is unavailable.'
+          msg:
+            'Malformed Namespace, special characters not allowed.'
         }
       });
     }
@@ -105,7 +117,7 @@ export default function AliasModal(props: Props) {
   };
 
   const generateRandomString = () => {
-    const slug = generateSlug(2,{
+    const slug = generateSlug(2, {
       format: 'kebab',
       partsOfSpeech: ['adjective', 'noun'],
       categories: {

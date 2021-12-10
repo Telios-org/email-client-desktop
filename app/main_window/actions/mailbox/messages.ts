@@ -227,6 +227,7 @@ export const forwardMessage = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const state = getState();
     const folderId = activeFolderId(state);
+    
     await dispatch(clearActiveMessage(folderId));
     dispatch(toggleEditor('forward', true));
   };

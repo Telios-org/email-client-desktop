@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // EXTERNAL COMPONENT LIBRARIES
@@ -101,7 +101,13 @@ export default function MessageToolbar(props: Props) {
   const showComposerControls =
     editorIsOpen || (currentFolderId === 2 && selected.items.length === 1);
   // Buttons positioning
-  const displacement = showComposerControls ? `${panelSize}px` : '0px';
+  const [displacement, setDisplacement] = useState(
+    showComposerControls ? `${panelSize}px` : '0px'
+  );
+
+  useEffect(() => {
+    setDisplacement(showComposerControls ? `${panelSize}px` : '0px')
+  }, [panelSize, showComposerControls]);
 
   // msgId for drafts
   const msgId = activeMessage ? activeMessage.id : null;
@@ -128,12 +134,15 @@ export default function MessageToolbar(props: Props) {
     onComposerClose({ action: 'delete' });
   };
 
-  const selectMessageRange = async (selected: SelectionRange, folderId: number) => {
+  const selectMessageRange = async (
+    selected: SelectionRange,
+    folderId: number
+  ) => {
     dispatch(msgRangeSelection(selected, folderId));
-  }
+  };
 
   const handleSelectAction = (action: string, messages: any) => {
-    let selected = activeSelectedRange;
+    const selected = activeSelectedRange;
 
     if (action === 'all') {
       messages.forEach((id, index) => {
@@ -148,7 +157,7 @@ export default function MessageToolbar(props: Props) {
     }
 
     selectMessageRange(selected, currentFolderId);
-  }
+  };
 
   // Handles Selection Movements including routing deletes
   const moveToFolder = async (toId: number, name: string) => {
@@ -245,8 +254,9 @@ export default function MessageToolbar(props: Props) {
         speaker={<Tooltip>{tpText}</Tooltip>}
       >
         <button
-          className={`disabled:opacity-50 ${disabled ? 'cursor-not-allowed' : 'hover:bg-gray-200 cursor-pointer'
-            }  text-gray-500 rounded p-2 focus:outline-none  ${className} justify-center items-center tracking-wide flex flex-row h-full`}
+          className={`disabled:opacity-50 ${
+            disabled ? 'cursor-not-allowed' : 'hover:bg-gray-200 cursor-pointer'
+          }  text-gray-500 rounded p-2 focus:outline-none  ${className} justify-center items-center tracking-wide flex flex-row h-full`}
           type="button"
           onClick={onClick}
           disabled={disabled}
@@ -397,18 +407,18 @@ type ButtonProps = {
   spinIcon?: boolean;
   disabled?: boolean;
   tpPlacement:
-  | 'top'
-  | 'bottom'
-  | 'left'
-  | 'right'
-  | 'topStart'
-  | 'topEnd'
-  | 'bottomStart'
-  | 'bottomEnd'
-  | 'leftStart'
-  | 'leftEnd'
-  | 'rightEnd'
-  | 'rightStart';
+    | 'top'
+    | 'bottom'
+    | 'left'
+    | 'right'
+    | 'topStart'
+    | 'topEnd'
+    | 'bottomStart'
+    | 'bottomEnd'
+    | 'leftStart'
+    | 'leftEnd'
+    | 'rightEnd'
+    | 'rightStart';
   tpTrigger: 'click' | 'hover' | 'focus' | 'active' | 'none';
   tpText: string;
   set: 'iconly' | 'bs';

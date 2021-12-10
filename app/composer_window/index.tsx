@@ -4,7 +4,7 @@ import '../app.global.css';
 
 document.addEventListener('DOMContentLoaded', () => {
   // eslint-disable-next-line global-require
-  const Composer = require('./components/Composer').default;
+  const Composer = require('./Composer').default;
   render(
     <>
       <Composer />

@@ -622,6 +622,8 @@ module.exports = env => {
 
       const { messages, type, newMessage } = payload;
 
+      // process.send({ event: 'emailupdate1', payload });
+
       const asyncMsgs = [];
       const asyncFolders = [];
       const newAliases = [];
@@ -640,11 +642,9 @@ module.exports = env => {
           msg._id = uuidv4();
         }
 
-        if (
-          (type === 'Sent' && msg.email.emailId) ||
-          (type === 'Draft' && msg.email.folderId !== 3)
-        ) {
+        if (type === 'Sent' && msg.email.emailId) {
           msg.email.emailId = null;
+          // This should already be enforced at the composer level.
         }
 
         if (msg.email.attachments.length > 0) {
@@ -770,8 +770,9 @@ module.exports = env => {
           path: msg.email.path
         };
 
+        // process.send({ event: 'emailupdate2', msgObj, type });
+
         if (msg.email.emailId && type !== 'incoming') {
-          process.send({ event: 'emailupdate3' });
           asyncMsgs.push(
             Email.update(msgObj, {
               where: { emailId: msg.email.emailId },
