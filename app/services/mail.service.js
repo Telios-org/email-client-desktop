@@ -132,7 +132,7 @@ class MailService {
 
   static save(opts) {
     worker.send({
-      event: 'MAIL SERVICE::saveMessageToDB',
+      event: opts.type === 'Sent' ? 'MAIL SERVICE::SaveSentMessageToDB' :'MAIL SERVICE::saveMessageToDB',
       payload: { messages: opts.messages, type: opts.type }
     });
 

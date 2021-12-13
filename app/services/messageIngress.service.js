@@ -67,7 +67,11 @@ class MessageIngressService extends EventEmitter {
             this.handleDone();
             return 'Message Saved';
           })
-          .catch(errors => console.log(errors));
+          .catch(err => {
+            console.log(err)
+            this.finished += 1;
+            this.handleDone();
+          });
       }
     });
 

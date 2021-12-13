@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { fork } = require('child_process');
 const { remote } = require('electron');
+const Store = require('electron-store');
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -19,10 +20,30 @@ class MainWorker extends EventEmitter {
   constructor() {
     super();
 
+    this.store = new Store();
+
+    let pids = this.store.get('pids');
+
+    if(typeof pids !== 'object') {
+      pids = [];
+    }
+
+    pids = pids.filter(pid => {
+      try {
+      process.kill(pid);
+      } catch(e) {}
+
+      return false;
+    })
+
     this.process = fork(workerPath, [userDataPath, process.env.NODE_ENV], {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       cwd
     });
+
+    pids.push(this.process.pid);
+
+    this.store.set('pids', pids);
 
     this.process.stderr.on('data', data => {
       // if(isDev) {
