@@ -1,7 +1,12 @@
 import React, { useRef, useState, useEffect, forwardRef, Ref } from 'react';
 import { EditorType } from './types';
 import { useHandler } from '../../../utils/hooks/useHandler';
-import { initEditor, getEditorRef, setEditorRef, scrollIntoViewIfNeeded } from './editor.utils';
+import {
+  initEditor,
+  getEditorRef,
+  setEditorRef,
+  scrollIntoViewIfNeeded
+} from './editor.utils';
 
 interface Props {
   id?: string;
@@ -49,12 +54,13 @@ const EditorIframe = (props: Props, ref: Ref<EditorType>) => {
 
     if (iframeReady && !editorReady) {
       const iframeDoc = iframeRef.current?.contentWindow?.document as Document;
-      void init(iframeDoc);
+      init(iframeDoc);
     }
-  }, [iframeReady, defaultEmailData, editorReady, onReady, ref]);
+  }, [iframeReady]);
 
   const handleInput = useHandler(() => {
     const content = getEditorRef(ref).getHTML();
+    console.log('EDITORIframe.tsx-handleInput', content);
     onInput(content);
   });
 
@@ -80,11 +86,16 @@ const EditorIframe = (props: Props, ref: Ref<EditorType>) => {
         editor.removeEventListener('cursor', handleCursor);
       };
     }
-  }, [editorReady, handleInput, ref]);
+  }, [editorReady]);
 
   return (
     <div className={`${className} w-full h-full bg-white`}>
-          <iframe id={id} className="w-full h-full bg-white" title="Editor" ref={iframeRef} frameBorder="0" />
+      <iframe
+        id={id}
+        className="w-full h-full bg-white"
+        title="Editor"
+        ref={iframeRef}
+        frameBorder="0"
       />
     </div>
   );

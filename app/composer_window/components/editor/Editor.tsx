@@ -61,6 +61,7 @@ const Editor = (props: Props, ref: Ref<EditorIframeRef>) => {
       },
       set value(value: string) {
         editorRef.current?.setHTML(value);
+        console.log('EDITOR.tsx', value, editorRef.current);
         editorRef.current?.fireEvent('input'); // For Squire to be aware of the change
       },
       get document() {

@@ -164,6 +164,7 @@ const Composer = (props: Props) => {
       }
 
       if (prevMsgIdRef.current !== draft.emailId) {
+        console.log('PREV EMAIL GUARD', message);
         prevMsgIdRef.current = draft.emailId;
       }
     }
@@ -175,6 +176,7 @@ const Composer = (props: Props) => {
   useEffect(() => {
     if (folder.name !== 'Drafts') {
       ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
+        console.log('IPC event handler', content, windowID);
         // The email has already been formatted according to the editorAction
         // it happened in the Window IPC.
         const draft = clone(content.message);
@@ -221,9 +223,11 @@ const Composer = (props: Props) => {
     if (editorState !== undefined && !composerReady) {
       setComposerReady(true);
     }
+    console.log('EditorState?', editorState);
   }, [editorState]);
 
   useEffect(() => {
+    console.log('ALL READY?', composerReady, editorReady, prevMsgIdRef.current);
     if (
       editorReady &&
       composerReady &&
@@ -232,6 +236,11 @@ const Composer = (props: Props) => {
     ) {
       skipNextInputRef.current = true;
       editorRef.current.value = editorState;
+      console.log(
+        'SETTING EDITOR',
+        editorRef.current.value,
+        editorState.substring(1, 100)
+      );
       editorRef.current.focus();
     }
   }, [editorReady, composerReady, prevMsgIdRef.current]);

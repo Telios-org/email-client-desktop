@@ -213,6 +213,8 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
       const newDraft = emailTransform(message, editorAction, true);
 
+      console.log('WINDOWSIPC::DRAFT', newDraft);
+
       store.setInitialDraft(newDraft);
       store.setNewDraft(null);
       store.setDraftDirty(false);
