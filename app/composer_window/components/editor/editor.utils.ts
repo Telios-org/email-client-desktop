@@ -41,7 +41,7 @@ export const initEditor = async (
 
   const { default: Squire } = await import('squire-rte');
 
-  document.body.innerHTML = '<div id="editor"></div>';
+  document.body.innerHTML = '<div id="editor" style="height: 96%;"></div>';
 
   const editorContainer = document.body.querySelector('#editor');
 

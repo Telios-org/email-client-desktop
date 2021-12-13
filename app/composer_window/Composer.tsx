@@ -227,7 +227,7 @@ const Composer = (props: Props) => {
   }, [editorState]);
 
   useEffect(() => {
-    console.log('ALL READY?', composerReady, editorReady, prevMsgIdRef.current);
+    // console.log('ALL READY?', composerReady, editorReady, prevMsgIdRef.current);
     if (
       editorReady &&
       composerReady &&
