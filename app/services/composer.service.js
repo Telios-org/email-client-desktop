@@ -10,7 +10,7 @@ class ComposerService {
     let eml = { ...email }
 
     // Save individual attachments
-    if(eml.attachments.length) {
+    if(eml.attachments && eml.attachments.length) {
       eml.attachments = await Promise.all(eml.attachments.map(async attachment => {
         let file;
 

@@ -70,10 +70,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@telios/client-sdk@^3.2.4":
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-3.2.4.tgz#b192291c784cf9b95fe979bf39258b7e353badce"
-  integrity sha512-Cruh9OXXthVjUwGa10N+UUCYwK4I6xCq24uDgNa655gOmIg/3BGMdaMxEkJskLpxYHGGxBfcc8e8y2yb2lTHSw==
+"@telios/client-sdk@^3.2.5":
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-3.2.5.tgz#e69e158bbc292bbf2f2a866c9da970886c050f0a"
+  integrity sha512-YyZJpQ/zWaYw5fc/Mutw6+gQ70M+VCHAg/kPbsMv6EHM/njfuqYCVwFCnVpo4nWsUh3WncD/Wa2qz2NIpxU28A==
   dependencies:
     "@telios/nebula-drive" "^5.0.0"
     async "^3.2.0"

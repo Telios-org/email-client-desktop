@@ -28,14 +28,6 @@ class MainWorker extends EventEmitter {
       pids = [];
     }
 
-    pids = pids.filter(pid => {
-      try {
-      process.kill(pid);
-      } catch(e) {}
-
-      return false;
-    })
-
     this.process = fork(workerPath, [userDataPath, process.env.NODE_ENV], {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       cwd

@@ -3,6 +3,7 @@ import { ipcMain, BrowserWindow, dialog, shell } from 'electron';
 import MenuBuilder from '../main_window/menu';
 
 const installer = require('electron-devtools-installer');
+const Store = require('electron-store');
 
 export default class WindowManager {
   constructor(app, AppUpdater) {
@@ -21,6 +22,26 @@ export default class WindowManager {
       process.env.DEBUG_PROD === 'true'
     ) {
       await WindowManager.installExtensions();
+    }
+
+    if (name.indexOf('login') > -1) {
+      const store = new Store();
+
+      let pids = store.get('pids');
+
+      if(typeof pids !== 'object') {
+        pids = [];
+      }
+
+      pids = pids.filter(pid => {
+        try {
+        process.kill(pid);
+        } catch(e) {}
+
+        return false;
+      })
+
+      store.set('pids', pids);
     }
 
     const win = new BrowserWindow(opts.window);

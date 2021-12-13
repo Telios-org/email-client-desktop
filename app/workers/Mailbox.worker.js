@@ -635,22 +635,26 @@ module.exports = env => {
         bccJSON: JSON.stringify(msg.bcc)
       };
 
-      email.attachments = email.attachments.map(file => {
-        process.send({ event: '::SaveSentMessageToDB::FILESAVE', file });
-        const fileId = file.fileId || uuidv4();
-        return {
-          id: fileId,
-          emailId: email.id,
-          filename: file.name || file.filename,
-          contentType: file.contentType || file.mimetype,
-          size: file.size,
-          discoveryKey: file.discoveryKey,
-          hash: file.hash,
-          header: file.header,
-          key: file.key,
-          path: file.path
-        };
-      });
+      if(email.attachments && email.attachments.length) {
+        email.attachments = email.attachments.map(file => {
+          process.send({ event: '::SaveSentMessageToDB::FILESAVE', file });
+          const fileId = file.fileId || uuidv4();
+          return {
+            id: fileId,
+            emailId: email.id,
+            filename: file.name || file.filename,
+            contentType: file.contentType || file.mimetype,
+            size: file.size,
+            discoveryKey: file.discoveryKey,
+            hash: file.hash,
+            header: file.header,
+            key: file.key,
+            path: file.path
+          };
+        });
+      } else {
+        email.attachments = [];
+      }
 
       email.attachments = JSON.stringify(email.attachments);
 
