@@ -131,7 +131,7 @@ export default function MessageToolbar(props: Props) {
     await Mail.removeMessages([id]);
     dispatch(clearActiveMessage(currentFolderId));
     dispatch(loadMailboxes({ fullSync: false }));
-    onComposerClose({ action: 'delete' });
+    onComposerClose({ action: 'delete', reloadDb: true });
   };
 
   const selectMessageRange = async (
@@ -358,7 +358,7 @@ export default function MessageToolbar(props: Props) {
       {showComposerControls && (
         <>
           <CustomButton
-            onClick={() => onComposerClose({ action: 'save' })}
+            onClick={() => onComposerClose({ action: 'save', reloadDb: true })}
             icon="closeout"
             className="mr-1"
             tpPlacement="bottom"

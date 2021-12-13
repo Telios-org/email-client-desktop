@@ -18,7 +18,10 @@ module.exports = windowManager => {
     return new Promise((resolve, reject) => {
       mainWindow.webContents.once('ipc-message', (e, channel, data) => {
         if (channel === 'ACCOUNT SERVICE::saveMessageToDBResponse') {
-          mainWindow.webContents.send('IPC::initMailbox', { fullSync: false });
+          const { sync = true } = payload;
+          mainWindow.webContents.send('IPC::initMailbox', {
+            fullSync: sync
+          });
           resolve(data);
         }
 
@@ -198,9 +201,11 @@ module.exports = windowManager => {
 
   ipcMain.on('RENDERER::closeComposerWindow', async (event, opts) => {
     let action = null;
+    let reload = null;
 
     if (opts) {
       action = opts.action;
+      reload = opts.reloadDb ?? true;
     }
 
     const mainWindow = windowManager.getWindow('mainWindow');
@@ -219,7 +224,7 @@ module.exports = windowManager => {
 
           // Update draft
           if (res === 0) {
-            saveMessage({ messages: [draft], type: 'Draft', sync: true });
+            saveMessage({ messages: [draft], type: 'Draft', sync: reload });
           }
 
           return true;
@@ -229,7 +234,7 @@ module.exports = windowManager => {
         });
     } else if (isDirty && action === 'save') {
       console.log('DRAFT', draft.emailId);
-      saveMessage({ messages: [draft], type: 'Draft', sync: true });
+      saveMessage({ messages: [draft], type: 'Draft', sync: reload });
     }
 
     clearDraft();

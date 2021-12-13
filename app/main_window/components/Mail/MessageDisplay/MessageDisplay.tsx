@@ -69,12 +69,15 @@ function MessageDisplay(props: Props) {
 
   const mailbox = useSelector(selectActiveMailbox);
   const [loaded, setLoaded] = useState(false);
+  const [iframeReady, setIframeReady] = useState(false);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setLoaded(false);
-  }, [bodyAsHtml]);
+    if (iframeReady && bodyAsHtml) {
+      setLoaded(true);
+    }
+  }, [bodyAsHtml, iframeReady]);
 
   let files = [];
 
@@ -224,7 +227,7 @@ function MessageDisplay(props: Props) {
     const mountNode = contentRef?.contentWindow?.document?.body;
 
     const onLoad = () => {
-      setLoaded(true);
+      setIframeReady(true);
     };
 
     return (

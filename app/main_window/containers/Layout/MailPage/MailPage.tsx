@@ -40,8 +40,13 @@ export default function MailPage() {
 
   useEffect(() => {
     ipcRenderer.on('IPC::initMailbox', async (event, opts) => {
-      await dispatch(loadMailboxes(opts));
-      await dispatch(fetchNewMessages());
+      const { fullSync = true } = opts;
+
+      // We don't always want the full state of the app to be refreshed
+      if (fullSync) {
+        await dispatch(loadMailboxes(opts));
+        await dispatch(fetchNewMessages());
+      }
     });
 
     ipcRenderer.on('COMPOSER_IPC::closeInlineComposer', async event => {
@@ -107,7 +112,8 @@ export default function MailPage() {
       <PanelGroup
         spacing={0}
         onResizeEnd={(panels: [{ size: number }, { size: number }]) =>
-          handlePanelResizeEnd(panels, 'nav')}
+          handlePanelResizeEnd(panels, 'nav')
+        }
         panelWidths={[
           {
             size: panelWidths.nav,
@@ -150,13 +156,13 @@ export default function MailPage() {
             </div>
           </PanelGroup>
         </div>
-      </PanelGroup >
+      </PanelGroup>
       <MessageSyncNotifier
         onRefresh={() => {
           refresh(true);
         }}
         inProgress={toggleSyncInProgress}
       />
-    </DndProvider >
+    </DndProvider>
   );
 }

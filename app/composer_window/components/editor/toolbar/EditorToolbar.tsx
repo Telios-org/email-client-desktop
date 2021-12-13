@@ -295,6 +295,7 @@ const EditorToolbar = (props: Props) => {
           appearance={isSendActive ? 'primary' : 'subtle'}
           className="font-bold tracking-wider shadow-sm hover:shadow-sm"
           compact={compactDesign}
+          loading={loading}
         />
       </ButtonToolbar>
     </div>

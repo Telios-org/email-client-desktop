@@ -171,7 +171,13 @@ export default function MessageList(props: Props) {
     };
 
     if (editorIsOpen) {
-      ipcRenderer.send('RENDERER::closeComposerWindow', { action: 'save' });
+      const opts = { action: 'save', reloadDb: false };
+
+      if (currentFolderName === 'Drafts') {
+        opts.reloadDb = true;
+      }
+      console.log('MESSAGELIST', opts);
+      ipcRenderer.send('RENDERER::closeComposerWindow', opts);
     }
 
     // If the editor is Open or if the message selected is not already the one open

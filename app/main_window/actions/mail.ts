@@ -890,7 +890,10 @@ export const selectSearch = (
       // };
 
       if (editorIsOpen) {
-        ipcRenderer.send('RENDERER::closeComposerWindow', { action: 'save' });
+        ipcRenderer.send('RENDERER::closeComposerWindow', {
+          action: 'save',
+          reloadDb: true
+        });
       }
       dispatch(messageSelection(msg));
       // dispatch(selectMessageRange(selected, message.folderId));

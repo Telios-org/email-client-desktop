@@ -17,7 +17,7 @@ interface Props {
 }
 
 const AddWebLinkButton = (props: Props) => {
-  const { className, linkData, onInsert, onClick } = props;
+  const { className = '', linkData, onInsert, onClick } = props;
   const [
     referenceElement,
     setReferenceElement
@@ -59,7 +59,7 @@ const AddWebLinkButton = (props: Props) => {
     <Popover className={`${className}`}>
       {({ open }) => (
         <>
-          <Popover.Button ref={setReferenceElement}>
+          <Popover.Button ref={setReferenceElement} className="outline-none">
             <ButtonTooltip text="Add Hyperlink/URL" placement="right">
               <IconButton
                 className="ml-1"

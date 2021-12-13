@@ -102,7 +102,7 @@ const Composer = (props: Props) => {
   const prevMsgIdRef = useRef(message.emailId);
   const [activeSendButton, setActiveSendButton] = useState(false);
   const [email, setEmail] = useState<Email>(emailTemplate);
-  const [mailbox, setMailbox] = useState<MailboxType>(mailboxTemplate);
+  const [mailbox, setMailbox] = useState<MailboxType>(mb ?? mailboxTemplate);
   const [prefillRecipients, setPrefillRecipients] = useState(
     prefillRecipientsTemplate
   );
@@ -143,7 +143,7 @@ const Composer = (props: Props) => {
       setEditorState(htmlBody);
     }
     setEmail(eml);
-    // console.log('Draft', eml);
+    console.log('Draft', eml);
     ipcRenderer.send('RENDERER::updateComposerDraft', eml);
   };
 
@@ -296,17 +296,14 @@ const Composer = (props: Props) => {
     { debounce: 250 }
   );
 
-  const onSubjectChange = useHandler(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
+  const onSubjectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
 
-      const newEmail = clone(email);
-      newEmail.subject = value;
+    const newEmail = clone(email);
+    newEmail.subject = value;
 
-      handleEmailUpdate(newEmail);
-    },
-    { debounce: 250 }
-  );
+    handleEmailUpdate(newEmail);
+  };
 
   const handleEditorReady = useCallback(() => setEditorReady(true), []);
 
