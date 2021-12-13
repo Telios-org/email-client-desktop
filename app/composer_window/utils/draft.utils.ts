@@ -176,7 +176,7 @@ export const emailTransform = (
   const path = resetId ? null : message.path;
 
   let subject = message.subject ?? '';
-  let body = message?.html_body || message.bodyAsHtml;
+  let body = message?.html_body ?? message.bodyAsHtml ?? '';
 
   if (action === 'reply' || action === 'replyAll') {
     body = attr(message, action);
@@ -197,11 +197,11 @@ export const emailTransform = (
     cc: [],
     bcc: [],
     from: [],
-    toJSON: JSON.stringify(message.to) || message.toJSON,
-    fromJSON: JSON.stringify(message.from) || message.fromJSON,
-    ccJSON: JSON.stringify(message.cc) || message.ccJSON,
-    bccJSON: JSON.stringify(message.bcc) || message.bccJSON,
-    bodyAsText: message?.text_body || message.bodyAsText,
+    toJSON: JSON.stringify(message.to) ?? message.toJSON ?? JSON.stringify([]),
+    fromJSON: JSON.stringify(message.from) ?? message.fromJSON ?? JSON.stringify([]),
+    ccJSON: JSON.stringify(message.cc) ?? message.ccJSON ?? JSON.stringify([]),
+    bccJSON: JSON.stringify(message.bcc) ?? message.bccJSON ?? JSON.stringify([]),
+    bodyAsText: message?.text_body ?? message.bodyAsText ?? JSON.stringify([]),
     bodyAsHtml: body,
     path,
     attachments:

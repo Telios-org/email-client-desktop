@@ -123,14 +123,14 @@ export default function MessageToolbar(props: Props) {
     // Right now we are reloading all of the messages and folders instead.
     await Mail.removeMessages(messagesToDelete);
     dispatch(clearActiveMessage(currentFolderId));
-    dispatch(loadMailboxes({ fullSync: false }));
+    dispatch(loadMailboxes());
   };
 
   const deleteDraftMessage = async (id: string) => {
     // NEED TO REWRITE THIS USING REDUX PATTERNS
     await Mail.removeMessages([id]);
     dispatch(clearActiveMessage(currentFolderId));
-    dispatch(loadMailboxes({ fullSync: false }));
+    dispatch(loadMailboxes());
     onComposerClose({ action: 'delete', reloadDb: true });
   };
 

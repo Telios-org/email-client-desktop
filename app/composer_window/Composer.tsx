@@ -227,7 +227,7 @@ const Composer = (props: Props) => {
   }, [editorState]);
 
   useEffect(() => {
-    // console.log('ALL READY?', composerReady, editorReady, prevMsgIdRef.current);
+    console.log('ALL READY?', composerReady, editorReady, prevMsgIdRef.current);
     if (
       editorReady &&
       composerReady &&
@@ -235,12 +235,7 @@ const Composer = (props: Props) => {
       editorState !== undefined
     ) {
       skipNextInputRef.current = true;
-      editorRef.current.value = editorState;
-      // console.log(
-      //   'SETTING EDITOR',
-      //   editorRef.current.value,
-      //   editorState.substring(1, 100)
-      // );
+      editorRef.current.value = ` </br> ${editorState}`;
       editorRef.current.focus();
     }
   }, [editorReady, composerReady, prevMsgIdRef.current]);

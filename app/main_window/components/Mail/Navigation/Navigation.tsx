@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { ipcRenderer } from 'electron';
 
 // IMPORT EXTERNAL LIBRAIRIES
 import { Button, Dropdown, Icon } from 'rsuite';
@@ -62,6 +63,11 @@ export default function Navigation(props: Props) {
   const newMessageAction = async () => {
     await dispatch(clearActiveMessage(folderId));
     dispatch(toggleEditor('brandNewComposer', true));
+    await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
+      mailbox,
+      message: {},
+      editorAction: 'new'
+    });
   };
 
   const [showFolderModal, setShowFolderModal] = useState(false);

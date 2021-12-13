@@ -37,7 +37,7 @@ function PreviewIconBar(props: Props) {
     // NEED TO REWRITE THIS USING REDUX PATTERNS
     await Mail.removeMessages(messageTodelete);
     await dispatch(clearActiveMessage(activeFolderId));
-    dispatch(loadMailboxes({ fullSync: false }));
+    dispatch(loadMailboxes());
   };
 
   // Handles Selection Movements including routing deletes

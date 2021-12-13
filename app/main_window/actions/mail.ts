@@ -750,7 +750,7 @@ export const fetchDataFailure = (error: Error) => {
   };
 };
 
-export const loadMailboxes = (opts: { fullSync: boolean }) => async (
+export const loadMailboxes = () => async (
   dispatch: Dispatch,
   getState: GetState
 ) => {
