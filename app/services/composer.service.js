@@ -51,9 +51,9 @@ class ComposerService {
   static async sendEmail(email) {
     return new Promise((resolve, reject) => {
       ipcRenderer
-        .invoke('sendEmail', email)
+        .invoke('COMPOSER_SERVICE::sendEmail', email)
         .then((data) => {
-          ipcRenderer.send('clearInMemDraft');
+          ipcRenderer.send('COMPOSER_SERVICE::clearInMemDraft');
           return resolve(data);
         })
         .catch(err => {

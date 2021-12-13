@@ -576,7 +576,7 @@ module.exports = env => {
       }
     }
 
-    if (event === 'sendEmail') {
+    if (event === 'MAIL_SERVICE::sendEmail') {
       drive = store.getDrive();
 
       try {
@@ -606,7 +606,7 @@ module.exports = env => {
         process.send({ event: 'sendEmail', data: res });
       } catch (e) {
         process.send({
-          event: 'sendEmail',
+          event: 'MAILBOX_WORKER::sendEmail',
           error: {
             name: e.name,
             message: e.message,
