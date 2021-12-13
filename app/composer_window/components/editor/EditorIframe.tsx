@@ -60,7 +60,7 @@ const EditorIframe = (props: Props, ref: Ref<EditorType>) => {
 
   const handleInput = useHandler(() => {
     const content = getEditorRef(ref).getHTML();
-    console.log('EDITORIframe.tsx-handleInput', content);
+    // console.log('EDITORIframe.tsx-handleInput', content);
     onInput(content);
   });
 
