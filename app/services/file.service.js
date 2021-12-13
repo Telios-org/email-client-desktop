@@ -16,6 +16,22 @@ class FileService {
       });
     });
   }
+
+  static async saveFileToDrive(file) {
+    worker.send({
+      event: 'FILE_SERVICE::saveFile',
+      payload: { file }
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once(`FILE_WORKER::saveFile`, m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+        return resolve(data);
+      });
+    });
+  }
 }
 
 module.exports = FileService;

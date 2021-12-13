@@ -523,6 +523,7 @@ module.exports = env => {
 
     if (event === 'MAIL_SERVICE::getMessageById') {
       try {
+        
         const email = await Email.findByPk(payload.id, { raw: true });
         email.id = email.emailId;
         email.attachments = JSON.parse(email.attachments);
@@ -617,6 +618,56 @@ module.exports = env => {
       }
     }
 
+    if(event === 'MAIL SERVICE::SaveSentMessageToDB') {
+      drive = store.getDrive();
+
+      const { messages } = payload;
+      const msg = messages[0];
+
+      let email = { 
+        ...msg,
+        emailId: uuidv4(),
+        path: `/email/${uuidv4()}.json`,
+        folderId: 3,
+        subject: msg.subject ? msg.subject : '(no subject)',
+        fromJSON: JSON.stringify(msg.from),
+        toJSON: JSON.stringify(msg.to),
+        ccJSON: JSON.stringify(msg.cc),
+        bccJSON: JSON.stringify(msg.bcc)
+      };
+
+      email.attachments = email.attachments.map(file => {
+        process.send({ event: '::SaveSentMessageToDB::FILESAVE', file})
+        const fileId = file.fileId || uuidv4();
+        return {
+          id: fileId,
+          emailId: email.id,
+          filename: file.name || file.filename,
+          contentType: file.contentType || file.mimetype,
+          size: file.size,
+          discoveryKey: file.discoveryKey,
+          hash: file.hash,
+          header: file.header,
+          key: file.key,
+          path: file.path
+        }
+      });
+      
+      email.attachments = JSON.stringify(email.attachments);
+
+      const file = await fileUtil.saveEmailToDrive({ email, drive });
+
+      const _f = await fileUtil.readFile(email.path, { drive, type: 'email' });
+
+      email = {
+        ...email,
+        encKey: file.key,
+        encHeader: file.header
+      };
+
+      Email.create(email);
+    }
+
     if (event === 'MAIL SERVICE::saveMessageToDB') {
       drive = store.getDrive();
 
@@ -649,23 +700,24 @@ module.exports = env => {
 
         if (msg.email.attachments.length > 0) {
           msg.email.attachments.forEach(file => {
-            
-            process.send({ event: 'SAVE FILE ATTACHMENT', file })
-            
             const fileId = file.fileId || uuidv4();
             const fileObj = {
               id: fileId,
               emailId: msg.email.emailId || msg._id,
-              filename: file.filename ? file.filename : 'undefined',
+              filename: file.filename || file.name,
               contentType: file.contentType,
               size: file.size,
-              drive: drive.discoveryKey,
-              path: `/file/${fileId}.file`
+              discoveryKey: file.discoveryKey || drive.discoveryKey,
+              path: `/file/${fileId}.file`,
+              hash: file.hash,
+              header: file.header,
+              key: file.key
             };
+            
 
             attachments.push(fileObj);
 
-            if(file.content) {
+            if(file.content) {  
               asyncMsgs.push(
                 fileUtil.saveFileToDrive({
                   drive,
@@ -780,7 +832,22 @@ module.exports = env => {
             })
           );
         } else {
-          asyncMsgs.push(Email.create(msgObj));
+          asyncMsgs.push(new Promise(async (resolve, reject) => {
+            // Save email to drive
+            let file = await fileUtil.saveEmailToDrive({ email: msgObj, drive });
+
+            const _email = {
+              ...msgObj,
+              encKey: file.key,
+              encHeader: file.header,
+              path: file.path,
+              size: file.size
+            }
+
+            Email.create(msgObj)
+            
+            resolve()
+          }))
         }
       }
 
@@ -943,17 +1010,22 @@ module.exports = env => {
           attachments.map(async attachment => {
             const writeStream = fs.createWriteStream(filepath);
 
-            const file = await File.findByPk(attachment.id, {
+            let file = await File.findByPk(attachment.id, {
               attributes: ['id', 'drive', 'path', 'key', 'header', 'hash'],
               raw: true
             });
+
+            if(!file) {
+              file = attachment
+            }
 
             await fileUtil.saveFileFromEncryptedStream(writeStream, {
               drive,
               path: file.path,
               key: file.key,
               hash: file.hash,
-              header: file.header
+              header: file.header,
+              discoveryKey: file.discoveryKey
             });
           })
         );

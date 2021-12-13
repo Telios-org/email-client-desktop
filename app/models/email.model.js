@@ -99,14 +99,6 @@ module.exports.init = async (sequelize, opts) => {
           bodyAsText = bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
 
           email[i].bodyAsText = bodyAsText;
-
-          // const selection = bodyAsText.split(' ').slice(0, 20);
-
-          // if (selection[selection.length - 1] !== '...') {
-          //   selection.push('...');
-          // }
-
-          // email[i].bodyAsText = selection.join(' ');
         }
       }
     } catch (err) {
@@ -126,8 +118,10 @@ module.exports.init = async (sequelize, opts) => {
         email.path = `/email/${uuidv4()}.json`;
       }
 
-      // Save email to drive
-      await fileUtil.saveEmailToDrive({ email, drive });
+      if(typeof email.attachments === 'object') {
+        email.attachments = JSON.stringify(email.attachments);
+      }
+
       email.bodyAsHtml = null;
 
       await collection.put(email.emailId, {

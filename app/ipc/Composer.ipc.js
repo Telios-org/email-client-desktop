@@ -205,7 +205,7 @@ module.exports = windowManager => {
 
     if (opts) {
       action = opts.action;
-      reload = opts.reloadDb ?? true;
+      reload = opts.reloadDb || true;
     }
 
     const mainWindow = windowManager.getWindow('mainWindow');

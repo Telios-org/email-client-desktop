@@ -23,6 +23,24 @@ module.exports = () => {
         process.send({ event: 'getFile', error: e.message });
       }
     }
+
+    if (event === 'FILE_SERVICE::saveFile') {
+      const { file } = payload;
+      const drive = store.getDrive();
+
+      try {
+        const _file = await fileUtil.saveFileToDrive({ file, content: file.content, drive });
+        process.send({ event: 'FILE_WORKER::saveFile', data: _file });
+      } catch(e) {
+        process.send({ 
+          event: 'FILE_WORKER::saveFile', 
+          error: { 
+            message: e.message, 
+            stack: e.stack 
+          } 
+        });
+      }
+    }
   });
 };
 

@@ -1,29 +1,51 @@
 const { ipcRenderer } = require('electron');
 const MailService = require('./mail.service');
 const ContactService = require('./contact.service');
-const fileUtil = require('../utils/file.util');
+const FileService = require('./file.service');
+const { v4: uuidv4 } = require('uuid');
 
 class ComposerService {
   static async send(email, isInline) {
     let details;
+    let eml = { ...email }
+
+    // Save individual attachments
+    if(eml.attachments.length) {
+      eml.attachments = await Promise.all(eml.attachments.map(async attachment => {
+        let file;
+
+        try {
+          file = await FileService.saveFileToDrive(attachment);
+        
+          return {
+            emailId: eml.id,
+            filename: file.name || file.filename,
+            contentType: file.contentType || file.mimetype,
+            size: file.size,
+            discoveryKey: file.discovery_key,
+            hash: file.hash,
+            path: file.path,
+            header: file.header,
+            key: file.key
+          }
+        } catch(e) {
+          console.error(e)
+        }
+      }));
+    }
 
     if (isInline) {
-      details = await MailService.send(email);
+      details = await MailService.send(eml);
     } else {
-      details = await ComposerService.sendEmail(email);
+      details = await ComposerService.sendEmail(eml);
     }
 
-    // Decode base64 attachments before saving
-    for(let i = 0; i < email.attachments.length; i += 1 ) {
-      email.attachments[i].content = fileUtil.decodeB64(email.attachments[i].content);
-    }
+    eml.path = details.path;
+    eml.encKey = details.key;
+    eml.encHeader = details.header;
 
-    email.path = details.path;
-    email.encKey = details.key;
-    email.encHeader = details.header;
-
-    ComposerService.save(email, 'Sent', isInline);
-    ComposerService.createContacts(email, isInline);
+    ComposerService.save(eml, isInline);
+    ComposerService.createContacts(eml, isInline);
   }
 
   static async sendEmail(email) {
@@ -40,9 +62,9 @@ class ComposerService {
     });
   }
 
-  static async save(email, type, isInline, mailProps) {
+  static async save(email, isInline, mailProps) {
     if (isInline) {
-      await MailService.save({ messages: [email], type, sync: true });
+      await MailService.save({ messages: [email], type: 'Sent', sync: true });
     } else {
       ipcRenderer
         .invoke('COMPOSER SERVICE::saveMessageToDB', {
