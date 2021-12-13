@@ -68,7 +68,6 @@ const Editor = (props: Props, ref: Ref<EditorIframeRef>) => {
         return (editorRef.current.getDocument() as any) as Element;
       },
       focus: () => {
-        console.log('FOCUSING');
         editorRef.current?.focus();
       }
     };

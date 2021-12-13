@@ -523,7 +523,6 @@ module.exports = env => {
 
     if (event === 'MAIL_SERVICE::getMessageById') {
       try {
-        
         const email = await Email.findByPk(payload.id, { raw: true });
         email.id = email.emailId;
         email.attachments = JSON.parse(email.attachments);
@@ -618,13 +617,13 @@ module.exports = env => {
       }
     }
 
-    if(event === 'MAIL SERVICE::SaveSentMessageToDB') {
+    if (event === 'MAIL SERVICE::SaveSentMessageToDB') {
       drive = store.getDrive();
 
       const { messages } = payload;
       const msg = messages[0];
 
-      let email = { 
+      let email = {
         ...msg,
         emailId: uuidv4(),
         path: `/email/${uuidv4()}.json`,
@@ -637,7 +636,7 @@ module.exports = env => {
       };
 
       email.attachments = email.attachments.map(file => {
-        process.send({ event: '::SaveSentMessageToDB::FILESAVE', file})
+        process.send({ event: '::SaveSentMessageToDB::FILESAVE', file });
         const fileId = file.fileId || uuidv4();
         return {
           id: fileId,
@@ -650,9 +649,9 @@ module.exports = env => {
           header: file.header,
           key: file.key,
           path: file.path
-        }
+        };
       });
-      
+
       email.attachments = JSON.stringify(email.attachments);
 
       const file = await fileUtil.saveEmailToDrive({ email, drive });
@@ -698,7 +697,11 @@ module.exports = env => {
           // This should already be enforced at the composer level.
         }
 
-        if (msg.email.attachments.length > 0) {
+        if (
+          msg.email &&
+          msg.email.attachments &&
+          msg.email.attachments.length > 0
+        ) {
           msg.email.attachments.forEach(file => {
             const fileId = file.fileId || uuidv4();
             const fileObj = {
@@ -713,11 +716,10 @@ module.exports = env => {
               header: file.header,
               key: file.key
             };
-            
 
             attachments.push(fileObj);
 
-            if(file.content) {  
+            if (file.content) {
               asyncMsgs.push(
                 fileUtil.saveFileToDrive({
                   drive,
@@ -832,22 +834,27 @@ module.exports = env => {
             })
           );
         } else {
-          asyncMsgs.push(new Promise(async (resolve, reject) => {
-            // Save email to drive
-            let file = await fileUtil.saveEmailToDrive({ email: msgObj, drive });
+          asyncMsgs.push(
+            new Promise(async (resolve, reject) => {
+              // Save email to drive
+              const file = await fileUtil.saveEmailToDrive({
+                email: msgObj,
+                drive
+              });
 
-            const _email = {
-              ...msgObj,
-              encKey: file.key,
-              encHeader: file.header,
-              path: file.path,
-              size: file.size
-            }
+              const _email = {
+                ...msgObj,
+                encKey: file.key,
+                encHeader: file.header,
+                path: file.path,
+                size: file.size
+              };
 
-            Email.create(msgObj)
-            
-            resolve()
-          }))
+              Email.create(msgObj);
+
+              resolve();
+            })
+          );
         }
       }
 
@@ -1015,8 +1022,8 @@ module.exports = env => {
               raw: true
             });
 
-            if(!file) {
-              file = attachment
+            if (!file) {
+              file = attachment;
             }
 
             await fileUtil.saveFileFromEncryptedStream(writeStream, {

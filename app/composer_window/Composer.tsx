@@ -99,7 +99,7 @@ const Composer = (props: Props) => {
   // When a draft is already open we need a way to tell the Editor the content has change
   // Therefore we're checking to see if the id has changed and if it has it will trigger
   // the useEffect that sets the editorRef content.
-  const prevMsgIdRef = useRef(message.emailId);
+  const prevMsgIdRef = useRef(message?.emailId ?? null);
   const [activeSendButton, setActiveSendButton] = useState(false);
   const [email, setEmail] = useState<Email>(emailTemplate);
   const [mailbox, setMailbox] = useState<MailboxType>(mb ?? mailboxTemplate);
@@ -143,13 +143,13 @@ const Composer = (props: Props) => {
       setEditorState(htmlBody);
     }
     setEmail(eml);
-    console.log('Draft', eml);
+    // console.log('Draft', eml);
     ipcRenderer.send('RENDERER::updateComposerDraft', eml);
   };
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
-    if (isInline && message?.bodyAsHtml && folder.name === 'Drafts') {
+    if (isInline && message?.bodyAsHtml && folder?.name === 'Drafts') {
       const draft = emailTransform(message, 'draftEdit', false);
       const rcp = recipientTransform(mb, draft, 'draftEdit');
       draft.to = rcp.data.to;
@@ -168,13 +168,13 @@ const Composer = (props: Props) => {
         prevMsgIdRef.current = draft.emailId;
       }
     }
-  }, [isInline, folder.name, message.bodyAsHtml, message.emailId]);
+  }, [isInline, folder, message?.bodyAsHtml, message?.emailId]);
 
   // When not in the draft folder, and replying, forwarding or popping out the message
   // We get the draft email from the IPC Draft storage that was initialized by 'RENDERER::ingestDraftForInlineComposer' or 'RENDERER::showComposerWindow'
   // In another electron window, the redux store is unavailable
   useEffect(() => {
-    if (folder.name !== 'Drafts') {
+    if (folder?.name !== 'Drafts') {
       ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
         // console.log('IPC event handler', content, windowID);
         // The email has already been formatted according to the editorAction
@@ -204,7 +204,7 @@ const Composer = (props: Props) => {
     return () => {
       ipcRenderer.removeAllListeners('WINDOW_IPC::contentReady');
     };
-  }, [folder.name]);
+  }, [folder]);
 
   // The below is to handle when the popOut window is closing.
   useEffect(() => {
@@ -361,9 +361,10 @@ const Composer = (props: Props) => {
         } else {
           remote.getCurrentWindow().close();
         }
+        console.error('SENDING THIS SHIT');
       } catch (err) {
         setLoading(false);
-        console.error(err);
+        console.error('FAILED TO SEND', err);
 
         Notification.error({
           title: 'Failed to Send',
