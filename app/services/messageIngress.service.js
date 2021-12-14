@@ -45,9 +45,10 @@ class MessageIngressService extends EventEmitter {
           async: true
         })
           .then(msg => {
-            msg.msgArr.forEach(msg => {
-              if(!this.incomingMsgBatch.some(m => m.id === msg.id)) {
-                this.incomingMsgBatch.push(msg);
+            console.log('INGRESS', msg);
+            msg.msgArr.forEach(ms => {
+              if(!this.incomingMsgBatch.some(m => m.id === ms.id)) {
+                this.incomingMsgBatch.push(ms);
               }
             })
 

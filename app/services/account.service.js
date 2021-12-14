@@ -66,13 +66,12 @@ class AccountService {
       }
     });
 
-    ipcRenderer.on('COMPOSER_IPC::sendEmail', async (evt, data) => {
+    ipcRenderer.on('sendEmail', async (evt, data) => {
       try {
         const result = await MailService.send(data);
-        console.log('ACCOUNT SERVICE', data, result);
-        ipcRenderer.send('ACCOUNT_SERVICE::sendEmailResponse', result);
+        ipcRenderer.send('sendEmailResponse', result);
       } catch (e) {
-        ipcRenderer.send('ACCOUNT_SERVICE::sendEmailError', e);
+        ipcRenderer.send('sendEmailError', e);
       }
     });
 

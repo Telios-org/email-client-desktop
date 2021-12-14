@@ -56,18 +56,18 @@ module.exports = windowManager => {
     store.setDraftDirty(false);
   };
 
-  ipcMain.handle('COMPOSER_SERVICE::sendEmail', async (event, payload) => {
+  ipcMain.handle('sendEmail', async (event, payload) => {
     const mainWindow = windowManager.getWindow('mainWindow');
-    mainWindow.webContents.send('COMPOSER_IPC::sendEmail', payload);
+    mainWindow.webContents.send('sendEmail', payload);
 
     return new Promise((resolve, reject) => {
       mainWindow.webContents.once('ipc-message', (e, channel, data) => {
-        if (channel === 'ACCOUNT_SERVICE::sendEmailResponse') {
+        if (channel === 'sendEmailResponse') {
           clearDraft();
           resolve(data);
         }
 
-        if (channel === 'ACCOUNT_SERVICE::sendEmailError') {
+        if (channel === 'sendEmailError') {
           clearDraft();
           reject(data);
         }
@@ -259,7 +259,7 @@ module.exports = windowManager => {
     });
   });
 
-  ipcMain.handle('COMPOSER_SERVICE::clearInMemDraft', event => {
+  ipcMain.handle('clearInMemDraft', event => {
     clearDraft();
   });
 

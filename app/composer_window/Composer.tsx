@@ -6,13 +6,10 @@ import { Notification, Divider } from 'rsuite';
 import { useHandler } from '../utils/hooks/useHandler';
 import {
   Editor,
-  MessageInputs
-  // ComposerTopBar,
-  // Attachments
+  MessageInputs,
+  TopBar,
+  Attachments
 } from './components';
-
-import Attachments from './components/attachments/Attachments';
-import ComposerTopBar from './components/topBar/ComposerTopBar';
 
 import { recipientTransform, emailTransform } from './utils/draft.utils';
 
@@ -379,7 +376,7 @@ const Composer = (props: Props) => {
       {!isInline && (
         <div>
           <div className="w-full h-10 bg-darkPurple flex">
-            <ComposerTopBar />
+            <TopBar />
           </div>
           <div className="w-full bg-gradient-to-r from-blue-400 to-purple-700 h-1" />
         </div>

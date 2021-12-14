@@ -50,10 +50,10 @@ class MailService {
 
   // Send new emails
   static send(email) {
-    worker.send({ event: 'MAIL_SERVICE::sendEmail', payload: { email } });
+    worker.send({ event: 'sendEmail', payload: { email } });
 
     return new Promise((resolve, reject) => {
-      worker.once('MAILBOX_WORKER::sendEmail', m => {
+      worker.once('sendEmail', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
@@ -132,7 +132,10 @@ class MailService {
 
   static save(opts) {
     worker.send({
-      event: opts.type === 'Sent' ? 'MAIL SERVICE::SaveSentMessageToDB' :'MAIL SERVICE::saveMessageToDB',
+      event:
+        opts.type === 'Sent'
+          ? 'MAIL SERVICE::SaveSentMessageToDB'
+          : 'MAIL SERVICE::saveMessageToDB',
       payload: { messages: opts.messages, type: opts.type }
     });
 
