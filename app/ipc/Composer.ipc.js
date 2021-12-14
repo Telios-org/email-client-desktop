@@ -205,7 +205,7 @@ module.exports = windowManager => {
 
     if (opts) {
       action = opts.action;
-      reload = opts.reloadDb || true;
+      reload = opts.reloadDb !== undefined ? opts.reloadDb : true;
     }
 
     const mainWindow = windowManager.getWindow('mainWindow');
@@ -233,7 +233,6 @@ module.exports = windowManager => {
           console.error(e);
         });
     } else if (isDirty && action === 'save') {
-      console.log('DRAFT', draft.emailId);
       saveMessage({ messages: [draft], type: 'Draft', sync: reload });
     }
 

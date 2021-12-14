@@ -1,16 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, Ref } from 'react';
 import RecipientsInput from '../recipientsInputs/RecipientsInput';
 import { Recipients, Recipient } from '../../../main_window/reducers/types';
 
 type Props = {
   onUpdateRecipients: (recipients: Recipients) => void;
+  setToRef: (node) => void;
   defaultRecipients?: Recipients;
 };
 
 const clone = require('rfdc')();
 
-export default function MessageInputs(props: Props) {
-  const { onUpdateRecipients, defaultRecipients } = props;
+const MessageInputs = (props: Props, ref) => {
+  const {
+    onUpdateRecipients,
+    setToRef,
+    defaultRecipients = {
+      to: {
+        arr: []
+      },
+      cc: {
+        show: false,
+        arr: []
+      },
+      bcc: {
+        show: false,
+        arr: []
+      }
+    }
+  } = props;
   const [recipients, setRecipients] = useState({
     to: {
       arr: []
@@ -24,7 +41,6 @@ export default function MessageInputs(props: Props) {
       arr: []
     }
   });
-  const [showRecipient, setShowRec] = useState(false);
 
   const handleUpdate = (field: string, arr: Array<Recipient>) => {
     const newRecip = clone(recipients);
@@ -55,6 +71,7 @@ export default function MessageInputs(props: Props) {
             onUpdateData={arr => handleUpdate('to', arr)}
             recipients={recipients.to.arr}
             defaultRecipients={defaultRecipients.to.arr}
+            setRef={setToRef}
           />
         </div>
         <div className="flex-none text-gray-600 self-end pb-2">
@@ -112,33 +129,6 @@ export default function MessageInputs(props: Props) {
       )}
     </div>
   );
-}
-
-MessageInputs.defaultProps = {
-  recipients: {
-    to: {
-      arr: []
-    },
-    cc: {
-      show: false,
-      arr: []
-    },
-    bcc: {
-      show: false,
-      arr: []
-    }
-  },
-  defaultRecipients: {
-    to: {
-      arr: []
-    },
-    cc: {
-      show: false,
-      arr: []
-    },
-    bcc: {
-      show: false,
-      arr: []
-    }
-  }
 };
+
+export default MessageInputs;

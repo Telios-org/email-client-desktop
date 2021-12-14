@@ -3,13 +3,9 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { Notification, Divider } from 'rsuite';
 
+import { topicReference } from '@babel/types';
 import { useHandler } from '../utils/hooks/useHandler';
-import {
-  Editor,
-  MessageInputs,
-  TopBar,
-  Attachments
-} from './components';
+import { Editor, MessageInputs, TopBar, Attachments } from './components';
 
 import { recipientTransform, emailTransform } from './utils/draft.utils';
 
@@ -98,7 +94,7 @@ const Composer = (props: Props) => {
   // the useEffect that sets the editorRef content.
   const prevMsgIdRef = useRef(message?.emailId ?? null);
   const [activeSendButton, setActiveSendButton] = useState(false);
-  const [email, setEmail] = useState<Email>(emailTemplate);
+  const [email, setEmail] = useState<Email | null>(null);
   const [mailbox, setMailbox] = useState<MailboxType>(mb ?? mailboxTemplate);
   const [prefillRecipients, setPrefillRecipients] = useState(
     prefillRecipientsTemplate
@@ -108,6 +104,9 @@ const Composer = (props: Props) => {
   const [editorState, setEditorState] = useState<string | undefined>();
   const [windowId, setWindowId] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Using a callback Ref to get to the To field to be able to control focus.
+  const [toRef, setToRef] = useState();
 
   const handleEmailUpdate = (
     msg?: Email,
@@ -140,7 +139,6 @@ const Composer = (props: Props) => {
       setEditorState(htmlBody);
     }
     setEmail(eml);
-    // console.log('Draft', eml);
     ipcRenderer.send('RENDERER::updateComposerDraft', eml);
   };
 
@@ -217,11 +215,12 @@ const Composer = (props: Props) => {
   }, [isInline]);
 
   useEffect(() => {
-    if (editorState !== undefined && !composerReady) {
+    if (editorState !== undefined && !composerReady && email !== null) {
+      console.log(editorState);
       setComposerReady(true);
     }
     // console.log('EditorState?', editorState);
-  }, [editorState]);
+  }, [editorState, email]);
 
   useEffect(() => {
     // console.log('ALL READY?', composerReady, editorReady, prevMsgIdRef.current);
@@ -233,7 +232,12 @@ const Composer = (props: Props) => {
     ) {
       skipNextInputRef.current = true;
       editorRef.current.value = ` </br> ${editorState}`;
-      editorRef.current.focus();
+
+      if (email.to.length === 0 && toRef) {
+        toRef.focus();
+      } else {
+        editorRef.current.focus();
+      }
     }
   }, [editorReady, composerReady, prevMsgIdRef.current]);
 
@@ -384,6 +388,9 @@ const Composer = (props: Props) => {
       <MessageInputs
         onUpdateRecipients={onUpdateRecipients}
         defaultRecipients={prefillRecipients}
+        setToRef={node => {
+          setToRef(node);
+        }}
       />
       <div className="px-3">
         <div className="flex">

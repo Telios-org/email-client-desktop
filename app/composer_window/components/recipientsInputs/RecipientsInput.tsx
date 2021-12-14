@@ -3,20 +3,16 @@ import CreatableSelect from 'react-select/creatable';
 import { components } from 'react-select';
 import { Avatar, Whisper, Tooltip } from 'rsuite';
 
+import { Recipient } from '../../../main_window/reducers/types';
+
 import ComposerService from '../../../services/composer.service';
-
-const validateEmail = (email: string) => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; // eslint-disable-line
-  return re.test(email);
-};
-
-const validateTeliosEmail = (email: string) => {
-    const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/g; // eslint-disable-line
-  return re.test(email);
-};
+import {
+  validateEmail,
+  validateTeliosEmail
+} from '../../../utils/helpers/regex';
 
 const isValidEmail = (email: string) => {
-  if (email.indexOf('telios') > -1) {
+  if (email.indexOf('telios.io') > -1) {
     return validateTeliosEmail(email);
   }
   return validateEmail(email);
@@ -106,8 +102,14 @@ const formattedCreateLabel = option => {
   return <span>{option.value}</span>;
 };
 
+type Props = {
+  onUpdateData: (recipients: Recipient[]) => void;
+  defaultRecipients: [];
+  setRef?: () => void;
+};
+
 class RecipientsInput extends Component {
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       menuIsOpen: false,
@@ -181,10 +183,11 @@ class RecipientsInput extends Component {
 
   render() {
     const { options, menuIsOpen, recipients } = this.state;
-    const { defaultRecipients } = this.props;
+    const { defaultRecipients, focusOnMount, setRef } = this.props;
 
     return (
       <CreatableSelect
+        ref={setRef}
         components={{ MultiValueContainer }}
         options={options}
         value={recipients || defaultRecipients}
