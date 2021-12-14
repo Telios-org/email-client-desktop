@@ -1,6 +1,6 @@
 import Editor from './editor/Editor';
 import MessageInputs from './messageInputs/MessageInputs';
-import TopBar from './topBar/TopBar';
-import Attachments from './attachments/Attachments';
+import TopBar from './TopBar/TopBar';
+import Attachments from './Attachments/Attachments';
 
 export { Editor, MessageInputs, TopBar, Attachments };
