@@ -1,18 +1,18 @@
 import { ipcRenderer, remote } from 'electron';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars';
-import { AutoSizer } from 'react-virtualized';
-
 import { DebounceInput } from 'react-debounce-input';
 import { Notification, Divider } from 'rsuite';
-import { DateTime } from 'luxon';
+
 import { useHandler } from '../utils/hooks/useHandler';
 import {
   Editor,
-  MessageInputs,
-  ComposerTopBar,
-  Attachments
+  MessageInputs
+  // ComposerTopBar,
+  // Attachments
 } from './components';
+
+import Attachments from './components/attachments/Attachments';
+import ComposerTopBar from './components/topBar/ComposerTopBar';
 
 import { recipientTransform, emailTransform } from './utils/draft.utils';
 

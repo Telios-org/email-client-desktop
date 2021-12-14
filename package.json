@@ -152,7 +152,8 @@
       "jsx",
       "ts",
       "tsx",
-      "json"
+      "json",
+      "mjs"
     ],
     "moduleDirectories": [
       "node_modules",
