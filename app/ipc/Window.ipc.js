@@ -1,4 +1,4 @@
-import { emailTransform } from '../composer_window/utils/draft.utils';
+const { emailTransform } = require('../composer_window/utils/draft.utils');
 
 const { ipcMain, nativeTheme, dialog } = require('electron');
 const path = require('path');
