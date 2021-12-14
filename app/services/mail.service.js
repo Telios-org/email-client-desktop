@@ -50,10 +50,10 @@ class MailService {
 
   // Send new emails
   static send(email) {
-    worker.send({ event: 'sendEmail', payload: { email } });
+    worker.send({ event: 'MAILBOX_SERVICE::sendEmail', payload: { email } });
 
     return new Promise((resolve, reject) => {
-      worker.once('sendEmail', m => {
+      worker.once('MAILBOX_WORKER::sendEmail', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
