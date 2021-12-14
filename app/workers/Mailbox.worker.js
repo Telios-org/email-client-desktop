@@ -603,7 +603,7 @@ module.exports = env => {
 
         res = { name: emailFilename, email: payload.email, ...res };
 
-        process.send({ event: 'sendEmail', data: res });
+        process.send({ event: 'MAILBOX_WORKER::sendEmail', data: res });
       } catch (e) {
         process.send({
           event: 'sendEmail',
@@ -637,7 +637,6 @@ module.exports = env => {
 
       if(email.attachments && email.attachments.length) {
         email.attachments = email.attachments.map(file => {
-          process.send({ event: '::SaveSentMessageToDB::FILESAVE', file });
           const fileId = file.fileId || uuidv4();
           return {
             id: fileId,
@@ -839,24 +838,31 @@ module.exports = env => {
           );
         } else {
           asyncMsgs.push(
-            new Promise(async (resolve, reject) => {
+            new Promise((resolve, reject) => {
               // Save email to drive
-              const file = await fileUtil.saveEmailToDrive({
-                email: msgObj,
-                drive
-              });
+              fileUtil.saveEmailToDrive({ email: msgObj, drive })
+                .then(file => {
+                  const _email = {
+                    ...msgObj,
+                    encKey: file.key,
+                    encHeader: file.header,
+                    path: file.path,
+                    size: file.size
+                  };
 
-              const _email = {
-                ...msgObj,
-                encKey: file.key,
-                encHeader: file.header,
-                path: file.path,
-                size: file.size
-              };
-
-              Email.create(msgObj);
-
-              resolve();
+                  Email.create(_email).then(eml => {
+                    process.send({ event: 'MAILBOX_WORKER::asyncMsgs.push', eml });
+                    resolve(eml);
+                  })
+                  .catch(err => {
+                    process.send({ event: 'MAILBOX_WORKER::asyncMsgs.pushERRR', error: { message: err.message, stack: err.stack } });
+                    reject(err);
+                  })
+                })
+                .catch(err => {
+                  process.send({ event: 'MAILBOX_WORKER::asyncMsgs.pushEEE', error: { message: err.message, stack: err.stack } });
+                  reject(e);
+                })
             })
           );
         }
@@ -869,7 +875,7 @@ module.exports = env => {
           await Promise.all(asyncFolders);
 
           items.forEach(item => {
-            if (item && item.dataValues && item.dataValues.bodyAsText) {
+            if (item && item.dataValues && item.bodyAsText) {
               const msg = { ...item.dataValues };
 
               msg.id = msg.emailId;

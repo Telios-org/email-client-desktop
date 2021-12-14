@@ -39,42 +39,47 @@ class MessageIngressService extends EventEmitter {
       if (!error) {
         const email = transformEmail(data);
 
+        if (data._id) {
+          this.syncIds.push(data._id);
+        }
+
         MailService.save({
           messages: [email],
           type: 'Incoming',
-          async: true
+          async: false
         })
-          .then(msg => {
-            console.log('INGRESS', msg);
-            msg.msgArr.forEach(ms => {
-              if(!this.incomingMsgBatch.some(m => m.id === ms.id)) {
-                this.incomingMsgBatch.push(ms);
-              }
-            })
-
-            if (msg.newAliases.length > 0) {
-              msg.newAliases.forEach(alias => {
-                if(!this.newAliases.some(a => a.name === alias.name))  {
-                  this.newAliases.push(alias)
-                }
-              })
-            }
-
-            if (data._id) {
-              this.syncIds.push(data._id);
-            }
-
-            this.finished += 1;
-            this.handleDone();
-            return 'Message Saved';
-          })
-          .catch(err => {
-            console.log(err)
-            this.finished += 1;
-            this.handleDone();
-          });
       }
     });
+
+    mainWorker.on('MAILBOX_WORKER::saveMessageToDB', async m => {
+      
+      const { data, error } = m;
+
+      if(error) {
+        console.log('MessageIngess.service::saveMessageToDBError', error);
+
+        this.finished += 1;
+        this.handleDone();
+        return;
+      }
+
+      data.msgArr.forEach(msg => {
+        if(!this.incomingMsgBatch.some(item => item.id === msg.id)) {
+          this.incomingMsgBatch.push(msg);
+        }
+      })
+
+      if (data.newAliases.length > 0) {
+        data.newAliases.forEach(alias => {
+          if(!this.newAliases.some(a => a.name === alias.name))  {
+            this.newAliases.push(alias)
+          }
+        })
+      }
+
+      this.finished += 1;
+      this.handleDone();
+    })
 
     mainWorker.on('fetchError', async m => {
       const { data } = m;
@@ -90,7 +95,6 @@ class MessageIngressService extends EventEmitter {
         console.log(`File ${data.file.hash} failed all attempts!`);
 
         // Goes into drive's dead letter queue
-
         this.finished += 1;
         this.handleDone();
       }
