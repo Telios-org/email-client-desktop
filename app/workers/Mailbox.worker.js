@@ -827,8 +827,6 @@ module.exports = env => {
           path: msg.email.path
         };
 
-        // process.send({ event: 'emailupdate2', msgObj, type });
-
         if (msg.email.emailId && type !== 'incoming') {
           asyncMsgs.push(
             Email.update(msgObj, {
@@ -840,6 +838,7 @@ module.exports = env => {
           asyncMsgs.push(
             new Promise((resolve, reject) => {
               // Save email to drive
+
               fileUtil.saveEmailToDrive({ email: msgObj, drive })
                 .then(file => {
                   const _email = {
@@ -851,16 +850,13 @@ module.exports = env => {
                   };
 
                   Email.create(_email).then(eml => {
-                    process.send({ event: 'MAILBOX_WORKER::asyncMsgs.push', eml });
                     resolve(eml);
                   })
                   .catch(err => {
-                    process.send({ event: 'MAILBOX_WORKER::asyncMsgs.pushERRR', error: { message: err.message, stack: err.stack } });
                     reject(err);
                   })
                 })
                 .catch(err => {
-                  process.send({ event: 'MAILBOX_WORKER::asyncMsgs.pushEEE', error: { message: err.message, stack: err.stack } });
                   reject(e);
                 })
             })

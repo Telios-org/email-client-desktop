@@ -87,6 +87,7 @@ module.exports.init = async (sequelize, opts) => {
           drive,
           type: 'email'
         });
+
         const e = JSON.parse(content);
 
         email.bodyAsHtml = e.bodyAsHtml || e.html_body || e.bodyAsText;
@@ -146,12 +147,21 @@ module.exports.init = async (sequelize, opts) => {
       email.bodyAsText = email.bodyAsText.replace(/\[(.*?)\]/g, '');
       email.bodyAsText = email.bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
 
-      if (email.path) {
-        // Overwrite email on drive.
-        await fileUtil.saveEmailToDrive({ email, drive });
-      }
+      // if (email.path) {
+      //   const content = await fileUtil.readFile(email.path, {
+      //     drive,
+      //     type: 'email'
+      //   });
 
-      email.bodyAsHtml = null;
+      //   const e = JSON.parse(content);
+
+      //   email.bodyAsHtml = e.bodyAsHtml || e.html_body;
+
+      //   // Overwrite email on drive.
+      //   await fileUtil.saveEmailToDrive({ email, drive });
+      // }
+
+      // email.bodyAsHtml = null;
 
       await collection.put(email.emailId, {
         unread: email.unread,

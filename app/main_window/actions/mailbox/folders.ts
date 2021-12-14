@@ -12,6 +12,9 @@ const updateCount = (id: number, amount: number) => {
 };
 
 export const updateFolderCount = (id: number, amount: number) => {
+  // Don't update folder counts for Drafs and Trash
+  const exceptions = [2,4];
+  
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       mail: { folders }
@@ -21,7 +24,7 @@ export const updateFolderCount = (id: number, amount: number) => {
 
     let change = amount;
 
-    // Make sure we cna never go below 0
+    // Make sure we never go below 0
     if (amount < 0 && Math.abs(amount) > Math.abs(currCount)) {
       change = -1 * currCount;
     }
@@ -35,8 +38,9 @@ export const updateFolderCount = (id: number, amount: number) => {
       }
     }
 
-    Mail.updateFolderCount({ id, amount: change });
-
-    dispatch(updateCount(id, change));
+    if(exceptions.indexOf(id) === -1) {
+      Mail.updateFolderCount({ id, amount: change });
+      dispatch(updateCount(id, change));
+    }
   };
 };
