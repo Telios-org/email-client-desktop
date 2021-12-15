@@ -17,11 +17,12 @@ import {
   MoreSquare,
   Star,
   TickSquare,
-  Bookmark
+  Bookmark,
+  Paper
 } from 'react-iconly';
 
 // COMPONENTS
-import { Dropdown, Icon } from 'rsuite';
+import { Whisper, Tooltip } from 'rsuite';
 
 // INTERNATIONALIZATION
 import i18n from '../../../../../i18n/i18n';
@@ -38,9 +39,11 @@ import {
 // TYPESCRIPT TYPES
 import { StateType } from '../../../../reducers/types';
 
+const { clipboard } = require('electron');
+
 type Props = {
   handleAlias: () => void;
-  handleSelectAction: (index: string, isAlias: boolean, e:any) => void;
+  handleSelectAction: (index: string, isAlias: boolean, e: any) => void;
 };
 
 export default function NamespaceBlock(props: Props) {
@@ -57,6 +60,7 @@ export default function NamespaceBlock(props: Props) {
   );
 
   const aliases = useSelector((state: StateType) => state.mail.aliases.allIds);
+  const ns = useSelector((state: StateType) => state.mail.namespaces.byId);
 
   const toggleAliases = () => {
     if (expandAliases) {
@@ -140,39 +144,29 @@ export default function NamespaceBlock(props: Props) {
                   {alias.name}
                 </span>
 
-                {/* <div className="opacity-0 group-hover:opacity-100 flex-none text-sm h-6">
-                  <Dropdown
-                    size="xs"
-                    placement="bottomEnd"
-                    renderTitle={() => {
-                      return (
-                        <MoreSquare
-                          set="broken"
-                          size="small"
-                          className="mt-0.5"
-                        />
-                      );
-                    }}
+                <div className="opacity-0 group-hover:opacity-100 flex text-sm h-6 items-center mr-2">
+                  <Whisper
+                    trigger="click"
+                    placement="top"
+                    speaker={<Tooltip>Copied!</Tooltip>}
+                    delay={250}
                   >
-                    <Dropdown.Item onClick={e => handleEditAlias(alias, e)}>
-                      <div className="flex text-sm">
-                        <Edit set="broken" size="small" />
-                        <span className="ml-2">{i18n.t('global.edit')}</span>
-                      </div>
-                    </Dropdown.Item> */}
-                {/* <Dropdown.Item
-                      onClick={e => handleDeleteFolder(alias, index, e)}
-                    >
-                      <div className="flex text-sm">
-                        <Delete set="broken" size="small" />
-                        <span className="ml-2">{i18n.t('global.delete')}</span>
-                      </div>
-                    </Dropdown.Item> */}
-                {/* </Dropdown> */}
-                {/* </div> */}
+                    <Paper
+                      set="broken"
+                      size="small"
+                      className="hover:text-blue-500"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        clipboard.writeText(
+                          `${alias.aliasId}@${ns[alias.namespaceKey].domain}`
+                        );
+                      }}
+                    />
+                  </Whisper>
+                </div>
 
                 <span
-                  className={`w-8 h-6 px-1 text-purple-700 font-semibold text-sm
+                  className={`w-8 h-6 px-1 group-hover:hidden text-purple-700 font-semibold text-sm
                   flex-initial text-right leading-loose self-center flex items-center justify-center`}
                 >
                   {alias.count ? alias.count : ''}

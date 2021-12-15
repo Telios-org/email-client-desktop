@@ -115,7 +115,8 @@ const variants = {
     opacity: ['disabled'],
     boxShadow: ['responsive', 'hover', 'focus', 'active'],
     backgroundColor: ['responsive', 'hover', 'focus', 'active'],
-    visibility: ['responsive', 'hover', 'focus', 'group-hover']
+    visibility: ['responsive', 'hover', 'focus', 'group-hover'],
+    display: ['group-hover']
   }
 };
 const plugins = [require('@tailwindcss/line-clamp')];

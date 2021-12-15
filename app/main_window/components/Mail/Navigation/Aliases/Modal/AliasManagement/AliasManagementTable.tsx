@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table, Toggle, Modal, Button } from 'rsuite';
+import { Table, Toggle, Modal, Button, Whisper, Tooltip } from 'rsuite';
 
 // UTILS
-import { Edit, Delete, Danger } from 'react-iconly';
+import { Edit, Delete, Danger, Paper } from 'react-iconly';
 import i18n from '../../../../../../../i18n/i18n';
 import {
   formatDateDisplay,
@@ -22,6 +22,8 @@ import {
 // CSS Style
 
 import styles from './AliasManagementTable.css';
+
+const { clipboard } = require('electron');
 
 type Props = {
   domain: string;
@@ -200,26 +202,59 @@ export default function AliasManagementTable(props: Props) {
             )}
           </Cell>
         </Column>
-        <Column fixed width={75} verticalAlign="middle" align="center">
+        <Column fixed width={85} verticalAlign="middle" align="center">
           <HeaderCell />
           <Cell className="font-semibold">
             {rowData => (
               <div className="flex flex-row">
-                <Edit
-                  set="broken"
-                  size="small"
-                  className="hover:text-blue-500"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => onShowEdit(`${rowData.ns}#${rowData.alias}`)}
-                />
+                <Whisper
+                  trigger="hover"
+                  placement="top"
+                  speaker={<Tooltip>Copy</Tooltip>}
+                  delay={250}
+                >
+                  <Paper
+                    set="broken"
+                    size="small"
+                    className="hover:text-blue-500"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() =>
+                      clipboard.writeText(
+                        `${rowData.ns}#${rowData.alias}@${rowData.domain}`
+                      )
+                    }
+                  />
+                </Whisper>
                 <span className="mx-1" />
-                <Delete
-                  set="broken"
-                  size="small"
-                  className="hover:text-red-500"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleDeleteAction(rowData)}
-                />
+                <Whisper
+                  trigger="hover"
+                  placement="top"
+                  speaker={<Tooltip>Edit</Tooltip>}
+                  delay={250}
+                >
+                  <Edit
+                    set="broken"
+                    size="small"
+                    className="hover:text-blue-500"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => onShowEdit(`${rowData.ns}#${rowData.alias}`)}
+                  />
+                </Whisper>
+                <span className="mx-1" />
+                <Whisper
+                  trigger="hover"
+                  placement="top"
+                  speaker={<Tooltip>Delete</Tooltip>}
+                  delay={250}
+                >
+                  <Delete
+                    set="broken"
+                    size="small"
+                    className="hover:text-red-500"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleDeleteAction(rowData)}
+                  />
+                </Whisper>
               </div>
             )}
           </Cell>
@@ -242,14 +277,17 @@ export default function AliasManagementTable(props: Props) {
               <span className="text-purple-600">{deleteObj?.alias}</span>
               {`@${deleteObj?.domain} `}
             </b>
-            will remove it from your list of aliases. You can recreate that
-            alias either "on the fly" or by adding an alias within the app.
+            will remove it from your list of aliases and block its incoming
+            traffic.
+          </p>
+          <p>
+            You can recreate this alias only through the app (as opposed to "on
+            the fly creation").
           </p>
           <p className="leading-relaxed text-xs flex flex-row items-center ">
             <Danger set="broken" className="text-coolGray-400" />
-            <span className="mt-1 ml-2 text-coolGray-400">
-              If you want to prevent/block emails from coming in through this
-              alias de-activate it instead.
+            <span className="mt-2 ml-2 text-coolGray-400">
+              All emails from this alias will be archived upon deletion.
             </span>
           </p>
         </Modal.Body>

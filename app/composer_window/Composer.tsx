@@ -131,6 +131,10 @@ const Composer = (props: Props) => {
           name: owner.name ? owner.name : owner.address
         }
       ],
+      fromJSON: JSON.stringify(draft?.from),
+      toJSON: JSON.stringify(draft?.to),
+      ccJSON: JSON.stringify(draft?.cc),
+      bccJSON: JSON.stringify(draft?.bcc),
       bodyAsText: plaintext,
       bodyAsHtml: htmlBody
     };
@@ -362,7 +366,6 @@ const Composer = (props: Props) => {
         } else {
           remote.getCurrentWindow().close();
         }
-        console.error('SENDING THIS SHIT');
       } catch (err) {
         setLoading(false);
         console.error('FAILED TO SEND', err);
