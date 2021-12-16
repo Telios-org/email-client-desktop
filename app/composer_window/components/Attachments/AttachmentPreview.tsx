@@ -20,7 +20,7 @@ export default class AttachmentPreview extends Component<Props, State> {
     this.state = {
       content: "",
       filename: props.attachment.filename,
-      showImagePreview: props.attachment.size < 10000000 && props.attachment.contentType.indexOf('image') > -1
+      showImagePreview: props.attachment.size < 10000000 && props.attachment.contentType && props.attachment.contentType.indexOf('image') > -1
     };
   }
 

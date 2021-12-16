@@ -147,22 +147,6 @@ module.exports.init = async (sequelize, opts) => {
       email.bodyAsText = email.bodyAsText.replace(/\[(.*?)\]/g, '');
       email.bodyAsText = email.bodyAsText.replace(/(?:\u00a0|\u200C)/g, '');
 
-      // if (email.path) {
-      //   const content = await fileUtil.readFile(email.path, {
-      //     drive,
-      //     type: 'email'
-      //   });
-
-      //   const e = JSON.parse(content);
-
-      //   email.bodyAsHtml = e.bodyAsHtml || e.html_body;
-
-      //   // Overwrite email on drive.
-      //   await fileUtil.saveEmailToDrive({ email, drive });
-      // }
-
-      // email.bodyAsHtml = null;
-
       await collection.put(email.emailId, {
         unread: email.unread,
         folderId: email.folderId,
@@ -215,12 +199,18 @@ module.exports.init = async (sequelize, opts) => {
       asyncArr.push(collection.del(email.emailId));
       asyncArr.push(drive.unlink(email.path));
 
-      asyncArr.push(
-        File.destroy({
-          where: { emailId: email.emailId },
-          individualHooks: true
-        })
-      );
+      const attachments = JSON.parse(email.attachments);
+
+      if(attachments && attachments.length) {
+        for(file of attachments) {
+          asyncArr.push(
+            File.destroy({
+              where: { path: file.path },
+              individualHooks: true
+            })
+          );
+        }
+      }
 
       const result = await Promise.all(asyncArr);
     } catch (err) {

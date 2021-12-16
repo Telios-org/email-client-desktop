@@ -11,6 +11,7 @@ const { File } = require('../models/file.model');
 const fileUtil = require('../utils/file.util');
 const store = require('../Store');
 const envAPI = require('../env_api.json');
+const { openStdin } = require('process');
 
 const { Op } = Sequelize;
 let drive = store.getDrive();
@@ -1041,7 +1042,8 @@ module.exports = env => {
               key: file.key,
               hash: file.hash,
               header: file.header,
-              discoveryKey: file.discoveryKey
+              discoveryKey: file.discoveryKey,
+              filename: file.filename
             });
           })
         );

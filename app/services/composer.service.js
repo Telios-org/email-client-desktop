@@ -8,30 +8,51 @@ class ComposerService {
   static async send(email, isInline) {
     let details;
     let eml = { ...email }
+    let _attachments = [];
+    let totalAttachmentSize = 0;
 
     // Save individual attachments
     if(eml.attachments && eml.attachments.length) {
-      eml.attachments = await Promise.all(eml.attachments.map(async attachment => {
-        let file;
 
-        try {
-          file = await FileService.saveFileToDrive(attachment);
-        
-          return {
-            emailId: eml.id,
-            filename: file.name || file.filename,
-            contentType: file.contentType || file.mimetype,
-            size: file.size,
-            discoveryKey: file.discovery_key,
-            hash: file.hash,
-            path: file.path,
-            header: file.header,
-            key: file.key
+      for(let attachment of eml.attachments) {
+        await new Promise((resolve, reject) => {
+          try {
+            totalAttachmentSize += attachment.size;
+            
+            // Don't send file data if size is over 25mb
+            if(totalAttachmentSize > 25000000) {
+              FileService.saveFileToDrive(attachment).then(file => {
+                console.log('DONE SAVING FILE TO DRIVE', file)
+
+                _attachments.push({
+                  filename: attachment.filename,
+                  contentType: file.contentType || file.mimetype,
+                  size: file.size,
+                  discoveryKey: file.discovery_key,
+                  hash: file.hash,
+                  path: file.path,
+                  header: file.header,
+                  key: file.key
+                })
+
+                resolve();
+              }).catch(e => {
+                console.error(e);
+                reject(e);
+              })
+            } else {
+              _attachments.push(attachment);
+              resolve();
+            }
+            
+          } catch(e) {
+            console.error(e);
+            reject(e)
           }
-        } catch(e) {
-          console.error(e)
-        }
-      }));
+        })
+      }
+
+      eml.attachments = _attachments;
     }
 
     if (isInline) {
