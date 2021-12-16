@@ -1,11 +1,11 @@
 import {
   FETCH_MAIL_DATA_SUCCESS,
-  CREATE_LOCAL_MAILBOX_SUCCESS,
-  CREATE_NEW_FOLDER
+  CREATE_LOCAL_MAILBOX_SUCCESS  
 } from '../../actions/mail';
 
 import {
-  UPDATE_FOLDER_COUNT
+  UPDATE_FOLDER_COUNT,
+  CREATE_NEW_FOLDER_SUCCESS
 } from '../../actions/mailbox/folders';
 
 import { MailType, MailAction } from '../types';
@@ -31,7 +31,7 @@ export default function folders(
         },
         allIds: [...idFromArrayDict(action.folders)]
       };
-    case CREATE_NEW_FOLDER:
+    case CREATE_NEW_FOLDER_SUCCESS:
       return {
         byId: {
           ...state.byId,

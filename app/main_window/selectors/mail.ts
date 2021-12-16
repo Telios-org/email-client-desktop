@@ -174,14 +174,15 @@ export const currentMessageList = createSelector(
     activeAliasId,
     activeFolderId,
     searchFilteredMessages,
-    readFilter
+    readFilter,
+    selectAllFoldersById
   ],
-  (rootMessages, aliasId, folderId, filter, readCondition) => {
+  (rootMessages, aliasId, folderId, filter, readCondition, allFoldersById) => {
     const { byId, allIds } = rootMessages;
     const filteredArr = allIds.filter(
       id =>
         (byId[id].folderId === folderId && byId[id].aliasId === aliasId) ||
-        byId[id].folderId === 4
+        ['Archives', 'Trash'].includes(allFoldersById[byId[id].folderId].name)
     );
 
     let finalArray;

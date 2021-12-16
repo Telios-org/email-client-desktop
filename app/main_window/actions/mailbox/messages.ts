@@ -1,3 +1,5 @@
+/* eslint import/no-cycle: [2, { ignoreExternal: true }] */
+import { AiOutlineConsoleSql } from 'react-icons/ai';
 import { updateFolderCount } from './folders';
 import { updateAliasCount } from './aliases';
 
@@ -13,7 +15,6 @@ import {
 } from '../../reducers/types';
 
 import { activeFolderId } from '../../selectors/mail';
-import { AiOutlineConsoleSql } from 'react-icons/ai';
 
 export const SAVE_SENT_MESSAGE = 'MESSAGES::SAVE_SENT_MESSAGE';
 export const initiateSaveSent = () => {
@@ -227,7 +228,7 @@ export const forwardMessage = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const state = getState();
     const folderId = activeFolderId(state);
-    
+
     await dispatch(clearActiveMessage(folderId));
     dispatch(toggleEditor('forward', true));
   };
@@ -244,7 +245,6 @@ export const updateMessageList = (messages: any, updateType: string) => {
 
 export const moveMessagesToFolder = (messages: any) => {
   return async (dispatch: Dispatch) => {
-
     let currentFolderId = 0;
 
     const msgArr = messages.map((msg: any) => {
@@ -252,10 +252,13 @@ export const moveMessagesToFolder = (messages: any) => {
         currentFolderId = msg.folder.fromId;
       }
       return msg;
-    })
-
-    dispatch(clearActiveMessage(currentFolderId));
-    dispatch(updateMessageList(msgArr, 'remove'));
-    await Mail.moveMessages(msgArr);
+    });
+    try {
+      dispatch(clearActiveMessage(currentFolderId));
+      dispatch(updateMessageList(msgArr, 'remove'));
+      await Mail.moveMessages(msgArr);
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
