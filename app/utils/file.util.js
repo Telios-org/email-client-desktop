@@ -2,6 +2,7 @@ const MemoryStream = require('memorystream');
 const { Crypto } = require('@telios/client-sdk');
 const { File } = require('../models/file.model');
 const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
 
 module.exports.saveEmailToDrive = async opts => {
   return new Promise((resolve, reject) => {
@@ -25,6 +26,12 @@ module.exports.saveEmailToDrive = async opts => {
 module.exports.saveFileToDrive = async opts => {
   return new Promise(async (resolve, reject) => {
     let readStream;
+
+    // When file is over 25mb create readstream from file path
+    if(opts.file.localPath) {
+      readStream = fs.createReadStream(opts.file.localPath);
+      opts.file.path = `/file/${opts.file.filename || opts.file.name}`
+    }
     
     if(opts.content) {
       readStream = new MemoryStream();
@@ -103,7 +110,7 @@ module.exports.saveFileFromEncryptedStream = async (writeStream, opts) => {
           throw err;
         });
     } else {
-      opts.drive.readFile(opts.path, { key: opts.key, header: opts.header })
+      opts.drive.readFile(`/file/${opts.filename}`, { key: opts.key, header: opts.header })
         .then(stream => {
           stream.on('data', chunk => {
             writeStream.write(chunk);
