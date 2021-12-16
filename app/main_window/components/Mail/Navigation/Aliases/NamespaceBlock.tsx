@@ -149,7 +149,6 @@ export default function NamespaceBlock(props: Props) {
                     trigger="click"
                     placement="top"
                     speaker={<Tooltip>Copied!</Tooltip>}
-                    delay={250}
                   >
                     <Paper
                       set="broken"

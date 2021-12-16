@@ -1,4 +1,6 @@
 import Mail from '../../../services/mail.service';
+import { createFolder } from './folders';
+import { moveMessagesToFolder } from './messages';
 import { MailMessageType, Dispatch, GetState } from '../../reducers/types';
 
 export const UPDATE_ALIAS_COUNT = 'GLOBAL::UPDATE_ALIAS_COUNT';
@@ -26,14 +28,14 @@ export const updateAliasCount = (id: number, amount: number) => {
     }
 
     // Self-heal if count ever gets stuck below 0
-    if(currCount < 0) {
-      if(amount > 0) {
+    if (currCount < 0) {
+      if (amount > 0) {
         change = Math.abs(currCount) + amount;
       } else {
         change = Math.abs(currCount);
       }
     }
-    
+
     Mail.updateAliasCount({ id, amount: change });
 
     dispatch(updateCount(id, change));
@@ -281,12 +283,64 @@ export const removeAlias = (payload: {
   domain: string;
   address: string;
 }) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const { namespaceName, domain, address } = payload;
     dispatch(
       startAliasRemove(`${namespaceName}#${address}@${domain}`, payload)
     );
+
+    const {
+      mail: { folders, mailboxes }
+    } = getState();
+
     try {
+      const archiveExist = folders.allIds.some(f => {
+        return folders.byId[f].name === 'Archives';
+      });
+      console.log('ALIAS REMOVAL', archiveExist);
+      const mailboxId = mailboxes.allIds[0];
+      console.log('ALIAS REMOVAL::MAILBOXID', mailboxId);
+
+      let archiveId: number;
+      if (!archiveExist) {
+        const archive = await dispatch(
+          createFolder(mailboxId, 'Archives', 'default', 'archive')
+        );
+        archiveId = archive?.id;
+      } else {
+        archiveId = folders.allIds.find(
+          f => folders.byId[f].name === 'Archives'
+        );
+      }
+
+      console.log('ALIAS REMOVAL:: ARCHIVE ID', archiveId);
+      const aliasFolderId = folders.allIds.find(f => {
+        return folders.byId[f].name === 'Alias';
+      });
+
+      const messages = await Mail.getMessagesByFolderId(aliasFolderId);
+
+      console.log('ALIAS REMOVAL:: MESSAGES', messages);
+
+      const aliasMsg = messages
+        .filter(msg => {
+          return msg.aliasId === `${namespaceName}#${address}`;
+        })
+        .map(msg => {
+          return {
+            id: msg.id,
+            emailId: msg.id,
+            unread: 0,
+            folder: {
+              fromId: aliasFolderId,
+              toId: archiveId,
+              name: 'Archives'
+            }
+          };
+        });
+
+      await dispatch(moveMessagesToFolder(aliasMsg));
+
       await Mail.removeAliasAddress({
         namespaceName,
         domain,

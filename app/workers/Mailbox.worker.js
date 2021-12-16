@@ -229,7 +229,8 @@ module.exports = env => {
         const { mailboxId, namespace } = payload;
 
         const mailbox = store.getMailbox();
-        const domain = 'telios.io';
+        const domain =
+          env === 'production' || !env ? envAPI.prodMail : envAPI.devMail;
         const { account } = store;
 
         const keypair = SDK.Crypto.boxKeypairFromStr(
@@ -635,7 +636,7 @@ module.exports = env => {
         bccJSON: JSON.stringify(msg.bcc)
       };
 
-      if(email.attachments && email.attachments.length) {
+      if (email.attachments && email.attachments.length) {
         email.attachments = email.attachments.map(file => {
           const fileId = file.fileId || uuidv4();
           return {
@@ -839,7 +840,8 @@ module.exports = env => {
             new Promise((resolve, reject) => {
               // Save email to drive
 
-              fileUtil.saveEmailToDrive({ email: msgObj, drive })
+              fileUtil
+                .saveEmailToDrive({ email: msgObj, drive })
                 .then(file => {
                   const _email = {
                     ...msgObj,
@@ -849,16 +851,17 @@ module.exports = env => {
                     size: file.size
                   };
 
-                  Email.create(_email).then(eml => {
-                    resolve(eml);
-                  })
-                  .catch(err => {
-                    reject(err);
-                  })
+                  Email.create(_email)
+                    .then(eml => {
+                      resolve(eml);
+                    })
+                    .catch(err => {
+                      reject(err);
+                    });
                 })
                 .catch(err => {
                   reject(e);
-                })
+                });
             })
           );
         }
