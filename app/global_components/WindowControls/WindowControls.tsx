@@ -33,8 +33,30 @@ import close30 from './img/close-k-30.png';
 import styles from './WindowControls.css';
 
 const { remote, ipcRenderer } = require('electron');
+const os = require('os');
 
 const win = remote.getCurrentWindow();
+
+
+const platforms = {
+  WINDOWS: 'WINDOWS',
+  MAC: 'MAC',
+  LINUX: 'LINUX',
+  SUN: 'SUN',
+  OPENBSD: 'OPENBSD',
+  ANDROID: 'ANDROID',
+  AIX: 'AIX'
+};
+
+const platformsNames = {
+  win32: platforms.WINDOWS,
+  darwin: platforms.MAC,
+  linux: platforms.LINUX,
+  sunos: platforms.SUN,
+  openbsd: platforms.OPENBSD,
+  android: platforms.ANDROID,
+  aix: platforms.AIX,
+};
 
 export default class WindowControls extends React.Component {
   constructor(props) {
@@ -51,10 +73,11 @@ export default class WindowControls extends React.Component {
 
   componentDidMount() {
     const state = { ...this.state };
-    const isWindowsOS = window.navigator.appVersion.indexOf('Win') > -1;
+    // const isWindowsOS = window.navigator.appVersion.indexOf('Win') > -1;
+    const currentPlatform = platformsNames[os.platform()];
     let { isMaximized } = state;
 
-    if (isWindowsOS) {
+    if (currentPlatform !== 'MAC') {
       this.setState({ showControls: true });
     } else {
       return;
