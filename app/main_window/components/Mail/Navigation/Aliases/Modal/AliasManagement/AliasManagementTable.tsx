@@ -208,10 +208,9 @@ export default function AliasManagementTable(props: Props) {
             {rowData => (
               <div className="flex flex-row">
                 <Whisper
-                  trigger="hover"
+                  trigger="click"
                   placement="top"
-                  speaker={<Tooltip>Copy</Tooltip>}
-                  delay={250}
+                  speaker={<Tooltip>Copied!</Tooltip>}
                 >
                   <Paper
                     set="broken"
@@ -221,40 +220,25 @@ export default function AliasManagementTable(props: Props) {
                     onClick={() =>
                       clipboard.writeText(
                         `${rowData.ns}#${rowData.alias}@${rowData.domain}`
-                      )
-                    }
+                      )}
                   />
                 </Whisper>
                 <span className="mx-1" />
-                <Whisper
-                  trigger="hover"
-                  placement="top"
-                  speaker={<Tooltip>Edit</Tooltip>}
-                  delay={250}
-                >
-                  <Edit
-                    set="broken"
-                    size="small"
-                    className="hover:text-blue-500"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => onShowEdit(`${rowData.ns}#${rowData.alias}`)}
-                  />
-                </Whisper>
+                <Edit
+                  set="broken"
+                  size="small"
+                  className="hover:text-blue-500"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => onShowEdit(`${rowData.ns}#${rowData.alias}`)}
+                />
                 <span className="mx-1" />
-                <Whisper
-                  trigger="hover"
-                  placement="top"
-                  speaker={<Tooltip>Delete</Tooltip>}
-                  delay={250}
-                >
-                  <Delete
-                    set="broken"
-                    size="small"
-                    className="hover:text-red-500"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleDeleteAction(rowData)}
-                  />
-                </Whisper>
+                <Delete
+                  set="broken"
+                  size="small"
+                  className="hover:text-red-500"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleDeleteAction(rowData)}
+                />
               </div>
             )}
           </Cell>

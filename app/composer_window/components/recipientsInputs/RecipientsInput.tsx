@@ -169,7 +169,10 @@ class RecipientsInput extends Component {
 
         const contacts = results.map(contact => {
           return {
-            label: contact.name,
+            label:
+              contact.name === contact.address
+                ? contact.name
+                : `${contact.name} <${contact.address}>`,
             value: contact.address,
             photo: contact.photo
           };
@@ -187,6 +190,7 @@ class RecipientsInput extends Component {
 
     return (
       <CreatableSelect
+        className="text-xs"
         ref={setRef}
         components={{ MultiValueContainer }}
         options={options}

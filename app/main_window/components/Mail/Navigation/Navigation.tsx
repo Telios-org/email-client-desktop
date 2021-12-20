@@ -38,7 +38,8 @@ import {
 } from '../../../selectors/mail';
 
 // REDUX ACTION CREATORS
-import { folderSelection, createNewFolder } from '../../../actions/mail';
+import { folderSelection } from '../../../actions/mail';
+import { createNewFolder } from '../../../actions/mailbox/folders';
 import { aliasSelection } from '../../../actions/mailbox/aliases';
 import { clearActiveMessage } from '../../../actions/mailbox/messages';
 import { toggleEditor } from '../../../actions/global';

@@ -145,33 +145,7 @@ module.exports = userDataPath => {
 
         // Initialize Account table
         await connection.initAccount();
-
-        // Load account
-        acct = await AccountModel.findOne({ raw: true });
-
-        // Initialize drive
-        drive = store.setDrive({
-          name: `${acctPath}/Drive`,
-          encryptionKey: acct.driveEncryptionKey,
-          keyPair: {
-            publicKey: Buffer.from(acct.deviceSigningPubKey, 'hex'),
-            secretKey: Buffer.from(acct.deviceSigningPrivKey, 'hex')
-          }
-        });
-
-        await drive.ready();
-
-        // Initialize remaing tables now that our encryption key is set
-        await connection.initAll();
-
-        handleDriveMessages(drive, acct);
-
-        // Store account and db connection info in global Store state
-        store.setDBConnection(payload.email, connection);
-        store.setAccount(acct);
-
-        process.send({ event: 'getAcct', data: acct });
-      } catch (e) {
+        } catch (e) {
         process.send({ event: 'loginFailed', data: null });
         process.send({
           event: 'getAcct',
@@ -181,7 +155,35 @@ module.exports = userDataPath => {
             stacktrace: e.stack
           }
         });
+        return 
       }
+
+      // Load account
+      acct = await AccountModel.findOne({ raw: true });
+
+      // Initialize drive
+      drive = store.setDrive({
+        name: `${acctPath}/Drive`,
+        encryptionKey: acct.driveEncryptionKey,
+        keyPair: {
+          publicKey: Buffer.from(acct.deviceSigningPubKey, 'hex'),
+          secretKey: Buffer.from(acct.deviceSigningPrivKey, 'hex')
+        }
+      });
+      
+      await drive.ready();
+
+      // Initialize remaing tables now that our encryption key is set
+      await connection.initAll();
+
+      handleDriveMessages(drive, acct);
+
+      // Store account and db connection info in global Store state
+      store.setDBConnection(payload.email, connection);
+      store.setAccount(acct);
+
+      process.send({ event: 'getAcct', data: acct });
+      
     }
 
     if (event === 'accountLogout') {

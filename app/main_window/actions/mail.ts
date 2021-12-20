@@ -231,14 +231,6 @@ export const fetchMailboxFolders = (id: number) => {
   };
 };
 
-export const CREATE_NEW_FOLDER = 'MAILPAGE::CREATE_NEW_FOLDER';
-export const createNewFolder = (folder: FolderType) => {
-  return {
-    type: CREATE_NEW_FOLDER,
-    folder
-  };
-};
-
 /*
  *  Get Mailboxes
  */
