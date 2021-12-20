@@ -194,10 +194,11 @@ module.exports.init = async (sequelize, opts) => {
     try {
       const asyncArr = [];
       const drive = store.getDrive();
+      
       process.send({ event: 'beforeDestroyEmail', email });
 
-      asyncArr.push(collection.del(email.emailId));
-      asyncArr.push(drive.unlink(email.path));
+      await collection.del(email.emailId);
+      await drive.unlink(email.path);
 
       const attachments = JSON.parse(email.attachments);
 

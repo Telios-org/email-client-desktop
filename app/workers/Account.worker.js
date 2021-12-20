@@ -145,7 +145,7 @@ module.exports = userDataPath => {
 
         // Initialize Account table
         await connection.initAccount();
-        } catch (e) {
+      } catch (e) {
         process.send({ event: 'loginFailed', data: null });
         process.send({
           event: 'getAcct',
