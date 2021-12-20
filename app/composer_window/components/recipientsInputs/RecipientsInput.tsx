@@ -141,7 +141,7 @@ class RecipientsInput extends Component {
     if (items.length > 0) {
       items = items.map(item => {
         return {
-          label: typeof item.label === 'string' ? item.label : item.value,
+          label: typeof item.label === 'string' ? item.name : item.value,
           value: item.value,
           isValid: !!isValidEmail(item.value)
         };
@@ -173,6 +173,7 @@ class RecipientsInput extends Component {
               contact.name === contact.address
                 ? contact.name
                 : `${contact.name} <${contact.address}>`,
+            name: contact.name,
             value: contact.address,
             photo: contact.photo
           };

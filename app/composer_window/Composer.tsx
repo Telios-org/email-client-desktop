@@ -7,9 +7,9 @@ import { topicReference } from '@babel/types';
 import { useHandler } from '../utils/hooks/useHandler';
 import { Editor, MessageInputs, TopBar, Attachments } from './components';
 
-import { recipientTransform, emailTransform } from './utils/draft.utils';
+import { recipientTransform, emailTransform } from '../utils/draft.utils';
 
-import { ISOtimestamp } from '../main_window/utils/date.util';
+import { ISOtimestamp } from '../utils/helpers/date';
 // import editorHTMLexport from './utils/messageEditor/htmlExportOptions';
 
 import ComposerService from '../services/composer.service';

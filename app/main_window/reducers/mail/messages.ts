@@ -17,7 +17,7 @@ import {
   FETCH_MORE_ALIAS_MESSAGES_SUCCESS
 } from '../../actions/mailbox/aliases';
 import { MailType, MailAction } from '../types';
-import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
+import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
 
 const initialState = {
   byId: {},

@@ -15,7 +15,7 @@ import {
 import styles from './Search.css';
 
 const Mail = require('../../../../services/mail.service');
-const { formatDateDisplay } = require('../../../utils/date.util');
+const { formatDateDisplay } = require('../../../../utils/helpers/date');
 
 enum Focus {
   /** Focus the first non-disabled item. */

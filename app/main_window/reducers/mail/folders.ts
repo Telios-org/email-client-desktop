@@ -9,7 +9,7 @@ import {
 } from '../../actions/mailbox/folders';
 
 import { MailType, MailAction } from '../types';
-import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
+import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
 
 // const clone = require('rfdc')();
 

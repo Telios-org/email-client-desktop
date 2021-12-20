@@ -1,4 +1,3 @@
-// Require moment.js
 
 import { DateTime, Interval } from 'luxon';
 

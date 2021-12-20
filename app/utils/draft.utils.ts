@@ -5,7 +5,7 @@ import {
   Email,
   MailMessageType,
   MailboxType
-} from '../../main_window/reducers/types';
+} from '../main_window/reducers/types';
 
 export const recipientTransform = (
   ownerMailbox: MailboxType,
@@ -111,8 +111,20 @@ export const recipientTransform = (
 
 const attr = (message: MailMessageType, action: string) => {
   const from = JSON.parse(message.fromJSON)[0];
-  const to = JSON.parse(message.toJSON)[0];
-  const cc = JSON.parse(message.toJSON)[0];
+  const to = JSON.parse(message.toJSON).reduce(
+    (previous: string, current: { name: string; address: string }) => {
+      const val = current.name || current.address;
+      const tag = ` <a
+      href="mailto:${current.address}"
+      target="_blank"
+      rel="noreferrer nofollow noopener"
+        > ${val}</a> `;
+      return `${previous + tag} `;
+    },
+    'To: '
+  );
+
+  
 
   const dt = DateTime.fromISO(message.date, {
     zone: 'utc'
@@ -137,11 +149,7 @@ const attr = (message: MailMessageType, action: string) => {
       <br />
       Subject: ${message.subject}
       <br />
-      To: <a
-      href="mailto:${to.address}"
-      target="_blank"
-      rel="noreferrer nofollow noopener"
-        > ${to.address}</a>
+      To: ${to}
       </div>
       <div id="original_msg">
         ${message?.bodyAsHtml ?? ''}
@@ -198,9 +206,11 @@ export const emailTransform = (
     bcc: [],
     from: [],
     toJSON: JSON.stringify(message.to) ?? message.toJSON ?? JSON.stringify([]),
-    fromJSON: JSON.stringify(message.from) ?? message.fromJSON ?? JSON.stringify([]),
+    fromJSON:
+      JSON.stringify(message.from) ?? message.fromJSON ?? JSON.stringify([]),
     ccJSON: JSON.stringify(message.cc) ?? message.ccJSON ?? JSON.stringify([]),
-    bccJSON: JSON.stringify(message.bcc) ?? message.bccJSON ?? JSON.stringify([]),
+    bccJSON:
+      JSON.stringify(message.bcc) ?? message.bccJSON ?? JSON.stringify([]),
     bodyAsText: message?.text_body ?? message.bodyAsText ?? JSON.stringify([]),
     bodyAsHtml: body,
     path,

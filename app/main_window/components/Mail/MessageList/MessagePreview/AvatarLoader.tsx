@@ -8,7 +8,7 @@ type Props = {
   onLoaderCompletion: () => void;
 };
 
-const stringToHslColor = require('../../../../utils/avatar.util');
+const stringToHslColor = require('../../../../../utils/avatar.util');
 
 const AvatarLoader = (props: Props) => {
   const { parsedSender, displayLoader, onLoaderCompletion } = props;

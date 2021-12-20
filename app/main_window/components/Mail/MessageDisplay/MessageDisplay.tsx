@@ -18,14 +18,15 @@ import { Scrollbars } from 'react-custom-scrollbars';
 // ICONS
 import { Forward, Reply, ReplyAll } from './customSVGs';
 
-// DATE UTILITIES
+// UTILITIES
 import {
   formatFullDate,
   formatTimeOnly,
   formatDateDisplay
-} from '../../../utils/date.util';
+} from '../../../../utils/helpers/date';
+import peopleHeaderParser from '../../../../utils/contact.util';
 
-import stringToHslColor from '../../../utils/avatar.util';
+import stringToHslColor from '../../../../utils/avatar.util';
 
 // COMPONENTS
 import { Attachments } from '../../../../composer_window/components';
@@ -40,7 +41,10 @@ import {
 } from '../../../actions/mailbox/messages';
 
 // REDUX STATE SELECTORS
-import { selectActiveMailbox } from '../../../selectors/mail';
+import {
+  selectActiveMailbox,
+  selectActiveFolderName
+} from '../../../selectors/mail';
 
 // TYPESCRIPT TYPES
 import { MailMessageType, MailboxType } from '../../../reducers/types';
@@ -59,6 +63,7 @@ function MessageDisplay(props: Props) {
       fromJSON,
       toJSON,
       ccJSON,
+      bccJSON,
       date,
       bodyAsHtml,
       attachments
@@ -68,6 +73,7 @@ function MessageDisplay(props: Props) {
   } = props;
 
   const mailbox = useSelector(selectActiveMailbox);
+  const currentFolderName = useSelector(selectActiveFolderName);
   const [loaded, setLoaded] = useState(false);
   const [iframeReady, setIframeReady] = useState(false);
 
@@ -87,44 +93,26 @@ function MessageDisplay(props: Props) {
     files = attachments;
   }
 
-  const senderEmail = JSON.parse(fromJSON)[0].address;
+  // We don't want to display the same people whether its incoming or outgoing;
+  const direction =
+    currentFolderName === 'Sent' || currentFolderName === 'Drafts'
+      ? 'outgoing'
+      : 'incoming';
 
-  const senderInNetwork = senderEmail.endsWith('@telios.io');
+  console.log('TEST', toJSON, fromJSON, ccJSON, bccJSON, direction);
+  const { sender, recipients } = peopleHeaderParser(
+    toJSON,
+    fromJSON,
+    ccJSON,
+    undefined,
+    direction
+  );
 
-  const parsedSender = JSON.parse(fromJSON)[0].name || senderEmail;
+  const parsedSender = sender.name;
+  // Checking if Sender is in the Telios Network
+  const senderInNetwork = sender.inNetwork;
 
-  const senderArr = parsedSender.split(' ');
-
-  let senderInitials = null;
-
-  if (senderArr.length > 1) {
-    senderInitials = `${senderArr[0][0]}${senderArr[1][0]}`.toUpperCase();
-  } else {
-    // eslint-disable-next-line prefer-destructuring
-    senderInitials = senderArr[0][0].toUpperCase();
-  }
-
-  const parsedRecipientTo = JSON.parse(toJSON).reduce(function(
-    previous: string,
-    current: { name: string; address: string }
-  ) {
-    if (current.name) {
-      return `${previous} ${current.name} <${current.address}>;`;
-    }
-    return `${previous} ${current.address}; `;
-  },
-  'To: ');
-
-  const parsedRecipientCC = JSON.parse(ccJSON).reduce(function(
-    previous: string,
-    current: { name: string; address: string }
-  ) {
-    if (current.name) {
-      return `${previous} ${current.name} <${current.address}>;`;
-    }
-    return `${previous} ${current.address}; `;
-  },
-  'Cc: ');
+  const senderInitials = sender.avatarInitials;
 
   const formattedDate = formatFullDate(date);
   const time = formatTimeOnly(date);
@@ -300,24 +288,33 @@ function MessageDisplay(props: Props) {
         </div>
       </div>
       <div className="border-b pt-3 pb-6 flex flex-row items-center px-6">
-        <Avatar
-          size="md"
-          className="font-bold"
-          style={{
-            backgroundColor: stringToHslColor(parsedSender, 45, 65)
-          }}
-          circle
-        >
-          {senderInitials}
-        </Avatar>
+        <div>
+          <Avatar
+            size="md"
+            className="font-bold"
+            style={{
+              backgroundColor: stringToHslColor(parsedSender, 45, 65)
+            }}
+            circle
+          >
+            {senderInitials}
+          </Avatar>
+        </div>
         <div className="flex-auto pl-4 select-none">
           <div className="flex flex-row justify-between">
             <div className="text-md font-bold">{parsedSender}</div>
-            <div className="text-sm text-gray-500 align-baseline items-baseline">{`${formattedDate} at ${time}`}</div>
+            <div className="text-xs text-gray-500 align-baseline items-baseline">{`${formattedDate} at ${time}`}</div>
           </div>
-          <div className="text-md text-gray-400">{parsedRecipientTo}</div>
+          <div className="text-xs text-gray-400">{`To: ${recipients.to.plainText}`}</div>
           {ccJSON !== '[]' && (
-            <div className="text-md text-gray-400">{parsedRecipientCC}</div>
+            <div className="text-xs text-gray-400">
+              {`Cc: ${recipients.cc.plainText}`}
+            </div>
+          )}
+          {bccJSON !== '[]' && (
+            <div className="text-xs text-gray-400">
+              {`Bcc: ${recipients.bcc.plainText}`}
+            </div>
           )}
         </div>
       </div>

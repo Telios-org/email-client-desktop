@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Avatar, IconButton, Icon } from 'rsuite';
 import { ContactType } from '../../reducers/types';
-import { fullDatefromJS } from '../../utils/date.util';
+import { fullDatefromJS } from '../../../utils/helpers/date';
 
 type Props = {
   closeAction: () => void;

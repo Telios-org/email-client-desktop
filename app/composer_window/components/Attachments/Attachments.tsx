@@ -11,7 +11,7 @@ import styles from './Attachments.css';
 const mime = require('mime-types');
 const path = require('path');
 const clone = require('rfdc')();
-const humanFileSize = require('../../../main_window/utils/attachment.util');
+const humanFileSize = require('../../../utils/attachment.util');
 
 type Props = {
   attachments: AttachmentType[];

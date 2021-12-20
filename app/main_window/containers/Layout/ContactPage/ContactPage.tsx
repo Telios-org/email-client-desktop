@@ -20,8 +20,6 @@ import {
   deleteContact
 } from '../../../actions/contacts/contacts';
 
-import { flattenObject } from '../../../../utils/form.util';
-
 const { Column, HeaderCell, Cell } = Table;
 const clone = require('rfdc')();
 

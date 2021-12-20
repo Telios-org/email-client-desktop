@@ -1,7 +1,7 @@
 const { remote, ipcRenderer } = require('electron');
 const fs = require('fs');
 const worker = require('../workers/main.worker');
-const { extractJSON } = require('../utils/string.util');
+const extractJSON = require('../utils/helpers/json');
 
 const { app } = remote;
 

@@ -4,7 +4,7 @@ import {
   GET_MAILBOXES_REQUEST_SUCCESS
 } from '../../actions/mail';
 import { MailType, MailAction } from '../types';
-import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
+import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
 
 const initialState = {
   byId: {},

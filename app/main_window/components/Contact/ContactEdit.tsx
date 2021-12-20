@@ -16,7 +16,7 @@ import {
 } from 'rsuite';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { ContactType } from '../../reducers/types';
-import { flattenObject, rebuildArrObject } from '../../../utils/form.util';
+import { flattenObject, rebuildArrObject } from '../../../utils/helpers/json';
 
 const countries = require('./countries.json');
 

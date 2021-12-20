@@ -1,4 +1,22 @@
 /* eslint-disable prefer-destructuring */
+export const extractJSON = (str = '') => {
+  const firstOpen = str.indexOf('{');
+  const firstClose = str.lastIndexOf('}');
+  if (firstClose <= firstOpen) {
+    return null;
+  }
+  const candidate = str.substring(firstOpen, firstClose + 1);
+  try {
+    const res = JSON.parse(candidate);
+    console.log('...found');
+    return res;
+  } catch (e) {
+    console.log('...failed');
+  }
+
+  return null;
+};
+
 const flattenArrObject = (arr, prefix) => {
   const flatObject = {};
   Object.entries(arr).forEach((e, i) => {
@@ -11,7 +29,7 @@ const flattenArrObject = (arr, prefix) => {
 
 // Stiching a nested object back together assuming that array of object have the following pattern
 // objectKey_objectKeyNestedObj_indexofArray =>{ objectKey:[{objectKeyNestedObj: value}] }
-module.exports.rebuildArrObject = obj => {
+export const rebuildArrObject = obj => {
   const flatObject = {};
 
   if (obj !== undefined) {
@@ -34,7 +52,7 @@ module.exports.rebuildArrObject = obj => {
   return flatObject;
 };
 
-module.exports.flattenObject = obj => {
+export const flattenObject = obj => {
   let flatObject = {};
   if (obj !== undefined) {
     Object.entries(obj).forEach((e, i) => {

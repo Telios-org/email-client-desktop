@@ -8,7 +8,7 @@ import i18n from '../../../../../../../i18n/i18n';
 import {
   formatDateDisplay,
   formatFullDate
-} from '../../../../../../utils/date.util';
+} from '../../../../../../../utils/helpers/date';
 
 // TYPESCRIPT
 import { MailType } from '../../../../../../reducers/types';

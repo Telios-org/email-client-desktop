@@ -7,6 +7,8 @@ import { Popover, Dropdown } from 'rsuite';
 // STATE SELECTORS
 import { selectActiveMailbox } from '../../../selectors/mail';
 
+const pkg = require('../../../../package.json');
+
 type Props = {
   onSelect: (eventkey: string) => void;
 };
@@ -20,6 +22,13 @@ const SettingsMenu = (props: Props) => {
         <Dropdown.Item panel className="p-2 pl-4" style={{ width: 200 }}>
           <p>Signed in as:</p>
           <strong>{address || name || ''}</strong>
+        </Dropdown.Item>
+        <Dropdown.Item
+          panel
+          className="text-xs pr-2 text-gray-400 text-right"
+          style={{ width: 200 }}
+        >
+          {`Beta Version: ${pkg.version}`}
         </Dropdown.Item>
       </Dropdown.Menu>
     </Popover>
