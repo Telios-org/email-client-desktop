@@ -7,17 +7,17 @@ const theme = {
   colors: {
     transparent: 'transparent',
     current: 'currentColor',
-    blueGray: colors.blueGray,
-    coolGray: colors.coolGray,
+    blueGray: colors.slate,
+    coolGray: colors.gray,
     black: colors.black,
     white: colors.white,
-    gray: colors.trueGray,
-    warmGray: colors.warmGray,
-    trueGray: colors.trueGray,
+    gray: colors.neutral,
+    warmGray: colors.stone,
+    trueGray: colors.neutral,
     red: colors.red,
     yellow: colors.amber,
     orange: colors.orange,
-    green: colors.green,
+    green: colors.emerald,
     emerald: colors.emerald,
     teal: colors.teal,
     cyan: colors.cyan,
@@ -110,26 +110,25 @@ const theme = {
     display: ['Montserrat']
   }
 };
-const variants = {
-  extend: {
-    opacity: ['disabled'],
-    boxShadow: ['responsive', 'hover', 'focus', 'active'],
-    backgroundColor: ['responsive', 'hover', 'focus', 'active'],
-    visibility: ['responsive', 'hover', 'focus', 'group-hover'],
-    display: ['group-hover']
-  }
-};
+// const variants = {
+//   extend: {
+//     opacity: ['disabled'],
+//     boxShadow: ['responsive', 'hover', 'focus', 'active'],
+//     backgroundColor: ['responsive', 'hover', 'focus', 'active'],
+//     visibility: ['responsive', 'hover', 'focus', 'group-hover'],
+//     display: ['group-hover']
+//   }
+// }; all variants are automatically available in v3 of tailwindcss
 const plugins = [require('@tailwindcss/line-clamp')];
 
 module.exports = {
-  darkMode: 'class',
-  purge: [
+  content: [
     './app/main_window/**/*.tsx',
     './app/login_window/**/*.tsx',
     './app/composer_window/**/*.tsx'
   ],
   important: true,
   theme,
-  variants,
+  // variants,
   plugins
 };

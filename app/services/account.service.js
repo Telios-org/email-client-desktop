@@ -1,11 +1,14 @@
 const { ipcRenderer } = require('electron');
+const EventEmitter = require('events');
 const worker = require('../workers/main.worker');
 const MailService = require('./mail.service');
 const ContactService = require('./contact.service');
 const MessageIngressService = require('./messageIngress.service');
 
-class AccountService {
+class AccountService extends EventEmitter {
   constructor() {
+    super();
+    
     ipcRenderer.once('ACCOUNT_IPC::createAccount', async (evt, data) => {
       try {
         const account = await AccountService.createAccount(data);
@@ -122,6 +125,11 @@ class AccountService {
     worker.on('syncMail', () => {
       ipcRenderer.send('syncMail')
     });
+
+    worker.on('ACCOUNT_WORKER::refreshToken', m => {
+      const { data, error } = m;
+      this.emit('ACCOUNT_SERVICE::refreshToken', data.token);
+    });
   }
 
   static async initSession(params) {
@@ -217,6 +225,20 @@ class AccountService {
       });
     });
   }
+
+  // static refreshToken() {
+  //   worker.send({ event: 'ACCOUNT_SERVICE::refreshToken', payload: { password, email } });
+
+  //   return new Promise((resolve, reject) => {
+  //     worker.once('ACCOUNT_WORKER::refreshToken', m => {
+  //       const { data, error } = m;
+
+  //       if (error) return reject(error);
+
+  //       return resolve(data.token);
+  //     });
+  //   });
+  // }
 
   static logout() {
     worker.send({ event: 'accountLogout', payload: {} });

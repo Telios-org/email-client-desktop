@@ -38,7 +38,7 @@ const AttachmentItem = ({
   >
     <AttachmentPreview attachment={item} key={item.filename} />
     <div className="pl-4 pr-2 flex flex-col">
-      <div className="text-sm font-medium text-gray-600 w-40 overflow-ellipsis overflow-hidden">
+      <div className="text-sm font-medium text-gray-600 w-40 text-ellipsis overflow-hidden">
         {item.filename}
       </div>
       <div>

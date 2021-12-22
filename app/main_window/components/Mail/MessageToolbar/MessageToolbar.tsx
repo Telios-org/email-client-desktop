@@ -22,12 +22,12 @@ import {
 } from 'react-iconly';
 
 // REDUX ACTIONS
-import { moveMessagesToFolder } from '../../../actions/mailbox/messages';
 import { loadMailboxes, msgRangeSelection } from '../../../actions/mail';
 
 import {
   clearActiveMessage,
-  markAsUnread
+  markAsUnread,
+  moveMessagesToFolder
 } from '../../../actions/mailbox/messages';
 
 // SELECTORS

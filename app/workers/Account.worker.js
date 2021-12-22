@@ -206,6 +206,11 @@ module.exports = userDataPath => {
   });
 };
 
+function refreshToken() {
+  const token = store.refreshToken();
+  process.send({ event: 'ACCOUNT_WORKER::refreshToken', data: { token } });
+}
+
 async function handleDriveMessages(drive, account) {
   drive.on('message', (peerPubKey, data) => {
     const msg = JSON.parse(data.toString());

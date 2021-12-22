@@ -1,4 +1,4 @@
-const { ipcMain, nativeTheme, dialog } = require('electron');
+const { ipcMain, nativeTheme, dialog, BrowserView } = require('electron');
 const path = require('path');
 const { emailTransform } = require('../utils/draft.utils');
 const store = require('../Store');

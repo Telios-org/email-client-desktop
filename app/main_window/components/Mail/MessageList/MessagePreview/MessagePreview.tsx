@@ -276,7 +276,7 @@ export default function MessagePreview(props: Props) {
           overflow-hidden
           ${isActive ? 'bg-blue-50' : 'hover:bg-coolGray-50'}`}
           >
-            <div className="flex justify-center w-6 flex-shrink-0 items-center pt-0.5">
+            <div className="flex justify-center w-6 shrink-0 items-center pt-0.5">
               {unread === 1 && !isRead && direction === 'incoming' && (
                 <Badge className="bg-purple-600" />
               )}

@@ -27,11 +27,7 @@ import {
 
 import { ALIAS_SELECTION_FLOW_SUCCESS } from '../actions/mailbox/aliases';
 
-import {
-  TOGGLE_EDITOR,
-  UPDATE_NETWORK_STATUS,
-  SET_MSGLIST_FILTER
-} from '../actions/global';
+import { TOGGLE_EDITOR, UPDATE_NETWORK_STATUS, REFRESH_TOKEN, SET_MSGLIST_FILTER } from '../actions/global';
 
 const initialState = {
   activeMsgId: {},
@@ -57,6 +53,7 @@ const initialState = {
   editorIsOpen: false,
   editorAction: '',
   highlightText: '',
+  authToken: '',
   accounts: []
 };
 
@@ -207,6 +204,11 @@ const globalState = (
         ...state,
         status: action.status
       };
+    case REFRESH_TOKEN:
+      return {
+        ...state,
+        authToken: action.token
+      }
     default:
       return state;
   }
