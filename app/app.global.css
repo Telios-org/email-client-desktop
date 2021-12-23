@@ -6,7 +6,11 @@
 @import 'rsuite/dist/styles/rsuite-default.css';
  /* PRIMSJS Theme is for the codeblock for the editor. */
 @import 'prismjs/themes/prism-tomorrow.css';
-
+@import url('https://rsms.me/inter/inter.css');
+html { font-family: 'Inter', sans-serif; }
+@supports (font-variation-settings: normal) {
+  html { font-family: 'Inter var', sans-serif; }
+}
 /* @reset-import: false;
 
 @base-color: #3498FF;*/
@@ -15,14 +19,54 @@
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
+  font-weight: 300;
+  src: local(''),
+    url('/resources/fonts/OpenSans/OpenSans-Light.ttf') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
   font-weight: 400;
   src: local(''),
-    url('/resources/fonts/open-sans-v18-latin-regular.woff2') format('woff2'),
-    url('/resources/fonts/open-sans-v18-latin-regular.woff2') format('woff');
+    url('/resources/fonts/OpenSans/OpenSans-Regular.ttf') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 500;
+  src: local(''),
+    url('/resources/fonts/OpenSans/OpenSans-Medium.ttf') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local(''),
+   url('/resources/fonts/OpenSans/OpenSans-SemiBold.ttf') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local(''),
+    url('/resources/fonts/OpenSans/OpenSans-Bold.ttf') format('woff2');
+
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 800;
+  src: local(''),
+    url('/resources/fonts/OpenSans/OpenSans-ExtraBold.ttf') format('woff2');
 }
 
 body {
-  font-family: 'Open Sans';
+  font-family: Inter var, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   position: relative;
   height: 100vh;
   overflow-y: hidden;

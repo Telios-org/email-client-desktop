@@ -26,7 +26,12 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-const UserMenu = () => {
+type Props = {
+  onSelect: (eventKey: string) => void;
+};
+
+const UserMenu = (props: Props) => {
+  const { onSelect } = props;
   const mailbox = useSelector(selectActiveMailbox);
   const [displayAddress, setDisplayAddress] = useState('');
   const [hasAvatar, setHasAvatar] = useState(true);
@@ -102,16 +107,15 @@ const UserMenu = () => {
                 >
                   <div className="px-4 py-3">
                     <p className="text-sm leading-5 flex justify-between">
-                        Signed in as
+                      Signed in as
                     </p>
                     <p className="text-sm font-semibold leading-5 text-gray-900 truncate">
                       {displayAddress}
                     </p>
-                    
                   </div>
 
                   <div className="py-1">
-                    <Menu.Item>
+                    <Menu.Item onClick={() => onSelect('settings')}>
                       {({ active }) => (
                         <div
                           style={{ cursor: 'pointer' }}
@@ -140,9 +144,7 @@ const UserMenu = () => {
                               : 'text-gray-700'
                           } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
                         >
-                          <span>
-                            Support
-                          </span>
+                          <span>Support</span>
                           <span className="text-xs rounded px-2 font-semibold bg-gray-200 text-gray-400">
                             {`V-${pkg.version}`}
                           </span>
