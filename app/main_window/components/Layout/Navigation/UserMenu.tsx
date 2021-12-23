@@ -7,6 +7,9 @@ import { Dialog, Menu, Transition } from '@headlessui/react';
 import { Portal } from 'react-portal';
 import { Logout, Setting, User } from 'react-iconly';
 
+// INTERNAL COMPONENTS
+import UserBubble from './CustomSVG/UserBubble';
+
 // STATE SELECTORS
 import { selectActiveMailbox } from '../../../selectors/mail';
 
@@ -26,6 +29,7 @@ function classNames(...classes) {
 const UserMenu = () => {
   const mailbox = useSelector(selectActiveMailbox);
   const [displayAddress, setDisplayAddress] = useState('');
+  const [hasAvatar, setHasAvatar] = useState(true);
   const popperElRef = React.useRef(null);
   const [targetElement, setTargetElement] = React.useState(null);
   const [popperElement, setPopperElement] = React.useState(null);
@@ -57,18 +61,26 @@ const UserMenu = () => {
     <Menu as="div" className="relative">
       {({ open }) => (
         <>
-          <div ref={setTargetElement} className="rounded-full shadow">
+          <div
+            ref={setTargetElement}
+            className="rounded-full shadow border border-gray-400/70"
+          >
             <Menu.Button
               className={`max-w-xs flex items-center rounded-full text-sm focus:outline-none ${
                 open ? 'ring-2 ring-offset-2 ring-blue-300' : ''
               } `}
             >
               <span className="sr-only">Open user menu</span>
-              <img
-                className="h-8 w-8 rounded-full"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
-              />
+              {hasAvatar && (
+                <img
+                  className="h-8 w-8 rounded-full"
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  alt=""
+                />
+              )}
+              {!hasAvatar && (
+                <UserBubble className="hover:text-purple-500 text-gray-400" />
+              )}
             </Menu.Button>
           </div>
           <Portal>
@@ -89,10 +101,13 @@ const UserMenu = () => {
                   className="w-56 bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none"
                 >
                   <div className="px-4 py-3">
-                    <p className="text-sm leading-5">Signed in as</p>
+                    <p className="text-sm leading-5 flex justify-between">
+                        Signed in as
+                    </p>
                     <p className="text-sm font-semibold leading-5 text-gray-900 truncate">
                       {displayAddress}
                     </p>
+                    
                   </div>
 
                   <div className="py-1">
@@ -123,9 +138,14 @@ const UserMenu = () => {
                             active
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-700'
-                          } flex items-center w-full px-4 py-2 text-sm leading-5 text-left`}
+                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
                         >
-                          Support
+                          <span>
+                            Support
+                          </span>
+                          <span className="text-xs rounded px-2 font-semibold bg-gray-200 text-gray-400">
+                            {`V-${pkg.version}`}
+                          </span>
                         </div>
                       )}
                     </Menu.Item>

@@ -16,11 +16,9 @@ const UserBubble = (props: Props) => {
       className={className}
       onClick={onClick}
       fill="currentColor"
-      x="0px"
-      y="0px"
       width="24px"
       height="24px"
-      viewBox="0 0 24 24"
+      viewBox="0 0 22 22"
     >
     <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="UserBubble" transform="translate(-1.000000, -1.000000)" stroke="currentColor" stroke-width="1.5">
