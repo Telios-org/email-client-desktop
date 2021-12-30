@@ -8,7 +8,7 @@ const MessageIngressService = require('./messageIngress.service');
 class AccountService extends EventEmitter {
   constructor() {
     super();
-    
+
     ipcRenderer.once('ACCOUNT_IPC::createAccount', async (evt, data) => {
       try {
         const account = await AccountService.createAccount(data);
@@ -28,15 +28,18 @@ class AccountService extends EventEmitter {
       }
     });
 
-    ipcRenderer.once('getAcct', async (evt, data) => {
+    ipcRenderer.once('ACCOUNT_IPC::initAcct', async (evt, data) => {
       try {
-        const account = await AccountService.getAccount(data);
+        const account = await AccountService.initAccount(data);
 
-        ipcRenderer.send('getAcctResponse', account);
+        // Emitting the account data so it can be ingested by the Redux Store
+        this.emit('ACCOUNT_SERVICE::accountData', account);
+        ipcRenderer.send('ACCOUNT_SERVICE::initAcctResponse', account);
       } catch (e) {
-        ipcRenderer.send('getAcctError', e);
+        ipcRenderer.send('ACCOUNT_SERVICE::initAcctError', e);
       }
     });
+    
 
     ipcRenderer.once('authenticate', async (evt, data) => {
       try {
@@ -44,15 +47,6 @@ class AccountService extends EventEmitter {
         ipcRenderer.send('authResponse', account);
       } catch (e) {
         ipcRenderer.send('authError', e);
-      }
-    });
-
-    ipcRenderer.once('initSession', async (evt, data) => {
-      try {
-        const account = await AccountService.initSession(data);
-        ipcRenderer.send('initSessionResponse', account);
-      } catch (e) {
-        ipcRenderer.send('initSessionError', e);
       }
     });
 
@@ -123,26 +117,12 @@ class AccountService extends EventEmitter {
     });
 
     worker.on('syncMail', () => {
-      ipcRenderer.send('syncMail')
+      ipcRenderer.send('syncMail');
     });
 
     worker.on('ACCOUNT_WORKER::refreshToken', m => {
       const { data, error } = m;
       this.emit('ACCOUNT_SERVICE::refreshToken', data.token);
-    });
-  }
-
-  static async initSession(params) {
-    const { opts, privKey, pubKey } = params;
-
-    worker.send({ event: 'initSession', payload: { opts, privKey, pubKey } });
-
-    return new Promise((resolve, reject) => {
-      worker.once('initSession', m => {
-        const { data, error } = m;
-        if (error) return reject(error);
-        return resolve(data);
-      });
     });
   }
 
@@ -208,13 +188,16 @@ class AccountService extends EventEmitter {
     });
   }
 
-  static getAccount(params) {
+  static initAccount(params) {
     const { email, password } = params;
 
-    worker.send({ event: 'getAcct', payload: { password, email } });
+    worker.send({
+      event: 'ACCOUNT_SERVICE::initAcct',
+      payload: { password, email }
+    });
 
     return new Promise((resolve, reject) => {
-      worker.once('getAcct', m => {
+      worker.once('ACCOUNT_WORKER::initAcct', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
@@ -226,6 +209,38 @@ class AccountService extends EventEmitter {
     });
   }
 
+  static getAccount() {
+    ipcRenderer.send({
+      event: 'ACCOUNT_SERVICE::getAccount'
+    });
+
+    return new Promise((resolve, reject) => {
+      ipcRenderer.once('ACCOUNT_IPC::getAccount', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
+  static async updateAccount(payload) {
+    worker.send({
+      event: 'ACCOUNT_SERVICE::updateAccount',
+      payload
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('ACCOUNT_WORKER::updateAccount', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
   // static refreshToken() {
   //   worker.send({ event: 'ACCOUNT_SERVICE::refreshToken', payload: { password, email } });
 

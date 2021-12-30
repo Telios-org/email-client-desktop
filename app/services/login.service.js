@@ -6,19 +6,6 @@ const extractJSON = require('../utils/helpers/json');
 const { app } = remote;
 
 class LoginService {
-  static async initSession(opts, privKey, pubKey) {
-    return new Promise((resolve, reject) => {
-      ipcRenderer
-        .invoke('initSession', opts, privKey, pubKey)
-        .then(() => {
-          return resolve();
-        })
-        .catch(err => {
-          return reject(err);
-        });
-    });
-  }
-
   static async createAccount(payload) {
     return new Promise((resolve, reject) => {
       ipcRenderer
@@ -37,10 +24,10 @@ class LoginService {
     });
   }
 
-  static getAccount(password, email) {
+  static initAccount(password, email) {
     return new Promise((resolve, reject) => {
       ipcRenderer
-        .invoke('getAccount', { password, email })
+        .invoke('LOGIN_SERVICE::initAccount', { password, email })
         .then(data => {
           return resolve(data);
         })

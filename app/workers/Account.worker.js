@@ -127,7 +127,7 @@ module.exports = userDataPath => {
       await del(acctPath, { force: true });
     }
 
-    if (event === 'getAcct') {
+    if (event === 'ACCOUNT_SERVICE::initAcct') {
       const acctPath = `${userDataPath}/Accounts/${payload.email}`;
       store.acctPath = acctPath;
 
@@ -148,14 +148,14 @@ module.exports = userDataPath => {
       } catch (e) {
         process.send({ event: 'loginFailed', data: null });
         process.send({
-          event: 'getAcct',
+          event: 'ACCOUNT_WORKER::initAcct',
           error: {
             name: e.name,
             message: e.message,
             stacktrace: e.stack
           }
         });
-        return 
+        return;
       }
 
       // Load account
@@ -170,7 +170,7 @@ module.exports = userDataPath => {
           secretKey: Buffer.from(acct.deviceSigningPrivKey, 'hex')
         }
       });
-      
+
       await drive.ready();
 
       // Initialize remaing tables now that our encryption key is set
@@ -182,8 +182,7 @@ module.exports = userDataPath => {
       store.setDBConnection(payload.email, connection);
       store.setAccount(acct);
 
-      process.send({ event: 'getAcct', data: acct });
-      
+      process.send({ event: 'ACCOUNT_WORKER::initAcct', data: acct });
     }
 
     if (event === 'accountLogout') {
@@ -202,6 +201,30 @@ module.exports = userDataPath => {
 
     if (event === 'exitProcess') {
       process.exit(0);
+    }
+
+    if (event === 'ACCOUNT_SERVICE::updateAccount') {
+      try {
+        // Right now I only want those 2 properties to be able to be updated via the client.
+        await AccountModel.update(
+          {
+            avatar: payload.avatar,
+            displayName: payload.displayName
+          },
+          {
+            where: {
+              accountId: payload.accountId
+            },
+            individualHooks: true
+          }
+        );
+        process.send({ event: 'ACCOUNT_WORKER::updateAccount', data: null });
+      } catch (e) {
+        process.send({
+          event: 'ACCOUNT_WORKER::updateAccount',
+          error: e.message
+        });
+      }
     }
   });
 };

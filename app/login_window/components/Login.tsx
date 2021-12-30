@@ -27,12 +27,13 @@ const errorStyles = errorVisible => {
 };
 
 // THE FUNCTIONS BELOW SHOULD BE MOVED TO A SEPARATE UTILITY FILE PROBABLY
-const getAccount = async (name, password) => {
+const initAccount = async (name, password) => {
   try {
-    const account = await LoginService.getAccount(password, name);
+    const account = await LoginService.initAccount(password, name);
 
     return account;
   } catch (err) {
+    console.log(err);
     ipcRenderer.send('restartMainWindow');
     throw i18n.t('login.incorrectPass');
   }
@@ -113,7 +114,7 @@ class Login extends Component<Props, State> {
 
     try {
       this.store.set('lastAccount', selectedAccount);
-      const account = await getAccount(selectedAccount, masterpass);
+      const account = await initAccount(selectedAccount, masterpass);
       await loadMailbox();
 
       goToMainWindow(account);

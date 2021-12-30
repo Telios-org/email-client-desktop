@@ -22,24 +22,38 @@ module.exports = windowManager => {
     });
   });
 
-  ipcMain.handle('getAccount', async (e, payload) => {
-    let account = payload;
-
-    if (!account.password || !account.email) {
-      account = store.getAccountSecrets();
-    }
+  ipcMain.handle('LOGIN_SERVICE::initAccount', async (e, payload) => {
+    const account = payload;
 
     const mainWindow = windowManager.getWindow('mainWindow');
-    mainWindow.webContents.send('getAcct', account);
+    mainWindow.webContents.send('ACCOUNT_IPC::initAcct', account);
 
     return new Promise((resolve, reject) => {
       mainWindow.webContents.on('ipc-message', (e, channel, data) => {
-        if (channel === 'getAcctResponse') {
+        if (channel === 'ACCOUNT_SERVICE::initAcctResponse') {
           store.setAccountSecrets(account);
           resolve(data);
         }
 
-        if (channel === 'getAcctError') {
+        if (channel === 'ACCOUNT_SERVICE::initAcctError') {
+          reject(data);
+        }
+      });
+    });
+  });
+
+  ipcMain.handle('ACCOUNT_SERVICE::getAccount', async (e, payload) => {
+    const account = store.getAccount();
+    const mainWindow = windowManager.getWindow('mainWindow');
+    mainWindow.webContents.send('ACCOUNT_IPC::getAccount', account);
+
+    return new Promise((resolve, reject) => {
+      mainWindow.webContents.on('ipc-message', (e, channel, data) => {
+        if (channel === 'ACCOUNT_SERVICE::getAccountResponse') {
+          resolve(data);
+        }
+
+        if (channel === 'ACCOUNT_SERVICE::getAccountResponseError') {
           reject(data);
         }
       });

@@ -12,6 +12,7 @@ import Notifier from '../../../services/notifier.service';
 
 // REDUX ACTIONS
 import { refreshToken } from '../../actions/global';
+import { loadAccountData } from '../../actions/account/account';
 
 const account = new Account();
 const notifier = new Notifier();
@@ -34,6 +35,17 @@ export default function MainWindow() {
     account.on('ACCOUNT_SERVICE::refreshToken', token => {
       dispatch(refreshToken(token));
     });
+
+    account.on('ACCOUNT_SERVICE::accountData', data => {
+      // Storing the Account Data in the redux store from Login
+      dispatch(loadAccountData(data));
+    });
+
+    return () => {
+      account.removeAllListeners('ACCOUNT_SERVICE::accountData');
+      account.removeAllListeners('ACCOUNT_SERVICE::refreshToken');
+      ipcRenderer.removeAllListeners('dark-mode');
+    };
   }, []);
 
   const handleSelect = activeKey => {

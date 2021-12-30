@@ -1,5 +1,25 @@
 import { Dispatch as ReduxDispatch, Store as ReduxStore, Action } from 'redux';
 
+export type AccountType = {
+  accountId: number;
+  uid: string;
+  driveEncryptionKey: string;
+  secretBoxPubKey: string;
+  secretBoxPrivKey: string;
+  deviceSigningPubKey: string;
+  deviceSigningPrivKey: string;
+  serverSig: string;
+  deviceId: string;
+  displayName: string;
+  avatar: any;
+};
+
+export type AccountAction = {
+  type: string;
+  payload?: any;
+  error?: string | Error;
+};
+
 export type ContactType = {
   id?: number;
   name: string;
@@ -233,6 +253,7 @@ export type MailType = {
 
 export type StateType = {
   client: ClientType;
+  account: AccountType;
   mail: {
     mailboxes: MailType;
     folders: MailType;

@@ -41,6 +41,14 @@ const model = {
     type: Sequelize.STRING,
     allowNull: false
   },
+  displayName: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
+  avatar: {
+    type: Sequelize.BLOB('medium'),
+    allowNull: true
+  },
   // Timestamps
   createdAt: Sequelize.DATE,
   updatedAt: Sequelize.DATE

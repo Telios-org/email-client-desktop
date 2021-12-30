@@ -4,24 +4,6 @@ const worker = require('../workers/main.worker');
 const Login = require('./login.service');
 
 class MailService {
-  static async reloadSession() {
-    try {
-      const account = await Login.getAccount();
-
-      await Login.loadMailbox();
-
-      // await Login.initSession(
-      //   { password: null, email: null },
-      //   account.secretBoxPrivKey,
-      //   account.secretBoxPubKey
-      // );
-
-      return true;
-    } catch (e) {
-      console.log(e);
-      throw new Error(e);
-    }
-  }
 
   static loadMailbox(payload) {
     worker.send({ event: 'loadMailbox', payload });
@@ -177,7 +159,6 @@ class MailService {
 
         if (error) {
           reject(error);
-          MailService.reloadSession();
         }
         return resolve(data);
       });
