@@ -255,6 +255,20 @@ class AccountService extends EventEmitter {
   //   });
   // }
 
+  static async uploadAvatar() {
+    return new Promise((resolve, reject) => {
+      ipcRenderer
+        .invoke('ACCOUNT_SERVICE::uploadAvatar')
+        .then(data => {
+          console.log('UPLODADED AVATAR', data);
+          return resolve(data);
+        })
+        .catch(e => {
+          reject(e);
+        });
+    });
+  }
+
   static logout() {
     worker.send({ event: 'accountLogout', payload: {} });
 

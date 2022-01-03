@@ -33,8 +33,9 @@ type Props = {
 const UserMenu = (props: Props) => {
   const { onSelect } = props;
   const mailbox = useSelector(selectActiveMailbox);
+  const account = useSelector(state => state.account);
   const [displayAddress, setDisplayAddress] = useState('');
-  const [hasAvatar, setHasAvatar] = useState(true);
+  const [hasAvatar, setHasAvatar] = useState(false);
   const popperElRef = React.useRef(null);
   const [targetElement, setTargetElement] = React.useState(null);
   const [popperElement, setPopperElement] = React.useState(null);
@@ -58,6 +59,12 @@ const UserMenu = (props: Props) => {
     }
   }, [mailbox]);
 
+  useEffect(() => {
+    if (account?.avatar?.length > 0) {
+      setHasAvatar(true);
+    }
+  }, [account]);
+
   const onSignout = async () => {
     ipcRenderer.send('logout');
   };
@@ -79,7 +86,7 @@ const UserMenu = (props: Props) => {
               {hasAvatar && (
                 <img
                   className="h-8 w-8 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  src={account.avatar}
                   alt=""
                 />
               )}

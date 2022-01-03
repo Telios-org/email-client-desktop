@@ -7,7 +7,7 @@ module.exports = {
         type: Sequelize.STRING
       }),
       queryInterface.addColumn('Account', 'avatar', {
-        type: Sequelize.BLOB('medium')
+        type: Sequelize.STRING
       })
     ]);
   },

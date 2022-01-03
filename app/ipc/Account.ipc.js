@@ -1,4 +1,5 @@
-const { ipcMain } = require('electron');
+const { ipcMain, dialog } = require('electron');
+const fs = require('fs');
 const store = require('../Store');
 
 module.exports = windowManager => {
@@ -75,5 +76,25 @@ module.exports = windowManager => {
         }
       });
     });
+  });
+
+  ipcMain.handle('ACCOUNT_SERVICE::uploadAvatar', async event => {
+    const options = {
+      title: 'Select your profile picture',
+      buttonLabel: 'Select',
+      filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif', 'jpeg'] }],
+      properties: ['openFile']
+    };
+
+    const { canceled, filePaths } = await dialog.showOpenDialog(options);
+
+    if (!canceled) {
+      const data = await fs.readFileSync(filePaths[0], {
+        encoding: 'base64'
+      });
+      return { canceled, data };
+    }
+
+    return { canceled, data: '' };
   });
 };
