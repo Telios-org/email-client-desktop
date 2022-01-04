@@ -162,7 +162,7 @@ module.exports = userDataPath => {
       acct = await AccountModel.findOne({ raw: true });
 
       // Initialize drive
-      drive = store.setDrive({
+      const drive = store.setDrive({
         name: `${acctPath}/Drive`,
         encryptionKey: acct.driveEncryptionKey,
         keyPair: {
@@ -173,16 +173,23 @@ module.exports = userDataPath => {
 
       await drive.ready();
 
+      const collection = await drive.db.collection('Account');
+      const addtlData = await collection.get(acct.uid);
+
+      process.send({ event: 'ACCOUNT_WORKER::initAcct', data: addtlData.value });
+
+      const fullAcct = { ...acct, ...addtlData.value };
+
       // Initialize remaing tables now that our encryption key is set
       await connection.initAll();
 
-      handleDriveMessages(drive, acct);
+      handleDriveMessages(drive, fullAcct);
 
       // Store account and db connection info in global Store state
       store.setDBConnection(payload.email, connection);
-      store.setAccount(acct);
+      store.setAccount(fullAcct);
 
-      process.send({ event: 'ACCOUNT_WORKER::initAcct', data: acct });
+      process.send({ event: 'ACCOUNT_WORKER::initAcct', data: fullAcct });
     }
 
     if (event === 'accountLogout') {

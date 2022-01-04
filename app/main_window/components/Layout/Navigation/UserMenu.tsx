@@ -151,6 +151,20 @@ const UserMenu = (props: Props) => {
                               : 'text-gray-700'
                           } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
                         >
+                          <span>Release Notes</span>
+                        </div>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <div
+                          style={{ cursor: 'pointer' }}
+                          className={`${
+                            active
+                              ? 'bg-gray-100 text-gray-900'
+                              : 'text-gray-700'
+                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
+                        >
                           <span>Support</span>
                           <span className="text-xs rounded px-2 font-semibold bg-gray-200 text-gray-400">
                             {`V-${pkg.version}`}

@@ -70,7 +70,7 @@ module.exports.init = async (sequelize, opts) => {
   });
 
   Account.addHook('afterFind', async (account, options) => {
-    process.send({ event: 'AFTER_FIND::Account', account });
+    process.send({ event: 'AFTER_FIND::Account', account, options });
     try {
       const drive = store.getDrive();
 
