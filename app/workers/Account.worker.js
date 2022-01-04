@@ -176,8 +176,6 @@ module.exports = userDataPath => {
       const collection = await drive.db.collection('Account');
       const addtlData = await collection.get(acct.uid);
 
-      process.send({ event: 'ACCOUNT_WORKER::initAcct', data: addtlData.value });
-
       const fullAcct = { ...acct, ...addtlData.value };
 
       // Initialize remaing tables now that our encryption key is set

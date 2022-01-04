@@ -62,6 +62,8 @@ const UserMenu = (props: Props) => {
   useEffect(() => {
     if (account?.avatar?.length > 0) {
       setHasAvatar(true);
+    }else{
+      setHasAvatar(false);
     }
   }, [account]);
 
@@ -143,33 +145,39 @@ const UserMenu = (props: Props) => {
                     </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
-                        <div
+                        <a
+                          href="https://github.com/Telios-org/email-client-desktop/releases"
+                          target="_blank"
+                          rel="noreferrer"
                           style={{ cursor: 'pointer' }}
                           className={`${
                             active
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-700'
-                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
+                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline`}
                         >
                           <span>Release Notes</span>
-                        </div>
+                        </a>
                       )}
                     </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
-                        <div
+                        <a
+                          href="https://teliostech.atlassian.net/servicedesk/customer/portal/1"
+                          target="_blank"
+                          rel="noreferrer"
                           style={{ cursor: 'pointer' }}
                           className={`${
                             active
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-700'
-                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
+                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline`}
                         >
                           <span>Support</span>
                           <span className="text-xs rounded px-2 font-semibold bg-gray-200 text-gray-400">
                             {`V-${pkg.version}`}
                           </span>
-                        </div>
+                        </a>
                       )}
                     </Menu.Item>
                     {/* <Menu.Item

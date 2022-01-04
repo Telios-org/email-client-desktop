@@ -6,10 +6,10 @@ import { GeneralPanel, SecurityPanel } from '../../../components/Settings';
 
 const tabs = [
   { name: 'General', panel: GeneralPanel },
-  { name: 'Security', panel: SecurityPanel },
-  { name: 'Notifications', panel: GeneralPanel },
-  { name: 'Plan', panel: GeneralPanel },
-  { name: 'Billing', panel: GeneralPanel }
+  // { name: 'Security', panel: SecurityPanel },
+  // { name: 'Notifications', panel: GeneralPanel },
+  { name: 'Plan / Billing', panel: GeneralPanel },
+  // { name: 'Billing', panel: GeneralPanel }
 ];
 
 function classNames(...classes) {
