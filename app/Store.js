@@ -1,4 +1,4 @@
-const SDK = require('@telios/client-sdk');
+const ClientSDK = require('@telios/client-sdk');
 const Drive = require('@telios/nebula-drive');
 const fs = require('fs');
 const envAPI = require('./env_api.json');
@@ -7,10 +7,11 @@ class Store {
   constructor() {
     this.api = {
       account: () => {
-        return new SDK.Account({
+        const teliosSDK = new ClientSDK({
           provider:
             process.env.NODE_ENV === 'production' || !process.env.NODE_ENV ? envAPI.prod : envAPI.dev
         });
+        return teliosSDK.Account;
       },
       mailbox: null
     };
@@ -151,7 +152,7 @@ class Store {
 
   refreshToken() {
     console.log(this.account);
-
+    const teliosSDK = new ClientSDK();
     const payload = {
       account_key: this.account.secretBoxPubKey,
       device_signing_key: this.account.deviceSigningPubKey,
@@ -159,7 +160,7 @@ class Store {
       sig: this.account.serverSig
     }
 
-    return SDK.Account.createAuthToken(payload, this.account.deviceSigningPrivKey);
+    return teliosSDK.Account.createAuthToken(payload, this.account.deviceSigningPrivKey);
   }
 }
 

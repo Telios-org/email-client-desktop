@@ -1,8 +1,11 @@
 const MemoryStream = require('memorystream');
-const { Crypto } = require('@telios/client-sdk');
+const ClientSDK = require('@telios/client-sdk');
 const { File } = require('../models/file.model');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
+
+const teliosSDK = new ClientSDK();
+const { Crypto } = teliosSDK;
 
 module.exports.saveEmailToDrive = async opts => {
   return new Promise((resolve, reject) => {

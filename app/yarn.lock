@@ -99,10 +99,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^3.2.5":
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-3.2.5.tgz#e69e158bbc292bbf2f2a866c9da970886c050f0a"
-  integrity sha512-YyZJpQ/zWaYw5fc/Mutw6+gQ70M+VCHAg/kPbsMv6EHM/njfuqYCVwFCnVpo4nWsUh3WncD/Wa2qz2NIpxU28A==
+"@telios/client-sdk@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-4.0.0.tgz#c8c4141f0e713d8b4157b7b19f37cb3577b2f805"
+  integrity sha512-YWinC81Fb6q1rCeIq+WYwVPo00WDFy5coSwwXdYmbb2zmo8qhy+mwgQSTyzMEN6B88vbM8QY/ZB/pVDIX7cTyg==
   dependencies:
     "@telios/nebula-drive" "^5.0.0"
     async "^3.2.0"

@@ -25,7 +25,7 @@ import {
   Checkbox,
   HelpBlock
 } from 'rsuite';
-import { Mailbox } from '@telios/client-sdk';
+import ClientSDK from '@telios/client-sdk';
 import Store from 'electron-store';
 import i18n from '../../i18n/i18n';
 import { validateEmail, validateTeliosEmail } from '../../utils/helpers/regex';
@@ -47,9 +47,10 @@ console.log('ENV VAR::', env);
 const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
 const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
 
-const mailbox = new Mailbox({
+const teliosSDK = new ClientSDK({
   provider: requestBase
 });
+const mailbox = teliosSDK.Mailbox;
 
 const errorStyles = errorVisible => {
   return {

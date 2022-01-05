@@ -1,7 +1,8 @@
 const fs = require('fs');
 const Sequelize = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
-const SDK = require('@telios/client-sdk');
+const ClientSDK = require('@telios/client-sdk');
+const { openStdin } = require('process');
 const { Mailbox } = require('../models/mailbox.model');
 const { Folder, DefaultFolders } = require('../models/folder.model');
 const { AliasNamespace } = require('../models/aliasNamespace.model');
@@ -11,7 +12,6 @@ const { File } = require('../models/file.model');
 const fileUtil = require('../utils/file.util');
 const store = require('../Store');
 const envAPI = require('../env_api.json');
-const { openStdin } = require('process');
 
 const { Op } = Sequelize;
 let drive = store.getDrive();
@@ -19,6 +19,9 @@ let drive = store.getDrive();
 module.exports = env => {
   process.on('message', async data => {
     const { event, payload } = data;
+    const teliosSDK = new ClientSDK({
+      provider: env === 'production' || !env ? envAPI.prod : envAPI.dev
+    });
 
     if (event === 'loadMailbox') {
       const account = store.getAccount();
@@ -31,18 +34,16 @@ module.exports = env => {
         deviceId
       } = account;
 
-      const mailbox = new SDK.Mailbox({
-        provider: env === 'production' || !env ? envAPI.prod : envAPI.dev,
-        auth: {
-          claims: {
-            account_key: secretBoxPubKey,
-            device_signing_key: deviceSigningPubKey,
-            device_id: deviceId
-          },
-          device_signing_priv_key: deviceSigningPrivKey,
-          sig: serverSig
-        }
+      teliosSDK.setAuthPayload({
+        claims: {
+          account_key: secretBoxPubKey,
+          device_signing_key: deviceSigningPubKey,
+          device_id: deviceId
+        },
+        device_signing_priv_key: deviceSigningPrivKey,
+        sig: serverSig
       });
+      const mailbox = teliosSDK.Mailbox;
 
       store.setMailbox(mailbox);
       process.send({ event: 'loadMailbox', data: mailbox });
@@ -234,7 +235,7 @@ module.exports = env => {
           env === 'production' || !env ? envAPI.prodMail : envAPI.devMail;
         const { account } = store;
 
-        const keypair = SDK.Crypto.boxKeypairFromStr(
+        const keypair = teliosSDK.Crypto.boxKeypairFromStr(
           `${account.secretBoxPrivKey}${namespace}@${domain}`
         );
 

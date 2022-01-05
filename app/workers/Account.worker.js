@@ -1,4 +1,4 @@
-const SDK = require('@telios/client-sdk');
+const ClientSDK = require('@telios/client-sdk');
 const fs = require('fs');
 const path = require('path');
 const del = require('del');
@@ -16,10 +16,11 @@ const apiDomain =
 module.exports = userDataPath => {
   process.on('message', async data => {
     const { event, payload } = data;
+    const teliosSDK = new ClientSDK({ provider: apiDomain });
 
     if (event === 'ACCOUNT_SERVICE::createAccount') {
       try {
-        const Account = new SDK.Account(apiDomain);
+        const { Account } = teliosSDK;
         const accountUID = randomBytes(8).toString('hex'); // This is used as an anonymous ID that is sent to Matomo
         const acctPath = path.join(userDataPath, `/Accounts/${payload.email}`);
         store.acctPath = acctPath;
@@ -31,8 +32,8 @@ module.exports = userDataPath => {
           secretBoxKeypair,
           signingKeypair,
           mnemonic
-        } = SDK.Account.makeKeys();
-        const encryptionKey = SDK.Crypto.generateAEDKey();
+        } = Account.makeKeys();
+        const encryptionKey = teliosSDK.Crypto.generateAEDKey();
 
         // Create account Nebula drive
         const drive = store.setDrive({
@@ -56,7 +57,7 @@ module.exports = userDataPath => {
         };
 
         // Create registration payload
-        const { account, sig: accountSig } = await SDK.Account.init(
+        const { account, sig: accountSig } = await Account.init(
           opts,
           signingKeypair.privateKey
         );
