@@ -1,7 +1,9 @@
+import { DateTime } from 'luxon';
 import { AccountType, AccountAction } from './types';
 import {
   LOAD_ACCOUNT_DATA,
-  UPDATE_PROFILE_SUCCESS
+  UPDATE_PROFILE_SUCCESS,
+  RETRIEVE_STATS_SUCCESS
 } from '../actions/account/account';
 
 const initialState: AccountType = {
@@ -15,14 +17,45 @@ const initialState: AccountType = {
   serverSig: '',
   deviceId: '',
   displayName: '',
-  avatar: null
+  avatar: null,
+  stats: {
+    plan: 'FREE',
+    dailyEmailUsed: 0,
+    namespaceUsed: 0,
+    aliasesUsed: 0,
+    storageSpaceUsed: 0,
+    dailyEmailResetDate: null,
+    lastUpdated: null
+  }
 };
 
 const account = (state: AccountType = initialState, action: AccountAction) => {
+  let stats;
   switch (action.type) {
     case LOAD_ACCOUNT_DATA:
+      stats = JSON.parse(action.payload.stats);
       return {
-        ...action.payload
+        ...action.payload,
+        stats: {
+          plan: stats.plan,
+          dailyEmailUsed: stats.daily_email_used,
+          namespaceUsed: stats.namespace_used,
+          aliasesUsed: stats.aliases_used,
+          storageSpaceUsed: stats.storage_space_used,
+          dailyEmailResetDate: DateTime.fromISO(stats.daily_email_reset_date),
+          lastUpdated: DateTime.fromISO(stats.last_updated)
+        }
+      };
+    case RETRIEVE_STATS_SUCCESS:
+      return {
+        ...state,
+        stats: {
+          ...action.payload,
+          dailyEmailResetDate: DateTime.fromISO(
+            action.payload.dailyEmailResetDate
+          ),
+          lastUpdated: DateTime.fromISO(action.payload.lastUpdated)
+        }
       };
     case UPDATE_PROFILE_SUCCESS:
       return {

@@ -241,6 +241,22 @@ class AccountService extends EventEmitter {
       });
     });
   }
+
+  static async retrieveStats() {
+    worker.send({
+      event: 'ACCOUNT_SERVICE::retrieveStats'
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.once('ACCOUNT_WORKER::retrieveStats', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
   // static refreshToken() {
   //   worker.send({ event: 'ACCOUNT_SERVICE::refreshToken', payload: { password, email } });
 

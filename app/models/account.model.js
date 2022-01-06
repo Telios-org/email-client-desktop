@@ -50,6 +50,10 @@ const model = {
     type: Sequelize.STRING,
     allowNull: true
   },
+  stats: {
+    type: Sequelize.STRING,
+    allowNull: true
+  },
   // Timestamps
   createdAt: Sequelize.DATE,
   updatedAt: Sequelize.DATE
@@ -114,18 +118,22 @@ module.exports.init = async (sequelize, opts) => {
   Account.addHook('beforeUpdate', async (account, options) => {
     try {
       process.send({ event: 'BEFORE_UPDATE::Account', account, options });
-      const drive = store.getDrive();
-      const collection = await drive.db.collection('Account');
+      if (
+        options.fields.includes('avatar') ||
+        options.fields.includes('displayName')
+      ) {
+        const drive = store.getDrive();
+        const collection = await drive.db.collection('Account');
 
-      // Nullifying the avatar value so it doesn't get stored locally
-      // Instead we'll store yet in the Hyperbee DB Collection
-      const res = await collection.put(account.uid, {
-        displayName: account.displayName,
-        avatar: account.avatar
-      });
-      process.send({ event: 'BEFORE_UPDATE::Account', account, res });
-      account.avatar = null;
-
+        // Nullifying the avatar value so it doesn't get stored locally
+        // Instead we'll store yet in the Hyperbee DB Collection
+        const res = await collection.put(account.uid, {
+          displayName: account.displayName,
+          avatar: account.avatar
+        });
+        process.send({ event: 'BEFORE_UPDATE::Account', account, res });
+        account.avatar = null;
+      }
     } catch (error) {
       process.send({
         event: 'BEFORE_UPDATE::Account',

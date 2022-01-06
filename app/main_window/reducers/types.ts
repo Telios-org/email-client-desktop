@@ -12,12 +12,23 @@ export type AccountType = {
   deviceId: string;
   displayName: string;
   avatar: any;
+  stats: AccountStats;
 };
 
 export type AccountAction = {
   type: string;
   payload?: any;
   error?: string | Error;
+};
+
+export type AccountStats = {
+  plan: string;
+  dailyEmailUsed: number;
+  dailyEmailResetDate: string | null;
+  namespaceUsed: number;
+  aliasesUsed: number;
+  storageSpaceUsed: number;
+  lastUpdated: string | null;
 };
 
 export type ContactType = {

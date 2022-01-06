@@ -99,6 +99,18 @@ module.exports = userDataPath => {
 
         store.setAccount(acctDBPayload);
 
+        const auth = {
+          claims: {
+            account_key: secretBoxKeypair.publicKey,
+            device_signing_key: signingKeypair.publicKey,
+            device_id: account.device_id
+          },
+          device_signing_priv_key: signingKeypair.privateKey,
+          sig: serverSig
+        };
+
+        store.setAuthPayload(auth);
+
         process.send({
           event: 'ACCOUNT_WORKER::createAccount',
           data: {
@@ -188,6 +200,18 @@ module.exports = userDataPath => {
       store.setDBConnection(payload.email, connection);
       store.setAccount(fullAcct);
 
+      const auth = {
+        claims: {
+          account_key: fullAcct.secretBoxPubKey,
+          device_signing_key: fullAcct.deviceSigningPubKey,
+          device_id: fullAcct.deviceId
+        },
+        device_signing_priv_key: fullAcct.deviceSigningPrivKey,
+        sig: fullAcct.serverSig
+      };
+
+      store.setAuthPayload(auth);
+
       process.send({ event: 'ACCOUNT_WORKER::initAcct', data: fullAcct });
     }
 
@@ -228,6 +252,52 @@ module.exports = userDataPath => {
       } catch (e) {
         process.send({
           event: 'ACCOUNT_WORKER::updateAccount',
+          error: e.message
+        });
+      }
+    }
+
+    if (event === 'ACCOUNT_SERVICE::retrieveStats') {
+      try {
+        const { uid } = store.getAccount();
+        const auth = store.getAuthPayload();
+        teliosSDK.setAuthPayload(auth);
+
+        const { Account } = teliosSDK;
+
+        const stats = await Account.retrieveStats();
+
+        const stringStats = JSON.stringify(stats);
+
+        await AccountModel.update(
+          {
+            stats: stringStats
+          },
+          {
+            where: {
+              uid
+            },
+            individualHooks: true
+          }
+        );
+
+        const finalPayload = {
+          plan: stats.plan,
+          dailyEmailUsed: stats.daily_email_used,
+          dailyEmailResetDate: stats.daily_email_reset_date,
+          namespaceUsed: stats.namespace_used,
+          aliasesUsed: stats.aliases_used,
+          storageSpaceUsed: stats.storage_space_used,
+          lastUpdated: stats.last_updated
+        };
+
+        process.send({
+          event: 'ACCOUNT_WORKER::retrieveStats',
+          data: finalPayload
+        });
+      } catch (e) {
+        process.send({
+          event: 'ACCOUNT_WORKER::retrieveStats',
           error: e.message
         });
       }

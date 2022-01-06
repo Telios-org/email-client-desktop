@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Camera } from 'react-iconly';
 import { selectActiveMailbox } from '../../selectors/mail';
 
-import { uploadAvatar } from '../../../services/account.service';
+import Account from '../../../services/account.service';
 
-import { updateProfile } from '../../actions/account/account';
+import { updateProfile, retrieveStats } from '../../actions/account/account';
 
 import useForm from '../../../utils/hooks/useForm';
 
@@ -41,7 +41,7 @@ const GeneralPanel = () => {
   });
 
   const upload = async () => {
-    const result = await uploadAvatar();
+    const result = await Account.uploadAvatar();
 
     if (!result.canceled) {
       manualChange('avatar', `data:image/png;base64,${result.data}`);
@@ -59,6 +59,12 @@ const GeneralPanel = () => {
       setHasAvatar(false);
     }
   }, [profile]);
+
+  // Retrieving the Updated Account Stats from Telios Server
+  useEffect(() => {
+    console.log('RETRIEVING STATS');
+    dispatch(retrieveStats());
+  }, []);
 
   return (
     <div className="space-y-6 py-8">
