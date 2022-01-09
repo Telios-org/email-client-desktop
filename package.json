@@ -98,17 +98,12 @@
       ]
     },
     "win": {
-      "target": [
-        "nsis"
-      ],
-      "certificateFile": "C:/gitlab-runner/builds/telios_csc_nopw.p12",
-      "certificatePassword": "",
+      "target": ["nsis"],
       "verifyUpdateCodeSignature": true,
       "publisherName": "Telios Technologies, Inc",
       "signAndEditExecutable": true,
-      "signingHashAlgorithms": [
-        "sha256"
-      ]
+      "signingHashAlgorithms": ["sha256"],
+      "sign": "./sign.js"
     },
     "linux": {
       "target": [

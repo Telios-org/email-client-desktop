@@ -68,6 +68,7 @@ version-beta:
   stage: build
   image: registry.gitlab.com/telios2/telios-devops/electronbuilder:wine
   script:
+    - mkdir -p release_signing/tmp
     - yarn install
     - yarn package-${PLATFORM}
     - git status
