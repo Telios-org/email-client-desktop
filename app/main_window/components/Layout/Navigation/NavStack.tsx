@@ -16,15 +16,20 @@ type Props = {
 const NavStack = (props: Props) => {
   const { active, onSelect } = props;
   return (
-    <>
-      <div className="flex flex-col items-center flex-1">
-        <NavIcon active={active} eventKey="mail" onClick={onSelect} />
-        <NavIcon active={active} eventKey="contacts" onClick={onSelect} />
+    <div className="flex flex-col w-16 border-gray-200 border-r">
+      <div className="flex-1 flex flex-col min-h-0 overflow-y-aut pt-6">
+        <nav
+          aria-label="Sidebar"
+          className="flex-1 flex-col items-center space-y-3"
+        >
+          <NavIcon active={active} eventKey="mail" onClick={onSelect} />
+          <NavIcon active={active} eventKey="contacts" onClick={onSelect} />
+        </nav>
+        <div className="flex-shrink-0 flex pb-5 items-center justify-center">
+          <UserMenu onSelect={onSelect} />
+        </div>
       </div>
-      <div className="flex flex-col items-center w-full justify-center mb-6">
-        <UserMenu onSelect={onSelect} />
-      </div>
-    </>
+    </div>
   );
 };
 

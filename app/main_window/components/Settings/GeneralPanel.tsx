@@ -62,17 +62,16 @@ const GeneralPanel = () => {
 
   // Retrieving the Updated Account Stats from Telios Server
   useEffect(() => {
-    console.log('RETRIEVING STATS');
     dispatch(retrieveStats());
   }, []);
 
   return (
-    <div className="space-y-6 py-8">
+    <div className="space-y-6">
       <section aria-labelledby="account-details-heading">
         <form onSubmit={handleSubmit}>
-          <div className="shadow rounded-md overflow-hidden">
-            <div className="bg-white py-6 px-7">
-              <div>
+          <div className="border border-gray-200 rounded-md overflow-hidden">
+            <div className="bg-white py-6 px-7 xl:grid xl:grid-cols-3 xl:gap-6">
+              <div className="xl:col-span-1">
                 <h2
                   id="payment-details-heading"
                   className="text-lg leading-6 font-medium text-gray-900"
@@ -84,8 +83,8 @@ const GeneralPanel = () => {
                   you share.
                 </p>
               </div>
-              <div className="mt-6 grid grid-cols-4 gap-6">
-                <div className="relative col-span-2">
+              <div className="mt-6 xl:mt-0 xl:col-span-2 grid grid-cols-4 gap-6">
+                <div className="relative col-span-2 xl:col-span-3">
                   <label
                     htmlFor="display-name"
                     className="block text-sm font-medium text-gray-700"
@@ -108,7 +107,7 @@ const GeneralPanel = () => {
                   )}
                 </div>
 
-                <div className="col-span-2">
+                <div className="col-span-2 pl-4 xl:pl-0 xl:col-span-4">
                   <label
                     htmlFor="photo"
                     className="block text-sm font-medium text-gray-700"
@@ -117,11 +116,13 @@ const GeneralPanel = () => {
                   </label>
                   <div className="mt-1 flex items-center">
                     {hasAvatar && (
-                      <img
-                        className="inline-block h-12 w-12 rounded-full"
-                        src={profile.avatar}
-                        alt=""
-                      />
+                      <div className="shadow border border-gray-400/70 rounded-full">
+                        <img
+                          className="inline-block h-12 w-12 rounded-full"
+                          src={profile.avatar}
+                          alt=""
+                        />
+                      </div>
                     )}
                     {!hasAvatar && (
                       <div className="h-12 w-12 rounded-full border-2 flex items-center justify-center">

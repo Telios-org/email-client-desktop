@@ -25,7 +25,12 @@ const initialState: AccountType = {
     aliasesUsed: 0,
     storageSpaceUsed: 0,
     dailyEmailResetDate: null,
-    lastUpdated: null
+    lastUpdated: null,
+    maxOutgoingEmails: 0,
+    maxAliasNames: 0,
+    maxAliasAddresses: 0,
+    maxGBCloudStorage: 0,
+    maxGBBandwidth: 0
   }
 };
 
@@ -43,7 +48,12 @@ const account = (state: AccountType = initialState, action: AccountAction) => {
           aliasesUsed: stats.aliases_used,
           storageSpaceUsed: stats.storage_space_used,
           dailyEmailResetDate: DateTime.fromISO(stats.daily_email_reset_date),
-          lastUpdated: DateTime.fromISO(stats.last_updated)
+          lastUpdated: DateTime.fromISO(stats.last_updated),
+          maxOutgoingEmails: stats.maxOutgoingEmails,
+          maxAliasNames: stats.maxAliasNames,
+          maxAliasAddresses: stats.maxAliasAddresses,
+          maxGBCloudStorage: stats.maxGBCloudStorage,
+          maxGBBandwidth: stats.maxGBBandwidth
         }
       };
     case RETRIEVE_STATS_SUCCESS:

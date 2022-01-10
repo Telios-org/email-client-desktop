@@ -288,7 +288,12 @@ module.exports = userDataPath => {
           namespaceUsed: stats.namespace_used,
           aliasesUsed: stats.aliases_used,
           storageSpaceUsed: stats.storage_space_used,
-          lastUpdated: stats.last_updated
+          lastUpdated: stats.last_updated,
+          maxOutgoingEmails: stats.maxOutgoingEmails,
+          maxAliasNames: stats.maxAliasNames,
+          maxAliasAddresses: stats.maxAliasAddresses,
+          maxGBCloudStorage: stats.maxGBCloudStorage,
+          maxGBBandwidth: stats.maxGBBandwidth
         };
 
         process.send({

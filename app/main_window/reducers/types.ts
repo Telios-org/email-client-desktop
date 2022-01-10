@@ -29,6 +29,11 @@ export type AccountStats = {
   aliasesUsed: number;
   storageSpaceUsed: number;
   lastUpdated: string | null;
+  maxOutgoingEmails: number;
+  maxAliasNames: number;
+  maxAliasAddresses: number;
+  maxGBCloudStorage: number;
+  maxGBBandwidth: number;
 };
 
 export type ContactType = {

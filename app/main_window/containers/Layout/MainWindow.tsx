@@ -58,12 +58,12 @@ export default function MainWindow() {
         <GlobalTopBar />
       </div>
       <div className="w-full bg-gradient-to-r from-blue-400 to-purple-700 h-1" />
-      <div className="flex flex-row flex-grow">
-        <div className="h-full flex flex-col w-16 pt-6 justify-center border-r border-gray-200 shadow">
+      <div className="min-h-0 flex-1 flex overflow-hidden">
+        <div className="flex flex-shrink-0">
           <NavStack active={active} onSelect={handleSelect} />
         </div>
         <div className="flex flex-col w-full rounded-tl overflow-hidden ">
-          <div className="flex-grow h-full bg-coolGray-100">
+          <div className="flex-grow h-full bg-coolGray-100 overflow-scroll">
             {active === 'mail' && <MailPage />}
             {/* {active === 'files' && <div>Files page</div>} */}
             {active === 'contacts' && <ContactPage />}

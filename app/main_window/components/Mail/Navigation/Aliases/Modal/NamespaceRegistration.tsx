@@ -160,7 +160,7 @@ export default function AliasModal(props: Props) {
               <b>{`#myalias@${domain}`}</b>
             </p>
             <p className="text-sm">
-              You namespace is unique to you. You can choose it yourself or
+              Your namespace is unique to you. You can choose it yourself or
               randomly generate it.
             </p>
           </div>

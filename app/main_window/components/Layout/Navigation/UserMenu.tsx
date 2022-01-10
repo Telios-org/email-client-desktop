@@ -72,7 +72,7 @@ const UserMenu = (props: Props) => {
   };
 
   return (
-    <Menu as="div" className="relative">
+    <Menu as="div" className="relative ">
       {({ open }) => (
         <>
           <div
