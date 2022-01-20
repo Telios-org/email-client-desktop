@@ -60,31 +60,28 @@ const GeneralPanel = () => {
     }
   }, [profile]);
 
-  // Retrieving the Updated Account Stats from Telios Server
-  useEffect(() => {
-    dispatch(retrieveStats());
-  }, []);
-
   return (
     <div className="space-y-6">
-      <section aria-labelledby="account-details-heading">
-        <form onSubmit={handleSubmit}>
-          <div className="border border-gray-200 rounded-md overflow-hidden">
-            <div className="bg-white py-6 px-7 xl:grid xl:grid-cols-3 xl:gap-6">
-              <div className="xl:col-span-1">
-                <h2
-                  id="payment-details-heading"
-                  className="text-lg leading-6 font-medium text-gray-900"
-                >
-                  Profile
-                </h2>
-                <p className="mt-1 text-sm text-gray-500">
-                  This information may be displayed publicly so be careful what
-                  you share.
-                </p>
-              </div>
-              <div className="mt-6 xl:mt-0 xl:col-span-2 grid grid-cols-4 gap-6">
-                <div className="relative col-span-2 xl:col-span-3">
+      <section
+        aria-labelledby="account-details-heading"
+      >
+        <form onSubmit={handleSubmit} className="xl:grid xl:grid-cols-3 xl:gap-6">
+          <div className="xl:col-span-1">
+            <h3
+              id="payment-details-heading"
+              className="text-lg leading-6 font-medium text-gray-900"
+            >
+              Profile
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              This information may be displayed publicly so be careful what you
+              share.
+            </p>
+          </div>
+          <div className="mt-5 xl:mt-0 border border-gray-300 rounded-md overflow-hidden xl:col-span-2">
+            <div className="bg-white py-6 px-7">
+              <div className="grid grid-cols-4 gap-6">
+                <div className="relative col-span-2 xl:col-span-4">
                   <label
                     htmlFor="display-name"
                     className="block text-sm font-medium text-gray-700"
@@ -137,14 +134,14 @@ const GeneralPanel = () => {
                       <button
                         type="button"
                         onClick={upload}
-                        className="bg-transparent py-2 px-3 border border-blue-gray-300 rounded-md text-sm font-medium text-blue-gray-900 hover:text-blue-gray-700 focus:outline-none focus:border-blue-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-gray-50 focus:ring-blue-500"
+                        className="bg-transparent py-2 px-3 border border-blue-gray-300 rounded-md text-sm font-medium text-blue-gray-900 hover:text-blue-gray-700 focus:outline-none focus:border-blue-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-gray-50 focus:ring-purple-500"
                       >
                         Change
                       </button>
                       <button
                         type="button"
                         onClick={removeAvatar}
-                        className="ml-3 bg-transparent py-2 px-3 border border-transparent rounded-md text-sm font-medium text-blue-gray-900 hover:text-blue-gray-700 focus:outline-none focus:border-blue-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-gray-50 focus:ring-blue-500"
+                        className="ml-3 bg-transparent py-2 px-3 border border-transparent rounded-md text-sm font-medium text-blue-gray-900 hover:text-blue-gray-700 focus:outline-none focus:border-blue-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-gray-50 focus:ring-purple-500"
                       >
                         Remove
                       </button>
@@ -153,12 +150,12 @@ const GeneralPanel = () => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end py-3 bg-gray-50 text-right px-6">
+            <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300">
               <button
                 type="button"
                 onClick={resetForm}
                 disabled={!isDirty}
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-3"
+                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 mr-3"
               >
                 Cancel
               </button>

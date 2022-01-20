@@ -307,13 +307,23 @@ module.exports = userDataPath => {
         });
       }
     }
+
+    if (event === 'ACCOUNT_SERVICE::refreshToken') {
+      try {
+        const token = store.refreshToken();
+        process.send({
+          event: 'ACCOUNT_WORKER::refreshToken',
+          data: { token }
+        });
+      } catch (e) {
+        process.send({
+          event: 'ACCOUNT_WORKER::refreshToken',
+          error: e.message
+        });
+      }
+    }
   });
 };
-
-function refreshToken() {
-  const token = store.refreshToken();
-  process.send({ event: 'ACCOUNT_WORKER::refreshToken', data: { token } });
-}
 
 async function handleDriveMessages(drive, account) {
   drive.on('message', (peerPubKey, data) => {

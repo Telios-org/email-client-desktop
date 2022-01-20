@@ -1,0 +1,76 @@
+.featureSvg::before{
+    content: "";
+    position: absolute;
+    top: -0.8rem;
+    bottom: -0.5rem;
+    left: 1.25rem;
+    width: 1.25rem;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='200' viewBox='0 0 12 200' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 1 0 V 200 M 1 100 H 12' stroke='%23a1a1aa' stroke-width='2'/%3E%3C/svg%3E%0A");
+    background-repeat: no-repeat;
+    background-position: 0;
+}
+
+.featureSvgLast::before{
+    content: "";
+    position: absolute;
+    top: -0.75rem;
+    bottom: -0.5rem;
+    left: 1.25rem;
+    width: 1.25rem;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='200' viewBox='0 0 12 200' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 1 0 V 89 Q 1 100 12 100' stroke='%23a1a1aa' stroke-width='2'/%3E%3C/svg%3E%0A");
+    background-repeat: no-repeat;
+    background-position: 0;
+}
+
+
+/* .featurePlans {
+    @apply grid grid-cols-5 text-xs
+}
+
+.featurePlans > ul:nth-child(1) {
+    @apply col-span-1 font-medium
+}
+
+.featurePlans > ul:nth-child(2) {
+    @apply text-center col-span-1
+}
+
+.featurePlans > ul li {
+    @apply h-8 flex items-center
+}
+
+.featurePlans > ul li:nth-child(odd){
+    @apply bg-purple-100
+}
+
+.featurePlans > ul:nth-child(1) li:nth-child(odd){
+    @apply rounded-l 
+}
+
+.featurePlans > ul:nth-child(1) li{
+    @apply pl-2 justify-end
+}
+
+.featurePlans > ul:not(:first-child) li{
+    @apply flex justify-center
+}
+
+.featurePlans > ul:last-child li:nth-child(odd){
+    @apply rounded-r 
+}
+
+.featurePlans > ul li:nth-child(even){
+    @apply py-1 my-1
+}
+
+.pricePoint > div {
+    @apply text-center text-xl flex justify-center items-baseline
+}
+
+.pricePoint > div span:first-child {
+    @apply text-2xl font-extrabold text-gray-900
+}
+
+.pricePoint > div span:nth-child(2) {
+    @apply text-sm font-medium text-gray-500
+} */

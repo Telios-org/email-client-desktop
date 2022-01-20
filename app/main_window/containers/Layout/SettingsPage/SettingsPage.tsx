@@ -1,25 +1,21 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tab } from '@headlessui/react';
 import { Filter, Wallet, Password, Setting, ShieldDone } from 'react-iconly';
-import {
-  BellIcon,
-  CogIcon,
-  CreditCardIcon,
-  KeyIcon,
-  MenuIcon,
-  UserCircleIcon,
-  ViewGridAddIcon,
-  XIcon,
-} from '@heroicons/react/outline'
-import StatsList from '../../../components/Settings/Stats/StatsList';
+import BrowserView, { removeViews } from 'react-electron-browser-view';
+import { retrieveStats } from '../../../actions/account/account';
 
-import { GeneralPanel, SecurityPanel } from '../../../components/Settings';
+import {
+  GeneralPanel,
+  SecurityPanel,
+  BillingPayments
+} from '../../../components/Settings';
 
 const tabs = [
-  { name: 'General', panel: GeneralPanel, icon: Setting }, // { name: 'Notifications', panel: GeneralPanel },
-  { name: 'Plan / Billing', panel: GeneralPanel, icon: Wallet },
-  { name: 'Security', panel: SecurityPanel, icon: ShieldDone }
+  { name: 'General', component: GeneralPanel, icon: Setting }, // { name: 'Notifications', panel: GeneralPanel },
+  { name: 'Plan & Billing', component: BillingPayments, icon: Wallet },
+  { name: 'Security', component: SecurityPanel, icon: ShieldDone }
   // { name: 'Billing', panel: GeneralPanel }
 ];
 
@@ -27,85 +23,82 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-// const SettingsPage = () => {
-//   return (
-//     <div className="max-w-5xl mx-auto flex flex-col md:px-8 xl:px-0">
-//       <main className="flex-1">
-//         <div className="relative max-w-5xl mx-auto md:px-8 xl:px-0">
-//           <div className="pt-10 pb-16">
-//             <StatsList />
-//             <div className="">
-//               <h1 className="text-xl font-extrabold text-gray-900">
-//                 Account Settings
-//               </h1>
-//             </div>
-//             {/* <div className="block">
-//               <div className="border-b border-gray-200">
-//                 <nav className="-mb-px flex space-x-8">
-//                   {tabs.map(tab => (
-//                     <a
-//                       key={tab.name}
-//                     //   href='#'
-//                       className={classNames(
-//                         tab.current
-//                           ? 'border-purple-500 text-purple-600'
-//                           : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
-//                         'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:no-underline'
-//                       )}
-//                     >
-//                       {tab.name}
-//                     </a>
-//                   ))}
-//                 </nav>
-//               </div>
-//             </div> */}
-//             <Tab.Group>
-//               <Tab.List className="border-b border-gray-200 flex space-x-8">
-//                 {tabs.map(tab => (
-//                   <Tab
-//                     className={({ selected }) =>
-//                       classNames(
-//                         selected
-//                           ? 'border-purple-500 text-purple-600'
-//                           : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
-//                         'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:no-underline outline-none'
-//                       )}
-//                     key={`list_${tab.name}`}
-//                   >
-//                     {tab.name}
-//                   </Tab>
-//                 ))}
-//               </Tab.List>
-//               <Tab.Panels>
-//                 {tabs.map(tab => {
-//                   const DesignatedPanel = tab.panel;
-//                   return (
-//                     <Tab.Panel
-//                       key={`panel_${tab.name}`}
-//                       className="outline-none"
-//                     >
-//                       <DesignatedPanel />
-//                     </Tab.Panel>
-//                   );
-//                 })}
-//               </Tab.Panels>
-//             </Tab.Group>
-//           </div>
-//         </div>
-//       </main>
-//     </div>
-//   );
-// };
-
 const SettingsPage = () => {
+  const dispatch = useDispatch();
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [browserURL, setBrowserURL] = useState('');
+
+  useEffect(() => {
+    // Retrieving the Updated Account Stats from Telios Server
+    dispatch(retrieveStats());
+    return () => {
+      // removeViews();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!browserURL.includes('http')) {
+      setShowOverlay(false);
+      // removeViews();
+    }
+    return () => {
+      // removeViews();
+    };
+  }, [browserURL]);
+
+  const handleOverlay = (url: string) => {
+    setBrowserURL(url);
+    setShowOverlay(true);
+  };
+
   return (
-    <div className="py-8">
-      <div className="px-8 w-full flex flex-row">
+    <div className="relative h-full">
+      {showOverlay && browserURL.includes('http') && (
+        <div className="bg-white absolute h-full w-full top-0 left-0 z-20">
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-2/4 -translate-y-2/4">
+            <svg
+              className="animate-spin -ml-1 mr-3 h-12 w-12 text-gray-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          </div>
+          <div className="relative z-30 h-full w-full">
+            <BrowserView
+              src={browserURL}
+              onWillNavigate={(e, t) => {
+                e.preventDefault();
+                console.log('BROWSER::', e, t);
+                if (t.includes('canceled')) {
+                  setShowOverlay(false);
+                }
+              }}
+            />
+          </div>
+        </div>
+      )}
+      <div className="w-full h-full flex flex-row max-w-[90rem] mx-auto">
         <Tab.Group vertical>
-          <div className="w-56">
+          <div className="w-56 min-w-56 pl-8 py-8">
             <nav aria-label="Sidebar" className="sticky top-6">
-              <h2 className="font-bold text-base">Account Settings</h2>
-              <Tab.List className="flex flex-col space-y-1">
+              <h4 className="text-sm leading-6 font-medium text-gray-900">
+                Account Settings
+              </h4>
+              <Tab.List className="flex flex-col space-y-1 mt-1">
                 {tabs.map(tab => (
                   <Tab as={Fragment} key={`list_${tab.name}`}>
                     {({ selected }) => (
@@ -113,22 +106,24 @@ const SettingsPage = () => {
                         type="button"
                         className={classNames(
                           selected
-                            ? 'bg-sky-50 text-sky-500 font-medium border border-sky-200 border-l-0'
+                            ? 'bg-purple-50 text-purple-500 font-medium border border-purple-200 border-l-0'
                             : 'text-gray-600 hover:text-gray-700 hover:font-medium',
-                          'group px-3 py-2.5 flex items-center text-sm outline-none relative rounded'
+                          'group px-3 py-1.5 flex items-center text-sm outline-none relative rounded'
                         )}
                       >
                         <span
                           className={classNames(
-                            selected ? 'bg-sky-500' : 'bg-transparent',
+                            selected ? 'bg-purple-500' : 'bg-transparent',
                             'absolute w-0.5 h-full rounded-l-lg left-0'
                           )}
                         />
                         <tab.icon
-                          set='broken'
-                          size='medium'
+                          set="broken"
+                          size="medium"
                           className={classNames(
-                            selected ? 'text-inherit' : 'text-gray-400 group-hover:text-gray-600',
+                            selected
+                              ? 'text-inherit'
+                              : 'text-gray-400 group-hover:text-gray-600',
                             'flex-shrink-0 ml-1 mb-0.5 mr-2 h-5 w-5'
                           )}
                         />
@@ -140,17 +135,21 @@ const SettingsPage = () => {
               </Tab.List>
             </nav>
           </div>
-          <main className="ml-8 flex-grow">
+          <main className="ml-8 pr-8 py-8 flex-1 relative overflow-y-scroll h-full">
             <div className="px-4 sm:px-0">
               <Tab.Panels>
                 {tabs.map(tab => {
-                  const DesignatedPanel = tab.panel;
+                  const tabProps = {};
+
+                  if (tab.name === 'Plan & Billing') {
+                    tabProps.handleOverlay = handleOverlay;
+                  }
                   return (
                     <Tab.Panel
                       key={`panel_${tab.name}`}
                       className="outline-none"
                     >
-                      <DesignatedPanel />
+                      <tab.component {...tabProps} />
                     </Tab.Panel>
                   );
                 })}

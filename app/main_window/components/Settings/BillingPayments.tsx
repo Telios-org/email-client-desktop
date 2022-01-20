@@ -1,155 +1,442 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Divider, Panel, Icon, Button, Progress, Modal, Placeholder } from 'rsuite';
-import BrowserView from 'react-electron-browser-view';
+import { DateTime } from 'luxon';
+import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  Divider,
+  Panel,
+  Icon,
+  Button,
+  Progress,
+  Modal,
+  Placeholder
+} from 'rsuite';
+import {
+  CheckIcon,
+  SparklesIcon,
+  XIcon,
+  HashtagIcon,
+  DatabaseIcon,
+  UploadIcon
+} from '@heroicons/react/outline';
+
+import AccountService from '../../../services/account.service';
+
+import PlanComparison from './BillingPayments/PlanComparison';
+import teliosLogo from '../../../../resources/img/telios_color_logo.svg';
+import classNames from '../../../utils/helpers/css';
 
 // REDUX STATE SELECTORS
 import { selectAuthToken } from '../../selectors/global';
 
+// IMPORT A FEW CSS CLASSES
+import styles from './BillingPayments.css';
+
+const envAPI = require('../../../env_api.json');
+const humanFileSize = require('../../../utils/attachment.util');
+
+const params = window.location.search.replace('?', '');
+const env = params.split('=')[1];
+const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
+
 type Props = {
+  handleOverlay: (url: string) => void;
 };
 
-export default function BillingsPayemnts(props: Props) {
-  const { Line } = Progress;
-  const { Paragraph } = Placeholder;
-
+const BillingPayments = (props: Props) => {
+  const dispatch = useDispatch();
   const authToken = useSelector(selectAuthToken);
+  const stats = useSelector(state => state.account.stats);
 
-  const [show, setShow] = useState(false);
-  let paymentWebview = useRef(null);
+  const { handleOverlay } = props;
 
-  const close = () => {
-    setShow(false);
+  const [pctValues, setPctValues] = useState({
+    namespacePct: '',
+    aliasPct: '',
+    storagePct: '',
+    dailyTrafficPct: ''
+  });
+
+  const [showPricing, setShowPricing] = useState(false);
+
+  const pctString = (numerator, denominator) => {
+    const value = Math.round((numerator / denominator) * 100);
+    return `${value}%`;
+  };
+
+  useEffect(() => {
+    setPctValues({
+      namespacePct: pctString(stats.namespaceUsed, stats.maxAliasNames),
+      aliasPct: pctString(stats.aliasesUsed, stats.maxAliasAddresses),
+      storagePct: pctString(
+        stats.storageSpaceUsed,
+        stats.maxGBCloudStorage * 1048576
+      ),
+      dailyTrafficPct: pctString(stats.dailyEmailUsed, stats.maxOutgoingEmails)
+    });
+  }, [stats]);
+
+  const togglePriceCompare = () => {
+    setShowPricing(!showPricing);
+  };
+
+  const openStripe = async () => {
+    try {
+      const token = await AccountService.refreshToken();
+      console.log(token);
+
+      const options = {
+        method: 'post',
+        url: `${requestBase}/stripe/customer-portal`,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
+
+      const {
+        data: { url }
+      } = await axios(options);
+
+      console.log(url);
+      handleOverlay(url);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  if (showPricing) {
+    return (
+      <PlanComparison currentPlan={stats.plan} hide={togglePriceCompare} />
+    );
   }
-
-  const open = () => {
-    setShow(true);
-  }
-
-  console.log('paymentWebview', paymentWebview)
 
   return (
-    <div className="overflow-hidden">
-      <div className="grid grid-cols-2">
-        <h4 className="">Current plan</h4>
-        <div className="justify-self-end">
-          <Button
-            className="text-purple-700 border-purple-700 active:shadow-sm mr-4"
-            appearance="ghost"
+    <div className="space-y-6">
+      <section
+        aria-labelledby="account-user-plan"
+        className="xl:grid xl:grid-cols-3 xl:gap-6"
+      >
+        <div className="xl:col-span-1">
+          <h3
+            id="payment-details-heading"
+            className="text-lg leading-6 font-medium text-gray-900"
           >
-            View Billing Info
-          </Button>
-          <Button
-            className="bg-gradient-to-tr from-purple-700 to-purple-500 rounded text-sm justify-center shadow active:shadow-sm"
-            appearance="primary"
-            onClick={open}
-          >
-            Upgrade
-          </Button>
+            Current Plan
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Lists your current subscription with Telios and allows you to manage
+            your billing preferences
+          </p>
         </div>
-      </div>
-      <Divider style={{ margin: '8px 0' }} />
-      <div className="mb-8">
-        <Panel bordered bodyFill>
-          <h6 className="bg-gray-100 p-4">Free</h6>
-          <Divider style={{ margin: '0' }} />
-          <div className="bg-white p-4">
-            <ul>
-              <li className="mb-2 text-sm">
-                <span className="text-green-500 mr-2"><Icon icon="check" /></span> Unlimited emails in network
-              </li>
-              <li className="mb-2 text-sm">
-                <span className="text-green-500 mr-2"><Icon icon="check" /></span> 100 outgoing emails daily out of network
-              </li>
-              <li className="mb-2 text-sm">
-                <span className="text-green-500 mr-2"><Icon icon="check" /></span> 1 email address
-              </li>
-              <li className="mb-2 text-sm">
-                <span className="text-green-500 mr-2"><Icon icon="check" /></span> 5 email aliases
-              </li>
-              <li className="mb-2 text-sm">
-                <span className="text-green-500 mr-2"><Icon icon="check" /></span> Limited support
-              </li>
-            </ul>
-          </div>
-        </Panel>
-      </div>
-      <h4>Usage this month</h4>
-      <Divider style={{ margin: '8px 0' }} />
-      <div className="mb-8">
-        <Panel bordered bodyFill>
-          <h6 className="bg-gray-100 p-4">Storage</h6>
-          <Divider style={{ margin: '0' }} />
-          <div className="bg-white p-4">
-            <span className="text-xs text-gray-500">Drive storage</span>
-            <span className="text-xs text-gray-500 float-right">15 MB of 500 MB included</span>
-            <Line style={{ padding: '8px 0' }} percent={15} showInfo={false} />
-          </div>
-        </Panel>
-      </div>
+        <div className="mt-5 xl:mt-0 border border-gray-300 bg-white rounded-md overflow-hidden xl:col-span-2">
+          <div className="py-6 px-7 flex flex-row relative border-gray-300 border-b justify-between">
+            <div className="flex flex-row">
+              <img
+                className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-900"
+                src={teliosLogo}
+                alt="Telios Logo"
+              />
+              <div>
+                <h4 className="text-sm leading-6 font-bold text-gray-900">
+                  Basic Privacy Plan
+                </h4>
 
-      <div className="mb-8">
-        <Panel bordered bodyFill>
-          <h6 className="bg-gray-100 p-4">Email</h6>
-          <Divider style={{ margin: '0' }} />
-          <div className="bg-white p-4">
-            <span className="text-xs text-gray-500">Outgoing emails</span>
-            <span className="text-xs text-gray-500 float-right">80 of 100</span>
-            <Line style={{ padding: '8px 0' }} percent={80} showInfo={false} />
-          </div>
-        </Panel>
-      </div>
-
-      <div className="mb-8">
-        <Panel bordered bodyFill>
-          <h6 className="bg-gray-100 p-4">Aliases</h6>
-          <Divider style={{ margin: '0' }} />
-          <div className="bg-white p-4 text-xs">
-            <div className="mb-8">
-              <span className="text-xs text-gray-500">Alias namespaces</span>
-              <span className="text-xs text-gray-500 float-right">1 of 1</span>
-              <Line style={{ padding: '8px 0' }} percent={100} showInfo={false} />
+                <p className="text-xs">The basics for all users</p>
+              </div>
             </div>
+            <div className="leading-6 font-bold text-lg text-gray-900 flex items-center uppercase">
+              {stats.plan}
+            </div>
+          </div>
+          <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
+            <a
+              href=""
+              className={classNames(
+                stats.plan === 'FREE'
+                  ? 'text-gray-200 pointer-events-none'
+                  : 'text-gray-500',
+                'text-sm font-medium underline flex items-center focus:outline-none'
+              )}
+            >
+              Cancel Plan
+            </a>
             <div>
-              <span className="text-xs text-gray-500">Alias addresses</span>
-              <span className="text-xs text-gray-500 float-right">1 of 5</span>
-              <Line style={{ padding: '8px 0' }} percent={20} showInfo={false} />
+              <button
+                type="button"
+                onClick={togglePriceCompare}
+                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 mr-3"
+              >
+                Compare Plans
+              </button>
+              <button
+                type="button"
+                onClick={openStripe}
+                className="bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                Manage Plan
+              </button>
             </div>
           </div>
-        </Panel>
-      </div>
+        </div>
+      </section>
+      <section
+        aria-labelledby="account-usage"
+        className="xl:grid xl:grid-cols-3 xl:gap-6"
+      >
+        <div className="xl:col-span-1">
+          <h3
+            id="account-usage-heading"
+            className="text-lg leading-6 font-medium text-gray-900"
+          >
+            Usage
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            An accounting of your plan resource consumption.
+          </p>
+        </div>
+        <div className="mt-5 xl:mt-0 xl:col-span-2 space-y-6">
+          {/* DAILY EMAIL CONSUMPTIONS */}
+          <div className="border border-gray-300 bg-white rounded-md overflow-hidden">
+            <div className="bg-gray-50 py-4 px-7 flex flex-row relative border-gray-300 border-b">
+              <UploadIcon className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-500" />
+              <div>
+                <h4 className="text-sm leading-6 font-bold text-gray-900">
+                  Email Traffic
+                </h4>
 
-      <Modal className="h-screen" style={{ padding: '0', width: '100%' }} full show={show} onHide={close}>
-        <Modal.Header>
-          <Modal.Title>Upgrade Your Plan</Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ margin: '0', padding: '0' }}>
-          <div>
-            <BrowserView
-              ref={(webview) => {
-                paymentWebview = webview
-              }}
-              // Your source
-              src={`http://localhost:3000/client/subscribe?token=${authToken}`}
-
-              // Using events
-              onDidAttach={() => {
-                console.log("BrowserView attached");
-              }}
-              onUpdateTargetUrl={(e, t) => {
-                console.log("Updated Target URL", t);
-              }}
-
-              // Providing styling for the container element
-              style={{
-                width: '100%',
-                height: '600px'
-              }}
-            />
-            {/* <webview style={{ margin: '0', padding: '0', height: '750px' }} className="w-full" src={`http://localhost:3001/client/subscribe?token=${authToken}`} ></webview> */}
+                <p className="text-xs">
+                  Limit will reset on
+{' '}
+                  <span className="font-bold">
+                    {stats.dailyEmailResetDate.toLocaleString(
+                      DateTime.DATETIME_SHORT
+                    )}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div className="bg-white py-6 px-7 text-sm">
+              {/* EMAIL LIMIT */}
+              <li
+                className={`relative text-gray-600 pl-[3.25rem] ${styles.featureSvgLast} flex flex-row justify-between space-x-6`}
+              >
+                <div className="flex-grow">
+                  <div className="flex flex-row justify-between">
+                    <span className="text-sm leading-6 font-bold">
+                      Email Sent out of Network
+                    </span>
+                    <span className="text-sm">
+                      <span className="text-purple-500 font-bold">
+                        {stats.dailyEmailUsed}
+                      </span>
+                      {` of `}
+                      {stats.maxOutgoingEmails !== 0 && (
+                        <>
+                          <span className="font-bold">{`${stats.maxOutgoingEmails} `}</span>
+                          included
+                        </>
+                      )}
+                      {stats.maxOutgoingEmails === 0 && (
+                        <span className="font-bold">Unlimited</span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="relative pt-1">
+                    <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
+                      <div
+                        style={{
+                          width: pctValues.dailyTrafficPct
+                        }}
+                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
+                          pctValues.dailyTrafficPct === '100%'
+                            ? 'bg-red-500'
+                            : 'bg-blueGray-400'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end items-center">
+                  <button
+                    type="submit"
+                    onClick={togglePriceCompare}
+                    className="h-fit bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+                  >
+                    Add More
+                  </button>
+                </div>
+              </li>
+            </div>
           </div>
-        </Modal.Body>
-      </Modal>
+          {/* ALIASES */}
+          <div className="border border-gray-300 bg-white rounded-md overflow-hidden">
+            <div className="bg-gray-50 py-4 px-7 flex flex-row relative border-gray-300 border-b">
+              <HashtagIcon className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-500" />
+              <div>
+                <h4 className="text-sm leading-6 font-bold text-gray-900">
+                  Aliases
+                </h4>
+
+                <p className="text-xs">
+                  Includes disabled aliases and namespaces
+                </p>
+              </div>
+            </div>
+            <div className="bg-white py-6 px-7 text-sm">
+              <ul className="space-y-5">
+                {/* NAMESPACES */}
+                <li
+                  className={`relative text-gray-600 pl-[3.25rem] ${styles.featureSvg} flex flex-row justify-between space-x-6`}
+                >
+                  <div className="flex-grow">
+                    <div className="flex flex-row justify-between">
+                      <span className="text-sm leading-6 font-bold">
+                        Namespaces
+                      </span>
+                      <span className="text-sm">
+                        <span className="text-purple-500 font-bold">
+                          {stats.namespaceUsed}
+                        </span>
+                        {` of `}
+                        <span className="font-bold">{`${stats.maxAliasNames} `}</span>
+                        included
+                      </span>
+                    </div>
+                    <div className="relative pt-1">
+                      <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
+                        <div
+                          style={{
+                            width: pctValues.namespacePct
+                          }}
+                          className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
+                            pctValues.namespacePct === '100%'
+                              ? 'bg-red-500'
+                              : 'bg-blueGray-400'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-end items-center">
+                    <button
+                      type="button"
+                      onClick={togglePriceCompare}
+                      className="h-fit bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+                    >
+                      Add More
+                    </button>
+                  </div>
+                </li>
+                {/* ALIASES */}
+                <li
+                  className={`relative text-gray-600 pl-[3.25rem] ${styles.featureSvgLast} flex flex-row justify-between space-x-6`}
+                >
+                  <div className="flex-grow">
+                    <div className="flex flex-row justify-between">
+                      <span className="text-sm leading-6 font-bold">
+                        Alias Addresses
+                      </span>
+                      <span className="text-sm">
+                        <span className="text-purple-500 font-bold">
+                          {stats.aliasesUsed}
+                        </span>
+                        {` of `}
+                        <span className="font-bold">{`${stats.maxAliasAddresses} `}</span>
+                        included
+                      </span>
+                    </div>
+                    <div className="relative pt-1">
+                      <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
+                        <div
+                          style={{
+                            width: pctValues.aliasPct
+                          }}
+                          className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
+                            pctValues.aliasPct === '100%'
+                              ? 'bg-red-500'
+                              : 'bg-blueGray-400'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-end items-center">
+                    <button
+                      type="button"
+                      onClick={togglePriceCompare}
+                      className="h-fit bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+                    >
+                      Add More
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          {/* STORAGE */}
+          <div className="border border-gray-300 bg-white rounded-md overflow-hidden">
+            <div className="bg-gray-50 py-4 px-7 flex flex-row relative border-gray-300 border-b">
+              <DatabaseIcon className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-500" />
+              <div>
+                <h4 className="text-sm leading-6 font-bold text-gray-900">
+                  Storage
+                </h4>
+
+                <p className="text-xs">
+                  Includes all of your encrypted data and metadata
+                </p>
+              </div>
+            </div>
+            <div className="bg-white py-6 px-7 text-sm">
+              {/* STORAGE */}
+              <li
+                className={`relative text-gray-600 pl-[3.25rem] ${styles.featureSvgLast} flex flex-row justify-between space-x-6`}
+              >
+                <div className="flex-grow">
+                  <div className="flex flex-row justify-between">
+                    <span className="text-sm leading-6 font-bold">
+                      Server Backup
+                    </span>
+                    <span className="text-sm">
+                      <span className="text-purple-500 font-bold">
+                        {humanFileSize(stats.storageSpaceUsed, true, 2)}
+                      </span>
+                      {` of `}
+                      <span className="font-bold">{`${stats.maxGBBandwidth}GB `}</span>
+                      included
+                    </span>
+                  </div>
+                  <div className="relative pt-1">
+                    <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
+                      <div
+                        style={{
+                          width: pctValues.storagePct
+                        }}
+                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
+                          pctValues.storagePct === '100%'
+                            ? 'bg-red-500'
+                            : 'bg-blueGray-400'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end items-center">
+                  <button
+                    type="button"
+                    onClick={togglePriceCompare}
+                    className="h-fit bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+                  >
+                    Add More
+                  </button>
+                </div>
+              </li>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
-}
+};
+
+export default BillingPayments;

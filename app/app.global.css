@@ -88,17 +88,20 @@ body {
     background-clip: padding-box;
     border-radius: .3125rem; /* 5px */
     background-color: var(--scrollbar-thumb-color, rgba(0, 0, 0, 0.35) );
+    visibility:hidden;
 }
 *::-webkit-scrollbar-track {
     background-color: transparent;
 }
 *::-webkit-scrollbar-thumb:horizontal:hover,
 *::-webkit-scrollbar-thumb:vertical:hover {
+    visibility:visible;
     background-color: var(--scrollbar-thumb-hover-color, rgba(0, 0, 0, 0.5) );
 }
 *::-webkit-scrollbar-corner {
     visibility: hidden;
 }
+
 
 h1 {
   font-size: 46px;

@@ -62,8 +62,8 @@ export default function MainWindow() {
         <div className="flex flex-shrink-0">
           <NavStack active={active} onSelect={handleSelect} />
         </div>
-        <div className="flex flex-col w-full rounded-tl overflow-hidden ">
-          <div className="flex-grow h-full bg-coolGray-100 overflow-scroll">
+        <div className="flex flex-col w-full overflow-hidden ">
+          <div className="flex-grow h-full bg-coolGray-100">
             {active === 'mail' && <MailPage />}
             {/* {active === 'files' && <div>Files page</div>} */}
             {active === 'contacts' && <ContactPage />}

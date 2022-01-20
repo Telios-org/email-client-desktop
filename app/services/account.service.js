@@ -39,7 +39,6 @@ class AccountService extends EventEmitter {
         ipcRenderer.send('ACCOUNT_SERVICE::initAcctError', e);
       }
     });
-    
 
     ipcRenderer.once('authenticate', async (evt, data) => {
       try {
@@ -257,19 +256,22 @@ class AccountService extends EventEmitter {
       });
     });
   }
-  // static refreshToken() {
-  //   worker.send({ event: 'ACCOUNT_SERVICE::refreshToken', payload: { password, email } });
 
-  //   return new Promise((resolve, reject) => {
-  //     worker.once('ACCOUNT_WORKER::refreshToken', m => {
-  //       const { data, error } = m;
+  static refreshToken() {
+    worker.send({
+      event: 'ACCOUNT_SERVICE::refreshToken'
+    });
 
-  //       if (error) return reject(error);
+    return new Promise((resolve, reject) => {
+      worker.once('ACCOUNT_WORKER::refreshToken', m => {
+        const { data, error } = m;
 
-  //       return resolve(data.token);
-  //     });
-  //   });
-  // }
+        if (error) return reject(error);
+
+        return resolve(data.token);
+      });
+    });
+  }
 
   static async uploadAvatar() {
     return new Promise((resolve, reject) => {
