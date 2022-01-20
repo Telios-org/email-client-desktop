@@ -12,6 +12,8 @@ import {
   BillingPayments
 } from '../../../components/Settings';
 
+const electron = require('electron');
+
 const tabs = [
   { name: 'General', component: GeneralPanel, icon: Setting }, // { name: 'Notifications', panel: GeneralPanel },
   { name: 'Plan & Billing', component: BillingPayments, icon: Wallet },
@@ -86,6 +88,10 @@ const SettingsPage = () => {
                 if (t.includes('canceled')) {
                   setShowOverlay(false);
                 }
+              }}
+              onNewWindow={(e, t) => {
+                e.preventDefault();
+                electron.shell.openExternal(t)
               }}
             />
           </div>
