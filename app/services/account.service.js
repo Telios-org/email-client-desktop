@@ -14,7 +14,7 @@ class AccountService extends EventEmitter {
         const account = await AccountService.createAccount(data);
 
         // Start incoming message listener
-        MessageIngressService.initMessageListener();
+        // MessageIngressService.initMessageListener();
 
         ipcRenderer.send('ACCOUNT_SERVICE::createAccountResponse', account);
       } catch (e) {
@@ -52,7 +52,7 @@ class AccountService extends EventEmitter {
     ipcRenderer.once('loadMbox', async (evt, data) => {
       try {
         // Start incoming message listener
-        await MessageIngressService.initMessageListener();
+        // await MessageIngressService.initMessageListener();
 
         const account = await MailService.loadMailbox();
 
@@ -126,10 +126,15 @@ class AccountService extends EventEmitter {
   }
 
   static createAccount(payload) {
-    worker.send({ event: 'ACCOUNT_SERVICE::createAccount', payload });
+    worker.send({ event: 'account:create', payload });
 
     return new Promise((resolve, reject) => {
-      worker.once('ACCOUNT_WORKER::createAccount', async m => {
+      worker.once('account:create:success', async m => {
+        const { error } = m;
+        if (error) return reject(error);
+      });
+
+      worker.once('account:create:success', async m => {
         const { data, error } = m;
         if (error) return reject(error);
 
@@ -144,12 +149,12 @@ class AccountService extends EventEmitter {
         } = data;
 
         try {
-          await MailService.loadMailbox({
-            signedAcct,
-            secretBoxKeypair,
-            signingKeypair,
-            sig
-          });
+          // await MailService.loadMailbox({
+          //   signedAcct,
+          //   secretBoxKeypair,
+          //   signingKeypair,
+          //   sig
+          // });
 
           const registerPayload = {
             account_key: signedAcct.account_key,

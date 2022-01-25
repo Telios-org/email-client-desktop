@@ -10,7 +10,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const appPath = remote.app.getAppPath();
 const userDataPath = remote.app.getPath('userData');
 
-const workerPath = path.join(appPath, '/workers/index.js');
+const workerPath = path.join(appPath, '/node_modules/@telios/telios-client-backend/index.js');
 let cwd = path.join(__dirname, '..');
 
 if (!fs.existsSync(path.join(cwd, 'app.asar'))) {

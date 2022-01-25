@@ -317,7 +317,7 @@ module.exports = userDataPath => {
         });
       } catch (e) {
         process.send({
-          event: 'ACCOUNT_WORKER::refreshToken',
+          event: '',
           error: e.message
         });
       }
