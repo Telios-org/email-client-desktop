@@ -611,11 +611,11 @@ export const msgSelectionFlowFailure = (error: Error) => {
 
 export const messageSelection = (message: MailMessageType) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch(msgSelectionFlow(message.id, message.folderId));
+    dispatch(msgSelectionFlow(message.emailId, message.folderId));
     try {
-      const fullMsg = await dispatch(fetchMsg(message.id));
-      dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
-      return Promise.resolve(message.id);
+      const fullMsg = await dispatch(fetchMsg(message.emailId));
+      dispatch(msgSelectionFlowSuccess(fullMsg, message.emailId, message.folderId));
+      return Promise.resolve(message.emailId);
     } catch (err) {
       return Promise.reject(err);
     }
@@ -770,9 +770,21 @@ export const loadMailboxes = () => async (
   try {
     mailboxes = await dispatch(fetchMailboxes());
 
-    activeMailboxId = mailboxes[activeMailboxIndex].id;
+    console.log('MAILBOXES', mailboxes)
+    console.log('activeMailboxIndex', activeMailboxIndex)
+
+    activeMailboxId = mailboxes[activeMailboxIndex]._id;
+
+    console.log('activeMailboxId', activeMailboxId)
+
     folders = await dispatch(fetchMailboxFolders(activeMailboxId));
+
+    console.log('folders', folders)
+
+
     namespaces = await dispatch(fetchMailboxNamespaces(activeMailboxId));
+
+    console.log('namespaces', namespaces)
 
     const namespaceKeys = namespaces.map(ns => ns.name);
 
@@ -783,10 +795,10 @@ export const loadMailboxes = () => async (
     }
 
     if (isAlias) {
-      activeAliasId = aliases[activeAliasIndex].id;
+      activeAliasId = aliases[activeAliasIndex].folderId;
       messages = await dispatch(fetchAliasMessages(activeAliasId));
     } else {
-      activeFolderId = folders[activeFolderIndex].id;
+      activeFolderId = folders[activeFolderIndex].folderId;
       messages = await dispatch(fetchFolderMessages(activeFolderId));
     }
 

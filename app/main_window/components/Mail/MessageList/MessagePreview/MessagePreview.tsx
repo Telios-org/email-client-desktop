@@ -26,7 +26,6 @@ import {
 
 // REDUX ACTIONS
 import { msgRangeSelection } from '../../../../actions/mail';
-import { moveMessagesToFolder } from '../../../../actions/mailbox/messages';
 
 // TYPESCRIPT TYPES
 import { MailMessageType } from '../../../../reducers/types';
@@ -76,7 +75,7 @@ export default function MessagePreview(props: Props) {
   } = message;
   const activeMessageId = useSelector(activeMsgId);
   const isActive =
-    id === activeMessageId || selected.items.indexOf(message.id) > -1;
+    id === activeMessageId || selected.items.indexOf(message.emailId) > -1;
 
   const [{ opacity }, drag, preview] = useDrag({
     item: { id, unread, folderId, type: 'message' },
@@ -151,7 +150,7 @@ export default function MessagePreview(props: Props) {
       messages.allIds.forEach((msg, index) => {
         if (index === newSelection.startIdx && index === newSelection.endIdx) {
           newSelection.items.push(msg);
-          newLoaders.push(msg.id);
+          newLoaders.push(msg.emailId);
         }
 
         if (
@@ -162,7 +161,7 @@ export default function MessagePreview(props: Props) {
           newSelection.exclude.indexOf(index) === -1
         ) {
           newSelection.items.push(msg);
-          newLoaders.push(msg.id);
+          newLoaders.push(msg.emailId);
         }
 
         if (

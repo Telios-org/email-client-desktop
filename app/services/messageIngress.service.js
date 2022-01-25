@@ -23,18 +23,18 @@ class MessageIngressService extends EventEmitter {
     this.MAX_RETRY = 1;
     this.folderCounts = {};
 
-    mainWorker.on('newMessage', async m => {
-      const { data, error } = m;
+    mainWorker.on('account:newMessage', async m => {
+      const { data } = m;
 
       this.msgBatchSize += 1;
 
       mainWorker.send({
-        event: 'newMessage',
+        event: 'messageHandler:newMessage',
         payload: { meta: data.meta }
       });
     });
 
-    mainWorker.on('fileFetched', async m => {
+    mainWorker.on('messageHandler:fileFetched', async m => {
       const { event, data, error } = m;
       if (!error) {
         const email = transformEmail(data);
@@ -51,20 +51,23 @@ class MessageIngressService extends EventEmitter {
       }
     });
 
-    mainWorker.on('MAILBOX_WORKER::saveMessageToDB', async m => {
-      
-      const { data, error } = m;
+    mainWorker.on('email:saveMessageToDB:error', async m => {
+      const { error } = m;
 
       if(error) {
-        console.log('MessageIngess.service::saveMessageToDBError', error);
+        console.log('email:saveMessageToDBERROR', error);
 
         this.finished += 1;
         this.handleDone();
         return;
       }
+    });
+
+    mainWorker.on('email:saveMessageToDB:success', async m => {
+      const { data } = m;
 
       data.msgArr.forEach(msg => {
-        if(!this.incomingMsgBatch.some(item => item.id === msg.id)) {
+        if(!this.incomingMsgBatch.some(item => item.emailId === msg.emailId)) {
           this.incomingMsgBatch.push(msg);
         }
       })
@@ -81,10 +84,10 @@ class MessageIngressService extends EventEmitter {
       this.handleDone();
     })
 
-    mainWorker.on('fetchError', async m => {
+    mainWorker.on('messageHandler:fetchError', async m => {
       const { data } = m;
 
-      console.log('MessageIngess.service::fetchError', m);
+      console.log('messageHandler:fetchError', m);
 
       if (data.file && data.file.failed < this.MAX_RETRY) {
         this.retryQueue.push(data.file);
@@ -114,7 +117,7 @@ class MessageIngressService extends EventEmitter {
       this.emit('MESSAGE_INGRESS_SERVICE::messageSyncStarted', meta.length);
 
       mainWorker.send({
-        event: 'MESSAGE_INGRESS_SERVICE::newMessageBatch',
+        event: 'messageHandler:newMessageBatch',
         payload: { meta, account }
       });
     }
@@ -122,7 +125,7 @@ class MessageIngressService extends EventEmitter {
 
   // Start incoming message listener
   initMessageListener() {
-    mainWorker.send({ event: 'initMessageListener' });
+    mainWorker.send({ event: 'messageHandler:initMessageListener' });
   }
 
   handleDone() {
@@ -134,7 +137,7 @@ class MessageIngressService extends EventEmitter {
     // Retry failed messages
     if (this.finished + this.retryQueue.length === this.msgBatchSize) {
       mainWorker.send({
-        event: 'retryMessageBatch',
+        event: 'messageHandler:retryMessageBatch',
         payload: { batch: this.retryQueue }
       });
 

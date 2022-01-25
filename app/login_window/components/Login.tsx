@@ -115,7 +115,7 @@ class Login extends Component<Props, State> {
     try {
       this.store.set('lastAccount', selectedAccount);
       const account = await initAccount(selectedAccount, masterpass);
-      await loadMailbox();
+      // await loadMailbox();
 
       goToMainWindow(account);
 

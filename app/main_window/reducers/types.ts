@@ -369,6 +369,7 @@ export type MailMessageType = {
   // the _id that is assigned to the raw message when delivered
   _id?: string;
   id: string;
+  emailId: string;
   folderId: number;
   isPreview: boolean;
   aliasId: string;

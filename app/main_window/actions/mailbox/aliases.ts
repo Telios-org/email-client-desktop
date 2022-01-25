@@ -328,8 +328,8 @@ export const removeAlias = (payload: {
         })
         .map(msg => {
           return {
-            id: msg.id,
-            emailId: msg.id,
+            id: msg.emailId,
+            emailId: msg.emailId,
             unread: 0,
             folder: {
               fromId: aliasFolderId,

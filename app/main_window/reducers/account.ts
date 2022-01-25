@@ -38,7 +38,7 @@ const account = (state: AccountType = initialState, action: AccountAction) => {
   let stats;
   switch (action.type) {
     case LOAD_ACCOUNT_DATA:
-      stats = JSON.parse(action.payload.stats);
+      stats = action.payload.stats
       return {
         ...action.payload,
         stats: {

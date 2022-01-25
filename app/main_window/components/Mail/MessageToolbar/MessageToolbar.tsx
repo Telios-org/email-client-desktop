@@ -110,7 +110,7 @@ export default function MessageToolbar(props: Props) {
   }, [panelSize, showComposerControls]);
 
   // msgId for drafts
-  const msgId = activeMessage ? activeMessage.id : null;
+  const msgId = activeMessage ? activeMessage.emailId : null;
   // Permanently delete messages from trash folder
   const deleteMessages = async () => {
     const messagesToDelete = [];
@@ -168,7 +168,7 @@ export default function MessageToolbar(props: Props) {
         Alert.success(`Deleted ${selected.items.length} message(s).`);
       } else {
         const messagesToMove = [];
-
+        console.log('SELECTED ITEMS:::', selected.items)
         selected.items.forEach(msgId => {
           messagesToMove.push({
             id: msgId,

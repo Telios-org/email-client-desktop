@@ -122,16 +122,18 @@ class MailService {
 
   static save(opts) {
     worker.send({
-      event:
-        opts.type === 'Sent'
-          ? 'MAIL SERVICE::SaveSentMessageToDB'
-          : 'MAIL SERVICE::saveMessageToDB',
+      event: 'email:saveMessageToDB',
       payload: { messages: opts.messages, type: opts.type }
     });
 
     if (opts.async) {
       return new Promise((resolve, reject) => {
-        worker.once('MAILBOX_WORKER::saveMessageToDB', m => {
+        worker.once('email:saveMessageToDB:success', m => {
+          const { error } = m;
+          if (error) return reject(error);
+        });
+
+        worker.once('email:saveMessageToDB:success', m => {
           const { data, error } = m;
 
           if (error) return reject(error);
@@ -283,6 +285,7 @@ class MailService {
   }
 
   static getMessagebyId(id) {
+    console.log('GET MESSAGE BY ID', id)
     worker.send({ event: 'email:getMessageById', payload: { id } });
 
     return new Promise((resolve, reject) => {
@@ -298,14 +301,15 @@ class MailService {
   }
 
   static moveMessages(messages) {
-    worker.send({ event: 'email:removeMessages', payload: { messages } });
+    console.log('MOVE MESSAGES::', messages)
+    worker.send({ event: 'email:moveMessages', payload: { messages } });
 
     return new Promise((resolve, reject) => {
-      worker.once('email:removeMessages:error', m => {
+      worker.once('email:moveMessages:error', m => {
         const { data, error } = m;
         if (error) return reject(error);
       });
-      worker.once('email:removeMessages:success', m => {
+      worker.once('email:moveMessages:success', m => {
         const { data } = m;
         return resolve(data);
       });
