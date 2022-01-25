@@ -95,7 +95,7 @@ body {
 }
 *::-webkit-scrollbar-thumb:horizontal:hover,
 *::-webkit-scrollbar-thumb:vertical:hover {
-    visibility:visible;
+    /* visibility:visible; */
     background-color: var(--scrollbar-thumb-hover-color, rgba(0, 0, 0, 0.5) );
 }
 *::-webkit-scrollbar-corner {

@@ -3,6 +3,7 @@ import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tab } from '@headlessui/react';
 import { Filter, Wallet, Password, Setting, ShieldDone } from 'react-iconly';
+import { ChevronLeftIcon } from '@heroicons/react/solid';
 import BrowserView, { removeViews } from 'react-electron-browser-view';
 import { retrieveStats } from '../../../actions/account/account';
 
@@ -82,16 +83,29 @@ const SettingsPage = () => {
           <div className="relative z-30 h-full w-full">
             <BrowserView
               src={browserURL}
+              // devtools
+              className="min-w-[1000px]"
+              onDomReady={e => {
+                console.log('DOMREADY', e);
+
+                e.sender.insertCSS(
+                  '.App.App--multiItem, .App.App--singleItem{ position: absolute !important; top: 50% !important; transform: translate(0%, -50%) !important;}'
+                );
+              }}
               onWillNavigate={(e, t) => {
                 e.preventDefault();
-                console.log('BROWSER::', e, t);
                 if (t.includes('canceled')) {
                   setShowOverlay(false);
+                }
+
+                if (t.includes('success')) {
+                  setShowOverlay(false);
+                  dispatch(retrieveStats());
                 }
               }}
               onNewWindow={(e, t) => {
                 e.preventDefault();
-                electron.shell.openExternal(t)
+                electron.shell.openExternal(t);
               }}
             />
           </div>

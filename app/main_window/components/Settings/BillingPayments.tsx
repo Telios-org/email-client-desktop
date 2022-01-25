@@ -3,15 +3,6 @@ import { DateTime } from 'luxon';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  Divider,
-  Panel,
-  Icon,
-  Button,
-  Progress,
-  Modal,
-  Placeholder
-} from 'rsuite';
-import {
   CheckIcon,
   SparklesIcon,
   XIcon,
@@ -58,6 +49,8 @@ const BillingPayments = (props: Props) => {
   });
 
   const [showPricing, setShowPricing] = useState(false);
+  const [pricingData, setPricingData] = useState([]);
+  const [currentPlan, setCurrentPlan] = useState(undefined);
 
   const pctString = (numerator, denominator) => {
     const value = Math.round((numerator / denominator) * 100);
@@ -76,27 +69,59 @@ const BillingPayments = (props: Props) => {
     });
   }, [stats]);
 
+  const retrievePlans = async () => {
+    const options = {
+      method: 'get',
+      url: `${requestBase}/stripe/plans`,
+      data: {}
+    };
+
+    const {
+      data: { plans }
+    } = await axios(options);
+    setPricingData(plans);
+    setCurrentPlan(plans.filter(p => p.id === stats.plan.toLowerCase())[0]);
+    return plans;
+  };
+
+  useEffect(() => {
+    retrievePlans();
+  }, []);
+
   const togglePriceCompare = () => {
     setShowPricing(!showPricing);
   };
 
-  const openStripe = async () => {
+  const openStripe = async (endpoint, plan) => {
     try {
       const token = await AccountService.refreshToken();
-      console.log(token);
 
-      const options = {
+      let options = {
         method: 'post',
         url: `${requestBase}/stripe/customer-portal`,
         headers: {
           Authorization: `Bearer ${token}`
-        }
+        },
+        data: {}
       };
 
+      if (endpoint === 'checkout') {
+        options = {
+          method: 'post',
+          url: `${requestBase}/stripe/create-checkout-session`,
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          data: {
+            plan,
+            billing: 'monthly'
+          }
+        };
+      }
+      console.log(options);
       const {
         data: { url }
       } = await axios(options);
-
       console.log(url);
       handleOverlay(url);
     } catch (error) {
@@ -106,7 +131,12 @@ const BillingPayments = (props: Props) => {
 
   if (showPricing) {
     return (
-      <PlanComparison currentPlan={stats.plan} hide={togglePriceCompare} />
+      <PlanComparison
+        currentPlan={stats.plan}
+        hide={togglePriceCompare}
+        pricingData={pricingData}
+        onStripeOpen={openStripe}
+      />
     );
   }
 
@@ -138,14 +168,31 @@ const BillingPayments = (props: Props) => {
               />
               <div>
                 <h4 className="text-sm leading-6 font-bold text-gray-900">
-                  Basic Privacy Plan
+                  {`${
+                    currentPlan && currentPlan.name ? currentPlan.name : 'Basic'
+                  } Privacy Plan`}
                 </h4>
 
-                <p className="text-xs">The basics for all users</p>
+                <p className="text-xs">{currentPlan?.description}</p>
               </div>
             </div>
             <div className="leading-6 font-bold text-lg text-gray-900 flex items-center uppercase">
-              {stats.plan}
+              {currentPlan !== undefined && currentPlan.price !== 0 && (
+                <>
+                  <span>{`$${currentPlan?.price?.monthly}`}</span>
+                  <div className="ml-4 flex flex-col items-start">
+                    <span className="text-xs font-bold text-gray-500">
+                      USD / mo
+                    </span>
+                    <span className="text-xs font-bold text-gray-500">
+                      {`Yearly ($${currentPlan?.price?.yearly})`}
+                    </span>
+                  </div>
+                </>
+              )}
+              {currentPlan !== undefined && currentPlan.price === 0 && (
+                <span>FREE</span>
+              )}
             </div>
           </div>
           <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
@@ -164,17 +211,24 @@ const BillingPayments = (props: Props) => {
               <button
                 type="button"
                 onClick={togglePriceCompare}
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 mr-3"
+                className={classNames(
+                  stats.plan !== 'FREE'
+                    ? 'bg-white focus:ring-gray-400 hover:bg-blue-gray-50 mr-3'
+                    : 'bg-green-500 hover:bg-green-600 focus:ring-green-500 text-white',
+                  'py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
+                )}
               >
-                Compare Plans
+                {stats.plan !== 'FREE' ? 'Compare Plans' : 'Upgrade Plan'}
               </button>
-              <button
-                type="button"
-                onClick={openStripe}
-                className="bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              >
-                Manage Plan
-              </button>
+              {stats.plan !== 'FREE' && (
+                <button
+                  type="button"
+                  onClick={() => openStripe('portal', null)}
+                  className="bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Manage Plan
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -206,7 +260,6 @@ const BillingPayments = (props: Props) => {
 
                 <p className="text-xs">
                   Limit will reset on
-{' '}
                   <span className="font-bold">
                     {stats.dailyEmailResetDate.toLocaleString(
                       DateTime.DATETIME_SHORT
