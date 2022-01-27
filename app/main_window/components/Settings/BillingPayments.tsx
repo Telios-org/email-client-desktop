@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { DateTime } from 'luxon';
 import axios from 'axios';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import {
   CheckIcon,
   SparklesIcon,
@@ -18,7 +18,7 @@ import teliosLogo from '../../../../resources/img/telios_color_logo.svg';
 import classNames from '../../../utils/helpers/css';
 
 // REDUX STATE SELECTORS
-import { selectAuthToken } from '../../selectors/global';
+import { selectAccountStats } from '../../selectors/account';
 
 // IMPORT A FEW CSS CLASSES
 import styles from './BillingPayments.css';
@@ -35,9 +35,7 @@ type Props = {
 };
 
 const BillingPayments = (props: Props) => {
-  const dispatch = useDispatch();
-  const authToken = useSelector(selectAuthToken);
-  const stats = useSelector(state => state.account.stats);
+  const stats = useSelector(selectAccountStats);
 
   const { handleOverlay } = props;
 
@@ -63,7 +61,7 @@ const BillingPayments = (props: Props) => {
       aliasPct: pctString(stats.aliasesUsed, stats.maxAliasAddresses),
       storagePct: pctString(
         stats.storageSpaceUsed,
-        stats.maxGBCloudStorage * 1048576
+        stats.maxGBCloudStorage * 1000000000
       ),
       dailyTrafficPct: pctString(stats.dailyEmailUsed, stats.maxOutgoingEmails)
     });
@@ -87,6 +85,12 @@ const BillingPayments = (props: Props) => {
   useEffect(() => {
     retrievePlans();
   }, []);
+
+  useEffect(() => {
+    setCurrentPlan(
+      pricingData.filter(p => p.id === stats.plan.toLowerCase())[0]
+    );
+  }, [stats]);
 
   const togglePriceCompare = () => {
     setShowPricing(!showPricing);
@@ -173,26 +177,30 @@ const BillingPayments = (props: Props) => {
                   } Privacy Plan`}
                 </h4>
 
-                <p className="text-xs">{currentPlan?.description}</p>
+                <p className="text-xs">
+                  {currentPlan?.type !== 'subscription'
+                    ? 'Limited Time Offer'
+                    : currentPlan?.description}
+                </p>
               </div>
             </div>
-            <div className="leading-6 font-bold text-lg text-gray-900 flex items-center uppercase">
-              {currentPlan !== undefined && currentPlan.price !== 0 && (
-                <>
-                  <span>{`$${currentPlan?.price?.monthly}`}</span>
-                  <div className="ml-4 flex flex-col items-start">
-                    <span className="text-xs font-bold text-gray-500">
-                      USD / mo
-                    </span>
-                    <span className="text-xs font-bold text-gray-500">
-                      {`Yearly ($${currentPlan?.price?.yearly})`}
-                    </span>
-                  </div>
-                </>
-              )}
+            <div className="leading-6 font-bold text-lg text-gray-900 flex items-center">
+              {currentPlan !== undefined &&
+                currentPlan.price !== 0 &&
+                currentPlan.price.monthly !== undefined && (
+                  <>
+                    <span className="uppercase text-2xl">{`$${currentPlan?.price?.monthly}`}</span>
+                    <div className="ml-4 flex flex-col items-start">
+                      <span className="text-sm font-bold text-gray-500">
+                        / mo
+                      </span>
+                    </div>
+                  </>
+                )}
               {currentPlan !== undefined && currentPlan.price === 0 && (
                 <span>FREE</span>
               )}
+              {currentPlan?.type === 'limited' && <span>LIFETIME MEMBER</span>}
             </div>
           </div>
           <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
@@ -214,7 +222,7 @@ const BillingPayments = (props: Props) => {
                 className={classNames(
                   stats.plan !== 'FREE'
                     ? 'bg-white focus:ring-gray-400 hover:bg-blue-gray-50 mr-3'
-                    : 'bg-green-500 hover:bg-green-600 focus:ring-green-500 text-white',
+                    : 'bg-gradient-to-bl from-green-600 to-green-500 hover:to-green-600 focus:ring-green-500 text-white',
                   'py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
                 )}
               >
@@ -224,7 +232,7 @@ const BillingPayments = (props: Props) => {
                 <button
                   type="button"
                   onClick={() => openStripe('portal', null)}
-                  className="bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  className="bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                 >
                   Manage Plan
                 </button>
@@ -309,15 +317,17 @@ const BillingPayments = (props: Props) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end items-center">
-                  <button
-                    type="submit"
-                    onClick={togglePriceCompare}
-                    className="h-fit bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
-                  >
-                    Add More
-                  </button>
-                </div>
+                {stats.maxOutgoingEmails !== 0 && (
+                  <div className="flex justify-end items-center">
+                    <button
+                      type="button"
+                      onClick={togglePriceCompare}
+                      className="h-fit bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+                    >
+                      Add More
+                    </button>
+                  </div>
+                )}
               </li>
             </div>
           </div>
@@ -351,8 +361,14 @@ const BillingPayments = (props: Props) => {
                           {stats.namespaceUsed}
                         </span>
                         {` of `}
-                        <span className="font-bold">{`${stats.maxAliasNames} `}</span>
-                        included
+                        <span className="font-bold">
+                          {`${
+                            stats.maxAliasNames === 0
+                              ? 'Unlimited'
+                              : stats.maxAliasNames
+                          } `}
+                        </span>
+                        {`${stats.maxAliasNames === 0 ? '' : 'included'} `}
                       </span>
                     </div>
                     <div className="relative pt-1">
@@ -370,15 +386,17 @@ const BillingPayments = (props: Props) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-end items-center">
-                    <button
-                      type="button"
-                      onClick={togglePriceCompare}
-                      className="h-fit bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
-                    >
-                      Add More
-                    </button>
-                  </div>
+                  {stats.maxAliasNames !== 0 && (
+                    <div className="flex justify-end items-center">
+                      <button
+                        type="button"
+                        onClick={togglePriceCompare}
+                        className="h-fit bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+                      >
+                        Add More
+                      </button>
+                    </div>
+                  )}
                 </li>
                 {/* ALIASES */}
                 <li
@@ -394,8 +412,14 @@ const BillingPayments = (props: Props) => {
                           {stats.aliasesUsed}
                         </span>
                         {` of `}
-                        <span className="font-bold">{`${stats.maxAliasAddresses} `}</span>
-                        included
+                        <span className="font-bold">
+                          {`${
+                            stats.maxAliasAddresses === 0
+                              ? 'Unlimited'
+                              : stats.maxAliasAddresses
+                          } `}
+                        </span>
+                        {`${stats.maxAliasAddresses === 0 ? '' : 'included'} `}
                       </span>
                     </div>
                     <div className="relative pt-1">
@@ -413,15 +437,17 @@ const BillingPayments = (props: Props) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-end items-center">
-                    <button
-                      type="button"
-                      onClick={togglePriceCompare}
-                      className="h-fit bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
-                    >
-                      Add More
-                    </button>
-                  </div>
+                  {stats.maxAliasAddresses !== 0 && (
+                    <div className="flex justify-end items-center">
+                      <button
+                        type="button"
+                        onClick={togglePriceCompare}
+                        className="h-fit bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+                      >
+                        Add More
+                      </button>
+                    </div>
+                  )}
                 </li>
               </ul>
             </div>
@@ -455,8 +481,14 @@ const BillingPayments = (props: Props) => {
                         {humanFileSize(stats.storageSpaceUsed, true, 2)}
                       </span>
                       {` of `}
-                      <span className="font-bold">{`${stats.maxGBBandwidth}GB `}</span>
-                      included
+                      <span className="font-bold">
+                        {humanFileSize(
+                          stats.maxGBCloudStorage * 1000000000,
+                          true,
+                          2
+                        )}
+                      </span>
+                      {` included`}
                     </span>
                   </div>
                   <div className="relative pt-1">
@@ -474,15 +506,17 @@ const BillingPayments = (props: Props) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end items-center">
-                  <button
-                    type="button"
-                    onClick={togglePriceCompare}
-                    className="h-fit bg-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
-                  >
-                    Add More
-                  </button>
-                </div>
+                {stats.maxGBCloudStorage !== 1000 && (
+                  <div className="flex justify-end items-center">
+                    <button
+                      type="button"
+                      onClick={togglePriceCompare}
+                      className="h-fit bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+                    >
+                      Add More
+                    </button>
+                  </div>
+                )}
               </li>
             </div>
           </div>

@@ -12,6 +12,7 @@ import {
   SecurityPanel,
   BillingPayments
 } from '../../../components/Settings';
+import { setTimeout } from 'timers';
 
 const electron = require('electron');
 
@@ -34,19 +35,12 @@ const SettingsPage = () => {
   useEffect(() => {
     // Retrieving the Updated Account Stats from Telios Server
     dispatch(retrieveStats());
-    return () => {
-      // removeViews();
-    };
   }, []);
 
   useEffect(() => {
     if (!browserURL.includes('http')) {
       setShowOverlay(false);
-      // removeViews();
     }
-    return () => {
-      // removeViews();
-    };
   }, [browserURL]);
 
   const handleOverlay = (url: string) => {
@@ -96,11 +90,18 @@ const SettingsPage = () => {
                 e.preventDefault();
                 if (t.includes('canceled')) {
                   setShowOverlay(false);
+                  dispatch(retrieveStats());
                 }
 
                 if (t.includes('success')) {
                   setShowOverlay(false);
                   dispatch(retrieveStats());
+
+                  setTimeout(() => {
+                    // Adding this extra timeout because of a lag for Limited Offer purchase.
+                    // Where our DB hasn't yet been updated before it tries to pull the info again.
+                    dispatch(retrieveStats());
+                  }, 3000);
                 }
               }}
               onNewWindow={(e, t) => {
