@@ -173,9 +173,9 @@
     uuid "^8.2.0"
 
 "@telios/nebula@^1.2.2", "@telios/nebula@^1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-1.5.1.tgz#3c28f2184f8f780a9eb70d1e64ba441f25e5ed9e"
-  integrity sha512-cvJ1vhoRWumCbZbiNYoq9y5dA419fFUEiTUBYXpbbxpyMKY6LgTeKZW8IKs1sOC6wch1WipdVGk0bVo8oBDtNA==
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-1.5.2.tgz#242c8f9a6b9cde46aeecbf1aaf252d03a04a1f7e"
+  integrity sha512-zzU9W8y78leWmM9j773/Mdl4XeeVA+A+XlNuSK+3FmTHqquqVEgjffuqXZQrAh1hJnQiyVrxm225hbr1s8CmFQ==
   dependencies:
     autobase "1.0.0-alpha.6"
     blakejs "^1.1.0"
@@ -197,10 +197,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^1.9.2":
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-1.9.2.tgz#e72255787145fcce3ed51df9a3b637a8d4a77800"
-  integrity sha512-Vs6Z/6QipcY+HsIVaUmSeVBbExZUvILZWW9Go6nUz/Dbcm7O3dneWafBh68OaAOVF9wM2FlzdScqm/HCLEYEQg==
+"@telios/telios-client-backend@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-2.0.2.tgz#b5e1d83133a00206a27c52f1a60495a8726d1acb"
+  integrity sha512-hQHcukB5gupPi+WRXJTdoU7UjbBzS7ogEQw5eYXl2K/lTxoNoEX4XuOqT+Wet1BYW27w2pE7namlwm8gaRwPWw==
   dependencies:
     "@telios/client-sdk" "^5.0.0"
     "@telios/nebula" "^1.5.1"
@@ -237,9 +237,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "17.0.12"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.12.tgz#f7aa331b27f08244888c47b7df126184bc2339c5"
-  integrity sha512-4YpbAsnJXWYK/fpTVFlMIcUIho2AYCi4wg5aNPrG1ng7fn/1/RZfCIpRCiBX+12RVa34RluilnvCqD+g3KiSiA==
+  version "17.0.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.13.tgz#5ed7ed7c662948335fcad6c412bb42d99ea754e3"
+  integrity sha512-Y86MAxASe25hNzlDbsviXl8jQHb0RDvKt4c40ZJQ1Don0AAL0STLZSs4N+6gLEO55pedy7r2cLwS+ZDxPm/2Bw==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -247,9 +247,9 @@
   integrity sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ==
 
 "@types/prismjs@^1.16.1":
-  version "1.16.8"
-  resolved "https://registry.yarnpkg.com/@types/prismjs/-/prismjs-1.16.8.tgz#ce1b3a673d282937c3d4183d2ff88b9ccedd6d3b"
-  integrity sha512-I8v3yZIvhIwB55MhV+9+FhK5OMokviuQQP4vGmffW18iQGw5cyB6CaBGWFhcIJk+0cyi/PNhNPedlUYTAHoc2Q==
+  version "1.26.0"
+  resolved "https://registry.yarnpkg.com/@types/prismjs/-/prismjs-1.26.0.tgz#a1c3809b0ad61c62cac6d4e0c56d610c910b7654"
+  integrity sha512-ZTaqn/qSqUuAq1YwvOFQfVW1AR/oQJlLSZVustdjwI+GZ8kr0MSHBj0tsXPW1EqHubx50gtBEjbPGsdZwQwCjQ==
 
 "@types/responselike@*", "@types/responselike@^1.0.0":
   version "1.0.0"

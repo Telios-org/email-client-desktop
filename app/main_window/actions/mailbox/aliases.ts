@@ -306,7 +306,7 @@ export const removeAlias = (payload: {
         const archive = await dispatch(
           createFolder(mailboxId, 'Archives', 'default', 'archive')
         );
-        archiveId = archive?.id;
+        archiveId = archive?.folderId;
       } else {
         archiveId = folders.allIds.find(
           f => folders.byId[f].name === 'Archives'

@@ -16,7 +16,7 @@ const ContactView = (props: Props) => {
     toggleEdit,
     deleteAction,
     data: {
-      id,
+      contactId,
       givenName = '',
       familyName = '',
       name = '',
@@ -38,7 +38,7 @@ const ContactView = (props: Props) => {
   };
 
   const removeContact = () => {
-    deleteAction(id);
+    deleteAction(contactId);
     toggleDeteteConfirmation();
     closeAction();
   };

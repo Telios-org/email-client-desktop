@@ -173,7 +173,7 @@ const Search = () => {
             folderId: res.folderId,
             aliasId: res.aliasId,
             name: res.name,
-            messages: res.messages.map(m => m.id)
+            messages: res.messages.map(m => m.emailId)
           });
 
           if (

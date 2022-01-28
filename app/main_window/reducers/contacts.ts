@@ -20,7 +20,7 @@ export default function client(
       let addition = true;
       // updating values if it's not net new
       state.forEach(c => {
-        if (c.id === action.payload.id) {
+        if (c.contactId === action.payload.contactId) {
           newState.push(action.payload);
           addition = false;
         } else {
@@ -36,7 +36,7 @@ export default function client(
       return newState;
     }
     case CONTACT_DELETION_REQUEST_SUCCESS:
-      return state.filter(c => c.id !== action.id);
+      return state.filter(c => c.contactId !== action.contactId);
     default:
       return state;
   }

@@ -1,6 +1,6 @@
 const { ipcRenderer } = require('electron');
 const EventEmitter = require('events');
-const worker = require('../workers/main.worker');
+const channel = require('./main.channel');
 const MailService = require('./mail.service');
 const ContactService = require('./contact.service');
 const MessageIngressService = require('./messageIngress.service');
@@ -112,30 +112,27 @@ class AccountService extends EventEmitter {
     });
 
     ipcRenderer.on('exitProcess', async () => {
-      worker.send({ event: 'exitProcess', payload: {} });
+      channel.send({ event: 'exitProcess', payload: {} });
     });
 
-    worker.on('syncMail', () => {
+    channel.on('syncMail', () => {
       ipcRenderer.send('syncMail');
     });
 
-    worker.on('ACCOUNT_WORKER::refreshToken', m => {
+    channel.on('ACCOUNT_WORKER::refreshToken', m => {
       const { data, error } = m;
       this.emit('ACCOUNT_SERVICE::refreshToken', data.token);
     });
   }
 
   static createAccount(payload) {
-    worker.send({ event: 'account:create', payload });
+    channel.send({ event: 'account:create', payload });
 
     return new Promise((resolve, reject) => {
-      worker.once('account:create:success', async m => {
-        const { error } = m;
-        if (error) return reject(error);
-      });
 
-      worker.once('account:create:success', async m => {
+      channel.once('account:create:callback', async m => {
         const { data, error } = m;
+        
         if (error) return reject(error);
 
         const {
@@ -149,13 +146,6 @@ class AccountService extends EventEmitter {
         } = data;
 
         try {
-          // await MailService.loadMailbox({
-          //   signedAcct,
-          //   secretBoxKeypair,
-          //   signingKeypair,
-          //   sig
-          // });
-
           const registerPayload = {
             account_key: signedAcct.account_key,
             addr: payload.email
@@ -195,75 +185,58 @@ class AccountService extends EventEmitter {
   static initAccount(params) {
     const { email, password } = params;
 
-    worker.send({
+    channel.send({
       event: 'account:login',
       payload: { password, email }
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('account:login:error', m => {
-        const { error } = m;
-        if (error) return reject(error);
-      });
 
-      worker.once('account:login:success', async m => {
-        const { data } = m;
+      channel.once('account:login:callback', async m => {
+        const { error, data } = m;
+        let _data = { ...data };
+
+        if (error) return reject(error);
 
         ipcRenderer.invoke('MATOMO::init', { account: data, isNew: false });
 
-        const stats = await this.retrieveStats()
+        try {
+          const stats = await this.retrieveStats()
+          if(stats) _data = { ...data, stats }
+        } catch(err) {
+          // possible connection issue
+          console.log(err)
+        }
 
-        return resolve({ ...data, stats: stats })
+        return resolve({ ..._data })
       });
     });
   }
 
-  // static getAccount() {
-  //   ipcRenderer.send({
-  //     event: 'ACCOUNT_SERVICE::getAccount'
-  //   });
-
-  //   return new Promise((resolve, reject) => {
-  //     ipcRenderer.once('ACCOUNT_IPC::getAccount', m => {
-  //       const { data, error } = m;
-
-  //       if (error) return reject(error);
-
-  //       return resolve(data);
-  //     });
-  //   });
-  // }
-
   static async updateAccount(payload) {
-    worker.send({
+    channel.send({
       event: 'account:update',
       payload
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('account:update:error', m => {
-        const { error } = m;
+      channel.once('account:update:callback', m => {
+        const { error, data } = m;
+        
         if (error) return reject(error);
-      });
-
-      worker.once('account:update:success', m => {
-        const { data } = m;
+        
         return resolve(data);
       });
     });
   }
 
   static async retrieveStats() {
-    worker.send({
+    channel.send({
       event: 'account:retrieveStats'
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('account:retrieveStats:error', m => {
-        const { error } = m;
-        if (error) return reject(error);
-      });
-      worker.once('account:retrieveStats:success', m => {
+      channel.once('account:retrieveStats:callback', m => {
         const { data } = m;
         return resolve(data);
       });
@@ -271,18 +244,16 @@ class AccountService extends EventEmitter {
   }
 
   static refreshToken() {
-    worker.send({
+    channel.send({
       event: 'account:refreshToken'
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('account:refreshToken:error', m => {
-        const { error } = m;
+      channel.once('account:refreshToken:callback', m => {
+        const { error, data } = m;
+        
         if (error) return reject(error);
-      });
 
-      worker.once('account:refreshToken:success', m => {
-        const { data } = m;
         return resolve(data.token);
       });
     });
@@ -302,15 +273,14 @@ class AccountService extends EventEmitter {
   }
 
   static logout() {
-    worker.send({ event: 'account:logout', payload: {} });
+    channel.send({ event: 'account:logout', payload: {} });
 
     return new Promise((resolve, reject) => {
-      worker.once('account:logout:error', m => {
+      channel.once('account:logout:callback', m => {
         const { error } = m;
+        
         if (error) return reject(error);
-      });
-
-      worker.once('account:logout:success', m => {
+        
         ipcRenderer.send('logout');
         return resolve();
       });

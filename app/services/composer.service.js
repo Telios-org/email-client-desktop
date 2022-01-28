@@ -7,14 +7,11 @@ class ComposerService {
 
     if(!email.attachments) email.attachments = []
 
-    console.log(email)
-
     if (isInline) {
       await MailService.send(email);
     } else {
       await ComposerService.sendEmail(email);
     }
-
 
     ComposerService.createContacts(email, isInline);
   }

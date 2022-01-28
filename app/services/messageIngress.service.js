@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { fork } = require('child_process');
 const MailService = require('./mail.service');
-const mainWorker = require('../workers/main.worker');
+const channel = require('./main.channel');
 
 const appPath = remote.app.getAppPath();
 
@@ -23,18 +23,18 @@ class MessageIngressService extends EventEmitter {
     this.MAX_RETRY = 1;
     this.folderCounts = {};
 
-    mainWorker.on('account:newMessage', async m => {
+    channel.on('account:newMessage', async m => {
       const { data } = m;
 
       this.msgBatchSize += 1;
 
-      mainWorker.send({
+      channel.send({
         event: 'messageHandler:newMessage',
         payload: { meta: data.meta }
       });
     });
 
-    mainWorker.on('messageHandler:fileFetched', async m => {
+    channel.on('messageHandler:fileFetched', async m => {
       const { event, data, error } = m;
       if (!error) {
         const email = transformEmail(data);
@@ -51,20 +51,14 @@ class MessageIngressService extends EventEmitter {
       }
     });
 
-    mainWorker.on('email:saveMessageToDB:error', async m => {
-      const { error } = m;
+    channel.on('email:saveMessageToDB:callback', async m => {
+      const { error, data } = m;
 
       if(error) {
-        console.log('email:saveMessageToDBERROR', error);
-
         this.finished += 1;
         this.handleDone();
         return;
       }
-    });
-
-    mainWorker.on('email:saveMessageToDB:success', async m => {
-      const { data } = m;
 
       data.msgArr.forEach(msg => {
         if(!this.incomingMsgBatch.some(item => item.emailId === msg.emailId)) {
@@ -84,7 +78,7 @@ class MessageIngressService extends EventEmitter {
       this.handleDone();
     })
 
-    mainWorker.on('messageHandler:fetchError', async m => {
+    channel.on('messageHandler:fetchError', async m => {
       const { data } = m;
 
       console.log('messageHandler:fetchError', m);
@@ -116,7 +110,7 @@ class MessageIngressService extends EventEmitter {
 
       this.emit('MESSAGE_INGRESS_SERVICE::messageSyncStarted', meta.length);
 
-      mainWorker.send({
+      channel.send({
         event: 'messageHandler:newMessageBatch',
         payload: { meta, account }
       });
@@ -125,7 +119,7 @@ class MessageIngressService extends EventEmitter {
 
   // Start incoming message listener
   initMessageListener() {
-    mainWorker.send({ event: 'messageHandler:initMessageListener' });
+    channel.send({ event: 'messageHandler:initMessageListener' });
   }
 
   handleDone() {
@@ -136,7 +130,7 @@ class MessageIngressService extends EventEmitter {
 
     // Retry failed messages
     if (this.finished + this.retryQueue.length === this.msgBatchSize) {
-      mainWorker.send({
+      channel.send({
         event: 'messageHandler:retryMessageBatch',
         payload: { batch: this.retryQueue }
       });

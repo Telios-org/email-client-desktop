@@ -139,6 +139,7 @@ class ContactPage extends React.Component<Props, State> {
   getData() {
     const { sortColumn, sortType } = this.state;
     const { contacts } = this.props;
+
     const data = clone(contacts);
     const transform = data.map(c => {
       return {
@@ -167,6 +168,7 @@ class ContactPage extends React.Component<Props, State> {
         return y - x;
       });
     }
+
     return transform;
   }
 
@@ -187,6 +189,9 @@ class ContactPage extends React.Component<Props, State> {
 
   saveContact(data: ContactType) {
     const { saveContacts } = this.props;
+    
+    if(!data.birthday) delete data.birthday
+
     saveContacts(data);
     this.setState({
       contactEdit: false,
@@ -202,11 +207,11 @@ class ContactPage extends React.Component<Props, State> {
   openModal(data: ContactType | undefined, editMode: boolean) {
     let rawData: ContactType = undefined;
 
-    if (data && data.id) {
+    if (data && data.contactId) {
       const { contacts } = this.props;
       // Referencing the raw contact data since we
       // may have manipulated the data to display in the table
-      [rawData] = contacts.filter(c => c.id === data.id);
+      [rawData] = contacts.filter(c => c.contactId === data.contactId);
     }
 
     this.setState({

@@ -120,6 +120,7 @@ export default function MessageList(props: Props) {
         const { unread } = messages.byId[id];
 
         return {
+          emailId: messages.byId[id].emailId,
           id: messages.byId[id].emailId,
           unread,
           folder: {
@@ -131,8 +132,10 @@ export default function MessageList(props: Props) {
       });
     } else {
       const { unread } = item;
+
       selection = [
         {
+          emailId: item.emailId,
           id: item.emailId,
           unread,
           folder: {

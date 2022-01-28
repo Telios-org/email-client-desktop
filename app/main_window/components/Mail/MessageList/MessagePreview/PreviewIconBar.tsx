@@ -50,6 +50,7 @@ function PreviewIconBar(props: Props) {
         const messagesToMove = [
           {
             id: messageId,
+            emailId: messageId,
             unread: 0,
             folder: {
               fromId: activeFolderId,

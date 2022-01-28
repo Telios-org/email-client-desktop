@@ -63,7 +63,8 @@ export default function MessagePreview(props: Props) {
   const message = useSelector(state => selectMessageByIndex(state, index));
 
   const {
-    id,
+    emailId,
+    aliasId,
     folderId,
     subject,
     fromJSON,
@@ -75,10 +76,10 @@ export default function MessagePreview(props: Props) {
   } = message;
   const activeMessageId = useSelector(activeMsgId);
   const isActive =
-    id === activeMessageId || selected.items.indexOf(message.emailId) > -1;
+  emailId === activeMessageId || selected.items.indexOf(message.emailId) > -1;
 
   const [{ opacity }, drag, preview] = useDrag({
-    item: { id, unread, folderId, type: 'message' },
+    item: { emailId, unread, folderId, type: 'message', aliasId },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult();
       if (item && dropResult) {
@@ -323,8 +324,8 @@ export default function MessagePreview(props: Props) {
                     attachment={files && files.length > 0}
                     isInNetwork={senderInNetwork}
                     isHover={isHover}
-                    messageId={id}
-                    activeFolderId={currentFolder.id}
+                    messageId={emailId}
+                    activeFolderId={currentFolder.folderId}
                   />
                 </div>
               </div>

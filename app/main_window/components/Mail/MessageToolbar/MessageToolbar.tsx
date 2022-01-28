@@ -168,7 +168,6 @@ export default function MessageToolbar(props: Props) {
         Alert.success(`Deleted ${selected.items.length} message(s).`);
       } else {
         const messagesToMove = [];
-        console.log('SELECTED ITEMS:::', selected.items)
         selected.items.forEach(msgId => {
           messagesToMove.push({
             id: msgId,
@@ -211,14 +210,14 @@ export default function MessageToolbar(props: Props) {
 
         if (
           !unmoveableToFolder.includes(folder.name) &&
-          folder.id !== currentFolderId
+          folder.folderId !== currentFolderId
         ) {
           const IconTag = Icon.folder;
           return (
             <Dropdown.Item
-              key={folder.id}
+              key={folder.folderId}
               onClick={() => {
-                moveToFolder(folder.id, folder.name);
+                moveToFolder(folder.folderId, folder.name);
               }}
             >
               {/* <IconTag className="text-base" /> */}

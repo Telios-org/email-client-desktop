@@ -38,6 +38,7 @@ export type AccountStats = {
 
 export type ContactType = {
   id?: number;
+  contactId: string;
   name: string;
   givenName?: string;
   familyName?: string;
@@ -72,7 +73,7 @@ export type ContactsType = Array<ContactType>;
 
 export type ContactAction = {
   type: string;
-  id?: number;
+  contactId?: any;
   payload?: ContactType;
   error?: string | Error;
 };
@@ -175,7 +176,7 @@ export type ExternalMailMessageType = {
 
 export type NamespaceType = {
   name: string;
-  mailboxId: number;
+  mailboxId: any;
   publicKey: string;
   privateKey: string;
   domain: string;
@@ -184,6 +185,7 @@ export type NamespaceType = {
 
 export type AliasesType = {
   aliasId: string;
+  mailboxId: any;
   name: string;
   description: string;
   namespaceKey: string;
@@ -196,13 +198,14 @@ export type AliasesType = {
 export type FolderType = {
   id: number;
   name: string;
-  mailboxId: number;
+  mailboxId: any;
   messages: number[];
   count: number;
 };
 
 export type MailboxType = {
   id: number | null;
+  mailboxId: any;
   address: string;
   name: string;
   isPrimary?: boolean;
@@ -309,7 +312,7 @@ export type MailAction = {
   folders?: FolderType[];
   messages?: MailMessageType[];
   mailbox?: MailboxType;
-  mailboxId?: number;
+  mailboxId?: any;
   activeFolderId?: number;
   searchQuery?: string;
   status?: string;
@@ -370,12 +373,12 @@ export type MailMessageType = {
   _id?: string;
   id: string;
   emailId: string;
+  mailboxId: any;
   folderId: number;
   isPreview: boolean;
   aliasId: string;
   createdAt: string;
   updatedAt: string;
-  // mailboxId: number; THIS WILL BE NEEDED WHEN MULTIPLE MAILBOX ARE PRESENT
   headers: any;
   active: boolean;
   subject: string;

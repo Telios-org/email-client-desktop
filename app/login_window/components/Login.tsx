@@ -28,15 +28,25 @@ const errorStyles = errorVisible => {
 
 // THE FUNCTIONS BELOW SHOULD BE MOVED TO A SEPARATE UTILITY FILE PROBABLY
 const initAccount = async (name, password) => {
-  try {
-    const account = await LoginService.initAccount(password, name);
+  let account;
 
-    return account;
+  try {
+    account = await LoginService.initAccount(password, name);
   } catch (err) {
     console.log(err);
+  }
+
+  if(account?.error?.message.indexOf('Unable to decrypt message') > -1) {
     ipcRenderer.send('restartMainWindow');
     throw i18n.t('login.incorrectPass');
   }
+
+  if(account?.error?.message.indexOf('ELOCKED') > -1) {
+    ipcRenderer.send('restartMainWindow');
+    throw account.error.message;
+  }
+  
+  return account;
 };
 
 const loadMailbox = async () => {
@@ -115,7 +125,6 @@ class Login extends Component<Props, State> {
     try {
       this.store.set('lastAccount', selectedAccount);
       const account = await initAccount(selectedAccount, masterpass);
-      // await loadMailbox();
 
       goToMainWindow(account);
 
