@@ -54,17 +54,17 @@ export default class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: 'Electron',
+      label: 'Telios',
       submenu: [
         {
-          label: 'About ElectronReact',
+          label: 'About Telios',
           selector: 'orderFrontStandardAboutPanel:'
         },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
         {
-          label: 'Hide ElectronReact',
+          label: 'Hide Telios',
           accelerator: 'Command+H',
           selector: 'hide:'
         },
@@ -157,27 +157,37 @@ export default class MenuBuilder {
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://electronjs.org');
+            shell.openExternal('https://www.telios.io/');
           }
         },
         {
           label: 'Documentation',
           click() {
-            shell.openExternal(
-              'https://github.com/electron/electron/tree/master/docs#readme'
-            );
+            shell.openExternal('https://docs.telios.io/');
           }
         },
         {
-          label: 'Community Discussions',
+          label: 'Discord Server',
           click() {
-            shell.openExternal('https://www.electronjs.org/community');
+            shell.openExternal('https://discord.gg/FyFcXHa6rX');
           }
         },
         {
-          label: 'Search Issues',
+          label: 'Telios Blog',
           click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
+            shell.openExternal('https://blog.telios.io/');
+          }
+        },
+        {
+          label: 'Release Notes',
+          click() {
+            shell.openExternal('https://github.com/Telios-org/email-client-desktop/releases');
+          }
+        },
+        {
+          label: 'Support',
+          click() {
+            shell.openExternal('https://teliostech.atlassian.net/servicedesk/customer/portal/1');
           }
         }
       ]
@@ -258,27 +268,37 @@ export default class MenuBuilder {
           {
             label: 'Learn More',
             click() {
-              shell.openExternal('https://electronjs.org');
+              shell.openExternal('https://www.telios.io/');
             }
           },
           {
             label: 'Documentation',
             click() {
-              shell.openExternal(
-                'https://github.com/electron/electron/tree/master/docs#readme'
-              );
+              shell.openExternal('https://docs.telios.io/');
             }
           },
           {
-            label: 'Community Discussions',
+            label: 'Discord Server',
             click() {
-              shell.openExternal('https://www.electronjs.org/community');
+              shell.openExternal('https://discord.gg/FyFcXHa6rX');
             }
           },
           {
-            label: 'Search Issues',
+            label: 'Telios Blog',
             click() {
-              shell.openExternal('https://github.com/electron/electron/issues');
+              shell.openExternal('https://blog.telios.io/');
+            }
+          },
+          {
+            label: 'Release Notes',
+            click() {
+              shell.openExternal('https://github.com/Telios-org/email-client-desktop/releases');
+            }
+          },
+          {
+            label: 'Support',
+            click() {
+              shell.openExternal('https://teliostech.atlassian.net/servicedesk/customer/portal/1');
             }
           }
         ]
