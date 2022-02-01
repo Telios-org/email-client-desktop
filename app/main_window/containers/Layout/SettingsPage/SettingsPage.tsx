@@ -5,6 +5,7 @@ import { Tab } from '@headlessui/react';
 import { Filter, Wallet, Password, Setting, ShieldDone } from 'react-iconly';
 import { ChevronLeftIcon } from '@heroicons/react/solid';
 import BrowserView, { removeViews } from 'react-electron-browser-view';
+import { setTimeout } from 'timers';
 import { retrieveStats } from '../../../actions/account/account';
 
 import {
@@ -12,7 +13,6 @@ import {
   SecurityPanel,
   BillingPayments
 } from '../../../components/Settings';
-import { setTimeout } from 'timers';
 
 const electron = require('electron');
 
@@ -49,7 +49,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full w-full">
       {showOverlay && browserURL.includes('http') && (
         <div className="bg-white absolute h-full w-full top-0 left-0 z-20">
           <div className="absolute left-1/2 top-1/2 transform -translate-x-2/4 -translate-y-2/4">
@@ -112,14 +112,19 @@ const SettingsPage = () => {
           </div>
         </div>
       )}
-      <div className="w-full h-full flex flex-row max-w-[90rem] mx-auto">
+      <div className="w-full h-full flex flex-row max-w-screen-2xl">
         <Tab.Group vertical>
-          <div className="w-56 min-w-56 pl-8 py-8">
-            <nav aria-label="Sidebar" className="sticky top-6">
-              <h4 className="text-sm leading-6 font-medium text-gray-900">
-                Account Settings
-              </h4>
-              <Tab.List className="flex flex-col space-y-1 mt-1">
+          <div className="w-72 min-w-72 bg-white border-r border-gray-200">
+            <nav aria-label="Sidebar" className="sticky">
+              <div className="px-6 pt-6 pb-4">
+                <h2 className="text-lg font-medium text-gray-900 leading-6">
+                  Account Settings
+                </h2>
+                <p className="mt-1 text-sm text-gray-600">
+                  Customize your account to your needs
+                </p>
+              </div>
+              <Tab.List className="flex flex-col space-y-1 mt-1 mx-6">
                 {tabs.map(tab => (
                   <Tab as={Fragment} key={`list_${tab.name}`}>
                     {({ selected }) => (

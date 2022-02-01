@@ -63,7 +63,7 @@ export default function MainWindow() {
           <NavStack active={active} onSelect={handleSelect} />
         </div>
         <div className="flex flex-col w-full overflow-hidden ">
-          <div className="flex-grow h-full bg-coolGray-100">
+          <div className="flex-grow h-full flex bg-coolGray-100 relative">
             {active === 'mail' && <MailPage />}
             {/* {active === 'files' && <div>Files page</div>} */}
             {active === 'contacts' && <ContactPage />}

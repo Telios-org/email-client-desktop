@@ -119,7 +119,13 @@ const theme = {
 //     display: ['group-hover']
 //   }
 // }; all variants are automatically available in v3 of tailwindcss
-const plugins = [require('@tailwindcss/line-clamp')];
+const plugins = [
+  require('@tailwindcss/line-clamp'),
+  require('@tailwindcss/forms')({
+    strategy: 'class'
+  }),
+  require('tailwind-scrollbar-hide')
+];
 
 module.exports = {
   content: [

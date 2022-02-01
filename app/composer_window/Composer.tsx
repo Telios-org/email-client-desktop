@@ -400,7 +400,7 @@ const Composer = (props: Props) => {
           <div className="w-16 text-gray-600 p-2 self-center">Subject</div>
           <div className="flex w-full">
             <DebounceInput
-              className="pl-1 focus:outline-none w-full py-2 text-gray-800 bg-transparent"
+              className="pl-1 focus:outline-none w-full py-2 text-gray-800 bg-transparent border-0 focus:ring-0"
               minLength={1}
               value={email?.subject ?? ''}
               debounceTimeout={250}

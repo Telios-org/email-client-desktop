@@ -41,13 +41,13 @@
 }
 
 .iddleSearch{
-    padding-left: 43%!important;
-    transition: padding 0.3s ease;
+    width: 75%!important;
+    transition: width 0.3s ease;
     cursor: 'pointer'!important;
 }
 
 .activeSearch{
-    padding-left: 0px!important;
-    transition: padding 0.3s ease;
+    width: 0%!important;
+    transition: width 0.3s ease;
     cursor: 'text'!important;
 }

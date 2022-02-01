@@ -1,336 +1,343 @@
-import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import React, { Fragment, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { FilterIcon, SearchIcon } from '@heroicons/react/solid';
+import { BigHead } from '@bigheads/core';
+import getRandomOptions from '../../../../utils/helpers/avatarRandomOptions';
 
-import {
-  AutoComplete,
-  InputGroup,
-  Icon,
-  IconButton,
-  Table,
-  Avatar
-} from 'rsuite';
-
-import ContactModal from '../../../components/Contact/ContactModal';
-
-import { StateType, Dispatch, ContactType } from '../../../reducers/types';
-
+// ACTION CREATORS
 import {
   fetchRolladex,
   commitContactsUpdates,
   deleteContact
 } from '../../../actions/contacts/contacts';
 
-const { Column, HeaderCell, Cell } = Table;
-const clone = require('rfdc')();
+// SELECTORS
+import { contactDirectory } from '../../../selectors/contacts';
 
-const ImageCell = ({
-  rowData: { givenName = '', familyName = '', name = '' },
-  dataKey,
-  ...props
-}: {
-  rowData: { givenName: string; familyName: string; name: string };
-  dataKey: any;
-}) => {
-  let initials = '';
-  if (
-    givenName &&
-    givenName.length > 0 &&
-    familyName &&
-    familyName.length > 0
-  ) {
-    initials = `${givenName[0].toUpperCase()}${familyName[0].toUpperCase()}`;
-  } else if (givenName && givenName.length > 0) {
-    initials = `${givenName.substring(0, 2).toUpperCase()}`;
-  } else if (familyName && familyName.length > 0) {
-    initials = `${familyName.substring(0, 2).toUpperCase()}`;
-  } else if (name && name.length > 0) {
-    initials = `${name.substring(0, 1).toUpperCase()}`;
-  }
+// TYPESCRIPT
+import { StateType, Dispatch, ContactType } from '../../../reducers/types';
 
-  return (
-    <Cell
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-      className="-mt-1 p-0"
-    >
-      <Avatar size="sm">{`${initials}`}</Avatar>
-    </Cell>
-  );
-};
-
-const contactTemplate = {
-  name: '',
-  givenName: '',
-  familyName: '',
-  nickname: '',
-  birthday: '',
-  photo: '',
-  email: '',
-  phone: [
+const directorySample = {
+  A: [
     {
-      value: '',
-      type: ''
+      id: 1,
+      name: 'Leslie Abbott',
+      role: 'Co-Founder / CEO',
+      imageUrl:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 2,
+      name: 'Hector Adams',
+      role: 'VP, Marketing',
+      imageUrl:
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 3,
+      name: 'Blake Alexander',
+      role: 'Account Coordinator',
+      imageUrl:
+        'https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 4,
+      name: 'Fabricio Andrews',
+      role: 'Senior Art Director',
+      imageUrl:
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
     }
   ],
-  address: [
+  B: [
     {
-      formatted: '',
-      street: '',
-      street2: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      country: '',
-      type: ''
+      id: 5,
+      name: 'Angela Beaver',
+      role: 'Chief Strategy Officer',
+      imageUrl:
+        'https://images.unsplash.com/photo-1501031170107-cfd33f0cbdcc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 6,
+      name: 'Yvette Blanchard',
+      role: 'Studio Artist',
+      imageUrl:
+        'https://images.unsplash.com/photo-1506980595904-70325b7fdd90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 7,
+      name: 'Lawrence Brooks',
+      role: 'Content Specialist',
+      imageUrl:
+        'https://images.unsplash.com/photo-1513910367299-bce8d8a0ebf6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
     }
   ],
-  website: '',
-  notes: '',
-  organization: [
+  C: [
     {
-      name: '',
-      jobTitle: ''
+      id: 8,
+      name: 'Jeffrey Clark',
+      role: 'Senior Art Director',
+      imageUrl:
+        'https://images.unsplash.com/photo-1517070208541-6ddc4d3efbcb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 9,
+      name: 'Kathryn Cooper',
+      role: 'Associate Creative Director',
+      imageUrl:
+        'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    }
+  ],
+  E: [
+    {
+      id: 10,
+      name: 'Alicia Edwards',
+      role: 'Junior Copywriter',
+      imageUrl:
+        'https://images.unsplash.com/photo-1509783236416-c9ad59bae472?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 11,
+      name: 'Benjamin Emerson',
+      role: 'Director, Print Operations',
+      imageUrl:
+        'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 12,
+      name: 'Jillian Erics',
+      role: 'Designer',
+      imageUrl:
+        'https://images.unsplash.com/photo-1504703395950-b89145a5425b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 13,
+      name: 'Chelsea Evans',
+      role: 'Human Resources Manager',
+      imageUrl:
+        'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    }
+  ],
+  G: [
+    {
+      id: 14,
+      name: 'Michael Gillard',
+      role: 'Co-Founder / CTO',
+      imageUrl:
+        'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 15,
+      name: 'Dries Giuessepe',
+      role: 'Manager, Business Relations',
+      imageUrl:
+        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    }
+  ],
+  M: [
+    {
+      id: 16,
+      name: 'Jenny Harrison',
+      role: 'Studio Artist',
+      imageUrl:
+        'https://images.unsplash.com/photo-1507101105822-7472b28e22ac?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 17,
+      name: 'Lindsay Hatley',
+      role: 'Front-end Developer',
+      imageUrl:
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 18,
+      name: 'Anna Hill',
+      role: 'Partner, Creative',
+      imageUrl:
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    }
+  ],
+  S: [
+    {
+      id: 19,
+      name: 'Courtney Samuels',
+      role: 'Designer',
+      imageUrl:
+        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 20,
+      name: 'Tom Simpson',
+      role: 'Director, Product Development',
+      imageUrl:
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    }
+  ],
+  T: [
+    {
+      id: 21,
+      name: 'Floyd Thompson',
+      role: 'Principal Designer',
+      imageUrl:
+        'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 22,
+      name: 'Leonard Timmons',
+      role: 'Senior Designer',
+      imageUrl:
+        'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 23,
+      name: 'Whitney Trudeau',
+      role: 'Copywriter',
+      imageUrl:
+        'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    }
+  ],
+  W: [
+    {
+      id: 24,
+      name: 'Kristin Watson',
+      role: 'VP, Human Resources',
+      imageUrl:
+        'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    },
+    {
+      id: 25,
+      name: 'Emily Wilson',
+      role: 'VP, User Experience',
+      imageUrl:
+        'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+    }
+  ],
+  Y: [
+    {
+      id: 26,
+      name: 'Emma Young',
+      role: 'Senior Front-end Developer',
+      imageUrl:
+        'https://images.unsplash.com/photo-1505840717430-882ce147ef2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
     }
   ]
 };
 
-class ContactPage extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: false,
-      showModal: false,
-      sortColumn: '',
-      sortType: undefined,
-      contactEdit: false,
-      currentContact: undefined
-    };
+const ContactPage = () => {
+  const dispatch = useDispatch();
+  const directory = useSelector(state => contactDirectory(state, ''));
 
-    this.handleSortColumn = this.handleSortColumn.bind(this);
-    this.getData = this.getData.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
-    this.setEditMode = this.setEditMode.bind(this);
+  useEffect(() => {
+    // Extracing data from the database
+    dispatch(fetchRolladex());
+  }, []);
 
-    this.getContactCount = this.getContactCount.bind(this);
-    this.saveContact = this.saveContact.bind(this);
-    this.deleteContact = this.deleteContact.bind(this);
-  }
-
-  componentDidMount() {
-    const { fetchContacts } = this.props;
-    fetchContacts();
-  }
-
-  handleSortColumn(sortColumn: string, sortType: 'desc' | 'asc' | undefined) {
-    this.setState({
-      loading: true
-    });
-
-    setTimeout(() => {
-      this.setState({
-        sortColumn,
-        sortType,
-        loading: false
-      });
-    }, 500);
-  }
-
-  getData() {
-    const { sortColumn, sortType } = this.state;
-    const { contacts } = this.props;
-    const data = clone(contacts);
-    const transform = data.map(c => {
-      return {
-        ...c,
-        organization_display:
-          (c.organization &&
-            c.organization.length > 0 &&
-            c.organization[0].name) ||
-          '',
-        phone_display: (c.phone && c.phone.length > 0 && c.phone[0].value) || ''
-      };
-    });
-    if (sortColumn && sortType) {
-      return transform.sort((a, b) => {
-        let x = a[sortColumn];
-        let y = b[sortColumn];
-        if (typeof x === 'string') {
-          x = x.charCodeAt();
-        }
-        if (typeof y === 'string') {
-          y = y.charCodeAt();
-        }
-        if (sortType === 'asc') {
-          return x - y;
-        }
-        return y - x;
-      });
-    }
-    return transform;
-  }
-
-  getContactCount() {
-    const { contacts } = this.props;
-    if (contacts && contacts.length > 0) {
-      return `Total: ${contacts.length}`;
-    }
-
-    return 'Total: 0';
-  }
-
-  setEditMode(contactEdit: boolean) {
-    this.setState({
-      contactEdit
-    });
-  }
-
-  saveContact(data: ContactType) {
-    const { saveContacts } = this.props;
-    saveContacts(data);
-    this.setState({
-      contactEdit: false,
-      currentContact: data
-    });
-  }
-
-  deleteContact(contactId: number) {
-    const { removeContact } = this.props;
-    removeContact(contactId);
-  }
-
-  openModal(data: ContactType | undefined, editMode: boolean) {
-    let rawData: ContactType = undefined;
-
-    if (data && data.id) {
-      const { contacts } = this.props;
-      // Referencing the raw contact data since we
-      // may have manipulated the data to display in the table
-      [rawData] = contacts.filter(c => c.id === data.id);
-    }
-
-    this.setState({
-      showModal: true,
-      currentContact: rawData,
-      contactEdit: editMode
-    });
-  }
-
-  closeModal() {
-    this.setState({
-      showModal: false
-    });
-  }
-
-  render() {
-    const {
-      loading,
-      sortType,
-      sortColumn,
-      showModal,
-      contactEdit,
-      currentContact
-    } = this.state;
-
-    return (
-      <div className="flex flex-col m-8 select-none">
-        <div className="flex flex-row justify-between mb-8">
-          <div className="text-xl">Contacts</div>
-          <div className="flex items-center">
-            <IconButton
-              appearance="primary"
-              size="md"
-              icon={<Icon icon="plus" />}
-              className="mr-2"
-              placement="left"
-              onClick={() => this.openModal(contactTemplate, true)}
+  return (
+    <div className="flex-1 relative z-0 flex overflow-hidden">
+      {/* DIRECTORY */}
+      <div className="flex flex-col flex-shrink-0 w-96 border-r border-gray-200 bg-white relative">
+        <div className="px-6 pt-6 pb-4">
+          <h2 className="text-lg font-medium text-gray-900 leading-6">
+            Contacts
+          </h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Search your directory of contacts
+          </p>
+          <div className="mt-6 flex space-x-4">
+            <div className="flex-1 min-w-0">
+              <label htmlFor="search" className="sr-only">
+                Search
+              </label>
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <SearchIcon
+                    className="h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                </div>
+                <input
+                  type="search"
+                  name="search"
+                  id="search"
+                  className="form-input focus:ring-purple-500 focus:border-purple-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
+                  placeholder="Search"
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              className="inline-flex justify-center px-3.5 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
-              Add Contact
-            </IconButton>
+              <FilterIcon
+                className="h-5 w-5 text-gray-400"
+                aria-hidden="true"
+              />
+              <span className="sr-only">Search</span>
+            </button>
           </div>
         </div>
-        <div className="block mb-24">
-          <Table
-            virtualized
-            data={this.getData()}
-            loading={loading}
-            sortColumn={sortColumn}
-            sortType={sortType}
-            onSortColumn={this.handleSortColumn}
-            onRowClick={data => this.openModal(data, false)}
-            autoHeight
-            affixHeader
-          >
-            <Column width={80} align="center" verticalAlign="middle">
-              <HeaderCell>{this.getContactCount()}</HeaderCell>
-              <ImageCell dataKey="avatar" />
-            </Column>
-
-            <Column width={200} sortable>
-              <HeaderCell>Name</HeaderCell>
-              <Cell dataKey="name" />
-            </Column>
-
-            <Column width={200} sortable>
-              <HeaderCell>Organization</HeaderCell>
-              <Cell dataKey="organization_display" />
-            </Column>
-
-            <Column width={200}>
-              <HeaderCell>Email</HeaderCell>
-              <Cell dataKey="email" />
-            </Column>
-
-            <Column width={200}>
-              <HeaderCell>Phone</HeaderCell>
-              <Cell dataKey="phone_display" />
-            </Column>
-          </Table>
-        </div>
-        <ContactModal
-          data={currentContact}
-          edit={contactEdit}
-          onDelete={this.deleteContact}
-          show={showModal}
-          onEditMode={this.setEditMode}
-          onClose={this.closeModal}
-          onSave={data => this.saveContact(data)}
-        />
+        {/* Directory list */}
+        <nav
+          className="flex-1 min-h-0 overflow-y-auto scrollbar-hide"
+          aria-label="Directory"
+        >
+          {Object.keys(directory).map(letter => (
+            <div key={letter} className="relative">
+              <div className="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 font-medium text-gray-500">
+                <h3 className="text-sm leading-5">{letter}</h3>
+              </div>
+              <ul
+                role="list"
+                className="relative z-0 divide-y divide-gray-200 mb-0"
+              >
+                {directory[letter].map(person => {
+                  const opts = getRandomOptions(person.email);
+                  return (
+                    <li key={person.id}>
+                      <div className="relative px-6 py-5 flex items-center space-x-3 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-purple-500">
+                        <div className="flex-shrink-0 h-10 w-10 relative">
+                          {/* <img
+                          className="h-10 w-10 rounded-full"
+                          src={person.imageUrl}
+                          alt=""
+                        /> */}
+                          {/* <img
+                          className="h-10 w-10 rounded-full"
+                          src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          alt=""
+                        /> */}
+                          <BigHead
+                            className="h-14 w-14 absolute top-[15px] left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                            {...opts}
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="">
+                            {/* Extend touch target to entire panel */}
+                            <span
+                              className="absolute inset-0"
+                              aria-hidden="true"
+                            />
+                            <p className="text-sm font-medium text-gray-900 mt-0">
+                              {person.name}
+                            </p>
+                            {/* <p className="text-sm text-gray-500 truncate mt-1">
+                            {person.role}
+                          </p> */}
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
       </div>
-    );
-  }
-}
-
-const mapStateToProps = (state: StateType) => {
-  return {
-    contacts: state.contacts
-  };
+      {/* DETAIL PAGE */}
+      <div />
+    </div>
+  );
 };
 
-// Functions that I want the component to be able to dispatch
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    fetchContacts: () => dispatch(fetchRolladex()),
-    saveContacts: (contact: ContactType) =>
-      dispatch(commitContactsUpdates(contact)),
-    removeContact: (contactId: number) => dispatch(deleteContact(contactId))
-  };
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux & {
-  // this object would hold any props not coming from redux
-};
-
-type State = {
-  loading: boolean;
-  sortType: 'asc' | 'desc' | undefined;
-  sortColumn: string;
-  showModal: boolean;
-  contactEdit: boolean;
-  currentContact: ContactType | undefined;
-};
-
-export default connector(ContactPage);
+export default ContactPage;

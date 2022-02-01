@@ -369,7 +369,9 @@ const Search = () => {
   return (
     <div
       className={`outline-none w-full transition-colors rounded relative inline-block mt-0.5 ${
-        isFocused || searchQuery !== '' ? 'bg-white' : 'bg-coolGray-800 cursor-pointer'
+        isFocused || searchQuery !== ''
+          ? 'bg-white'
+          : 'bg-coolGray-800 cursor-pointer'
       }`}
       ref={menuRef}
       role="searchbox"
@@ -388,7 +390,8 @@ const Search = () => {
               ? styles.activeSearch
               : styles.iddleSearch
           }`}
-        >
+        />
+        <div className="flex flex-row items-center">
           <SearchIcon
             set="broken"
             size="small"
@@ -464,7 +467,8 @@ const Search = () => {
                       tabIndex={0}
                       onKeyDown={handleKeyDown}
                       onMouseEnter={() =>
-                        calculateActiveIndex(Focus.Specific, index)}
+                        calculateActiveIndex(Focus.Specific, index)
+                      }
                       onMouseLeave={() => calculateActiveIndex(Focus.Nothing)}
                     >
                       <div className="mr-3 w-4 relative">
@@ -518,7 +522,8 @@ const Search = () => {
                       onKeyDown={handleKeyDown}
                       onClick={e => handleSelect(index)}
                       onMouseEnter={() =>
-                        calculateActiveIndex(Focus.Specific, index)}
+                        calculateActiveIndex(Focus.Specific, index)
+                      }
                       onMouseLeave={() => calculateActiveIndex(Focus.Nothing)}
                     >
                       <div className="mr-2 w-4 relative flex items-center">

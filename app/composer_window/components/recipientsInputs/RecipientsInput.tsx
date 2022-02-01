@@ -26,6 +26,10 @@ const customStyles = {
     ...inlineCss,
     display: 'none'
   }),
+  input: inlineCss => ({
+    ...inlineCss,
+    '--tw-ring-inset': '0px!important'
+  }),
   placeholder: inlineCss => ({
     ...inlineCss,
     display: 'none'
