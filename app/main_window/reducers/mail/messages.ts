@@ -33,7 +33,6 @@ export default function messages(
   let _allIds;
   switch (action.type) {
     case MSG_SELECTION_FLOW_SUCCESS:
-      console.log('ACTION ::: ', action)
       
       if (action.message) {
         console.log({
@@ -106,13 +105,17 @@ export default function messages(
     case FETCH_MAIL_DATA_SUCCESS:
     case FOLDER_SELECTION_FLOW_SUCCESS:
     case ALIAS_SELECTION_FLOW_SUCCESS:
-      return {
-        ...state,
-        byId: {
-          ...arrayToObject(action.messages, 'emailId')
-        },
-        allIds: [...idFromArrayDict(action.messages, 'emailId')]
-      };
+      if(action.messages) {
+        return {
+          ...state,
+          byId: {
+            ...arrayToObject(action.messages, 'emailId')
+          },
+          allIds: [...idFromArrayDict(action.messages, 'emailId')]
+        };
+      }
+
+      return { ...state }
     case UPDATE_MESSAGE_LIST:
       _byId = { ...state.byId };
       _allIds = [...state.allIds];

@@ -1154,6 +1154,11 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@bigheads/core@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@bigheads/core/-/core-0.3.3.tgz#158b1ba6c53417841ee30c5df62a5209ba0ee9b0"
+  integrity sha512-lu+TbgFR3IRPQR539td47935SwujzT4OQJdqReksVPJ9f3Tn80kpemIsdmO4yYm9FWW7eAGV+a5bFKC4/1jpLA==
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.4.tgz#f864ae85004d0fcab6f50be9141c4da368d1656a"
@@ -1645,6 +1650,13 @@
   integrity sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA==
   dependencies:
     defer-to-connect "^1.0.1"
+
+"@tailwindcss/forms@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/forms/-/forms-0.4.0.tgz#a46715e347a32d216a3973eb67473bd29ae3798e"
+  integrity sha512-DeaQBx6EgEeuZPQACvC+mKneJsD8am1uiJugjgQK1+/Vt+Ai0GpFBC2T2fqnUad71WgOxyrZPE6BG1VaI6YqfQ==
+  dependencies:
+    mini-svg-data-uri "^1.2.3"
 
 "@tailwindcss/line-clamp@^0.3.0":
   version "0.3.0"
@@ -10309,6 +10321,11 @@ mini-css-extract-plugin@^1.3.0:
     schema-utils "^3.0.0"
     webpack-sources "^1.1.0"
 
+mini-svg-data-uri@^1.2.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/mini-svg-data-uri/-/mini-svg-data-uri-1.4.3.tgz#43177b2e93766ba338931a3e2a84a3dfd3a222b8"
+  integrity sha512-gSfqpMRC8IxghvMcxzzmMnWpXAChSA+vy4cia33RgerMS8Fex95akUyQZPbxJJmeBGiGmK7n/1OpUX8ksRjIdA==
+
 minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.1.tgz#2e194de044626d4a10e7f7fbc00ce73e83e4d5c7"
@@ -13615,6 +13632,11 @@ seamless-immutable@^7.1.3:
   resolved "https://registry.yarnpkg.com/seamless-immutable/-/seamless-immutable-7.1.4.tgz#6e9536def083ddc4dea0207d722e0e80d0f372f8"
   integrity sha512-XiUO1QP4ki4E2PHegiGAlu6r82o5A+6tRh7IkGGTVg/h+UoeX4nFBeCGPOhb4CYjvkqsfm/TUtvOMYC1xmV30A==
 
+seedrandom@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/seedrandom/-/seedrandom-3.0.5.tgz#54edc85c95222525b0c7a6f6b3543d8e0b3aa0a7"
+  integrity sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==
+
 selderee@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/selderee/-/selderee-0.6.0.tgz#f3bee66cfebcb6f33df98e4a1df77388b42a96f7"
@@ -14684,6 +14706,11 @@ table@^6.6.0:
     slice-ansi "^4.0.0"
     string-width "^4.2.3"
     strip-ansi "^6.0.1"
+
+tailwind-scrollbar-hide@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/tailwind-scrollbar-hide/-/tailwind-scrollbar-hide-1.1.7.tgz#90b481fb2e204030e3919427416650c54f56f847"
+  integrity sha512-X324n9OtpTmOMqEgDUEA/RgLrNfBF/jwJdctaPZDzB3mppxJk7TLIDmOreEDm1Bq4R9LSPu4Epf8VSdovNU+iA==
 
 tailwindcss@^3.0.7:
   version "3.0.7"

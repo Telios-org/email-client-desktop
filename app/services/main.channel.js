@@ -50,7 +50,7 @@ class Channel extends EventEmitter {
     });
 
     this.process.on('message', m => {
-      console.timeEnd('processSend')
+      //console.timeEnd('processSend')
       // if(isDev) {
       console.log(m);
       // }
@@ -61,7 +61,7 @@ class Channel extends EventEmitter {
   }
 
   send(payload) {
-    console.time('processSend')
+    //console.time('processSend')
     this.process.send(payload);
   }
 }
