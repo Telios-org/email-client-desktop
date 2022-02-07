@@ -9,7 +9,7 @@ import { Editor, MessageInputs, TopBar, Attachments } from './components';
 
 import { recipientTransform, emailTransform } from '../utils/draft.utils';
 
-import { ISOtimestamp } from '../utils/helpers/date';
+import { UTCtimestamp } from '../utils/helpers/date';
 // import editorHTMLexport from './utils/messageEditor/htmlExportOptions';
 
 import ComposerService from '../services/composer.service';
@@ -118,7 +118,7 @@ const Composer = (props: Props) => {
     const owner = mbox ?? mailbox;
 
     // Getting timestamp for email
-    const time = ISOtimestamp();
+    const time = UTCtimestamp();
     // Getting the plain text off the htmlBody
     const plaintext = htmlToText.fromString(htmlBody);
 

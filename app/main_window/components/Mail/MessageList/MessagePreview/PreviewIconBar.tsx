@@ -51,7 +51,7 @@ function PreviewIconBar(props: Props) {
           {
             id: messageId,
             emailId: messageId,
-            unread: 0,
+            unread: false,
             folder: {
               fromId: activeFolderId,
               toId,

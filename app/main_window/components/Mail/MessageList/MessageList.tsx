@@ -300,6 +300,7 @@ export default function MessageList(props: Props) {
               return reject(err);
             });
         } else {
+          console.log('LOAD MORE ITEMS', folderId, startIndex)
           dispatch(fetchMoreFolderMessages(folderId, startIndex))
             .then(() => {
               isLoading = false;
@@ -316,11 +317,11 @@ export default function MessageList(props: Props) {
   const setReadFilter = (status: string) => {
     switch (status) {
       case 'read':
-        dispatch(setMsgListFilter({ unread: 0 }, folderId, aliasId));
+        dispatch(setMsgListFilter({ unread: false }, folderId, aliasId));
         break;
 
       case 'unread':
-        dispatch(setMsgListFilter({ unread: 1 }, folderId, aliasId));
+        dispatch(setMsgListFilter({ unread: true }, folderId, aliasId));
         break;
 
       case 'all':

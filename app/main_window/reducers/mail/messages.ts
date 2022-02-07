@@ -33,7 +33,16 @@ export default function messages(
   let _allIds;
   switch (action.type) {
     case MSG_SELECTION_FLOW_SUCCESS:
+      console.log('ACTION ::: ', action)
+      
       if (action.message) {
+        console.log({
+          ...state,
+          byId: {
+            ...state.byId,
+            [action.message.emailId]: { ...action.message }
+          }
+        })
         return {
           ...state,
           byId: {
@@ -42,6 +51,7 @@ export default function messages(
           }
         };
       }
+      console.log('RETURN STATE')
       return { ...state };
     case MARK_UNREAD_SUCCESS:
       if (action.id) {
@@ -49,7 +59,7 @@ export default function messages(
           ...state,
           byId: {
             ...state.byId,
-            [action.id]: { ...state.byId[action.id], unread: 1 }
+            [action.id]: { ...state.byId[action.id], unread: true }
           }
         };
       }

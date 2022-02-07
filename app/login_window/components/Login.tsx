@@ -36,12 +36,14 @@ const initAccount = async (name, password) => {
     console.log(err);
   }
 
-  if(account?.error?.message.indexOf('Unable to decrypt message') > -1) {
+  console.log('ACCOUNT::', account)
+
+  if(account?.error?.message?.indexOf('Unable to decrypt message') > -1) {
     ipcRenderer.send('restartMainWindow');
     throw i18n.t('login.incorrectPass');
   }
 
-  if(account?.error?.message.indexOf('ELOCKED') > -1) {
+  if(account?.error?.message?.indexOf('ELOCKED') > -1) {
     ipcRenderer.send('restartMainWindow');
     throw account.error.message;
   }

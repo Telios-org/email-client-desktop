@@ -176,7 +176,7 @@ function transformEmail(data) {
   const email = data.email.content;
 
   return {
-    unread: 1,
+    unread: true,
     fromJSON: JSON.stringify(email.from),
     toJSON: JSON.stringify(email.to),
     ccJSON: JSON.stringify(email.cc),

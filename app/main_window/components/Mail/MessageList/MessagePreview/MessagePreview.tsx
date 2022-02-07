@@ -277,7 +277,7 @@ export default function MessagePreview(props: Props) {
           ${isActive ? 'bg-blue-50' : 'hover:bg-coolGray-50'}`}
           >
             <div className="flex justify-center w-6 shrink-0 items-center pt-0.5">
-              {unread === 1 && !isRead && direction === 'incoming' && (
+              {unread && !isRead && direction === 'incoming' && (
                 <Badge className="bg-purple-600" />
               )}
             </div>
@@ -311,7 +311,7 @@ export default function MessagePreview(props: Props) {
               <div
                 id="subject"
                 className={`flex flex-1 flex-row justify-between ${
-                  unread === 1 && !isRead ? 'text-purple-600 font-bold' : ''
+                  unread && !isRead ? 'text-purple-600 font-bold' : ''
                 }`}
               >
                 <div className="flex flex-1 leading-tight overflow-hidden text-sm break-all line-clamp-1">

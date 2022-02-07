@@ -175,6 +175,7 @@ export const fetchMoreFolderMessages = (id: number, offset: number) => {
 
     try {
       messages = await Mail.getMessagesByFolderId(id, 50, offset);
+      console.log('FETCH MORE MESSAGES!!', messages)
     } catch (error) {
       return Promise.reject(error);
     }
@@ -773,7 +774,7 @@ export const loadMailboxes = () => async (
     console.log('MAILBOXES', mailboxes)
     console.log('activeMailboxIndex', activeMailboxIndex)
 
-    activeMailboxId = mailboxes[activeMailboxIndex]._id;
+    activeMailboxId = mailboxes[activeMailboxIndex].mailboxId;
 
     console.log('activeMailboxId', activeMailboxId)
 

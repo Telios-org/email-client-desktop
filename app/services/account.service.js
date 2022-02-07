@@ -237,7 +237,10 @@ class AccountService extends EventEmitter {
 
     return new Promise((resolve, reject) => {
       channel.once('account:retrieveStats:callback', m => {
-        const { data } = m;
+        const { data, error } = m;
+        
+        if(error) return reject(error);
+        
         return resolve(data);
       });
     });

@@ -92,6 +92,7 @@ class MailService {
     }
 
     const filepath = await dialog.showSaveDialogSync(options);
+
     channel.send({ event: 'email:saveFiles', payload: { filepath, attachments } });
 
     return new Promise((resolve, reject) => {
@@ -203,6 +204,7 @@ class MailService {
   }
 
   static getMessagesByFolderId(id, limit, offset) {
+    console.time('getMessages')
     channel.send({
       event: 'email:getMessagesByFolderId',
       payload: { id, limit, offset }
@@ -212,6 +214,7 @@ class MailService {
       channel.once('email:getMessagesByFolderId:callback', m => {
         const { error, data } = m;
         if (error) return reject(error);
+        console.timeEnd('getMessages')
         return resolve(data);
       });
     });
@@ -233,6 +236,7 @@ class MailService {
   }
 
   static getMessagebyId(id) {
+    console.log('MESSAGE ID :: ', id)
     channel.send({ event: 'email:getMessageById', payload: { id } });
 
     return new Promise((resolve, reject) => {

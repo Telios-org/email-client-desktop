@@ -28,7 +28,7 @@ class Channel extends EventEmitter {
       pids = [];
     }
 
-    this.process = fork(channelPath, [userDataPath, process.env.NODE_ENV], {
+    this.process = fork(channelPath, [userDataPath + '/Accounts', process.env.NODE_ENV], {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       cwd
     });
@@ -50,6 +50,7 @@ class Channel extends EventEmitter {
     });
 
     this.process.on('message', m => {
+      console.timeEnd('processSend')
       // if(isDev) {
       console.log(m);
       // }
@@ -60,6 +61,7 @@ class Channel extends EventEmitter {
   }
 
   send(payload) {
+    console.time('processSend')
     this.process.send(payload);
   }
 }

@@ -172,7 +172,7 @@ export default function MessageToolbar(props: Props) {
           messagesToMove.push({
             id: msgId,
             emailId: msgId,
-            unread: 0,
+            unread: false,
             folder: {
               fromId: currentFolderId,
               toId,

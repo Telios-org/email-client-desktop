@@ -389,7 +389,7 @@ export type MailMessageType = {
   bccJSON: string;
   bodyAsHtml: string;
   bodyAsText: string;
-  unread: number;
+  unread: boolean;
   labels: Array<LabelType>;
   path: string;
   attachments: Array<AttachmentType>;

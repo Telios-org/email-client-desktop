@@ -297,9 +297,7 @@ export const removeAlias = (payload: {
       const archiveExist = folders.allIds.some(f => {
         return folders.byId[f].name === 'Archives';
       });
-      console.log('ALIAS REMOVAL', archiveExist);
       const mailboxId = mailboxes.allIds[0];
-      console.log('ALIAS REMOVAL::MAILBOXID', mailboxId);
 
       let archiveId: number;
       if (!archiveExist) {
@@ -313,14 +311,11 @@ export const removeAlias = (payload: {
         );
       }
 
-      console.log('ALIAS REMOVAL:: ARCHIVE ID', archiveId);
       const aliasFolderId = folders.allIds.find(f => {
         return folders.byId[f].name === 'Alias';
       });
 
       const messages = await Mail.getMessagesByFolderId(aliasFolderId);
-
-      console.log('ALIAS REMOVAL:: MESSAGES', messages);
 
       const aliasMsg = messages
         .filter(msg => {
@@ -330,7 +325,7 @@ export const removeAlias = (payload: {
           return {
             id: msg.emailId,
             emailId: msg.emailId,
-            unread: 0,
+            unread: false,
             folder: {
               fromId: aliasFolderId,
               toId: archiveId,
@@ -438,7 +433,7 @@ export const fetchMoreAliasMessagesSuccess = (messages: MailMessageType[]) => {
   };
 };
 
-export const fetchMoreAliasMessages = (id: number, offset: number) => {
+export const fetchMoreAliasMessages = (id: string, offset: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     let messages;
 
