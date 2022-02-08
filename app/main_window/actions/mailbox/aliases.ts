@@ -403,7 +403,7 @@ export const fetchAliasMessages = (id: string) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByAliasId(id, 50);
+      messages = await Mail.getMessagesByAliasId(id, 20);
     } catch (error) {
       dispatch(getAliasMessagesFailure(error));
       return Promise.reject(error);
@@ -438,7 +438,7 @@ export const fetchMoreAliasMessages = (id: string, offset: number) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByAliasId(id, 50, offset);
+      messages = await Mail.getMessagesByAliasId(id, 20, offset);
     } catch (error) {
       return Promise.reject(error);
     }

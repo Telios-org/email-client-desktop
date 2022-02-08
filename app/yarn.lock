@@ -206,10 +206,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.1.2":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.1.2.tgz#33b6e1fc02ccb009eb7aadf96936ecb504aac0e1"
-  integrity sha512-0rR6oXvZae8qhdPX/LmF0NOFyMeS/n7zCeDZtnGwBIfhFUxFz7zVN2jhNIlBVTzS4KyLFiLy7NW5kglzvlWdMw==
+"@telios/telios-client-backend@^3.1.4":
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.1.4.tgz#322fbc35bc01e5c2747fb5e0e0c5d39c8d45f3a8"
+  integrity sha512-YBkJBHLYuAKcPk3t2QHxtN668b8Pg9gq3Irx/XvtzCqTfHkx8f6cYng4WzKiNlxOdHk6BeLfzY6D+RiLF8MB2Q==
   dependencies:
     "@telios/client-sdk" "^5.0.1"
     "@telios/nebula" "^1.5.5"
@@ -247,9 +247,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "17.0.15"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.15.tgz#97779282c09c09577120a2162e71d8380003590a"
-  integrity sha512-zWt4SDDv1S9WRBNxLFxFRHxdD9tvH8f5/kg5/IaLFdnSNXsDY4eL3Q3XXN+VxUnWIhyVFDwcsmAprvwXoM/ClA==
+  version "17.0.16"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.16.tgz#e3733f46797b9df9e853ca9f719c8a6f7b84cd26"
+  integrity sha512-ydLaGVfQOQ6hI1xK2A5nVh8bl0OGoIfYMxPWHqqYe9bTkWCfqiVvZoh2I/QF2sNSkZzZyROBoTefIEI+PB6iIA==
 
 "@types/node@11.11.6":
   version "11.11.6"

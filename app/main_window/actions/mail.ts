@@ -139,7 +139,7 @@ export const fetchFolderMessages = (id: number) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByFolderId(id, 50);
+      messages = await Mail.getMessagesByFolderId(id, 20);
     } catch (error) {
       dispatch(getFolderMessagesFailure(error));
       return Promise.reject(error);
@@ -174,7 +174,7 @@ export const fetchMoreFolderMessages = (id: number, offset: number) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByFolderId(id, 50, offset);
+      messages = await Mail.getMessagesByFolderId(id, 20, offset);
       console.log('FETCH MORE MESSAGES!!', messages)
     } catch (error) {
       return Promise.reject(error);

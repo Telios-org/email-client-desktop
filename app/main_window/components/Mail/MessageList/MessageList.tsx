@@ -282,7 +282,7 @@ export default function MessageList(props: Props) {
   // }
 
   const isItemLoaded = (index: number) => {
-    return index < 50;
+    return index < 20;
   };
 
   const loadMoreItems = (startIndex: number, stopIndex: number) => {
