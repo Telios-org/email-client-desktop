@@ -39,6 +39,17 @@ const useForm = options => {
     }
   }, [data]);
 
+  useEffect(() => {
+    console.log('CHANGES', options?.initialValues);
+    if (
+      JSON.stringify(options?.initialValues) !== JSON.stringify(initialData)
+    ) {
+      setIsDirty(false);
+      setInitial(options?.initialValues);
+      setData(options?.initialValues);
+    }
+  }, [options?.initialValues]);
+
   const handleSubmit = async e => {
     e.preventDefault();
     const validations = options?.validations;

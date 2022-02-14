@@ -34,15 +34,19 @@ const getRandomOptions = (seed: string) => {
   // const seed1 = seed.replace('@dev.telios.io', '').replace('@.telios.io', '');
   // const seed2 = seed.replace('@dev.telios.io', '').replace('@.telios.io', '');
 
+  // Removing the naked option from the random generation
+  const clothingDict = { ...clothingMap };
+  delete clothingDict.naked;
+
   const skinTone = selectRandomKey(theme.colors.skin, seed1);
   const eyes = selectRandomKey(eyesMap, seed2);
   const eyebrows = selectRandomKey(eyebrowsMap, seed1);
   const mouth = selectRandomKey(mouthsMap, seed2);
   const hair = selectRandomKey(hairMap, seed1);
   const facialHair = selectRandomKey(facialHairMap, seed2);
-  const clothing = selectRandomKey(clothingMap, seed1);
+  const clothing = selectRandomKey(clothingDict, seed1);
   const accessory = selectRandomKey(accessoryMap, seed2);
-  const graphic = selectRandomKey(graphicsMap, seed1);
+  const graphic = 'none';
   const hat = selectRandomKey(hatMap, seed2);
   const body = selectRandomKey(bodyMap, seed1);
 

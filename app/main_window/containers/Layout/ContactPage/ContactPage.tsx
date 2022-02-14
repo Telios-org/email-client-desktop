@@ -1,7 +1,14 @@
-import React, { Fragment, useState, useEffect } from 'react';
+/* eslint-disable react/jsx-indent */
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FilterIcon, SearchIcon } from '@heroicons/react/solid';
+import { SearchIcon } from '@heroicons/react/solid';
+import { PlusIcon } from '@heroicons/react/outline';
 import { BigHead } from '@bigheads/core';
+
+// Internal Components
+import ContactDetails from '../../../components/Contact/ContactDetails/ContactDetails';
+
+// Internal Helpers
 import getRandomOptions from '../../../../utils/helpers/avatarRandomOptions';
 
 // ACTION CREATORS
@@ -17,219 +24,84 @@ import { contactDirectory } from '../../../selectors/contacts';
 // TYPESCRIPT
 import { StateType, Dispatch, ContactType } from '../../../reducers/types';
 
-const directorySample = {
-  A: [
+// HOOKS
+import { useHandler } from '../../../../utils/hooks/useHandler';
+
+const contactTemplate = {
+  name: '',
+  givenName: '',
+  familyName: '',
+  nickname: '',
+  birthday: '',
+  photo: '',
+  email: '',
+  phone: [
     {
-      id: 1,
-      name: 'Leslie Abbott',
-      role: 'Co-Founder / CEO',
-      imageUrl:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 2,
-      name: 'Hector Adams',
-      role: 'VP, Marketing',
-      imageUrl:
-        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 3,
-      name: 'Blake Alexander',
-      role: 'Account Coordinator',
-      imageUrl:
-        'https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 4,
-      name: 'Fabricio Andrews',
-      role: 'Senior Art Director',
-      imageUrl:
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+      value: '',
+      type: ''
     }
   ],
-  B: [
+  address: [
     {
-      id: 5,
-      name: 'Angela Beaver',
-      role: 'Chief Strategy Officer',
-      imageUrl:
-        'https://images.unsplash.com/photo-1501031170107-cfd33f0cbdcc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 6,
-      name: 'Yvette Blanchard',
-      role: 'Studio Artist',
-      imageUrl:
-        'https://images.unsplash.com/photo-1506980595904-70325b7fdd90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 7,
-      name: 'Lawrence Brooks',
-      role: 'Content Specialist',
-      imageUrl:
-        'https://images.unsplash.com/photo-1513910367299-bce8d8a0ebf6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+      formatted: '',
+      street: '',
+      street2: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: '',
+      type: ''
     }
   ],
-  C: [
+  website: '',
+  notes: '',
+  organization: [
     {
-      id: 8,
-      name: 'Jeffrey Clark',
-      role: 'Senior Art Director',
-      imageUrl:
-        'https://images.unsplash.com/photo-1517070208541-6ddc4d3efbcb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 9,
-      name: 'Kathryn Cooper',
-      role: 'Associate Creative Director',
-      imageUrl:
-        'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    }
-  ],
-  E: [
-    {
-      id: 10,
-      name: 'Alicia Edwards',
-      role: 'Junior Copywriter',
-      imageUrl:
-        'https://images.unsplash.com/photo-1509783236416-c9ad59bae472?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 11,
-      name: 'Benjamin Emerson',
-      role: 'Director, Print Operations',
-      imageUrl:
-        'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 12,
-      name: 'Jillian Erics',
-      role: 'Designer',
-      imageUrl:
-        'https://images.unsplash.com/photo-1504703395950-b89145a5425b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 13,
-      name: 'Chelsea Evans',
-      role: 'Human Resources Manager',
-      imageUrl:
-        'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    }
-  ],
-  G: [
-    {
-      id: 14,
-      name: 'Michael Gillard',
-      role: 'Co-Founder / CTO',
-      imageUrl:
-        'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 15,
-      name: 'Dries Giuessepe',
-      role: 'Manager, Business Relations',
-      imageUrl:
-        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    }
-  ],
-  M: [
-    {
-      id: 16,
-      name: 'Jenny Harrison',
-      role: 'Studio Artist',
-      imageUrl:
-        'https://images.unsplash.com/photo-1507101105822-7472b28e22ac?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 17,
-      name: 'Lindsay Hatley',
-      role: 'Front-end Developer',
-      imageUrl:
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 18,
-      name: 'Anna Hill',
-      role: 'Partner, Creative',
-      imageUrl:
-        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    }
-  ],
-  S: [
-    {
-      id: 19,
-      name: 'Courtney Samuels',
-      role: 'Designer',
-      imageUrl:
-        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 20,
-      name: 'Tom Simpson',
-      role: 'Director, Product Development',
-      imageUrl:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    }
-  ],
-  T: [
-    {
-      id: 21,
-      name: 'Floyd Thompson',
-      role: 'Principal Designer',
-      imageUrl:
-        'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 22,
-      name: 'Leonard Timmons',
-      role: 'Senior Designer',
-      imageUrl:
-        'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 23,
-      name: 'Whitney Trudeau',
-      role: 'Copywriter',
-      imageUrl:
-        'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    }
-  ],
-  W: [
-    {
-      id: 24,
-      name: 'Kristin Watson',
-      role: 'VP, Human Resources',
-      imageUrl:
-        'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    },
-    {
-      id: 25,
-      name: 'Emily Wilson',
-      role: 'VP, User Experience',
-      imageUrl:
-        'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-    }
-  ],
-  Y: [
-    {
-      id: 26,
-      name: 'Emma Young',
-      role: 'Senior Front-end Developer',
-      imageUrl:
-        'https://images.unsplash.com/photo-1505840717430-882ce147ef2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+      name: '',
+      jobTitle: ''
     }
   ]
 };
 
 const ContactPage = () => {
   const dispatch = useDispatch();
-  const directory = useSelector(state => contactDirectory(state, ''));
+  const [contactFilter, setContactFilter] = useState('');
+  const [contactCount, setContactCount] = useState(0);
+  const [activeContact, setActiveContact] = useState(contactTemplate);
+  const [editMode, setEditMode] = useState(false);
+
+  const directory = useSelector(state =>
+    contactDirectory(state, contactFilter)
+  );
+
+  const inputRef = useRef();
 
   useEffect(() => {
     // Extracing data from the database
     dispatch(fetchRolladex());
   }, []);
+
+  useEffect(() => {
+    if (Object.keys(directory).length > 0) {
+      const count = Object.keys(directory).reduce(
+        (prev, curr) => prev + directory[curr].length,
+        0
+      );
+      setContactCount(count);
+    }
+  }, [directory]);
+
+  const handleContactSearch = useHandler(
+    e => {
+      setContactFilter(inputRef.current.value || '');
+    },
+    { debounce: 250 }
+  );
+
+  const handleContactSelection = contact => {
+    console.log('SELECTION OF CONTACT', contact);
+    setActiveContact(contact);
+  };
 
   return (
     <div className="flex-1 relative z-0 flex overflow-hidden">
@@ -240,7 +112,7 @@ const ContactPage = () => {
             Contacts
           </h2>
           <p className="mt-1 text-sm text-gray-600">
-            Search your directory of contacts
+            {`Search your directory of ${contactCount} contacts`}
           </p>
           <div className="mt-6 flex space-x-4">
             <div className="flex-1 min-w-0">
@@ -258,6 +130,8 @@ const ContactPage = () => {
                   type="search"
                   name="search"
                   id="search"
+                  ref={inputRef}
+                  onChange={handleContactSearch}
                   className="form-input focus:ring-purple-500 focus:border-purple-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
                   placeholder="Search"
                 />
@@ -267,10 +141,7 @@ const ContactPage = () => {
               type="button"
               className="inline-flex justify-center px-3.5 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
-              <FilterIcon
-                className="h-5 w-5 text-gray-400"
-                aria-hidden="true"
-              />
+              <PlusIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
               <span className="sr-only">Search</span>
             </button>
           </div>
@@ -280,6 +151,74 @@ const ContactPage = () => {
           className="flex-1 min-h-0 overflow-y-auto scrollbar-hide"
           aria-label="Directory"
         >
+          {Object.keys(directory).length === 0 && (
+            <>
+              <div className="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 font-medium text-gray-500">
+                <h3 className="text-sm leading-5">Oh no!</h3>
+              </div>
+              <div className="space-x-3 relative px-6 py-5 flex items-center">
+                <div className="flex-shrink-0 h-10 w-10 relative">
+                  <BigHead
+                    accessory="none"
+                    body="chest"
+                    circleColor="blue"
+                    clothing="dressShirt"
+                    clothingColor="black"
+                    eyebrows="concerned"
+                    eyes="dizzy"
+                    faceMask
+                    faceMaskColor="black"
+                    facialHair="none"
+                    graphic="none"
+                    hair="short"
+                    hairColor="brown"
+                    hat="none"
+                    hatColor="blue"
+                    lashes
+                    lipColor="green"
+                    mask
+                    mouth="grin"
+                    skinTone="light"
+                    className="h-14 w-14 absolute top-[15px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 grayscale"
+                  />
+                </div>
+                <div className="flex-1 min-w-0 relative">
+                  <div className="">
+                    {/* Extend touch target to entire panel */}
+                    <span className="absolute inset-0" aria-hidden="true" />
+                    <p className="text-sm font-medium text-gray-900 mt-0">
+                      No Contact Found
+                    </p>
+                    <p className="text-sm text-gray-500 truncate mt-1">
+                      Add it to your contacts list.
+                    </p>
+                  </div>
+
+                  <svg
+                    width="114px"
+                    height="174px"
+                    viewBox="0 0 114 174"
+                    className="absolute top-[-45px] right-[14px] h-20 w-14 text-gray-500 z-50"
+                  >
+                    <g
+                      id="Page-1"
+                      stroke="none"
+                      strokeWidth="1"
+                      fill="currentColor"
+                      fillRule="evenodd"
+                    >
+                      <path
+                        id="Line"
+                        d="M98.6565805,1.06471592 L98.7541831,1.21670333 L112.833693,24.8813903 C113.53966,26.0679719 113.150044,27.6021857 111.963463,28.3081526 C110.826322,28.9847043 109.369915,28.6550703 108.629175,27.5820731 L108.536701,27.4379228 L99.337,11.975 L99.6871276,26.3739905 C100.239157,54.6915786 100.017411,74.0635537 99.0134241,84.5665053 C98.1315403,93.7921079 96.8403224,101.401285 95.1286898,107.409507 C92.8125945,115.539531 89.6885612,120.898974 85.5331495,123.425914 C82.7768165,125.102062 79.7252282,124.74154 76.2594923,122.905639 C74.9882902,122.232247 73.6530905,121.364372 72.0374605,120.194672 C71.41392,119.743235 70.7690397,119.262527 69.9212852,118.620574 C69.7992802,118.528187 68.2471442,117.348689 67.7872758,117.002008 C58.2693382,109.82673 53.2614064,108.417673 47.7207244,113.413459 C46.0253535,114.9421 44.3412261,117.10229 42.6770148,119.950369 C42.3746884,120.467761 39.0548764,127.561863 35.7124525,134.513323 L35.3725837,135.219498 C35.3159648,135.337024 35.2593686,135.454444 35.2028096,135.571725 L34.8468294,136.309045 C33.1299529,139.860909 31.4761333,143.219708 30.2980716,145.459497 C24.8363571,155.843578 19.7548193,163.571025 14.8261196,168.261457 C10.710644,172.177978 6.65802823,173.981015 2.66424077,173.066213 C1.31838391,172.757936 0.477259094,171.416996 0.785535912,170.071139 C1.09381273,168.725282 2.43475302,167.884157 3.78060988,168.192434 C5.79976417,168.654934 8.35378658,167.518632 11.3792188,164.639458 C15.8104398,160.422455 20.6471666,153.06729 25.8728498,143.131963 C27.0846274,140.828072 28.848426,137.232652 30.6719259,133.451451 L31.037276,132.693061 L31.7692514,131.169282 C31.9359879,130.821586 32.1024017,130.474185 32.2681191,130.127917 L32.5985146,129.437142 C35.4519756,123.467841 38.0213375,118.007371 38.3599899,117.427812 C40.2689724,114.160839 42.2657627,111.599603 44.3725056,109.700047 C48.7606787,105.743427 53.5759731,104.693535 58.7047545,106.136595 C62.4315114,107.185174 65.7189945,109.181169 70.7971529,113.009435 C79.007067,119.198635 81.0670537,120.28987 82.9352465,119.153806 C85.7802682,117.423726 88.3163374,113.072966 90.3200139,106.039603 C91.93857,100.358101 93.1809632,93.0366495 94.0361128,84.0907196 C95.0058192,73.9463824 95.2316806,55.016715 94.7057576,27.387533 L94.6883415,26.483498 L94.338,12.096 L85.9012711,27.9884095 C85.2807963,29.1570935 83.8649768,29.6316829 82.6747465,29.0993574 L82.5208623,29.0241876 C81.3521783,28.4037129 80.8775888,26.9878934 81.4099144,25.797663 L81.4850842,25.6437788 L94.3975936,1.32265424 C95.2831934,-0.345401385 97.6060388,-0.45334596 98.6565805,1.06471592 Z"
+                        fill="currentColor"
+                        fillRule="nonzero"
+                      />
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </>
+          )}
           {Object.keys(directory).map(letter => (
             <div key={letter} className="relative">
               <div className="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 font-medium text-gray-500">
@@ -292,8 +231,21 @@ const ContactPage = () => {
                 {directory[letter].map(person => {
                   const opts = getRandomOptions(person.email);
                   return (
-                    <li key={person.id}>
-                      <div className="relative px-6 py-5 flex items-center space-x-3 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-purple-500">
+                    <li
+                      key={person.id}
+                      role="menuitem"
+                      onClick={() => handleContactSelection(person)}
+                    >
+                      <div
+                        className={`relative px-6 py-5 flex items-center space-x-3 
+                         focus-within:ring-2 focus-within:ring-inset 
+                        focus-within:ring-purple-500 ${
+                          person.id === activeContact?.id
+                            ? 'bg-purple-100'
+                            : 'hover:bg-gray-50'
+                        }`}
+                        style={{ cursor: 'pointer' }}
+                      >
                         <div className="flex-shrink-0 h-10 w-10 relative">
                           {/* <img
                           className="h-10 w-10 rounded-full"
@@ -311,18 +263,18 @@ const ContactPage = () => {
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="">
+                          <div className="outline-none">
                             {/* Extend touch target to entire panel */}
                             <span
                               className="absolute inset-0"
                               aria-hidden="true"
                             />
                             <p className="text-sm font-medium text-gray-900 mt-0">
-                              {person.name}
+                              {person.nickname || person.name}
                             </p>
-                            {/* <p className="text-sm text-gray-500 truncate mt-1">
-                            {person.role}
-                          </p> */}
+                            <p className="text-sm text-gray-500 truncate mt-0">
+                              {person.name !== person.email ? person.email : ''}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -335,7 +287,7 @@ const ContactPage = () => {
         </nav>
       </div>
       {/* DETAIL PAGE */}
-      <div />
+      <ContactDetails contact={activeContact} editMode={editMode} />
     </div>
   );
 };

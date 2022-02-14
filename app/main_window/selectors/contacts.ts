@@ -14,6 +14,34 @@ export const contactDirectory = createSelector(
       if (Object.prototype.hasOwnProperty.call(contacts, key)) {
         const c = contacts[key];
 
+        if (filter.length > 0) {
+          const filterArr = filter.toLowerCase().split(' ');
+
+          const filterTest = filterArr.every(f => {
+            const nameTest = c.name && c.name.toLowerCase().includes(f);
+            const givenNameTest =
+              c.givenName && c.givenName.toLowerCase().includes(f);
+            const familyNameTest =
+              c.familyName && c.familyName.toLowerCase().includes(f);
+            const emailTest = c.email && c.email.toLowerCase().includes(f);
+            const nicknameTest =
+              c.nickname && c.nickname.toLowerCase().includes(f);
+
+            return (
+              nameTest ||
+              givenNameTest ||
+              familyNameTest ||
+              emailTest ||
+              nicknameTest
+            );
+          });
+
+          if (!filterTest) {
+            // If none of the entry matche the filter we don't add this contact to the directory.
+            continue;
+          }
+        }
+
         let char = '';
         if (c.nickname?.length > 0) {
           char = c.nickname.charAt(0).toUpperCase();
@@ -61,6 +89,8 @@ export const contactDirectory = createSelector(
     const sorted = Object.keys(directory)
       .sort()
       .reduce((r, k) => ((r[k] = directory[k]), r), {});
+
+    console.log('DIRECTORY SORTED', sorted);
 
     return sorted;
   }
