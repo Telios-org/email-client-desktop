@@ -1,11 +1,10 @@
-
 import { DateTime, Interval } from 'luxon';
 
 export const formatDateDisplay = date => {
   const now = DateTime.local();
   const received = DateTime.fromISO(date, { zone: 'utc' }).toLocal();
 
-  const diff = now.diff(received, ["years","months","days","hours"]);
+  const diff = now.diff(received, ['years', 'months', 'days', 'hours']);
 
   if (now.hasSame(received, 'day')) {
     return received.toLocaleString(DateTime.TIME_SIMPLE);
@@ -44,4 +43,24 @@ export const ISOtimestamp = () => {
 
 export const fullDatefromJS = date => {
   return DateTime.fromJSDate(date).toLocaleString(DateTime.DATE_FULL);
+};
+
+export const fullDatefromString = date => {
+  return DateTime.fromFormat(date, 'MM/dd/yyyy').toLocaleString(
+    DateTime.DATE_FULL
+  );
+};
+
+export const fromStringToJSDate = date => {
+  if (date === null || date.length === 0) {
+    return '';
+  }
+  return DateTime.fromFormat(date, 'MM/dd/yyyy').toJSDate();
+}
+
+export const fromJSDateToString = date => {
+  if (date === null || date.length === 0) {
+    return '';
+  }
+  return DateTime.fromJSDate(date).toFormat('LL/dd/yyyy');
 };

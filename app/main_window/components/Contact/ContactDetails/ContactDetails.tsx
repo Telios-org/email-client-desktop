@@ -1,45 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { MailIcon, PhoneIcon } from '@heroicons/react/solid';
+import { useDispatch } from 'react-redux';
+import { CheckIcon, XIcon } from '@heroicons/react/solid';
 import { BigHead } from '@bigheads/core';
 import { Edit, Message } from 'react-iconly';
 
 // Internal Components
 import ContactField from './ContactField';
 
+// Action Creators
+import {
+  commitContactsUpdates,
+  deleteContact
+} from '../../../actions/contacts/contacts';
+
 // Internal Helpers
 import classNames from '../../../../utils/helpers/css';
 import getRandomOptions from '../../../../utils/helpers/avatarRandomOptions';
-import { fullDatefromJS } from '../../../../utils/helpers/date';
+import { rebuildArrObject } from '../../../../utils/helpers/json';
 import useForm from '../../../../utils/hooks/useForm';
+import { fromStringToJSDate } from '../../../../utils/helpers/date';
+
+// Typescript
+import { ContactType } from '../../../reducers/types';
 
 // Internal resource
 const cover = require('../../../../img/contactCoverPhoto.jpeg');
 
-console.log(cover);
-
 const tabs = [{ name: 'Profile', href: '#', current: true }];
-const profile2 = {
-  name: 'Ricardo Cooper',
-  imageUrl:
-    'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
-  coverImageUrl:
-    'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3764&q=80',
-
-  about: `
-      <p>Tincidunt quam neque in cursus viverra orci, dapibus nec tristique. Nullam ut sit dolor consectetur urna, dui cras nec sed. Cursus risus congue arcu aenean posuere aliquam.</p>
-      <p>Et vivamus lorem pulvinar nascetur non. Pulvinar a sed platea rhoncus ac mauris amet. Urna, sem pretium sit pretium urna, senectus vitae. Scelerisque fermentum, cursus felis dui suspendisse velit pharetra. Augue et duis cursus maecenas eget quam lectus. Accumsan vitae nascetur pharetra rhoncus praesent dictum risus suspendisse.</p>
-    `,
-  fields: {
-    Phone: '(555) 123-4567',
-    Email: 'ricardocooper@example.com',
-    Title: 'Senior Front-End Developer',
-    Team: 'Product Development',
-    Location: 'San Francisco',
-    Sits: 'Oasis, 4th floor',
-    Salary: '$145,000',
-    Birthday: 'June 8, 1990'
-  }
-};
 
 const team = [
   {
@@ -74,13 +61,14 @@ const team = [
 
 type Props = {
   contact: any;
-  editMode: boolean;
 };
 
 const ContactDetails = (props: Props) => {
-  const { contact, editMode } = props;
+  const { contact } = props;
+  const dispatch = useDispatch();
 
   const [bigHeadOpt, setBigHeadOpt] = useState({});
+  const [editMode, setEditMode] = useState(false);
 
   const {
     handleSubmit,
@@ -92,6 +80,7 @@ const ContactDetails = (props: Props) => {
     errors
   } = useForm({
     initialValues: {
+      id: contact?.id || null,
       name: contact?.name || '',
       givenName: contact?.givenName || '',
       familyName: contact?.familyName || '',
@@ -99,22 +88,20 @@ const ContactDetails = (props: Props) => {
       birthday: contact?.birthday || '',
       photo: contact?.photo || '',
       email: contact?.email || '',
-      phone: contact?.phone[0]?.value || '',
-      phoneType: contact?.phone[0]?.type || '',
-      address: {
-        formatted: contact?.address[0]?.formatted || '',
-        street: contact?.address[0]?.street || '',
-        street2: contact?.address[0]?.street2 || '',
-        city: contact?.address[0]?.city || '',
-        state: contact?.address[0]?.state || '',
-        postalCode: contact?.address[0]?.postalCode || '',
-        country: contact?.address[0]?.country || '',
-        type: contact?.address[0]?.type || ''
-      },
+      phone_value_0: contact?.phone[0]?.value || '',
+      phone_type_0: contact?.phone[0]?.type || '',
+      address_formatted_0: contact?.address[0]?.formatted || '',
+      address_street_0: contact?.address[0]?.street || '',
+      address_street2_0: contact?.address[0]?.street2 || '',
+      address_city_0: contact?.address[0]?.city || '',
+      address_state_0: contact?.address[0]?.state || '',
+      address_postalCode_0: contact?.address[0]?.postalCode || '',
+      address_country_0: contact?.address[0]?.country || '',
+      address_type_0: contact?.address[0]?.type || '',
       website: contact?.website || '',
       notes: contact?.notes || '',
-      organizationName: contact?.organization[0]?.name || '',
-      organizationTitle: contact?.organization[0]?.jobTitle || ''
+      organization_name_0: contact?.organization[0]?.name || '',
+      organization_jobTitle_0: contact?.organization[0]?.jobTitle || ''
     },
     validations: {
       // displayName: {
@@ -124,7 +111,18 @@ const ContactDetails = (props: Props) => {
       //   }
       // }
     },
-    onSubmit: data => {}
+    onSubmit: data => {
+      const finalForm = { ...data };
+      Object.keys(finalForm).forEach(d => {
+        if (finalForm[d] === '') {
+          finalForm[d] = null;
+        }
+      });
+      const input: ContactType = rebuildArrObject(finalForm);
+      console.log(input);
+      setEditMode(false);
+      dispatch(commitContactsUpdates(input));
+    }
   });
 
   useEffect(() => {
@@ -134,8 +132,30 @@ const ContactDetails = (props: Props) => {
     }
   }, [profile.email]);
 
+  useEffect(() => {
+    manualChange('name', `${profile.givenName} ${profile.familyName}`);
+  }, [profile.familyName, profile.givenName]);
+
+  // When the contact changes we want to close editMode
+  useEffect(() => {
+    setEditMode(false);
+  }, [contact.id]);
+
+  const handleResetForm = () => {
+    setEditMode(false);
+    resetForm();
+  };
+
+  const handleBirthday = (e: Event) => {
+    const value = e.target.value;
+    manualChange('birthday', fromStringToJSDate(value))
+  }
+
   return (
-    <article className="bg-white w-full overflow-y-auto scrollbar-hide">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white w-full overflow-y-auto scrollbar-hide"
+    >
       {/* Profile header */}
       <div>
         <div>
@@ -188,28 +208,58 @@ const ContactDetails = (props: Props) => {
             </div>
             <div className="mt-6 flex-1 min-w-0 flex items-center justify-end space-x-6 pb-1">
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                <button
-                  type="button"
-                  className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                >
-                  <Message
-                    set="bold"
-                    className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  <span>Message</span>
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                >
-                  <Edit
-                    set="bold"
-                    className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  <span>Edit</span>
-                </button>
+                {!editMode && (
+                  <>
+                    <button
+                      type="button"
+                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    >
+                      <Message
+                        set="bold"
+                        className="-ml-1 mr-2 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                      <span>Message</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditMode(true)}
+                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    >
+                      <Edit
+                        set="bold"
+                        className="-ml-1 mr-2 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                      <span>Edit</span>
+                    </button>
+                  </>
+                )}
+                {editMode && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleResetForm}
+                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    >
+                      <XIcon
+                        className="-ml-1 mr-2 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
+                      <span>Cancel</span>
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-gradient-to-bl from-sky-600 to-sky-500 disabled:from-gray-300 disabled:to-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-700"
+                    >
+                      <CheckIcon
+                        className="-ml-1 mr-2 h-5 w-5 text-white"
+                        aria-hidden="true"
+                      />
+                      <span>Save</span>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -251,64 +301,72 @@ const ContactDetails = (props: Props) => {
         <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
           <ContactField
             label="First Name"
+            type="text"
             value={profile.givenName}
-            editMode={false}
-            onEdit={() => {}}
+            editMode={editMode}
+            onEdit={handleChange('givenName')}
           />
           <ContactField
             label="Last Name"
+            type="text"
             value={profile.familyName}
-            editMode={false}
-            onEdit={() => {}}
+            editMode={editMode}
+            onEdit={handleChange('familyName')}
           />
           <ContactField
             label="Nickname"
+            type="text"
             value={profile.nickname}
-            editMode={false}
-            onEdit={() => {}}
+            editMode={editMode}
+            onEdit={handleChange('nickname')}
           />
           <ContactField
             label="Birthday"
-            value={
-              profile.birthday !== '' ? fullDatefromJS(profile.birthday) : ''
-            }
-            editMode={false}
-            onEdit={() => {}}
+            type="birthday"
+            value={profile.birthday}
+            editMode={editMode}
+            onEdit={handleBirthday}
           />
           <ContactField
             label="Email"
+            type="email"
             value={profile.email}
-            editMode={false}
-            onEdit={() => {}}
+            editMode={editMode}
+            onEdit={handleChange('email')}
           />
           <ContactField
             label="Website"
+            type="url"
             value={profile.website}
-            editMode={false}
+            editMode={editMode}
+            onEdit={handleChange('website')}
+          />
+          <ContactField
+            label="Address"
+            type="address"
+            value={profile.address_formatted_0}
+            editMode={editMode}
             onEdit={() => {}}
           />
           <ContactField
             label="Phone"
-            value={profile.phone}
-            editMode={false}
-            onEdit={() => {}}
-          />
-          <ContactField
-            label="Address"
-            value={profile.address.formatted}
-            editMode={false}
+            type="tel"
+            value={profile.phone_value_0}
+            editMode={editMode}
             onEdit={() => {}}
           />
           <ContactField
             label="Organization"
-            value={profile.organizationName}
-            editMode={false}
+            type="text"
+            value={profile.organization_name_0}
+            editMode={editMode}
             onEdit={() => {}}
           />
           <ContactField
             label="Title"
-            value={profile.organizationTitle}
-            editMode={false}
+            type="text"
+            value={profile.organization_jobTitle_0}
+            editMode={editMode}
             onEdit={() => {}}
           />
           <div className="sm:col-span-2">
@@ -352,7 +410,7 @@ const ContactDetails = (props: Props) => {
           ))}
         </div>
       </div> */}
-    </article>
+    </form>
   );
 };
 

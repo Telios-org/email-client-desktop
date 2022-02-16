@@ -8,7 +8,7 @@ export const contactDirectory = createSelector(
   [selectAllContacts, (_, filter: string) => filter],
   (contacts, filter) => {
     const directory = {};
-    console.log('SELECTOR', contacts);
+    // console.log('SELECTOR', contacts);
 
     for (const key in contacts) {
       if (Object.prototype.hasOwnProperty.call(contacts, key)) {

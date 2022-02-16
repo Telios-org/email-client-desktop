@@ -40,7 +40,7 @@ const useForm = options => {
   }, [data]);
 
   useEffect(() => {
-    console.log('CHANGES', options?.initialValues);
+    console.log(options?.initialValues)
     if (
       JSON.stringify(options?.initialValues) !== JSON.stringify(initialData)
     ) {

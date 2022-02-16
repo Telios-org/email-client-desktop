@@ -67,8 +67,7 @@ const ContactPage = () => {
   const dispatch = useDispatch();
   const [contactFilter, setContactFilter] = useState('');
   const [contactCount, setContactCount] = useState(0);
-  const [activeContact, setActiveContact] = useState(contactTemplate);
-  const [editMode, setEditMode] = useState(false);
+  const [activeContact, setActiveContact] = useState(null);
 
   const directory = useSelector(state =>
     contactDirectory(state, contactFilter)
@@ -88,6 +87,11 @@ const ContactPage = () => {
         0
       );
       setContactCount(count);
+    }
+
+    if (Object.keys(directory).length > 0 && activeContact === null) {
+      const first = Object.keys(directory)[0];
+      setActiveContact(directory[first][0]);
     }
   }, [directory]);
 
@@ -271,6 +275,9 @@ const ContactPage = () => {
                             />
                             <p className="text-sm font-medium text-gray-900 mt-0">
                               {person.nickname || person.name}
+                              {person?.nickname?.length > 0 &&
+                              <span className='text-xs text-gray-400 pl-2'>{`(${person.name})`}</span>
+                              }
                             </p>
                             <p className="text-sm text-gray-500 truncate mt-0">
                               {person.name !== person.email ? person.email : ''}
@@ -287,7 +294,7 @@ const ContactPage = () => {
         </nav>
       </div>
       {/* DETAIL PAGE */}
-      <ContactDetails contact={activeContact} editMode={editMode} />
+      {activeContact !== null && <ContactDetails contact={activeContact} />}
     </div>
   );
 };
