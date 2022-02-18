@@ -6,6 +6,9 @@ import { Edit, Message } from 'react-iconly';
 
 // Internal Components
 import ContactField from './ContactField';
+import PhoneField from './PhoneField';
+import AddressField from './AddressField';
+import NotesField from './NotesField';
 
 // Action Creators
 import {
@@ -18,7 +21,10 @@ import classNames from '../../../../utils/helpers/css';
 import getRandomOptions from '../../../../utils/helpers/avatarRandomOptions';
 import { rebuildArrObject } from '../../../../utils/helpers/json';
 import useForm from '../../../../utils/hooks/useForm';
-import { fromStringToJSDate } from '../../../../utils/helpers/date';
+import {
+  fromStringToJSDate,
+  fromJSDateToString
+} from '../../../../utils/helpers/date';
 
 // Typescript
 import { ContactType } from '../../../reducers/types';
@@ -61,10 +67,11 @@ const team = [
 
 type Props = {
   contact: any;
+  editActiveContact: () => void;
 };
 
 const ContactDetails = (props: Props) => {
-  const { contact } = props;
+  const { contact, editActiveContact } = props;
   const dispatch = useDispatch();
 
   const [bigHeadOpt, setBigHeadOpt] = useState({});
@@ -85,7 +92,7 @@ const ContactDetails = (props: Props) => {
       givenName: contact?.givenName || '',
       familyName: contact?.familyName || '',
       nickname: contact?.nickname || '',
-      birthday: contact?.birthday || '',
+      birthday: fromJSDateToString(contact?.birthday),
       photo: contact?.photo || '',
       email: contact?.email || '',
       phone_value_0: contact?.phone[0]?.value || '',
@@ -111,17 +118,20 @@ const ContactDetails = (props: Props) => {
       //   }
       // }
     },
-    onSubmit: data => {
+    onSubmit: async data => {
       const finalForm = { ...data };
       Object.keys(finalForm).forEach(d => {
         if (finalForm[d] === '') {
           finalForm[d] = null;
+        } else if (d === 'birthday') {
+          finalForm[d] = fromStringToJSDate(finalForm[d]);
         }
       });
       const input: ContactType = rebuildArrObject(finalForm);
-      console.log(input);
+      console.log('FINAL FORM', input);
       setEditMode(false);
-      dispatch(commitContactsUpdates(input));
+      await dispatch(commitContactsUpdates(input));
+      editActiveContact(input);
     }
   });
 
@@ -145,11 +155,6 @@ const ContactDetails = (props: Props) => {
     setEditMode(false);
     resetForm();
   };
-
-  const handleBirthday = (e: Event) => {
-    const value = e.target.value;
-    manualChange('birthday', fromStringToJSDate(value))
-  }
 
   return (
     <form
@@ -265,7 +270,10 @@ const ContactDetails = (props: Props) => {
           </div>
           <div className="block mt-6 min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-gray-900 truncate">
-              {profile.name}
+              {profile.nickname || profile.name}
+              {profile?.nickname?.length > 0 && (
+                <span className="text-lg text-gray-400 pl-4 font-medium">{`(${profile.name})`}</span>
+              )}
             </h1>
           </div>
         </div>
@@ -325,7 +333,7 @@ const ContactDetails = (props: Props) => {
             type="birthday"
             value={profile.birthday}
             editMode={editMode}
-            onEdit={handleBirthday}
+            onEdit={handleChange('birthday')}
           />
           <ContactField
             label="Email"
@@ -341,41 +349,48 @@ const ContactDetails = (props: Props) => {
             editMode={editMode}
             onEdit={handleChange('website')}
           />
-          <ContactField
+          <AddressField
             label="Address"
-            type="address"
-            value={profile.address_formatted_0}
+            value={{
+              formatted: profile.address_formatted_0,
+              street: profile.address_street_0,
+              street2: profile.address_street2_0,
+              city: profile.address_city_0,
+              state: profile.address_state_0,
+              zip: profile.address_postalCode_0,
+              country: profile.address_country_0
+            }}
             editMode={editMode}
-            onEdit={() => {}}
+            onEdit={handleChange}
           />
-          <ContactField
+          <PhoneField
             label="Phone"
-            type="tel"
             value={profile.phone_value_0}
+            typeValue={profile.phone_type_0}
             editMode={editMode}
-            onEdit={() => {}}
+            onEdit={handleChange('phone_value_0')}
+            onTypeChange={handleChange('phone_type_0')}
           />
           <ContactField
             label="Organization"
             type="text"
             value={profile.organization_name_0}
             editMode={editMode}
-            onEdit={() => {}}
+            onEdit={handleChange('organization_name_0')}
           />
           <ContactField
             label="Title"
             type="text"
             value={profile.organization_jobTitle_0}
             editMode={editMode}
-            onEdit={() => {}}
+            onEdit={handleChange('organization_jobTitle_0')}
           />
-          <div className="sm:col-span-2">
-            <dt className="text-sm font-medium text-gray-500">Notes</dt>
-            <dd
-              className="mt-1 max-w-prose text-sm text-gray-900 space-y-5"
-              dangerouslySetInnerHTML={{ __html: profile.notes }}
-            />
-          </div>
+          <NotesField
+            label="Notes"
+            value={profile.notes}
+            editMode={editMode}
+            onEdit={handleChange('notes')}
+          />
         </dl>
       </div>
 

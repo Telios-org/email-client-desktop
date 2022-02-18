@@ -107,6 +107,41 @@ const ContactPage = () => {
     setActiveContact(contact);
   };
 
+  const secondaryLabel = pers => {
+    if (
+      pers?.organization.length > 0 &&
+      (pers?.organization[0]?.jobTitle?.length > 0 ||
+        pers?.organization[0]?.name?.length > 0)
+    ) {
+      if (
+        pers?.organization[0].name?.length > 0 &&
+        pers?.organization[0].jobTitle?.length > 0
+      ) {
+        return `${pers?.organization[0].name} - ${pers?.organization[0].jobTitle}`;
+      }
+
+      if (
+        !pers?.organization[0].name &&
+        pers?.organization[0].jobTitle?.length > 0
+      ) {
+        return `${pers?.organization[0].jobTitle}`;
+      }
+
+      if (
+        pers?.organization[0].name?.length > 0 &&
+        !pers?.organization[0].jobTitle
+      ) {
+        return `${pers?.organization[0].name}`;
+      }
+    }
+
+    if (pers.name !== pers.email) {
+      return pers.email;
+    }
+
+    return '';
+  };
+
   return (
     <div className="flex-1 relative z-0 flex overflow-hidden">
       {/* DIRECTORY */}
@@ -275,12 +310,12 @@ const ContactPage = () => {
                             />
                             <p className="text-sm font-medium text-gray-900 mt-0">
                               {person.nickname || person.name}
-                              {person?.nickname?.length > 0 &&
-                              <span className='text-xs text-gray-400 pl-2'>{`(${person.name})`}</span>
-                              }
+                              {person?.nickname?.length > 0 && (
+                                <span className="text-xs text-gray-400 pl-2">{`(${person.name})`}</span>
+                              )}
                             </p>
                             <p className="text-sm text-gray-500 truncate mt-0">
-                              {person.name !== person.email ? person.email : ''}
+                              {secondaryLabel(person)}
                             </p>
                           </div>
                         </div>
@@ -294,7 +329,12 @@ const ContactPage = () => {
         </nav>
       </div>
       {/* DETAIL PAGE */}
-      {activeContact !== null && <ContactDetails contact={activeContact} />}
+      {activeContact !== null && (
+        <ContactDetails
+          contact={activeContact}
+          editActiveContact={setActiveContact}
+        />
+      )}
     </div>
   );
 };
