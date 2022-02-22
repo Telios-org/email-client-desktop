@@ -15,10 +15,9 @@ const NotesField = (props: Props) => {
       {!editMode && (
         <>
           <dt className="text-sm font-medium text-gray-500">{label}</dt>
-          <dd
-            className="mt-1 max-w-prose text-sm text-gray-900 space-y-5"
-            dangerouslySetInnerHTML={{ __html: { value } }}
-          />
+          <dd className="mt-1 max-w-prose text-sm text-gray-900 space-y-5 whitespace-pre-line">
+            {value}
+          </dd>
         </>
       )}
       {editMode && (

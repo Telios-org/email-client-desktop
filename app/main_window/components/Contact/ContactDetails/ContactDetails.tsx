@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CheckIcon, XIcon } from '@heroicons/react/solid';
 import { BigHead } from '@bigheads/core';
-import { Edit, Message } from 'react-iconly';
+import { Edit, Message, Delete } from 'react-iconly';
 
 // Internal Components
 import ContactField from './ContactField';
 import PhoneField from './PhoneField';
 import AddressField from './AddressField';
 import NotesField from './NotesField';
+import DeleteModal from './DeleteModal';
+import Notification from './Notification';
 
 // Action Creators
 import {
@@ -67,15 +69,19 @@ const team = [
 
 type Props = {
   contact: any;
+  editMode: boolean;
+  setEditMode: (val: boolean) => void;
   editActiveContact: () => void;
 };
 
 const ContactDetails = (props: Props) => {
-  const { contact, editActiveContact } = props;
+  const { contact, editActiveContact, setEditMode, editMode } = props;
   const dispatch = useDispatch();
 
+  const [showNotification, setShowNotification] = useState(false);
+  const [saveSucceeded, setSaveSucceeded] = useState(true);
   const [bigHeadOpt, setBigHeadOpt] = useState({});
-  const [editMode, setEditMode] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
   const {
     handleSubmit,
@@ -127,13 +133,29 @@ const ContactDetails = (props: Props) => {
           finalForm[d] = fromStringToJSDate(finalForm[d]);
         }
       });
+      console.log(finalForm);
+      if (finalForm.id === null) {
+        delete finalForm.id;
+      }
       const input: ContactType = rebuildArrObject(finalForm);
-      console.log('FINAL FORM', input);
       setEditMode(false);
-      await dispatch(commitContactsUpdates(input));
-      editActiveContact(input);
+      
+      const result = await dispatch(commitContactsUpdates(input));
+      let newObj = {...result}
+      if (result && (result.contactId || result.id)) {
+        setSaveSucceeded(true);
+        newObj.id = result.contactId;
+      } else {
+        setSaveSucceeded(false);
+      }
+      editActiveContact(newObj);
+      setShowNotification(true);
     }
   });
+
+  const handleDeletion = () => {
+    dispatch(deleteContact(profile.id));
+  };
 
   useEffect(() => {
     if (profile?.email) {
@@ -145,11 +167,6 @@ const ContactDetails = (props: Props) => {
   useEffect(() => {
     manualChange('name', `${profile.givenName} ${profile.familyName}`);
   }, [profile.familyName, profile.givenName]);
-
-  // When the contact changes we want to close editMode
-  useEffect(() => {
-    setEditMode(false);
-  }, [contact.id]);
 
   const handleResetForm = () => {
     setEditMode(false);
@@ -217,10 +234,10 @@ const ContactDetails = (props: Props) => {
                   <>
                     <button
                       type="button"
-                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
                     >
                       <Message
-                        set="bold"
+                        set="broken"
                         className="-ml-1 mr-2 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
@@ -229,23 +246,40 @@ const ContactDetails = (props: Props) => {
                     <button
                       type="button"
                       onClick={() => setEditMode(true)}
-                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
                     >
                       <Edit
-                        set="bold"
+                        set="broken"
                         className="-ml-1 mr-2 h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
                       <span>Edit</span>
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowDelete(true)}
+                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                      <Delete
+                        set="broken"
+                        className="-ml-1 mr-2 h-5 w-5 text-gray-400"
+                      />
+                      <span>Delete</span>
+                    </button>
                   </>
                 )}
+                <DeleteModal
+                  open={showDelete}
+                  setOpen={setShowDelete}
+                  profile={profile}
+                  onDelete={handleDeletion}
+                />
                 {editMode && (
                   <>
                     <button
                       type="button"
                       onClick={handleResetForm}
-                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                      className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                     >
                       <XIcon
                         className="-ml-1 mr-2 h-5 w-5 text-gray-400"
@@ -393,7 +427,11 @@ const ContactDetails = (props: Props) => {
           />
         </dl>
       </div>
-
+      <Notification
+        show={showNotification}
+        setShow={setShowNotification}
+        success={saveSucceeded}
+      />
       {/* Team member list */}
       {/* <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
         <h2 className="text-sm font-medium text-gray-500">Team members</h2>

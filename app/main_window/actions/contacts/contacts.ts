@@ -113,10 +113,9 @@ export const commitContactsUpdates = (contact: ContactType) => {
       dispatch(contactSaveFailure(error));
       return error;
     }
-
     dispatch(contactSaveSuccess(c));
 
-    return 'handled';
+    return c;
   };
 };
 

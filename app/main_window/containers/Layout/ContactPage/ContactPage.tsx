@@ -7,16 +7,14 @@ import { BigHead } from '@bigheads/core';
 
 // Internal Components
 import ContactDetails from '../../../components/Contact/ContactDetails/ContactDetails';
+import teliosLogoSVG from '../../../../../resources/img/telios_logo.svg';
+
 
 // Internal Helpers
 import getRandomOptions from '../../../../utils/helpers/avatarRandomOptions';
 
 // ACTION CREATORS
-import {
-  fetchRolladex,
-  commitContactsUpdates,
-  deleteContact
-} from '../../../actions/contacts/contacts';
+import { fetchRolladex } from '../../../actions/contacts/contacts';
 
 // SELECTORS
 import { contactDirectory } from '../../../selectors/contacts';
@@ -67,7 +65,10 @@ const ContactPage = () => {
   const dispatch = useDispatch();
   const [contactFilter, setContactFilter] = useState('');
   const [contactCount, setContactCount] = useState(0);
+  const [editMode, setEditMode] = useState(false);
   const [activeContact, setActiveContact] = useState(null);
+
+  const AllContacts = useSelector(state => state.contacts);
 
   const directory = useSelector(state =>
     contactDirectory(state, contactFilter)
@@ -89,9 +90,17 @@ const ContactPage = () => {
       setContactCount(count);
     }
 
-    if (Object.keys(directory).length > 0 && activeContact === null) {
+    if (
+      Object.keys(directory).length > 0 &&
+      (activeContact === null ||
+        !AllContacts.some(c => c.id === activeContact?.id))
+    ) {
       const first = Object.keys(directory)[0];
       setActiveContact(directory[first][0]);
+    }
+
+    if (AllContacts.length === 0) {
+      setActiveContact(null);
     }
   }, [directory]);
 
@@ -103,9 +112,23 @@ const ContactPage = () => {
   );
 
   const handleContactSelection = contact => {
-    console.log('SELECTION OF CONTACT', contact);
     setActiveContact(contact);
+    setEditMode(false);
   };
+
+  const handleNewContact = () => {
+    setActiveContact(contactTemplate);
+    setEditMode(true);
+  };
+
+  useEffect(() => {
+    if (!editMode) {
+      if (Object.keys(directory).length > 0) {
+        const first = Object.keys(directory)[0];
+        setActiveContact(directory[first][0]);
+      }
+    }
+  }, [editMode]);
 
   const secondaryLabel = pers => {
     if (
@@ -178,6 +201,7 @@ const ContactPage = () => {
             </div>
             <button
               type="button"
+              onClick={handleNewContact}
               className="inline-flex justify-center px-3.5 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
               <PlusIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -228,9 +252,12 @@ const ContactPage = () => {
                     <p className="text-sm font-medium text-gray-900 mt-0">
                       No Contact Found
                     </p>
-                    <p className="text-sm text-gray-500 truncate mt-1">
+                    {AllContacts.length > 0 && (<p className="text-sm text-gray-500 truncate mt-1">
                       Add it to your contacts list.
-                    </p>
+                    </p>)}
+                    {AllContacts.length === 0 && (<p className="text-sm text-gray-500 truncate mt-1">
+                      Add your first contact here.
+                    </p>)}
                   </div>
 
                   <svg
@@ -328,12 +355,24 @@ const ContactPage = () => {
           ))}
         </nav>
       </div>
+
       {/* DETAIL PAGE */}
       {activeContact !== null && (
         <ContactDetails
           contact={activeContact}
+          editMode={editMode}
+          setEditMode={setEditMode}
           editActiveContact={setActiveContact}
         />
+      )}
+      {AllContacts.length === 0 && editMode !== true && (
+        <div className="text-center w-full flex items-center -mt-64 justify-center">
+         <img
+            className="opacity-5 w-64 h-64"
+            src={teliosLogoSVG}
+            alt="Telios Logo"
+          />
+        </div>
       )}
     </div>
   );
