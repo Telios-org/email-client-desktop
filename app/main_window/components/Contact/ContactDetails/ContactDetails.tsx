@@ -232,7 +232,7 @@ const ContactDetails = (props: Props) => {
               <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
                 {!editMode && (
                   <>
-                    <button
+                    {/* <button
                       type="button"
                       className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
                     >
@@ -242,7 +242,7 @@ const ContactDetails = (props: Props) => {
                         aria-hidden="true"
                       />
                       <span>Message</span>
-                    </button>
+                    </button> */}
                     <button
                       type="button"
                       onClick={() => setEditMode(true)}
