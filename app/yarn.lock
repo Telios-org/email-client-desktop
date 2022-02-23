@@ -206,13 +206,38 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.1.4":
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.1.4.tgz#322fbc35bc01e5c2747fb5e0e0c5d39c8d45f3a8"
-  integrity sha512-YBkJBHLYuAKcPk3t2QHxtN668b8Pg9gq3Irx/XvtzCqTfHkx8f6cYng4WzKiNlxOdHk6BeLfzY6D+RiLF8MB2Q==
+"@telios/nebula@^1.8.3":
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-1.8.3.tgz#35446799a708f6a8fd5db33893e8d413afc6d960"
+  integrity sha512-JPN8PeqYH2SYI06+3fLI/VgaX6XZud3DnL0Kc883Ec+0dp2VpH9ldfFpaMNTWPUJG7RsrZM2Nia1LI0vVkkQLQ==
+  dependencies:
+    autobase "1.0.0-alpha.6"
+    blakejs "^1.1.0"
+    chokidar "^3.5.1"
+    codecs "^2.2.0"
+    concat-stream "^2.0.0"
+    corestore "^6.0.1-alpha.9"
+    dat-encoding "^5.0.1"
+    hyperbee "^1.6.3"
+    hyperbeedeebee "git+https://github.com/hexadecible/hyperbeedeebee.git"
+    hypercore "10.0.0-alpha.23"
+    hyperswarm "^3.0.1"
+    is-online "^9.0.1"
+    memorystream "^0.3.1"
+    natural "^5.1.11"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    sodium-native "^3.2.0"
+    stopwords "^0.0.9"
+    uuid "^8.2.0"
+
+"@telios/telios-client-backend@^3.1.10":
+  version "3.1.10"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.1.10.tgz#3ad9a015f8a43bd86089b32f8674b1bc2deba0db"
+  integrity sha512-7Cx3B0Ee0I1Qo2N/N0An7fPPQyOzo4YWyzG4BBfiFiXXCDBSys1XVuroJqeYqvuE77gOlXzK3rJUMaxMLR2GcQ==
   dependencies:
     "@telios/client-sdk" "^5.0.1"
-    "@telios/nebula" "^1.5.5"
+    "@telios/nebula" "^1.8.3"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     file-type "^16.5.3"
     memorystream "^0.3.1"

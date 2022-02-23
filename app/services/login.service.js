@@ -18,8 +18,8 @@ class LoginService {
           // The error is string is serialized coming back from the IPC
           // to get the actual error messsage we will need to extract the JSON obj
           // and parse it.
-          const error = extractJSON(err.toString());
-          return reject(error);
+          // const error = extractJSON(err.toString());
+          return reject(err);
         });
     });
   }

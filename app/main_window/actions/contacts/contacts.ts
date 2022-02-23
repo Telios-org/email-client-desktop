@@ -46,15 +46,15 @@ export const fetchRolladex = () => {
       const result = await Contact.getAllContacts();
       
       contacts = result.map((c: any) => {
-        const address = c.address ? JSON.parse(c.address) : [];
-        const phone = c.phone ? JSON.parse(c.phone) : [];
-        const organization = c.organization ? JSON.parse(c.organization) : [];
+        // const address = c.address ? JSON.parse(c.address) : [];
+        // const phone = c.phone ? JSON.parse(c.phone) : [];
+        // const organization = c.organization ? JSON.parse(c.organization) : [];
         const birthday = c.birthday ? new Date(c.birthday) : null;
         return {
           ...c,
-          address,
-          phone,
-          organization,
+          // address,
+          // phone,
+          // organization,
           birthday
         };
       });

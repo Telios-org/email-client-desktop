@@ -93,7 +93,7 @@ const ContactPage = () => {
     if (
       Object.keys(directory).length > 0 &&
       (activeContact === null ||
-        !AllContacts.some(c => c.id === activeContact?.id))
+        !AllContacts.some(c => c.contactId === activeContact?.contactId))
     ) {
       const first = Object.keys(directory)[0];
       setActiveContact(directory[first][0]);
@@ -298,7 +298,7 @@ const ContactPage = () => {
                   const opts = getRandomOptions(person.email);
                   return (
                     <li
-                      key={person.id}
+                      key={person.contactId}
                       role="menuitem"
                       onClick={() => handleContactSelection(person)}
                     >
@@ -306,7 +306,7 @@ const ContactPage = () => {
                         className={`relative px-6 py-5 flex items-center space-x-3 
                          focus-within:ring-2 focus-within:ring-inset 
                         focus-within:ring-purple-500 ${
-                          person.id === activeContact?.id
+                          person.contactId === activeContact?.contactId
                             ? 'bg-purple-100'
                             : 'hover:bg-gray-50'
                         }`}

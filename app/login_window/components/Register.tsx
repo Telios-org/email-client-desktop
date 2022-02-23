@@ -159,7 +159,7 @@ class Register extends Component<Props, State> {
     this.setState({ betaCheckLoading, formSuccess, formError });
 
     try {
-      await axios(options);
+      const result = await axios(options);
       betaCheckLoading = false;
       formSuccess.betacode = true;
       nextStepDisabled = false;
@@ -226,18 +226,24 @@ class Register extends Component<Props, State> {
     this.setState({ emailCheckLoading, formSuccess, formError });
 
     if (validateTeliosEmail(email)) {
-      const mailboxes = await mailbox.getMailboxPubKeys([email]);
-      // check if available
-      emailCheckLoading = false;
-
-      // if available
-      if (!mailboxes[email]) {
-        formSuccess.email = true;
-        nextStepDisabled = false;
-      } else {
-        formError.email = i18n.t('register.emailNotAvailable');
+      let mailboxes;
+      try {
+        mailboxes = await mailbox.getMailboxPubKeys([email]);
+        // if available
+        if (!mailboxes[email]) {
+          formSuccess.email = true;
+          nextStepDisabled = false;
+        } else {
+          formError.email = i18n.t('register.emailNotAvailable');
+          nextStepDisabled = true;
+        }
+      } catch (error) {
+        formError.email = i18n.t('register.unexpected');
         nextStepDisabled = true;
       }
+
+      // check if available
+      emailCheckLoading = false;
     } else {
       emailCheckLoading = false;
       nextStepDisabled = true;

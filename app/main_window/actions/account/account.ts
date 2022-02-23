@@ -50,6 +50,7 @@ export const updateProfile = (data: {
     } = getState();
 
     try {
+      console.log('PROFILE DATA', data);
       // We purposefully only let this method update two parameters
       await AccountService.updateAccount({
         accountId,

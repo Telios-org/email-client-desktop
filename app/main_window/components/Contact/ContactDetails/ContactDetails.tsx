@@ -93,7 +93,7 @@ const ContactDetails = (props: Props) => {
     errors
   } = useForm({
     initialValues: {
-      id: contact?.id || null,
+      contactId: contact?.contactId || null,
       name: contact?.name || '',
       givenName: contact?.givenName || '',
       familyName: contact?.familyName || '',
@@ -134,17 +134,18 @@ const ContactDetails = (props: Props) => {
         }
       });
       console.log(finalForm);
-      if (finalForm.id === null) {
-        delete finalForm.id;
+      if (finalForm.contactId === null) {
+        delete finalForm.contactId;
       }
       const input: ContactType = rebuildArrObject(finalForm);
       setEditMode(false);
       
+      console.log('SVAE INPUT', input)
       const result = await dispatch(commitContactsUpdates(input));
       let newObj = {...result}
-      if (result && (result.contactId || result.id)) {
+      if (result && (result.contactId)) {
         setSaveSucceeded(true);
-        newObj.id = result.contactId;
+        // newObj.contactId = result.contactId;
       } else {
         setSaveSucceeded(false);
       }
@@ -154,7 +155,7 @@ const ContactDetails = (props: Props) => {
   });
 
   const handleDeletion = () => {
-    dispatch(deleteContact(profile.id));
+    dispatch(deleteContact(profile.contactId));
   };
 
   useEffect(() => {
@@ -340,7 +341,7 @@ const ContactDetails = (props: Props) => {
 
       {/* Description list */}
       <div className="mt-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 min-h-0 overflow-y-auto scrollbar-hide">
-        <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+        <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 mb-28">
           <ContactField
             label="First Name"
             type="text"

@@ -22,7 +22,8 @@ const selectRandomKey = <T extends {}>(object: T, seed: string) => {
   ];
 };
 
-const getRandomOptions = (seed: string) => {
+const getRandomOptions = (initialSeed: string) => {
+  const seed = initialSeed || '';
   const seed1 = seed
     .replace('@dev.telios.io', '')
     .replace('@.telios.io', '')
