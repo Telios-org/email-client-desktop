@@ -37,8 +37,8 @@ export const formatTimeOnly = date => {
   return received.toFormat('t');
 };
 
-export const ISOtimestamp = () => {
-  return DateTime.local().toISO();
+export const UTCtimestamp = () => {
+  return DateTime.local().toUTC();
 };
 
 export const fullDatefromJS = date => {

@@ -253,6 +253,7 @@ export const moveMessagesToFolder = (messages: any) => {
       }
       return msg;
     });
+
     try {
       dispatch(clearActiveMessage(currentFolderId));
       dispatch(updateMessageList(msgArr, 'remove'));

@@ -139,7 +139,7 @@ export const fetchFolderMessages = (id: number) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByFolderId(id, 50);
+      messages = await Mail.getMessagesByFolderId(id, 20);
     } catch (error) {
       dispatch(getFolderMessagesFailure(error));
       return Promise.reject(error);
@@ -174,7 +174,8 @@ export const fetchMoreFolderMessages = (id: number, offset: number) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByFolderId(id, 50, offset);
+      messages = await Mail.getMessagesByFolderId(id, 20, offset);
+      console.log('FETCH MORE MESSAGES!!', messages)
     } catch (error) {
       return Promise.reject(error);
     }
@@ -611,11 +612,11 @@ export const msgSelectionFlowFailure = (error: Error) => {
 
 export const messageSelection = (message: MailMessageType) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch(msgSelectionFlow(message.id, message.folderId));
+    dispatch(msgSelectionFlow(message.emailId, message.folderId));
     try {
-      const fullMsg = await dispatch(fetchMsg(message.id));
-      dispatch(msgSelectionFlowSuccess(fullMsg, message.id, message.folderId));
-      return Promise.resolve(message.id);
+      const fullMsg = await dispatch(fetchMsg(message.emailId));
+      dispatch(msgSelectionFlowSuccess(fullMsg, message.emailId, message.folderId));
+      return Promise.resolve(message.emailId);
     } catch (err) {
       return Promise.reject(err);
     }
@@ -770,9 +771,21 @@ export const loadMailboxes = () => async (
   try {
     mailboxes = await dispatch(fetchMailboxes());
 
-    activeMailboxId = mailboxes[activeMailboxIndex].id;
+    console.log('MAILBOXES', mailboxes)
+    console.log('activeMailboxIndex', activeMailboxIndex)
+
+    activeMailboxId = mailboxes[activeMailboxIndex].mailboxId;
+
+    console.log('activeMailboxId', activeMailboxId)
+
     folders = await dispatch(fetchMailboxFolders(activeMailboxId));
+
+    console.log('folders', folders)
+
+
     namespaces = await dispatch(fetchMailboxNamespaces(activeMailboxId));
+
+    console.log('namespaces', namespaces)
 
     const namespaceKeys = namespaces.map(ns => ns.name);
 
@@ -783,10 +796,10 @@ export const loadMailboxes = () => async (
     }
 
     if (isAlias) {
-      activeAliasId = aliases[activeAliasIndex].id;
+      activeAliasId = aliases[activeAliasIndex].folderId;
       messages = await dispatch(fetchAliasMessages(activeAliasId));
     } else {
-      activeFolderId = folders[activeFolderIndex].id;
+      activeFolderId = folders[activeFolderIndex].folderId;
       messages = await dispatch(fetchFolderMessages(activeFolderId));
     }
 

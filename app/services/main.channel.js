@@ -10,13 +10,13 @@ const isDev = process.env.NODE_ENV === 'development';
 const appPath = remote.app.getAppPath();
 const userDataPath = remote.app.getPath('userData');
 
-const workerPath = path.join(appPath, '/workers/index.js');
+const channelPath = path.join(appPath, '/node_modules/@telios/telios-client-backend/index.js');
 let cwd = path.join(__dirname, '..');
 
 if (!fs.existsSync(path.join(cwd, 'app.asar'))) {
   cwd = null;
 }
-class MainWorker extends EventEmitter {
+class Channel extends EventEmitter {
   constructor() {
     super();
 
@@ -28,7 +28,7 @@ class MainWorker extends EventEmitter {
       pids = [];
     }
 
-    this.process = fork(workerPath, [userDataPath, process.env.NODE_ENV], {
+    this.process = fork(channelPath, [userDataPath + '/Accounts', process.env.NODE_ENV], {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       cwd
     });
@@ -50,6 +50,7 @@ class MainWorker extends EventEmitter {
     });
 
     this.process.on('message', m => {
+      //console.timeEnd('processSend')
       // if(isDev) {
       console.log(m);
       // }
@@ -60,10 +61,11 @@ class MainWorker extends EventEmitter {
   }
 
   send(payload) {
+    //console.time('processSend')
     this.process.send(payload);
   }
 }
 
-const instance = new MainWorker();
+const instance = new Channel();
 
 module.exports = instance;

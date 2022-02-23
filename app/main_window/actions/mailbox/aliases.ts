@@ -297,30 +297,25 @@ export const removeAlias = (payload: {
       const archiveExist = folders.allIds.some(f => {
         return folders.byId[f].name === 'Archives';
       });
-      console.log('ALIAS REMOVAL', archiveExist);
       const mailboxId = mailboxes.allIds[0];
-      console.log('ALIAS REMOVAL::MAILBOXID', mailboxId);
 
       let archiveId: number;
       if (!archiveExist) {
         const archive = await dispatch(
           createFolder(mailboxId, 'Archives', 'default', 'archive')
         );
-        archiveId = archive?.id;
+        archiveId = archive?.folderId;
       } else {
         archiveId = folders.allIds.find(
           f => folders.byId[f].name === 'Archives'
         );
       }
 
-      console.log('ALIAS REMOVAL:: ARCHIVE ID', archiveId);
       const aliasFolderId = folders.allIds.find(f => {
         return folders.byId[f].name === 'Alias';
       });
 
       const messages = await Mail.getMessagesByFolderId(aliasFolderId);
-
-      console.log('ALIAS REMOVAL:: MESSAGES', messages);
 
       const aliasMsg = messages
         .filter(msg => {
@@ -328,9 +323,9 @@ export const removeAlias = (payload: {
         })
         .map(msg => {
           return {
-            id: msg.id,
-            emailId: msg.id,
-            unread: 0,
+            id: msg.emailId,
+            emailId: msg.emailId,
+            unread: false,
             folder: {
               fromId: aliasFolderId,
               toId: archiveId,
@@ -408,7 +403,7 @@ export const fetchAliasMessages = (id: string) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByAliasId(id, 50);
+      messages = await Mail.getMessagesByAliasId(id, 20);
     } catch (error) {
       dispatch(getAliasMessagesFailure(error));
       return Promise.reject(error);
@@ -438,12 +433,12 @@ export const fetchMoreAliasMessagesSuccess = (messages: MailMessageType[]) => {
   };
 };
 
-export const fetchMoreAliasMessages = (id: number, offset: number) => {
+export const fetchMoreAliasMessages = (id: string, offset: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     let messages;
 
     try {
-      messages = await Mail.getMessagesByAliasId(id, 50, offset);
+      messages = await Mail.getMessagesByAliasId(id, 20, offset);
     } catch (error) {
       return Promise.reject(error);
     }

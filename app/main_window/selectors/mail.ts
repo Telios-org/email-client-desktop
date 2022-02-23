@@ -158,7 +158,7 @@ export const readFilter = createSelector(
       const filters = filterObj[id];
 
       if ('unread' in filters) {
-        return filters.unread === 0 ? 'read' : 'unread';
+        return !filters.unread ? 'read' : 'unread';
       }
 
       return 'all';
@@ -180,9 +180,10 @@ export const currentMessageList = createSelector(
   (rootMessages, aliasId, folderId, filter, readCondition, allFoldersById) => {
     const { byId, allIds } = rootMessages;
     const filteredArr = allIds.filter(
-      id =>
-        (byId[id].folderId === folderId && byId[id].aliasId === aliasId) ||
+      id => {
+        return (byId[id].folderId === folderId && byId[id].aliasId == aliasId) ||
         ['Archives', 'Trash'].includes(allFoldersById[byId[id].folderId].name)
+      }
     );
 
     let finalArray;

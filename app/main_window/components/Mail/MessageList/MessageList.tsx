@@ -75,8 +75,6 @@ export default function MessageList(props: Props) {
 
   const { editorIsOpen } = useSelector(selectGlobalState);
 
-  // console.log('READFILTER', readFilter);
-
   const virtualLoaderRef = useRef(null);
 
   let isLoading = false;
@@ -89,6 +87,7 @@ export default function MessageList(props: Props) {
     selected: SelectionRange,
     folderId: number
   ) => {
+    console.log('SELECTED', selected)
     dispatch(msgRangeSelection(selected, folderId));
   };
 
@@ -121,7 +120,8 @@ export default function MessageList(props: Props) {
         const { unread } = messages.byId[id];
 
         return {
-          id: messages.byId[id].id,
+          emailId: messages.byId[id].emailId,
+          id: messages.byId[id].emailId,
           unread,
           folder: {
             fromId: messages.byId[id].folderId,
@@ -135,7 +135,8 @@ export default function MessageList(props: Props) {
 
       selection = [
         {
-          id: item.id,
+          emailId: item.emailId,
+          id: item.emailId,
           unread,
           folder: {
             fromId: item.folderId,
@@ -167,7 +168,7 @@ export default function MessageList(props: Props) {
       startIdx: index,
       endIdx: index,
       exclude: [],
-      items: [message.id]
+      items: [message.emailId]
     };
 
     if (editorIsOpen) {
@@ -184,7 +185,7 @@ export default function MessageList(props: Props) {
     // we dispatch the message selection action
     if (
       editorIsOpen ||
-      activeMsgId !== message.id ||
+      activeMsgId !== message.emailId ||
       activeSelectedRange.items.length > 1
     ) {
       selectMessage(message);
@@ -221,7 +222,7 @@ export default function MessageList(props: Props) {
 
   const itemKey = (index, data) => {
     const msgId = data.messages.allIds[index];
-    return data.messages.byId[msgId].id;
+    return data.messages.byId[msgId].emailId;
   };
 
   // Removing these to reevaluate if we need them. Including custom scrollbars creates a lot of
@@ -281,7 +282,7 @@ export default function MessageList(props: Props) {
   // }
 
   const isItemLoaded = (index: number) => {
-    return index < 50;
+    return index < 20;
   };
 
   const loadMoreItems = (startIndex: number, stopIndex: number) => {
@@ -299,6 +300,7 @@ export default function MessageList(props: Props) {
               return reject(err);
             });
         } else {
+          console.log('LOAD MORE ITEMS', folderId, startIndex)
           dispatch(fetchMoreFolderMessages(folderId, startIndex))
             .then(() => {
               isLoading = false;
@@ -315,11 +317,11 @@ export default function MessageList(props: Props) {
   const setReadFilter = (status: string) => {
     switch (status) {
       case 'read':
-        dispatch(setMsgListFilter({ unread: 0 }, folderId, aliasId));
+        dispatch(setMsgListFilter({ unread: false }, folderId, aliasId));
         break;
 
       case 'unread':
-        dispatch(setMsgListFilter({ unread: 1 }, folderId, aliasId));
+        dispatch(setMsgListFilter({ unread: true }, folderId, aliasId));
         break;
 
       case 'all':

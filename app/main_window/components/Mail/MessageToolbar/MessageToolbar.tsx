@@ -110,7 +110,7 @@ export default function MessageToolbar(props: Props) {
   }, [panelSize, showComposerControls]);
 
   // msgId for drafts
-  const msgId = activeMessage ? activeMessage.id : null;
+  const msgId = activeMessage ? activeMessage.emailId : null;
   // Permanently delete messages from trash folder
   const deleteMessages = async () => {
     const messagesToDelete = [];
@@ -168,12 +168,11 @@ export default function MessageToolbar(props: Props) {
         Alert.success(`Deleted ${selected.items.length} message(s).`);
       } else {
         const messagesToMove = [];
-
         selected.items.forEach(msgId => {
           messagesToMove.push({
             id: msgId,
             emailId: msgId,
-            unread: 0,
+            unread: false,
             folder: {
               fromId: currentFolderId,
               toId,
@@ -211,14 +210,14 @@ export default function MessageToolbar(props: Props) {
 
         if (
           !unmoveableToFolder.includes(folder.name) &&
-          folder.id !== currentFolderId
+          folder.folderId !== currentFolderId
         ) {
           const IconTag = Icon.folder;
           return (
             <Dropdown.Item
-              key={folder.id}
+              key={folder.folderId}
               onClick={() => {
-                moveToFolder(folder.id, folder.name);
+                moveToFolder(folder.folderId, folder.name);
               }}
             >
               {/* <IconTag className="text-base" /> */}

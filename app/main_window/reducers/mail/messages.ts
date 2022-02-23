@@ -38,7 +38,7 @@ export default function messages(
           ...state,
           byId: {
             ...state.byId,
-            [action.message.id]: { ...action.message }
+            [action.message.emailId]: { ...action.message }
           }
         };
       }
@@ -49,7 +49,7 @@ export default function messages(
           ...state,
           byId: {
             ...state.byId,
-            [action.id]: { ...state.byId[action.id], unread: 1 }
+            [action.id]: { ...state.byId[action.id], unread: true }
           }
         };
       }
@@ -76,9 +76,9 @@ export default function messages(
           return {
             ...state,
             byId: {
-              ...arrayToObject(sortedMessages)
+              ...arrayToObject(sortedMessages, 'emailId')
             },
-            allIds: [...idFromArrayDict(sortedMessages)]
+            allIds: [...idFromArrayDict(sortedMessages, 'emailId')]
           };
         }
       }
@@ -96,13 +96,17 @@ export default function messages(
     case FETCH_MAIL_DATA_SUCCESS:
     case FOLDER_SELECTION_FLOW_SUCCESS:
     case ALIAS_SELECTION_FLOW_SUCCESS:
-      return {
-        ...state,
-        byId: {
-          ...arrayToObject(action.messages)
-        },
-        allIds: [...idFromArrayDict(action.messages)]
-      };
+      if(action.messages) {
+        return {
+          ...state,
+          byId: {
+            ...arrayToObject(action.messages, 'emailId')
+          },
+          allIds: [...idFromArrayDict(action.messages, 'emailId')]
+        };
+      }
+
+      return { ...state }
     case UPDATE_MESSAGE_LIST:
       _byId = { ...state.byId };
       _allIds = [...state.allIds];
@@ -113,7 +117,7 @@ export default function messages(
         action.updateType === 'remove'
       ) {
         for (let i = 0; i < action.messages.length; i += 1) {
-          const msgId = action.messages[i].id || action.messages[i].emailId;
+          const msgId = action.messages[i].emailId;
 
           delete _byId[msgId];
           _allIds = _allIds.filter(id => id !== msgId);
@@ -131,9 +135,9 @@ export default function messages(
         ...state,
         byId: {
           ...state.byId,
-          ...arrayToObject(action.messages)
+          ...arrayToObject(action.messages, 'emailId')
         },
-        allIds: [...state.allIds, ...idFromArrayDict(action.messages)]
+        allIds: [...state.allIds, ...idFromArrayDict(action.messages, 'emailId')]
       };
     default:
       return { ...state };

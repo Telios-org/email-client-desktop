@@ -45,7 +45,7 @@ export default function MailPage() {
       // We don't always want the full state of the app to be refreshed
       if (fullSync) {
         await dispatch(loadMailboxes(opts));
-        await dispatch(fetchNewMessages());
+        dispatch(fetchNewMessages());
       }
     });
 
@@ -102,7 +102,7 @@ export default function MailPage() {
   const refresh = async (full: any) => {
     setLoading(true);
     if (!isSyncInProgress) {
-      await dispatch(fetchNewMessages());
+      dispatch(fetchNewMessages());
     }
     setTimeout(() => setLoading(false), 1000);
   };

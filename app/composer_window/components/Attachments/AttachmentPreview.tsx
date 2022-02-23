@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from 'react';
 import { Icon, Loader } from 'rsuite';
 import { Document, Paper } from 'react-iconly';
 import { AttachmentType } from '../../../main_window/reducers/types';
-import FileService from '../../../services/file.service';
+// import FileService from '../../../services/file.service';
 
 type Props = {
   attachment: AttachmentType
@@ -28,14 +28,14 @@ export default class AttachmentPreview extends Component<Props, State> {
     const { showImagePreview } = this.state;
     const { attachment } = this.props;
 
-    if(showImagePreview && !attachment.content) {
-      const data = await FileService.getFile(attachment.id);
-      this.setState({ content: data, filename: attachment.id });
-    }
+    // if(showImagePreview && !attachment.content) {
+    //   const data = await FileService.getFile(attachment.id);
+    //   this.setState({ content: data, filename: attachment.id });
+    // }
 
-    if(showImagePreview && attachment.content) {
-      this.setState({ content: attachment.content });
-    }
+    // if(showImagePreview && attachment.content) {
+    //   this.setState({ content: attachment.content });
+    // }
   }
 
   render() {

@@ -37,12 +37,12 @@ function MessageDisplayRouter(props: Props) {
   const selectedItems = useSelector(activeMessageSelectedRange).items;
 
   const showComposer =
-    ((message.id && currentFolder.name === 'Drafts') || showComposerInline) &&
+    ((message.emailId && currentFolder.name === 'Drafts') || showComposerInline) &&
     selectedItems.length <= 1;
 
   return (
     <>
-      {(message.id === null || selectedItems.length > 1) && !showComposer && (
+      {(message.emailId === null || selectedItems.length > 1) && !showComposer && (
         <div className="flex flex-1 items-center flex-col justify-center pb-16">
           <img
             className="opacity-5 w-40 h-40"
@@ -60,7 +60,7 @@ function MessageDisplayRouter(props: Props) {
           )}
         </div>
       )}
-      {message.id !== null &&
+      {message.emailId !== null &&
         selectedItems.length < 2 &&
         message.fromJSON &&
         !showComposer && (

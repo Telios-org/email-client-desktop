@@ -99,7 +99,6 @@ function MessageDisplay(props: Props) {
       ? 'outgoing'
       : 'incoming';
 
-  console.log('TEST', toJSON, fromJSON, ccJSON, bccJSON, direction);
   const { sender, recipients } = peopleHeaderParser(
     toJSON,
     fromJSON,

@@ -1,6 +1,6 @@
 const { remote, ipcRenderer } = require('electron');
 const fs = require('fs');
-const worker = require('../workers/main.worker');
+const channel = require('./main.channel');
 const extractJSON = require('../utils/helpers/json');
 
 const { app } = remote;
@@ -14,7 +14,7 @@ class LoginService {
           return resolve(data);
         })
         .catch(err => {
-          worker.send({ event: 'LOGIN_SERVICE::removeAccount', payload });
+          channel.send({ event: 'LOGIN_SERVICE::removeAccount', payload });
           // The error is string is serialized coming back from the IPC
           // to get the actual error messsage we will need to extract the JSON obj
           // and parse it.

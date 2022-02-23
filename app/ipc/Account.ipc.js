@@ -37,7 +37,7 @@ module.exports = windowManager => {
         }
 
         if (channel === 'ACCOUNT_SERVICE::initAcctError') {
-          reject(data);
+          resolve({ error: { message: data.message }});
         }
       });
     });

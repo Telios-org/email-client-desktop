@@ -26,7 +26,6 @@ import {
 
 // REDUX ACTIONS
 import { msgRangeSelection } from '../../../../actions/mail';
-import { moveMessagesToFolder } from '../../../../actions/mailbox/messages';
 
 // TYPESCRIPT TYPES
 import { MailMessageType } from '../../../../reducers/types';
@@ -64,7 +63,8 @@ export default function MessagePreview(props: Props) {
   const message = useSelector(state => selectMessageByIndex(state, index));
 
   const {
-    id,
+    emailId,
+    aliasId,
     folderId,
     subject,
     fromJSON,
@@ -76,10 +76,10 @@ export default function MessagePreview(props: Props) {
   } = message;
   const activeMessageId = useSelector(activeMsgId);
   const isActive =
-    id === activeMessageId || selected.items.indexOf(message.id) > -1;
+  emailId === activeMessageId || selected.items.indexOf(message.emailId) > -1;
 
   const [{ opacity }, drag, preview] = useDrag({
-    item: { id, unread, folderId, type: 'message' },
+    item: { emailId, unread, folderId, type: 'message', aliasId },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult();
       if (item && dropResult) {
@@ -151,7 +151,7 @@ export default function MessagePreview(props: Props) {
       messages.allIds.forEach((msg, index) => {
         if (index === newSelection.startIdx && index === newSelection.endIdx) {
           newSelection.items.push(msg);
-          newLoaders.push(msg.id);
+          newLoaders.push(msg.emailId);
         }
 
         if (
@@ -162,7 +162,7 @@ export default function MessagePreview(props: Props) {
           newSelection.exclude.indexOf(index) === -1
         ) {
           newSelection.items.push(msg);
-          newLoaders.push(msg.id);
+          newLoaders.push(msg.emailId);
         }
 
         if (
@@ -277,7 +277,7 @@ export default function MessagePreview(props: Props) {
           ${isActive ? 'bg-blue-50' : 'hover:bg-coolGray-50'}`}
           >
             <div className="flex justify-center w-6 shrink-0 items-center pt-0.5">
-              {unread === 1 && !isRead && direction === 'incoming' && (
+              {unread && !isRead && direction === 'incoming' && (
                 <Badge className="bg-purple-600" />
               )}
             </div>
@@ -311,7 +311,7 @@ export default function MessagePreview(props: Props) {
               <div
                 id="subject"
                 className={`flex flex-1 flex-row justify-between ${
-                  unread === 1 && !isRead ? 'text-purple-600 font-bold' : ''
+                  unread && !isRead ? 'text-purple-600 font-bold' : ''
                 }`}
               >
                 <div className="flex flex-1 leading-tight overflow-hidden text-sm break-all line-clamp-1">
@@ -324,8 +324,8 @@ export default function MessagePreview(props: Props) {
                     attachment={files && files.length > 0}
                     isInNetwork={senderInNetwork}
                     isHover={isHover}
-                    messageId={id}
-                    activeFolderId={currentFolder.id}
+                    messageId={emailId}
+                    activeFolderId={currentFolder.folderId}
                   />
                 </div>
               </div>

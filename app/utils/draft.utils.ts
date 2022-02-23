@@ -180,7 +180,7 @@ export const emailTransform = (
   action: string,
   resetId = true
 ): Email => {
-  const id = resetId ? null : message.emailId ?? message.id;
+  const id = resetId ? null : message.emailId ?? message.emailId;
   const path = resetId ? null : message.path;
 
   let subject = message.subject ?? '';

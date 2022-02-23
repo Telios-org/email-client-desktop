@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { fork } = require('child_process');
 const MailService = require('./mail.service');
-const mainWorker = require('../workers/main.worker');
+const channel = require('./main.channel');
 
 const appPath = remote.app.getAppPath();
 
@@ -23,18 +23,18 @@ class MessageIngressService extends EventEmitter {
     this.MAX_RETRY = 1;
     this.folderCounts = {};
 
-    mainWorker.on('newMessage', async m => {
-      const { data, error } = m;
+    channel.on('account:newMessage', async m => {
+      const { data } = m;
 
       this.msgBatchSize += 1;
 
-      mainWorker.send({
-        event: 'newMessage',
+      channel.send({
+        event: 'messageHandler:newMessage',
         payload: { meta: data.meta }
       });
     });
 
-    mainWorker.on('fileFetched', async m => {
+    channel.on('messageHandler:fileFetched', async m => {
       const { event, data, error } = m;
       if (!error) {
         const email = transformEmail(data);
@@ -51,20 +51,17 @@ class MessageIngressService extends EventEmitter {
       }
     });
 
-    mainWorker.on('MAILBOX_WORKER::saveMessageToDB', async m => {
-      
-      const { data, error } = m;
+    channel.on('email:saveMessageToDB:callback', async m => {
+      const { error, data } = m;
 
       if(error) {
-        console.log('MessageIngess.service::saveMessageToDBError', error);
-
         this.finished += 1;
         this.handleDone();
         return;
       }
 
       data.msgArr.forEach(msg => {
-        if(!this.incomingMsgBatch.some(item => item.id === msg.id)) {
+        if(!this.incomingMsgBatch.some(item => item.emailId === msg.emailId)) {
           this.incomingMsgBatch.push(msg);
         }
       })
@@ -81,10 +78,10 @@ class MessageIngressService extends EventEmitter {
       this.handleDone();
     })
 
-    mainWorker.on('fetchError', async m => {
+    channel.on('messageHandler:fetchError', async m => {
       const { data } = m;
 
-      console.log('MessageIngess.service::fetchError', m);
+      console.log('messageHandler:fetchError', m);
 
       if (data.file && data.file.failed < this.MAX_RETRY) {
         this.retryQueue.push(data.file);
@@ -113,8 +110,8 @@ class MessageIngressService extends EventEmitter {
 
       this.emit('MESSAGE_INGRESS_SERVICE::messageSyncStarted', meta.length);
 
-      mainWorker.send({
-        event: 'MESSAGE_INGRESS_SERVICE::newMessageBatch',
+      channel.send({
+        event: 'messageHandler:newMessageBatch',
         payload: { meta, account }
       });
     }
@@ -122,7 +119,7 @@ class MessageIngressService extends EventEmitter {
 
   // Start incoming message listener
   initMessageListener() {
-    mainWorker.send({ event: 'initMessageListener' });
+    channel.send({ event: 'messageHandler:initMessageListener' });
   }
 
   handleDone() {
@@ -133,8 +130,8 @@ class MessageIngressService extends EventEmitter {
 
     // Retry failed messages
     if (this.finished + this.retryQueue.length === this.msgBatchSize) {
-      mainWorker.send({
-        event: 'retryMessageBatch',
+      channel.send({
+        event: 'messageHandler:retryMessageBatch',
         payload: { batch: this.retryQueue }
       });
 
@@ -179,7 +176,7 @@ function transformEmail(data) {
   const email = data.email.content;
 
   return {
-    unread: 1,
+    unread: true,
     fromJSON: JSON.stringify(email.from),
     toJSON: JSON.stringify(email.to),
     ccJSON: JSON.stringify(email.cc),

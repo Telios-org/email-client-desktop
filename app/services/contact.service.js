@@ -1,5 +1,5 @@
 const clone = require('rfdc')();
-const worker = require('../workers/main.worker');
+const channel = require('./main.channel');
 
 class ContactService {
   static async createContacts(contacts) {
@@ -12,14 +12,14 @@ class ContactService {
       return c;
     });
 
-    worker.send({
-      event: 'createContacts',
+    channel.send({
+      event: 'contact:createContacts',
       payload: { contactList }
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('createContacts', m => {
-        const { data, error } = m;
+      channel.once('contact:createContacts:callback', m => {
+        const { error, data } = m;
 
         if (error) return reject(error);
 
@@ -29,14 +29,14 @@ class ContactService {
   }
 
   static async getContactById(id) {
-    worker.send({
-      event: 'getContactById',
+    channel.send({
+      event: 'contact:getContactById',
       payload: { id }
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('getContactById', m => {
-        const { data, error } = m;
+      channel.once('contact:getContactById:callback', m => {
+        const { error, data } = m;
 
         if (error) return reject(error);
 
@@ -46,13 +46,13 @@ class ContactService {
   }
 
   static async updateContact(payload) {
-    worker.send({
-      event: 'updateContact',
+    channel.send({
+      event: 'contact:updateContact',
       payload
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('updateContact', m => {
+      channel.once('contact:updateContact:callback', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
@@ -63,13 +63,13 @@ class ContactService {
   }
 
   static async searchContact(searchQuery) {
-    worker.send({
-      event: 'searchContact',
+    channel.send({
+      event: 'contact:searchContact',
       payload: { searchQuery }
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('searchContact', m => {
+      channel.once('contact:searchContact:callback', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
@@ -80,13 +80,13 @@ class ContactService {
   }
 
   static async removeContact(id) {
-    worker.send({
-      event: 'removeContact',
+    channel.send({
+      event: 'contact:removeContact',
       payload: { id }
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('removeContact', m => {
+      channel.once('contact:removeContact:callback', m => {
         const { data, error } = m;
 
         if (error) return reject(error);
@@ -97,13 +97,13 @@ class ContactService {
   }
 
   static async getAllContacts() {
-    worker.send({
-      event: 'getAllContacts',
+    channel.send({
+      event: 'contact:getAllContacts',
       payload: {}
     });
 
     return new Promise((resolve, reject) => {
-      worker.once('getAllContacts', m => {
+      channel.once('contact:getAllContacts:callback', m => {
         const { data, error } = m;
 
         if (error) return reject(error);

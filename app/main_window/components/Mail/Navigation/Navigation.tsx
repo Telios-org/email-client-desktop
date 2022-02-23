@@ -169,7 +169,11 @@ export default function Navigation(props: Props) {
             const IconTag = CustomIcon[folder.icon];
             const [{ canDrop, isOver }, drop] = useDrop({
               accept: 'message',
-              drop: () => ({ id: folder.id, name: folder.name }),
+              canDrop: (item, monitor) => {
+                if(folder.folderId === 4 || folder.folderId !== 4 && !item.aliasId) return true
+                return false
+              },
+              drop: () => ({ id: folder.folderId, name: folder.name }),
               collect: monitor => ({
                 isOver: monitor.isOver(),
                 canDrop: monitor.canDrop()
@@ -279,7 +283,7 @@ export default function Navigation(props: Props) {
           if (folder.type === 'custom') {
             const [{ canDrop, isOver }, drop] = useDrop({
               accept: 'message',
-              drop: () => ({ id: folder.id, name: folder.name }),
+              drop: () => ({ id: folder.folderId, name: folder.name }),
               collect: monitor => ({
                 isOver: monitor.isOver(),
                 canDrop: monitor.canDrop()

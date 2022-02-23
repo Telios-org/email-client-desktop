@@ -110,7 +110,7 @@ class NewFolderModal extends React.Component {
 
     try {
       const f = await Mail.updateFolder({
-        folderId: folder.id,
+        folderId: folder.folderId,
         name: state.formValue.folderName
       });
 
@@ -132,8 +132,8 @@ class NewFolderModal extends React.Component {
 
     try {
       await Mail.deleteFolder({
-        mailboxId: mailbox.id,
-        folderId: folder.id
+        mailboxId: mailbox.mailboxId,
+        folderId: folder.folderId
       });
 
       onRefresh(true, folder.index);
