@@ -366,7 +366,7 @@ const ContactPage = () => {
         />
       )}
       {AllContacts.length === 0 && editMode !== true && (
-        <div className="text-center w-full flex items-center -mt-64 justify-center">
+        <div className="text-center w-full flex items-center justify-center">
          <img
             className="opacity-5 w-64 h-64"
             src={teliosLogoSVG}

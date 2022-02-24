@@ -20,8 +20,9 @@ import {
 } from 'react-iconly';
 
 // COMPONENT IMPORT
-import NewFolderModal from './NewFolderModal';
+// import NewFolderModal from './NewFolderModal';
 import AliasSection from './Aliases/AliasSection';
+import SyncNotification from './SyncNotification';
 
 // CSS/LESS STYLES
 import styles from './Navigation.css';
@@ -52,6 +53,7 @@ import CustomIcon from './NavIcons';
 
 type Props = {
   onRefreshData: () => void;
+  inProgress: (bool: boolean) => void;
 };
 
 export default function Navigation(props: Props) {
@@ -109,7 +111,7 @@ export default function Navigation(props: Props) {
     }
   };
 
-  const { onRefreshData } = props;
+  const { onRefreshData, inProgress } = props;
 
   const handleNewFolder = () => {
     setEditFolder(null);
@@ -388,7 +390,7 @@ export default function Navigation(props: Props) {
   };
 
   return (
-    <div className="flex w-full h-full ">
+    <div className="flex w-full h-full relative mb-16">
       <div className="flex-1">
         <div className="h-14 flex justify-center items-center">
           <Button
@@ -435,6 +437,7 @@ export default function Navigation(props: Props) {
         folderCount={foldersArray.length}
         onRefresh={handleRefresh}
       /> */}
+      <SyncNotification inProgress={inProgress} />
     </div>
   );
 }

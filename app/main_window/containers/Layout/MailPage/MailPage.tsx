@@ -18,7 +18,7 @@ import { activeFolderId, selectActiveMailbox } from '../../../selectors/mail';
 import MessageList from '../../../components/Mail/MessageList/MessageList';
 import MessageDisplayRouter from '../../../components/Mail/MessageDisplay/MessageDisplayRouter';
 import Navigation from '../../../components/Mail/Navigation/Navigation';
-import MessageSyncNotifier from '../../../components/Mail/MessageSyncNotifier';
+
 import MessageToolbar from '../../../components/Mail/MessageToolbar/MessageToolbar';
 
 // ELECTRON IPC IMPORT
@@ -32,7 +32,7 @@ export default function MailPage() {
 
   const [loading, setLoading] = useState(false);
   const [panelWidths, setPanelWidths] = useState({ nav: 200, msgList: 445 });
-  const [isSyncInProgress, setIsSyncInProgress] = useState(false);
+  const [isSyncInProgress, setIsSyncInProgress] = useState(true);
 
   const toggleEditorState = (editorAction: string, forcedStatus?: boolean) => {
     dispatch(toggleEditor(editorAction, forcedStatus));
@@ -129,6 +129,7 @@ export default function MailPage() {
             onRefreshData={() => {
               refresh(true);
             }}
+            inProgress={toggleSyncInProgress}
           />
         </div>
         <div className="flex flex-col w-full h-full">
@@ -157,12 +158,6 @@ export default function MailPage() {
           </PanelGroup>
         </div>
       </PanelGroup>
-      <MessageSyncNotifier
-        onRefresh={() => {
-          refresh(true);
-        }}
-        inProgress={toggleSyncInProgress}
-      />
     </DndProvider>
   );
 }
