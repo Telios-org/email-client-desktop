@@ -135,28 +135,31 @@ export const getFolderMessagesFailure = (error: Error) => {
 
 export const fetchFolderMessages = (id: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch(getFolderMessagesRequest());
-    let messages;
+    return new Promise((resolve, reject) => {
+      dispatch(getFolderMessagesRequest());
 
-    try {
-      messages = await Mail.getMessagesByFolderId(id, 20);
-    } catch (error) {
-      dispatch(getFolderMessagesFailure(error));
-      return Promise.reject(error);
-    }
-    await dispatch(getFolderMessagesSuccess(messages));
+      Mail.getMessagesByFolderId(id, 20)
+        .then(messages => {
+          
+          dispatch(getFolderMessagesSuccess(messages));
 
-    // const { activeMsgId } = getState().globalState;
+          const { activeMsgId } = getState().globalState;
 
-    // if (Object.prototype.hasOwnProperty.call(activeMsgId, id)) {
-    //   const foldersActiveMsg = activeMsgId[id].id;
-    //   const current = messages.filter(m => m.id === foldersActiveMsg);
-    //   if (current.length === 1) {
-    //     await dispatch(fetchMsg(current[0]));
-    //   }
-    // }
+          if (Object.prototype.hasOwnProperty.call(activeMsgId, id)) {
+            const foldersActiveMsg = activeMsgId[id].id;
+            const current = messages.filter(m => m.id === foldersActiveMsg);
+            if (current.length === 1) {
+              dispatch(fetchMsg(current[0]))
+            }
+          }
 
-    return Promise.resolve(messages);
+          return resolve(messages)
+        })
+        .catch(err => {
+          dispatch(getFolderMessagesFailure(err));
+          reject(err)
+        })
+    })
   };
 };
 
@@ -171,18 +174,16 @@ export const fetchMoreFolderMessagesSuccess = (messages: MailMessageType[]) => {
 
 export const fetchMoreFolderMessages = (id: number, offset: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    let messages;
-
-    try {
-      messages = await Mail.getMessagesByFolderId(id, 20, offset);
-      console.log('FETCH MORE MESSAGES!!', messages)
-    } catch (error) {
-      return Promise.reject(error);
-    }
-
-    dispatch(fetchMoreFolderMessagesSuccess(messages));
-
-    return Promise.resolve(messages);
+    return new Promise((resolve, reject) => {
+        Mail.getMessagesByFolderId(id, 20, offset)
+          .then(messages => {
+            dispatch(fetchMoreFolderMessagesSuccess(messages));
+            return resolve(messages)
+          })
+          .catch(err => {
+            reject(err)
+          })
+    })
   };
 };
 
@@ -219,16 +220,17 @@ export const getMailboxFoldersFailure = (error: Error) => {
 
 export const fetchMailboxFolders = (id: number) => {
   return async (dispatch: Dispatch) => {
-    dispatch(getMailboxFoldersRequest());
-    let folders;
-    try {
-      folders = await Mail.getMailboxFolders(id);
-    } catch (error) {
-      dispatch(getMailboxFoldersFailure(error));
-      return error;
-    }
-    dispatch(getMailboxFoldersSuccess(id, folders));
-    return folders;
+    return new Promise((resolve, reject) => {
+      dispatch(getMailboxFoldersRequest());
+      Mail.getMailboxFolders(id)
+        .then(folders => {
+          dispatch(getMailboxFoldersSuccess(id, folders));
+          return resolve(folders)
+        })
+        .catch(err => {
+          dispatch(getMailboxFoldersFailure(err));
+        })
+    })
   };
 };
 
@@ -456,12 +458,12 @@ export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
 
     // Update Folder Counts
     for (const key in folderCounts) {
-      await dispatch(updateFolderCount(parseInt(key), folderCounts[key]));
+      dispatch(updateFolderCount(parseInt(key), folderCounts[key]));
     }
 
     // Update Alias Counts
     for (const key in aliasCounts) {
-      await dispatch(updateAliasCount(key, aliasCounts[key]));
+      dispatch(updateAliasCount(key, aliasCounts[key]));
     }
 
     return Promise.resolve('done');
@@ -496,26 +498,35 @@ export const fetchNewMessageFailure = (error: string) => {
 
 export function fetchNewMessages() {
   return async (dispatch: Dispatch) => {
-    dispatch(fetchNewMessageRequest());
-    let messages;
-    try {
-      const data = await Mail.getNewMail();
+    return new Promise((resolve, reject) => {
+      let messages = [];
 
-      if (data.meta.length > 0) {
-        await MessageIngress.decipherMailMeta({
-          async: false,
-          meta: data.meta,
-          account: data.account
+      dispatch(fetchNewMessageRequest());
+      Mail.getNewMail()
+        .then(data => {
+          if (data.meta.length > 0) {
+            MessageIngress.decipherMailMeta({
+              async: false,
+              meta: data.meta,
+              account: data.account
+            }).then(messages => {
+              dispatch(fetchNewMessageSuccess());
+              return resolve(messages);
+            })
+            .catch(err => {
+              console.log(err);
+              dispatch(fetchNewMessageFailure(err));
+            })
+          } else {
+            dispatch(fetchNewMessageSuccess());
+            return resolve(messages);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          dispatch(fetchNewMessageFailure(err));
         });
-      }
-    } catch (err) {
-      console.log(err);
-      dispatch(fetchNewMessageFailure(err));
-      return err;
-    }
-
-    dispatch(fetchNewMessageSuccess());
-    return messages;
+    });
   };
 }
 
@@ -552,25 +563,26 @@ export const fetchMsg = (messageId: string) => {
     dispatch(fetchMsgBody(messageId));
     const { mail } = getState();
     const isUnread = mail.messages?.byId[messageId]?.unread;
-    let email;
 
-    try {
-      email = await Mail.getMessagebyId(messageId);
+    return new Promise((resolve, reject) => {
+      Mail.getMessagebyId(messageId)
+        .then(email => {
+          if (isUnread) {
+            if (email.aliasId !== null) {
+              dispatch(updateAliasCount(email.aliasId, -1));
+            } else {
+              dispatch(updateFolderCount(email.folderId, -1));
+            }
+          }
 
-      if (isUnread) {
-        if (email.aliasId !== null) {
-          await dispatch(updateAliasCount(email.aliasId, -1));
-        } else {
-          await dispatch(updateFolderCount(email.folderId, -1));
-        }
-      }
-    } catch (err) {
-      dispatch(fetchMsgBodyFailure(err));
-      return Promise.reject(err);
-    }
-
-    dispatch(fetchMsgBodySuccess(email));
-    return Promise.resolve(email);
+          dispatch(fetchMsgBodySuccess(email));
+          return resolve(email);
+        })
+        .catch(err => {
+          dispatch(fetchMsgBodyFailure(err));
+          return reject(err);
+        });
+    });
   };
 };
 
@@ -589,13 +601,11 @@ export const msgSelectionFlow = (id: string, folderId: number) => {
 export const MSG_SELECTION_FLOW_SUCCESS =
   'MAILPAGE::MSG_SELECTION_FLOW_SUCCESS';
 export const msgSelectionFlowSuccess = (
-  message: MailMessageType,
   id: string,
   folderId: number
 ) => {
   return {
     type: MSG_SELECTION_FLOW_SUCCESS,
-    message,
     id,
     folderId
   };
@@ -613,13 +623,8 @@ export const msgSelectionFlowFailure = (error: Error) => {
 export const messageSelection = (message: MailMessageType) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(msgSelectionFlow(message.emailId, message.folderId));
-    try {
-      const fullMsg = await dispatch(fetchMsg(message.emailId));
-      dispatch(msgSelectionFlowSuccess(fullMsg, message.emailId, message.folderId));
-      return Promise.resolve(message.emailId);
-    } catch (err) {
-      return Promise.reject(err);
-    }
+
+    dispatch(msgSelectionFlowSuccess(message.emailId, message.folderId));
   };
 };
 
@@ -676,30 +681,34 @@ export const folderSelection = (folderIndex: number) => {
     const newFolderId = foldersArray[folderIndex];
     const activeMsgIdObj = globalState.activeMsgId;
 
-    let messages;
+    return new Promise((resolve, reject) => {
+      dispatch(fetchFolderMessages(newFolderId))
+        .then(messages => {
+          if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, newFolderId)) {
+            const foldersActiveMsg = activeMsgIdObj[newFolderId].id;
 
-    try {
-      messages = await dispatch(fetchFolderMessages(newFolderId));
+            // Making sure the message selection has not been set to null before trying to fetch the message.
+            if (foldersActiveMsg) {
 
-      // if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, newFolderId)) {
-      //   const foldersActiveMsg = activeMsgIdObj[newFolderId].id;
-
-      //   // Making sure the message selection has not been set to null before trying to fetch the message.
-      //   if (foldersActiveMsg) {
-      //     const fullActiveMsg = await dispatch(fetchMsg(foldersActiveMsg));
-      //     messages = messages.map(m =>
-      //       m.id !== fullActiveMsg.id ? m : fullActiveMsg
-      //     );
-      //   }
-      // }
-    } catch (err) {
-      dispatch(folderSelectionFlowFailure(err));
-      return Promise.reject(err);
-    }
-
-    dispatch(folderSelectionFlowSuccess(folderIndex, newFolderId, messages));
-    return Promise.resolve();
-  };
+              dispatch(fetchMsg(foldersActiveMsg))
+                .then(fullActiveMsg => {
+                  messages = messages.map(m =>
+                    m.id !== fullActiveMsg.id ? m : fullActiveMsg
+                  );
+                  dispatch(folderSelectionFlowSuccess(folderIndex, newFolderId, messages));
+                  return resolve();
+                })
+            }
+          } else {
+            dispatch(folderSelectionFlowSuccess(folderIndex, newFolderId, messages));
+            return resolve()
+          }
+        })
+        .catch(err => {
+          return reject(err)
+        })
+    })
+  }
 };
 
 /*

@@ -40,6 +40,8 @@ import {
   forwardMessage
 } from '../../../actions/mailbox/messages';
 
+import { fetchMsg } from '../../../actions/mail';
+
 // REDUX STATE SELECTORS
 import {
   selectActiveMailbox,
@@ -59,14 +61,15 @@ type Props = {
 function MessageDisplay(props: Props) {
   const {
     message: {
+      emailId,
       subject,
       fromJSON,
       toJSON,
       ccJSON,
       bccJSON,
       date,
-      bodyAsHtml,
-      attachments
+      // bodyAsHtml,
+      // attachments
     },
     highlight,
     message
@@ -76,14 +79,30 @@ function MessageDisplay(props: Props) {
   const currentFolderName = useSelector(selectActiveFolderName);
   const [loaded, setLoaded] = useState(false);
   const [iframeReady, setIframeReady] = useState(false);
+  const [bodyAsHtml, setBodyAsHtml] = useState(null);
+  const [attachments, setAttachments] = useState([]);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (iframeReady && bodyAsHtml) {
+    setIframeReady(false)
+    setLoaded(false)
+    setBodyAsHtml(null)
+
+    dispatch(fetchMsg(emailId))
+      .then(email => {
+        setBodyAsHtml(email.bodyAsHtml)
+        setAttachments(email.attachments)
+      })
+      .catch(err => {
+      })
+  },[emailId])
+
+  useEffect(() => {
+    if (iframeReady) {
       setLoaded(true);
     }
-  }, [bodyAsHtml, iframeReady]);
+  }, [iframeReady]);
 
   let files = [];
 
@@ -327,11 +346,12 @@ function MessageDisplay(props: Props) {
           <div className="h-full">
             <div className="mb-2 h-full px-4 pt-4">
               {!loaded && <Loader size="lg" backdrop vertical />}
-
+              
               <IFrame className="w-full h-full">
                 {bodyAsHtml && (
                   <div style={divStyle}>
                     {renderHTML(bodyAsHtml)}
+                    
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
                   </div>
                 )}

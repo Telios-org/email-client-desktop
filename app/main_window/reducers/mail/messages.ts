@@ -33,14 +33,18 @@ export default function messages(
   let _allIds;
   switch (action.type) {
     case MSG_SELECTION_FLOW_SUCCESS:
-      if (action.message) {
+
+      if(action.id) {
+        let message = state.byId[action.id]
+        message.unread = false
+
         return {
           ...state,
           byId: {
             ...state.byId,
-            [action.message.emailId]: { ...action.message }
+            [action.id]: { ...message}
           }
-        };
+        }
       }
       return { ...state };
     case MARK_UNREAD_SUCCESS:

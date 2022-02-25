@@ -87,7 +87,7 @@ export default function MessageList(props: Props) {
     selected: SelectionRange,
     folderId: number
   ) => {
-    console.log('SELECTED', selected)
+
     dispatch(msgRangeSelection(selected, folderId));
   };
 
