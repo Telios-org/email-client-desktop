@@ -31,10 +31,10 @@ class AccountService extends EventEmitter {
     ipcRenderer.once('ACCOUNT_IPC::initAcct', async (evt, data) => {
       try {
         const account = await AccountService.initAccount(data);
-
+        console.log('ACCOUNT SERVICE', account);
+        ipcRenderer.send('ACCOUNT_SERVICE::initAcctResponse', account);
         // Emitting the account data so it can be ingested by the Redux Store
         this.emit('ACCOUNT_SERVICE::accountData', account);
-        ipcRenderer.send('ACCOUNT_SERVICE::initAcctResponse', account);
       } catch (e) {
         ipcRenderer.send('ACCOUNT_SERVICE::initAcctError', e);
       }
@@ -129,10 +129,9 @@ class AccountService extends EventEmitter {
     channel.send({ event: 'account:create', payload });
 
     return new Promise((resolve, reject) => {
-
       channel.once('account:create:callback', async m => {
         const { data, error } = m;
-        
+
         if (error) return reject(error);
 
         const {
@@ -191,24 +190,24 @@ class AccountService extends EventEmitter {
     });
 
     return new Promise((resolve, reject) => {
-
       channel.once('account:login:callback', async m => {
         const { error, data } = m;
         let _data = { ...data };
 
+        console.log('IS THERE AN ERROR', error);
         if (error) return reject(error);
 
         ipcRenderer.invoke('MATOMO::init', { account: data, isNew: false });
 
         try {
-          const stats = await this.retrieveStats()
-          if(stats) _data = { ...data, stats }
-        } catch(err) {
+          const stats = await this.retrieveStats();
+          if (stats) _data = { ...data, stats };
+        } catch (err) {
           // possible connection issue
-          console.log(err)
+          console.log('STATS ERROR:', err);
         }
-
-        return resolve({ ..._data })
+        console.log('HERE IS MY DATA', { ..._data });
+        return resolve({ ..._data });
       });
     });
   }
@@ -222,9 +221,9 @@ class AccountService extends EventEmitter {
     return new Promise((resolve, reject) => {
       channel.once('account:update:callback', m => {
         const { error, data } = m;
-        
+
         if (error) return reject(error);
-        
+
         return resolve(data);
       });
     });
@@ -238,9 +237,9 @@ class AccountService extends EventEmitter {
     return new Promise((resolve, reject) => {
       channel.once('account:retrieveStats:callback', m => {
         const { data, error } = m;
-        
-        if(error) return reject(error);
-        
+
+        if (error) return reject(error);
+
         return resolve(data);
       });
     });
@@ -254,7 +253,7 @@ class AccountService extends EventEmitter {
     return new Promise((resolve, reject) => {
       channel.once('account:refreshToken:callback', m => {
         const { error, data } = m;
-        
+
         if (error) return reject(error);
 
         return resolve(data.token);
@@ -281,9 +280,9 @@ class AccountService extends EventEmitter {
     return new Promise((resolve, reject) => {
       channel.once('account:logout:callback', m => {
         const { error } = m;
-        
+
         if (error) return reject(error);
-        
+
         ipcRenderer.send('logout');
         return resolve();
       });

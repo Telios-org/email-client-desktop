@@ -29,6 +29,7 @@ class LoginService {
       ipcRenderer
         .invoke('LOGIN_SERVICE::initAccount', { password, email })
         .then(data => {
+          console.log('LOGIN_SERVICE::initAccount', data)
           return resolve(data);
         })
         .catch(err => {

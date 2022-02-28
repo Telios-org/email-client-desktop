@@ -36,7 +36,7 @@ const initAccount = async (name, password) => {
   try {
     account = await LoginService.initAccount(password, name);
   } catch (err) {
-    console.log(err);
+    console.log('INITACCOUNT ERR', err);
   }
 
   console.log('ACCOUNT::', account);
@@ -137,9 +137,12 @@ class Login extends Component<Props, State> {
         selectedAccount
       );
 
+      console.log('HAS THE ACCOUNT BEEN MIGRATED?', accountMigrated);
+
       if (accountMigrated) {
         const account = await initAccount(selectedAccount, masterpass);
         goToMainWindow(account);
+        this.clearState();
       } else {
         this.setState({ showMigrationScreen: true });
         const account = await initAccount(selectedAccount, masterpass);
@@ -151,8 +154,6 @@ class Login extends Component<Props, State> {
           });
         }
       }
-
-      this.clearState();
     } catch (err) {
       let error = null;
       if (typeof err === 'string') {
@@ -243,7 +244,7 @@ class Login extends Component<Props, State> {
     } = this.state;
     const { accounts, onUpdateActive } = this.props;
 
-    if (accounts.length > 0 && !showMigrationScreen) {
+    if (accounts.length > 0 && !showMigrationScreen && account === null) {
       return (
         <div className="flex flex-col h-full">
           <div className="text-2xl text-gray-700 font-semibold mb-6 select-none">
@@ -339,7 +340,7 @@ class Login extends Component<Props, State> {
       );
     }
     // the below is only for nebula migration purposes (Feb 2022)
-    if (showMigrationScreen && account && account.mnemonic === null) {
+    if (showMigrationScreen) {
       return (
         <div className="flex flex-col h-full items-center mt-24">
           <div className="text-sm text-gray-500 mb-8 select-none px-2 text-center">
@@ -372,7 +373,7 @@ class Login extends Component<Props, State> {
       );
     }
 
-    if (showMigrationScreen && account && account.mnemonic !== null) {
+    if (account && account.mnemonic !== null) {
       return (
         <div className="flex flex-col h-full items-center mt-4">
           <div className="flex-none mb-6">
@@ -402,9 +403,12 @@ class Login extends Component<Props, State> {
             appearance="primary"
             type="button"
             block
-            onClick={() => this.goToMainWindow(account)}
+            onClick={() => {
+              goToMainWindow(account);
+              this.clearState();
+            }}
           >
-            Register
+            Go to mailbox
           </Button>
         </div>
       );

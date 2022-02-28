@@ -32,6 +32,7 @@ module.exports = windowManager => {
     return new Promise((resolve, reject) => {
       mainWindow.webContents.on('ipc-message', (e, channel, data) => {
         if (channel === 'ACCOUNT_SERVICE::initAcctResponse') {
+          console.log('ACCOUNT_SERVICE::initAcctResponse', data);
           store.setAccountSecrets(account);
           resolve(data);
         }
