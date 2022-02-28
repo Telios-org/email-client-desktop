@@ -49,6 +49,7 @@ const BillingPayments = (props: Props) => {
   const [showPricing, setShowPricing] = useState(false);
   const [pricingData, setPricingData] = useState([]);
   const [currentPlan, setCurrentPlan] = useState(undefined);
+  const pricingFeature = false;
 
   const pctString = (numerator, denominator) => {
     const value = Math.round((numerator / denominator) * 100);
@@ -203,42 +204,45 @@ const BillingPayments = (props: Props) => {
               {currentPlan?.type === 'limited' && <span>LIFETIME MEMBER</span>}
             </div>
           </div>
-          <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
-            <a
-              href=""
-              className={classNames(
-                stats.plan === 'FREE'
-                  ? 'text-gray-200 pointer-events-none'
-                  : 'text-gray-500',
-                'text-sm font-medium underline flex items-center focus:outline-none'
-              )}
-            >
-              Cancel Plan
-            </a>
-            <div>
-              <button
-                type="button"
-                onClick={togglePriceCompare}
+          {/* NOT YET RELEASE PRICING - STILL WORKING ON PLANS */}
+          {pricingFeature && (
+            <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
+              <a
+                href=""
                 className={classNames(
-                  stats.plan !== 'FREE'
-                    ? 'bg-white focus:ring-gray-400 hover:bg-blue-gray-50 mr-3'
-                    : 'bg-gradient-to-bl from-green-600 to-green-500 hover:to-green-600 focus:ring-green-500 text-white',
-                  'py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
+                  stats.plan === 'FREE'
+                    ? 'text-gray-200 pointer-events-none'
+                    : 'text-gray-500',
+                  'text-sm font-medium underline flex items-center focus:outline-none'
                 )}
               >
-                {stats.plan !== 'FREE' ? 'Compare Plans' : 'Upgrade Plan'}
-              </button>
-              {stats.plan !== 'FREE' && (
+                Cancel Plan
+              </a>
+              <div>
                 <button
                   type="button"
-                  onClick={() => openStripe('portal', null)}
-                  className="bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  onClick={togglePriceCompare}
+                  className={classNames(
+                    stats.plan !== 'FREE'
+                      ? 'bg-white focus:ring-gray-400 hover:bg-blue-gray-50 mr-3'
+                      : 'bg-gradient-to-bl from-green-600 to-green-500 hover:to-green-600 focus:ring-green-500 text-white',
+                    'py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
+                  )}
                 >
-                  Manage Plan
+                  {stats.plan !== 'FREE' ? 'Compare Plans' : 'Upgrade Plan'}
                 </button>
-              )}
+                {stats.plan !== 'FREE' && (
+                  <button
+                    type="button"
+                    onClick={() => openStripe('portal', null)}
+                    className="bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  >
+                    Manage Plan
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
       <section
@@ -317,7 +321,7 @@ const BillingPayments = (props: Props) => {
                     </div>
                   </div>
                 </div>
-                {stats.maxOutgoingEmails !== 0 && (
+                {pricingFeature && stats.maxOutgoingEmails !== 0 && (
                   <div className="flex justify-end items-center">
                     <button
                       type="button"
@@ -386,7 +390,7 @@ const BillingPayments = (props: Props) => {
                       </div>
                     </div>
                   </div>
-                  {stats.maxAliasNames !== 0 && (
+                  {pricingFeature && stats.maxAliasNames !== 0 && (
                     <div className="flex justify-end items-center">
                       <button
                         type="button"
@@ -437,7 +441,7 @@ const BillingPayments = (props: Props) => {
                       </div>
                     </div>
                   </div>
-                  {stats.maxAliasAddresses !== 0 && (
+                  {pricingFeature && stats.maxAliasAddresses !== 0 && (
                     <div className="flex justify-end items-center">
                       <button
                         type="button"
@@ -480,33 +484,39 @@ const BillingPayments = (props: Props) => {
                       <span className="text-purple-500 font-bold">
                         {humanFileSize(stats.storageSpaceUsed, true, 2)}
                       </span>
-                      {` of `}
-                      <span className="font-bold">
-                        {humanFileSize(
-                          stats.maxGBCloudStorage * 1000000000,
-                          true,
-                          2
-                        )}
-                      </span>
-                      {` included`}
+                      {pricingFeature && (
+                        <>
+                          {` of `}
+                          <span className="font-bold">
+                            {humanFileSize(
+                              stats.maxGBCloudStorage * 1000000000,
+                              true,
+                              2
+                            )}
+                          </span>
+                          {` included`}
+                        </>
+                      )}
                     </span>
                   </div>
-                  <div className="relative pt-1">
-                    <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
-                      <div
-                        style={{
-                          width: pctValues.storagePct
-                        }}
-                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
-                          pctValues.storagePct === '100%'
-                            ? 'bg-red-500'
-                            : 'bg-blueGray-400'
-                        }`}
-                      />
+                  {pricingFeature && (
+                    <div className="relative pt-1">
+                      <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
+                        <div
+                          style={{
+                            width: pctValues.storagePct
+                          }}
+                          className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
+                            pctValues.storagePct === '100%'
+                              ? 'bg-red-500'
+                              : 'bg-blueGray-400'
+                          }`}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-                {stats.maxGBCloudStorage !== 1000 && (
+                {pricingFeature && stats.maxGBCloudStorage !== 1000 && (
                   <div className="flex justify-end items-center">
                     <button
                       type="button"

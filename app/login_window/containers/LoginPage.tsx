@@ -36,14 +36,6 @@ class LoginPage extends Component<Props, State> {
   }
 
   componentDidMount() {
-    ipcRenderer.on('dark-mode', (event, value) => {
-      if (value) {
-        themeUtils.switchCss('dark');
-      } else {
-        themeUtils.switchCss('light');
-      }
-    });
-
     const accounts = LoginService.getAccounts();
     const acct = accounts.map((a: string) => ({ label: a, value: a }));
 

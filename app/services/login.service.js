@@ -60,6 +60,16 @@ class LoginService {
     return getDirectories(`${app.getPath('userData')}/Accounts`);
   }
 
+  // checkMigrationStatus can utimately get deleted once all users have migrated
+  static checkMigrationStatus(account) {
+    const getDirectories = source =>
+      fs
+        .readdirSync(source, { withFileTypes: true })
+        .some(file => file.name === 'recovery' || file.name === 'vault');
+
+    return getDirectories(`${app.getPath('userData')}/Accounts/${account}/Drive/Files`);
+  }
+
   // Perform account initialization
   static async registerAccount(acct) {
     return new Promise((resolve, reject) => {
