@@ -27,6 +27,7 @@ import {
   fromStringToJSDate,
   fromJSDateToString
 } from '../../../../utils/helpers/date';
+import stringToHslColor from '../../../../utils/avatar.util';
 
 // Typescript
 import { ContactType } from '../../../reducers/types';
@@ -147,6 +148,14 @@ const ContactDetails = (props: Props) => {
     }
   };
 
+  const initials = name => {
+    const senderArr = name.split(' ');
+    if (senderArr.length > 1) {
+      return (`${senderArr[0][0]}${senderArr[1][0]}` || '').toUpperCase();
+    }
+    // eslint-disable-next-line prefer-destructuring
+    return (senderArr[0][0] || '').toUpperCase();
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -164,38 +173,59 @@ const ContactDetails = (props: Props) => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
             <div className="flex relative">
-              <div className="h-[128px] w-[136px] rounded-full bg-white " />
-              {profile?.email.length === 0 && (
-                <BigHead
-                  accessory="none"
-                  body="chest"
-                  circleColor="blue"
-                  clothing="dressShirt"
-                  clothingColor="black"
-                  eyebrows="concerned"
-                  eyes="dizzy"
-                  faceMask
-                  faceMaskColor="black"
-                  facialHair="none"
-                  graphic="none"
-                  hair="short"
-                  hairColor="brown"
-                  hat="none"
-                  hatColor="blue"
-                  lashes
-                  lipColor="green"
-                  mask
-                  mouth="grin"
-                  skinTone="light"
-                  className="absolute h-48 w-48 grayscale top-[39px] left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                />
-              )}
-              {profile?.email.length !== 0 && (
+              <span
+                className="inline-flex items-center justify-center h-32 w-32 rounded-full ring-4 ring-white"
+                style={{
+                  backgroundColor: stringToHslColor(profile.email, 50, 50)
+                }}
+              >
+                <span className="text-3xl font-medium leading-none text-white">
+                  {initials(
+                    profile.nickname ||
+                      (profile.givenName &&
+                        profile.familyName &&
+                        profile.name) ||
+                      profile.email
+                  )}
+                </span>
+              </span>
+              {profile.name === ' ' &&
+                profile.nickname.length === 0 &&
+                profile?.email.length === 0 && (
+                  <>
+                    <div className="h-[128px] w-[136px] rounded-full bg-white " />
+                    <BigHead
+                      accessory="none"
+                      body="chest"
+                      circleColor="blue"
+                      clothing="dressShirt"
+                      clothingColor="black"
+                      eyebrows="concerned"
+                      eyes="dizzy"
+                      faceMask
+                      faceMaskColor="black"
+                      facialHair="none"
+                      graphic="none"
+                      hair="short"
+                      hairColor="brown"
+                      hat="none"
+                      hatColor="blue"
+                      lashes
+                      lipColor="green"
+                      mask
+                      mouth="grin"
+                      skinTone="light"
+                      className="absolute h-48 w-48 grayscale top-[39px] left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                    />
+                  </>
+                )}
+              {/* {profile?.email.length !== 0 && (
                 <BigHead
                   {...bigHeadOpt}
                   className="absolute h-48 w-48 top-[39px] left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                 />
-              )}
+              )} */}
+
               {/* <img
                 className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
                 src={profile.imageUrl}
@@ -278,10 +308,16 @@ const ContactDetails = (props: Props) => {
           </div>
           <div className="block mt-6 min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-gray-900 truncate">
+              {profile.nickname.length === 0 &&
+                profile.givenName.length === 0 &&
+                profile.familyName.length === 0 &&
+                profile.email}
               {profile.nickname || profile.name}
-              {profile?.nickname?.length > 0 && (
-                <span className="text-lg text-gray-400 pl-4 font-medium">{`(${profile.name})`}</span>
-              )}
+              {profile?.nickname?.length > 0 &&
+                (profile.givenName.length > 0 ||
+                  profile.familyName.length > 0) && (
+                  <span className="text-lg text-gray-400 pl-4 font-medium">{`(${profile.name.trim()})`}</span>
+                )}
             </h1>
           </div>
         </div>

@@ -31,7 +31,6 @@ class AccountService extends EventEmitter {
     ipcRenderer.once('ACCOUNT_IPC::initAcct', async (evt, data) => {
       try {
         const account = await AccountService.initAccount(data);
-        console.log('ACCOUNT SERVICE', account);
         ipcRenderer.send('ACCOUNT_SERVICE::initAcctResponse', account);
         // Emitting the account data so it can be ingested by the Redux Store
         this.emit('ACCOUNT_SERVICE::accountData', account);
@@ -194,7 +193,6 @@ class AccountService extends EventEmitter {
         const { error, data } = m;
         let _data = { ...data };
 
-        console.log('IS THERE AN ERROR', error);
         if (error) return reject(error);
 
         ipcRenderer.invoke('MATOMO::init', { account: data, isNew: false });
@@ -206,7 +204,6 @@ class AccountService extends EventEmitter {
           // possible connection issue
           console.log('STATS ERROR:', err);
         }
-        console.log('HERE IS MY DATA', { ..._data });
         return resolve({ ..._data });
       });
     });

@@ -67,7 +67,7 @@ function MessageDisplay(props: Props) {
       toJSON,
       ccJSON,
       bccJSON,
-      date,
+      date
       // bodyAsHtml,
       // attachments
     },
@@ -85,18 +85,17 @@ function MessageDisplay(props: Props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setIframeReady(false)
-    setLoaded(false)
-    setBodyAsHtml(null)
+    setIframeReady(false);
+    setLoaded(false);
+    setBodyAsHtml(null);
 
     dispatch(fetchMsg(emailId))
       .then(email => {
-        setBodyAsHtml(email.bodyAsHtml)
-        setAttachments(email.attachments)
+        setBodyAsHtml(email.bodyAsHtml);
+        setAttachments(email.attachments);
       })
-      .catch(err => {
-      })
-  },[emailId])
+      .catch(err => {});
+  }, [emailId]);
 
   useEffect(() => {
     if (iframeReady) {
@@ -307,16 +306,16 @@ function MessageDisplay(props: Props) {
       </div>
       <div className="border-b pt-3 pb-6 flex flex-row items-center px-6">
         <div>
-          <Avatar
-            size="md"
-            className="font-bold"
+          <span
+            className="inline-flex items-center justify-center h-10 w-10 rounded-full"
             style={{
-              backgroundColor: stringToHslColor(parsedSender, 45, 65)
+              backgroundColor: stringToHslColor(parsedSender, 50, 50)
             }}
-            circle
           >
-            {senderInitials}
-          </Avatar>
+            <span className="font-medium leading-none text-white">
+              {senderInitials}
+            </span>
+          </span>
         </div>
         <div className="flex-auto pl-4 select-none">
           <div className="flex flex-row justify-between">
@@ -346,12 +345,12 @@ function MessageDisplay(props: Props) {
           <div className="h-full">
             <div className="mb-2 h-full px-4 pt-4">
               {!loaded && <Loader size="lg" backdrop vertical />}
-              
+
               <IFrame className="w-full h-full">
                 {bodyAsHtml && (
                   <div style={divStyle}>
                     {renderHTML(bodyAsHtml)}
-                    
+
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
                   </div>
                 )}

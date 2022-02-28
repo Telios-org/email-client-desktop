@@ -9,9 +9,9 @@ import { BigHead } from '@bigheads/core';
 import ContactDetails from '../../../components/Contact/ContactDetails/ContactDetails';
 import teliosLogoSVG from '../../../../../resources/img/telios_logo.svg';
 
-
 // Internal Helpers
 import getRandomOptions from '../../../../utils/helpers/avatarRandomOptions';
+import stringToHslColor from '../../../../utils/avatar.util';
 
 // ACTION CREATORS
 import { fetchRolladex } from '../../../actions/contacts/contacts';
@@ -165,6 +165,15 @@ const ContactPage = () => {
     return '';
   };
 
+  const initials = name => {
+    const senderArr = name.split(' ');
+    if (senderArr.length > 1) {
+      return (`${senderArr[0][0]}${senderArr[1][0]}` || '').toUpperCase();
+    }
+    // eslint-disable-next-line prefer-destructuring
+    return (senderArr[0][0] || '').toUpperCase();
+  };
+
   return (
     <div className="flex-1 relative z-0 flex overflow-hidden">
       {/* DIRECTORY */}
@@ -252,12 +261,16 @@ const ContactPage = () => {
                     <p className="text-sm font-medium text-gray-900 mt-0">
                       No Contact Found
                     </p>
-                    {AllContacts.length > 0 && (<p className="text-sm text-gray-500 truncate mt-1">
-                      Add it to your contacts list.
-                    </p>)}
-                    {AllContacts.length === 0 && (<p className="text-sm text-gray-500 truncate mt-1">
-                      Add your first contact here.
-                    </p>)}
+                    {AllContacts.length > 0 && (
+                      <p className="text-sm text-gray-500 truncate mt-1">
+                        Add it to your contacts list.
+                      </p>
+                    )}
+                    {AllContacts.length === 0 && (
+                      <p className="text-sm text-gray-500 truncate mt-1">
+                        Add your first contact here.
+                      </p>
+                    )}
                   </div>
 
                   <svg
@@ -323,10 +336,29 @@ const ContactPage = () => {
                           src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                           alt=""
                         /> */}
-                          <BigHead
+
+                          <span
+                            className="inline-flex items-center justify-center h-10 w-10 rounded-full"
+                            style={{
+                              backgroundColor: stringToHslColor(
+                                person.email,
+                                50,
+                                50
+                              )
+                            }}
+                          >
+                            <span className="font-medium leading-none text-white">
+                              {initials(
+                                person.nickname ||
+                                  (person.name !== ' ' && person.name) ||
+                                  person.email
+                              )}
+                            </span>
+                          </span>
+                          {/* <BigHead
                             className="h-14 w-14 absolute top-[15px] left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                             {...opts}
-                          />
+                          /> */}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="outline-none">
@@ -336,7 +368,7 @@ const ContactPage = () => {
                               aria-hidden="true"
                             />
                             <p className="text-sm font-medium text-gray-900 mt-0">
-                              {person.nickname || person.name}
+                              {person.nickname || person.name || ''}
                               {person?.nickname?.length > 0 && (
                                 <span className="text-xs text-gray-400 pl-2">{`(${person.name})`}</span>
                               )}
@@ -367,7 +399,7 @@ const ContactPage = () => {
       )}
       {AllContacts.length === 0 && editMode !== true && (
         <div className="text-center w-full flex items-center justify-center">
-         <img
+          <img
             className="opacity-5 w-64 h-64"
             src={teliosLogoSVG}
             alt="Telios Logo"

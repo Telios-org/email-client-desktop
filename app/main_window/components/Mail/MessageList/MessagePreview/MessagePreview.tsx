@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 // EXTERNAL LIBRARIES
-import { Badge, Avatar } from 'rsuite';
-import { DragPreviewImage, useDrag, useDragLayer } from 'react-dnd';
+import { Badge } from 'rsuite';
+import { DragPreviewImage, useDrag } from 'react-dnd';
 // import {CustomDragLayer} from './CustomDragLayer';
 
 // CSS/LESS STYLES
@@ -76,7 +76,7 @@ export default function MessagePreview(props: Props) {
   } = message;
   const activeMessageId = useSelector(activeMsgId);
   const isActive =
-  emailId === activeMessageId || selected.items.indexOf(message.emailId) > -1;
+    emailId === activeMessageId || selected.items.indexOf(message.emailId) > -1;
 
   const [{ opacity }, drag, preview] = useDrag({
     item: { emailId, unread, folderId, type: 'message', aliasId },
@@ -282,16 +282,16 @@ export default function MessagePreview(props: Props) {
               )}
             </div>
             <div className="pt-3 mr-3">
-              <Avatar
-                size="md"
-                className="font-bold"
+              <span
+                className="inline-flex items-center justify-center h-10 w-10 rounded-full"
                 style={{
-                  backgroundColor: stringToHslColor(parsedSender, 45, 65)
+                  backgroundColor: stringToHslColor(parsedSender, 50, 50)
                 }}
-                circle
               >
-                {sender.avatarInitials}
-              </Avatar>
+                <span className="font-medium leading-none text-white">
+                  {sender.avatarInitials}
+                </span>
+              </span>
             </div>
 
             <div className="flex-auto flex-col py-2 pr-3 leading-tight">

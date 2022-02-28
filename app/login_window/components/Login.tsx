@@ -39,8 +39,6 @@ const initAccount = async (name, password) => {
     console.log('INITACCOUNT ERR', err);
   }
 
-  console.log('ACCOUNT::', account);
-
   if (account?.error?.message?.indexOf('Unable to decrypt message') > -1) {
     ipcRenderer.send('restartMainWindow');
     throw i18n.t('login.incorrectPass');
@@ -136,8 +134,6 @@ class Login extends Component<Props, State> {
       const accountMigrated = await LoginService.checkMigrationStatus(
         selectedAccount
       );
-
-      console.log('HAS THE ACCOUNT BEEN MIGRATED?', accountMigrated);
 
       if (accountMigrated) {
         const account = await initAccount(selectedAccount, masterpass);
@@ -382,7 +378,7 @@ class Login extends Component<Props, State> {
             </div>
 
             <div className="text-sm text-gray-500 mt-6 select-none">
-              As part of our upgrade we had to had to generate new recovery
+              As part of our upgrade we had to generate new recovery
               passpharses, it can now be used to recover lost passwords.
             </div>
           </div>
