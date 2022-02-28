@@ -499,9 +499,8 @@ export const fetchNewMessageFailure = (error: string) => {
 export function fetchNewMessages() {
   return async (dispatch: Dispatch) => {
     return new Promise((resolve, reject) => {
-      let messages = [];
-
       dispatch(fetchNewMessageRequest());
+      
       Mail.getNewMail()
         .then(data => {
           if (data.meta.length > 0) {
@@ -509,17 +508,9 @@ export function fetchNewMessages() {
               async: false,
               meta: data.meta,
               account: data.account
-            }).then(messages => {
-              dispatch(fetchNewMessageSuccess());
-              return resolve(messages);
             })
-            .catch(err => {
-              console.log(err);
-              dispatch(fetchNewMessageFailure(err));
-            })
-          } else {
             dispatch(fetchNewMessageSuccess());
-            return resolve(messages);
+            return resolve();
           }
         })
         .catch(err => {
