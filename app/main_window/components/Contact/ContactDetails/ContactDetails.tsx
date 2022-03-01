@@ -189,22 +189,24 @@ const ContactDetails = (props: Props) => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
             <div className="flex relative">
-              <span
-                className="inline-flex items-center justify-center h-32 w-32 rounded-full ring-4 ring-white"
-                style={{
-                  backgroundColor: stringToHslColor(profile.email, 50, 50)
-                }}
-              >
-                <span className="text-3xl font-medium leading-none text-white">
-                  {initials(
-                    profile.nickname ||
-                      (profile.givenName &&
-                        profile.familyName &&
-                        profile.name) ||
-                      profile.email
-                  )}
+              {(profile.nickname || profile?.name?.trim().length > 0 || profile.email) && (
+                <span
+                  className="inline-flex items-center justify-center h-32 w-32 rounded-full ring-4 ring-white"
+                  style={{
+                    backgroundColor: stringToHslColor(profile.email, 50, 50)
+                  }}
+                >
+                  <span className="text-3xl font-medium leading-none text-white">
+                    {initials(
+                      profile.nickname ||
+                        (profile.givenName &&
+                          profile.familyName &&
+                          profile.name) ||
+                        profile.email
+                    )}
+                  </span>
                 </span>
-              </span>
+              )}
               {profile.name === ' ' &&
                 profile.nickname.length === 0 &&
                 profile?.email.length === 0 && (
@@ -325,8 +327,7 @@ const ContactDetails = (props: Props) => {
           <div className="block mt-6 min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-gray-900 truncate">
               {profile.nickname.length === 0 &&
-                profile.givenName.length === 0 &&
-                profile.familyName.length === 0 &&
+                profile.name.trim().length === 0 &&
                 profile.email}
               {profile.nickname || profile.name}
               {profile?.nickname?.length > 0 &&
