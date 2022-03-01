@@ -132,7 +132,7 @@ const Attachments = (props: Props) => {
         ))}
       </ul>
       {attachments.length > 0 && (
-        <Divider className="mt-2">
+        <Divider className="mt-2 text-center">
           <Dropdown
             title="Attachments"
             size="xs"

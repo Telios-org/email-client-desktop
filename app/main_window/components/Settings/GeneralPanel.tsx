@@ -106,7 +106,7 @@ const GeneralPanel = () => {
                 type="text"
                 disabled
               />
-              <div className="col-span-2 pl-4 xl:pl-0 xl:col-span-4">
+              <div className="col-span-2 xl:col-span-4">
                 <label
                   htmlFor="photo"
                   className="block text-sm font-medium text-gray-700"
@@ -117,7 +117,7 @@ const GeneralPanel = () => {
                   {hasAvatar && (
                     <div className="shadow border border-gray-400/70 rounded-full">
                       <img
-                        className="inline-block h-12 w-12 rounded-full"
+                        className="inline-block h-24 w-24 rounded-full"
                         src={profile.avatar}
                         alt=""
                       />
