@@ -3,7 +3,8 @@ import {
   SAVE_INCOMING_MESSAGES_SUCCESS,
   MSG_SELECTION_FLOW_SUCCESS,
   FOLDER_SELECTION_FLOW_SUCCESS,
-  FETCH_MORE_FOLDER_MESSAGES_SUCCESS
+  FETCH_MORE_FOLDER_MESSAGES_SUCCESS,
+  FETCH_MSG_BODY_SUCCESS
 } from '../../actions/mail';
 import {
   SAVE_SENT_MESSAGE_SUCCESS,
@@ -32,17 +33,16 @@ export default function messages(
   let _byId;
   let _allIds;
   switch (action.type) {
-    case MSG_SELECTION_FLOW_SUCCESS:
-
-      if(action.id) {
-        let message = state.byId[action.id]
-        message.unread = false
+    case FETCH_MSG_BODY_SUCCESS:
+      if (action.message) {
+        const message = { ...action.message };
+        message.unread = false;
 
         return {
           ...state,
           byId: {
             ...state.byId,
-            [action.id]: { ...message}
+            [action.message.emailId]: { ...message }
           }
         }
       }
