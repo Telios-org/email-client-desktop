@@ -273,7 +273,7 @@ const BillingPayments = (props: Props) => {
                 <p className="text-xs">
                   Limit will reset on
                   <span className="font-bold">
-                    {stats.dailyEmailResetDate.toLocaleString(
+                    {stats?.dailyEmailResetDate?.toLocaleString(
                       DateTime.DATETIME_SHORT
                     )}
                   </span>
@@ -292,16 +292,16 @@ const BillingPayments = (props: Props) => {
                     </span>
                     <span className="text-sm">
                       <span className="text-purple-500 font-bold">
-                        {stats.dailyEmailUsed}
+                        {stats?.dailyEmailUsed}
                       </span>
                       {` of `}
-                      {stats.maxOutgoingEmails !== 0 && (
+                      {stats?.maxOutgoingEmails !== 0 && (
                         <>
-                          <span className="font-bold">{`${stats.maxOutgoingEmails} `}</span>
+                          <span className="font-bold">{`${stats?.maxOutgoingEmails} `}</span>
                           included
                         </>
                       )}
-                      {stats.maxOutgoingEmails === 0 && (
+                      {stats?.maxOutgoingEmails === 0 && (
                         <span className="font-bold">Unlimited</span>
                       )}
                     </span>
@@ -310,7 +310,7 @@ const BillingPayments = (props: Props) => {
                     <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
                       <div
                         style={{
-                          width: pctValues.dailyTrafficPct
+                          width: pctValues?.dailyTrafficPct
                         }}
                         className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
                           pctValues.dailyTrafficPct === '100%'
@@ -321,7 +321,7 @@ const BillingPayments = (props: Props) => {
                     </div>
                   </div>
                 </div>
-                {pricingFeature && stats.maxOutgoingEmails !== 0 && (
+                {pricingFeature && stats?.maxOutgoingEmails !== 0 && (
                   <div className="flex justify-end items-center">
                     <button
                       type="button"

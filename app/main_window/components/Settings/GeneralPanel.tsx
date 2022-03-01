@@ -16,12 +16,15 @@ import useForm from '../../../utils/hooks/useForm';
 
 // INTERNAL COMPONENTS
 import SettingsSection from './shared/SettingsSection';
+import InputField from './shared/InputField';
 
 const GeneralPanel = () => {
   const dispatch = useDispatch();
   const mailbox = useSelector(selectActiveMailbox);
   const account = useSelector(state => state.account);
   const [hasAvatar, setHasAvatar] = useState(false);
+  const [displayAddress, setDisplayAddress] = useState('');
+
 
   const {
     handleSubmit,
@@ -68,6 +71,14 @@ const GeneralPanel = () => {
     }
   }, [profile]);
 
+  useEffect(() => {
+    if (mailbox?.address?.length > 0) {
+      setDisplayAddress(mailbox.address);
+    } else if (mailbox?.name?.length > 0) {
+      setDisplayAddress(mailbox.name);
+    }
+  }, [mailbox]);
+
   return (
     <div className="space-y-6">
       <SettingsSection
@@ -77,29 +88,24 @@ const GeneralPanel = () => {
         <form onSubmit={handleSubmit}>
           <div className="bg-white py-6 px-7">
             <div className="grid grid-cols-4 gap-6">
-              <div className="relative col-span-2 xl:col-span-4">
-                <label
-                  htmlFor="display-name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Display Name
-                </label>
-                <input
-                  type="text"
-                  name="display-name"
-                  id="display-name"
-                  placeholder={mailbox?.address ?? ''}
-                  value={profile.displayName || ''}
-                  onChange={handleChange('displayName')}
-                  className="mt-2 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-700 focus:border-purple-700 sm:text-sm"
-                />
-                {errors.displayName && (
-                  <p className="absolute -bottom-4 text-red-400 text-xs pl-2 pt-1">
-                    {errors.displayName}
-                  </p>
-                )}
-              </div>
-
+              <InputField
+                id="display-name"
+                label="Display Name"
+                className="col-span-2"
+                placeholder={mailbox?.address ?? ''}
+                value={profile.displayName || ''}
+                onChange={handleChange('displayName')}
+                error={errors.displayName}
+                type="text"
+              />
+              <InputField
+                id="email"
+                label="Primary Email"
+                className="col-span-2"
+                value={displayAddress || ''}
+                type="text"
+                disabled
+              />
               <div className="col-span-2 pl-4 xl:pl-0 xl:col-span-4">
                 <label
                   htmlFor="photo"
@@ -165,6 +171,31 @@ const GeneralPanel = () => {
           </div>
         </form>
       </SettingsSection>
+      {/* <SettingsSection
+        header="Experimentations"
+        description="These are features that may not be fully implemented, the Telios team is simply playing around. We figured we'd share the fun. Activate them or not, gives us feedback, 100% up to you."
+      >
+          <div className="bg-white py-6 px-7">
+
+          </div>
+          <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300">
+            <button
+              type="button"
+              // onClick={resetForm}
+              // disabled={!isDirty}
+              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 mr-3"
+            >
+              Cancel
+            </button>
+            <button
+              // type="submit"
+              // disabled={!isDirty}
+              className="bg-gradient-to-bl from-purple-600 to-purple-500 disabled:from-gray-300 disabled:to-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-700"
+            >
+              Save
+            </button>
+          </div>
+      </SettingsSection> */}
     </div>
   );
 };

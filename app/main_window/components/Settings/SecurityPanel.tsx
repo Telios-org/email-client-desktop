@@ -31,7 +31,7 @@ const SecurityPanel = () => {
   }
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-6 select-none'>
       <SettingsSection header="Device Signature" description="The key pair used to sign your communication over the network, thus ensuring that your traffic is safe and authenticated.">
         <div className="bg-white py-6 px-7 space-y-6">
           <div>

@@ -72,20 +72,35 @@ const ContactDetails = (props: Props) => {
       birthday: fromJSDateToString(contact?.birthday),
       photo: contact?.photo || '',
       email: contact?.email || '',
-      phone_value_0: contact?.phone[0]?.value || '',
-      phone_type_0: contact?.phone[0]?.type || '',
-      address_formatted_0: contact?.address[0]?.formatted || '',
-      address_street_0: contact?.address[0]?.street || '',
-      address_street2_0: contact?.address[0]?.street2 || '',
-      address_city_0: contact?.address[0]?.city || '',
-      address_state_0: contact?.address[0]?.state || '',
-      address_postalCode_0: contact?.address[0]?.postalCode || '',
-      address_country_0: contact?.address[0]?.country || '',
-      address_type_0: contact?.address[0]?.type || '',
+      phone_value_0:
+        (contact?.phone?.length > 0 && contact?.phone[0]?.value) || '',
+      phone_type_0:
+        (contact?.phone?.length > 0 && contact?.phone[0]?.type) || '',
+      address_formatted_0:
+        (contact?.address?.length > 0 && contact?.address[0]?.formatted) || '',
+      address_street_0:
+        (contact?.address?.length > 0 && contact?.address[0]?.street) || '',
+      address_street2_0:
+        (contact?.address?.length > 0 && contact?.address[0]?.street2) || '',
+      address_city_0:
+        (contact?.address?.length > 0 && contact?.address[0]?.city) || '',
+      address_state_0:
+        (contact?.address?.length > 0 && contact?.address[0]?.state) || '',
+      address_postalCode_0:
+        (contact?.address?.length > 0 && contact?.address[0]?.postalCode) || '',
+      address_country_0:
+        (contact?.address?.length > 0 && contact?.address[0]?.country) || '',
+      address_type_0:
+        (contact?.address?.length > 0 && contact?.address[0]?.type) || '',
       website: contact?.website || '',
       notes: contact?.notes || '',
-      organization_name_0: contact?.organization[0]?.name || '',
-      organization_jobTitle_0: contact?.organization[0]?.jobTitle || ''
+      organization_name_0:
+        (contact?.organization?.length > 0 && contact?.organization[0]?.name) ||
+        '',
+      organization_jobTitle_0:
+        (contact?.organization?.length > 0 &&
+          contact?.organization[0]?.jobTitle) ||
+        ''
     },
     validations: {
       // displayName: {
@@ -155,6 +170,7 @@ const ContactDetails = (props: Props) => {
     }
     // eslint-disable-next-line prefer-destructuring
     return (senderArr[0][0] || '').toUpperCase();
+  };
 
   return (
     <form

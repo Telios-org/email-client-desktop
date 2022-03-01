@@ -132,29 +132,29 @@ const ContactPage = () => {
 
   const secondaryLabel = pers => {
     if (
-      pers?.organization.length > 0 &&
+      pers?.organization?.length > 0 &&
       (pers?.organization[0]?.jobTitle?.length > 0 ||
         pers?.organization[0]?.name?.length > 0)
     ) {
       if (
-        pers?.organization[0].name?.length > 0 &&
-        pers?.organization[0].jobTitle?.length > 0
+        pers?.organization[0]?.name?.length > 0 &&
+        pers?.organization[0]?.jobTitle?.length > 0
       ) {
-        return `${pers?.organization[0].name} - ${pers?.organization[0].jobTitle}`;
+        return `${pers?.organization[0]?.name} - ${pers?.organization[0]?.jobTitle}`;
       }
 
       if (
-        !pers?.organization[0].name &&
-        pers?.organization[0].jobTitle?.length > 0
+        !pers?.organization[0]?.name &&
+        pers?.organization[0]?.jobTitle?.length > 0
       ) {
-        return `${pers?.organization[0].jobTitle}`;
+        return `${pers?.organization[0]?.jobTitle}`;
       }
 
       if (
-        pers?.organization[0].name?.length > 0 &&
-        !pers?.organization[0].jobTitle
+        pers?.organization[0]?.name?.length > 0 &&
+        !pers?.organization[0]?.jobTitle
       ) {
-        return `${pers?.organization[0].name}`;
+        return `${pers?.organization[0]?.name}`;
       }
     }
 
@@ -369,8 +369,8 @@ const ContactPage = () => {
                             />
                             <p className="text-sm font-medium text-gray-900 mt-0">
                               {person.nickname || person.name || ''}
-                              {person?.nickname?.length > 0 && (
-                                <span className="text-xs text-gray-400 pl-2">{`(${person.name})`}</span>
+                              {person?.nickname?.length > 0 && person.name.trim().length > 0 && (
+                                <span className="text-xs text-gray-400 pl-2">{`(${person.name.trim()})`}</span>
                               )}
                             </p>
                             <p className="text-sm text-gray-500 truncate mt-0">
