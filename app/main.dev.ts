@@ -21,13 +21,13 @@ const store = new Store();
 
 export default class AppUpdater {
   constructor() {
-    if (process.env.NODE_ENV === 'production') {
-      log.transports.file.level = 'info';
-      autoUpdater.channel = 'latest';
-      autoUpdater.logger = log;
-      autoUpdater.allowDowngrade = true;
-      autoUpdater.checkForUpdatesAndNotify();
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    //   log.transports.file.level = 'info';
+    //   autoUpdater.channel = 'latest';
+    //   autoUpdater.logger = log;
+    //   autoUpdater.allowDowngrade = true;
+    //   autoUpdater.checkForUpdatesAndNotify();
+    // }
   }
 }
 
