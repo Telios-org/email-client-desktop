@@ -326,9 +326,7 @@ const ContactDetails = (props: Props) => {
           </div>
           <div className="block mt-6 min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-gray-900 truncate">
-              {profile.nickname.length === 0 &&
-                profile.name.trim().length === 0 &&
-                profile.email}
+              {(profile.nickname.length === 0 && profile.name.trim().length === 0) && profile.email}
               {profile.nickname || profile.name}
               {profile?.nickname?.length > 0 &&
                 (profile.givenName.length > 0 ||
