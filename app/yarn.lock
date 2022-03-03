@@ -220,10 +220,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.1.1.tgz#1d325f81c7aa1adb8fe17947a176b767ac1f4d15"
-  integrity sha512-ykdHqQfUeWMiADpGhAI5FEku7+5i7/zgRSQzwqjIC/C7af/S8wiT8rm8NLWgHSPZF/EkaXa1Zi3cIYLTBZAbYA==
+"@telios/nebula@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.1.2.tgz#6ebfd45da80ce411ef0ef179c675aaa35d382b62"
+  integrity sha512-2XcYitH7wQbOqeoZuCOipzYla/dPGEFh08r4LBHFO95tJHBP1ypthIHP0PI6KnjmJx+uP4FLDoDjzlsaEdD0hg==
   dependencies:
     autobase "1.0.0-alpha.6"
     blakejs "^1.1.0"
@@ -246,13 +246,13 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.2.3.tgz#d7f17beb1de9f4350ab8a6664f3e88cf01d15a71"
-  integrity sha512-8VM6WeWL5Bvk4t2/b0/rqf0xf3itnpMwYWzGkTxVXXf0tfpaHa//d7e5g/JZZbu4KlHppsJKyNwSd6hJdBBDBA==
+"@telios/telios-client-backend@^3.2.5":
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.2.5.tgz#5ba2b2fd8e3fa25dd0fed9ac63edfd3d64cb6052"
+  integrity sha512-ygo/2QGCxHY4CUKfNr5JEr1EJZusZMzwK4KRpc8As8ABidnfAhWMMUXJjxgH0V0JSq9qq9Wm9karC/2I4RRoIw==
   dependencies:
     "@telios/client-sdk" "^5.0.1"
-    "@telios/nebula" "^2.1.1"
+    "@telios/nebula" "^2.1.2"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     file-type "^16.5.3"
     luxon "^2.3.1"
