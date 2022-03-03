@@ -69,7 +69,7 @@ const ContactDetails = (props: Props) => {
       givenName: contact?.givenName || '',
       familyName: contact?.familyName || '',
       nickname: contact?.nickname || '',
-      birthday: fromJSDateToString(contact?.birthday),
+      birthday: (contact?.birthday && fromJSDateToString(contact?.birthday)) || '',
       photo: contact?.photo || '',
       email: contact?.email || '',
       phone_value_0:
@@ -125,8 +125,10 @@ const ContactDetails = (props: Props) => {
       const input: ContactType = rebuildArrObject(finalForm);
       setEditMode(false);
 
+      console.log('UPDATE', input);
       const result = await dispatch(commitContactsUpdates(input));
       const newObj = { ...result };
+      console.log('RETURN', newObj);
       if (result && result.contactId) {
         setSaveSucceeded(true);
         // newObj.contactId = result.contactId;
@@ -156,7 +158,6 @@ const ContactDetails = (props: Props) => {
   const handleResetForm = () => {
     setEditMode(false);
     resetForm();
-    console.log('RESETTING', contact);
 
     if (!('contactId' in contact)) {
       editActiveContact(null);
@@ -164,7 +165,7 @@ const ContactDetails = (props: Props) => {
   };
 
   const initials = name => {
-    const senderArr = name.split(' ');
+    const senderArr = name.trim().split(' ');
     if (senderArr.length > 1) {
       return (`${senderArr[0][0]}${senderArr[1][0]}` || '').toUpperCase();
     }
@@ -199,8 +200,8 @@ const ContactDetails = (props: Props) => {
                   <span className="text-3xl font-medium leading-none text-white">
                     {initials(
                       profile.nickname ||
-                        (profile.givenName &&
-                          profile.familyName &&
+                        ((profile.givenName ||
+                          profile.familyName )&&
                           profile.name) ||
                         profile.email
                     )}
@@ -325,7 +326,7 @@ const ContactDetails = (props: Props) => {
             </div>
           </div>
           <div className="block mt-6 min-w-0 flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 truncate">
+            <h1 className="text-2xl font-bold text-gray-900 truncate w-full min-h-[62px]">
               {(profile.nickname.length === 0 && profile.name.trim().length === 0) && profile.email}
               {profile.nickname || profile.name}
               {profile?.nickname?.length > 0 &&

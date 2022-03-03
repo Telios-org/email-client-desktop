@@ -350,7 +350,8 @@ const ContactPage = () => {
                             <span className="font-medium leading-none text-white">
                               {initials(
                                 person.nickname ||
-                                  (person.name !== ' ' && person.name) ||
+                                  ((person.givenName || person.familyName) &&
+                                    person.name) ||
                                   person.email
                               )}
                             </span>
@@ -369,9 +370,10 @@ const ContactPage = () => {
                             />
                             <p className="text-sm font-medium text-gray-900 mt-0">
                               {person.nickname || person.name || ''}
-                              {person?.nickname?.length > 0 && person.name.trim().length > 0 && (
-                                <span className="text-xs text-gray-400 pl-2">{`(${person.name.trim()})`}</span>
-                              )}
+                              {person?.nickname?.length > 0 &&
+                                person.name.trim().length > 0 && (
+                                  <span className="text-xs text-gray-400 pl-2">{`(${person.name.trim()})`}</span>
+                                )}
                             </p>
                             <p className="text-sm text-gray-500 truncate mt-0">
                               {secondaryLabel(person)}

@@ -256,7 +256,12 @@ const Composer = (props: Props) => {
         toArr = recipients.to.arr
           .filter(eml => eml.isValid || eml.preFill)
           .map(eml => {
-            return { address: eml.value, name: eml.label };
+            return {
+              address: eml.value,
+              name: eml.name,
+              contactId: eml.contactId || null,
+              _id: eml.contactId || null
+            };
           });
       } else {
         setActiveSendButton(false);
@@ -266,7 +271,12 @@ const Composer = (props: Props) => {
         ccArr = recipients.cc.arr
           .filter(eml => eml.isValid || eml.preFill)
           .map(eml => {
-            return { address: eml.value, name: eml.label };
+            return {
+              address: eml.value,
+              name: eml.name,
+              contactId: eml.contactId || null,
+              _id: eml.contactId || null
+            };
           });
       }
 
@@ -274,7 +284,12 @@ const Composer = (props: Props) => {
         bccArr = recipients.bcc.arr
           .filter(eml => eml.isValid || eml.preFill)
           .map(eml => {
-            return { address: eml.value, name: eml.label };
+            return {
+              address: eml.value,
+              name: eml.name,
+              contactId: eml.contactId || null,
+              _id: eml.contactId || null
+            };
           });
       }
 
@@ -291,6 +306,7 @@ const Composer = (props: Props) => {
         ]
       };
 
+      console.log('DRAFT', draft);
       handleEmailUpdate(draft, undefined, undefined);
     },
     { debounce: 250 }
@@ -352,6 +368,7 @@ const Composer = (props: Props) => {
     handleEmailUpdate();
     setTimeout(async () => {
       try {
+        console.log(email);
         await ComposerService.send(email, isInline);
 
         setLoading(false);

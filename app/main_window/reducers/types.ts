@@ -81,6 +81,8 @@ export type ContactAction = {
 export type Recipient = {
   label: string;
   value: string;
+  name: string;
+  contactId: string;
   isValid: boolean;
 };
 

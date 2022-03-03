@@ -3,6 +3,7 @@ import CreatableSelect from 'react-select/creatable';
 import { components } from 'react-select';
 import { Avatar, Whisper, Tooltip } from 'rsuite';
 
+import ClientSDK from '@telios/client-sdk';
 import { Recipient } from '../../../main_window/reducers/types';
 
 import ComposerService from '../../../services/composer.service';
@@ -11,11 +12,35 @@ import {
   validateTeliosEmail
 } from '../../../utils/helpers/regex';
 
-const isValidEmail = (email: string) => {
+const envAPI = require('../../../env_api.json');
+
+const params = window.location.search.replace('?', '');
+const env = params.split('=')[1];
+const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
+
+const teliosSDK = new ClientSDK({
+  provider: requestBase
+});
+const mailbox = teliosSDK.Mailbox;
+
+const isValidEmail = async (email: string) => {
   if (email.indexOf('telios.io') > -1) {
+    let mailboxes;
+    try {
+      mailboxes = await mailbox.getMailboxPubKeys([email]);
+      console.log(email, mailboxes);
+      // if available
+      if (mailboxes[email]) {
+        return { success: true, account_key: mailboxes[email]}
+      }
+
+      return { success: false, account_key: null}
+    } catch (error) {
+      console.log("Couldn't check if telios email exists or not");
+    }
     return validateTeliosEmail(email);
   }
-  return validateEmail(email);
+  return { success: !!validateEmail(email), account_key: null};
 };
 
 const customStyles = {
@@ -34,23 +59,23 @@ const customStyles = {
     ...inlineCss,
     display: 'none'
   }),
-  multiValue: (styles, { data }) => {
+  multiValue: async (styles, { data }) => {
     const style = {
       ...styles
     };
 
-    if (!isValidEmail(data.value)) {
+    if (!(await isValidEmail(data.value).success)) {
       style.color = 'white';
       style.backgroundColor = 'red';
     }
     return style;
   },
-  multiValueLabel: (styles, { data }) => {
+  multiValueLabel: async (styles, { data }) => {
     const style = {
       ...styles
     };
 
-    if (!isValidEmail(data.value)) {
+    if (!(await isValidEmail(data.value).success)) {
       style.color = 'white';
     }
     return style;
@@ -143,11 +168,15 @@ class RecipientsInput extends Component {
     let items = data ? [...data] : [];
 
     if (items.length > 0) {
+      console.log('ITEMS', items);
       items = items.map(item => {
+        const test = isValidEmail(item.value);
         return {
           label: typeof item.label === 'string' ? item.name : item.value,
           value: item.value,
-          isValid: !!isValidEmail(item.value)
+          contactId: item.contactId,
+          isValid: test.success,
+          account_key: test.account_key
         };
       });
 
@@ -173,12 +202,13 @@ class RecipientsInput extends Component {
 
         const contacts = results.map(contact => {
           return {
+            contactId: contact.contactId,
             label:
-              contact.name === contact.address
+              contact.name === contact.email
                 ? contact.name
-                : `${contact.name} <${contact.address}>`,
+                : `${contact.name} <${contact.email}>`,
             name: contact.name,
-            value: contact.address,
+            value: contact.email,
             photo: contact.photo
           };
         });

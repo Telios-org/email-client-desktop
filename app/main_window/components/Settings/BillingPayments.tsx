@@ -288,7 +288,7 @@ const BillingPayments = (props: Props) => {
                 <div className="flex-grow">
                   <div className="flex flex-row justify-between">
                     <span className="text-sm leading-6 font-bold">
-                      Email Sent out of Network
+                      Emails Sent out of Network
                     </span>
                     <span className="text-sm">
                       <span className="text-purple-500 font-bold">
