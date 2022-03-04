@@ -23,24 +23,11 @@ const teliosSDK = new ClientSDK({
 });
 const mailbox = teliosSDK.Mailbox;
 
-const isValidEmail = async (email: string) => {
+const isValidEmail = (email: string) => {
   if (email.indexOf('telios.io') > -1) {
-    let mailboxes;
-    try {
-      mailboxes = await mailbox.getMailboxPubKeys([email]);
-      console.log(email, mailboxes);
-      // if available
-      if (mailboxes[email]) {
-        return { success: true, account_key: mailboxes[email]}
-      }
-
-      return { success: false, account_key: null}
-    } catch (error) {
-      console.log("Couldn't check if telios email exists or not");
-    }
-    return validateTeliosEmail(email);
+    return { isValid: validateTeliosEmail(email), account_key: null}
   }
-  return { success: !!validateEmail(email), account_key: null};
+  return { isValid: !!validateEmail(email), account_key: null};
 };
 
 const customStyles = {
@@ -59,23 +46,23 @@ const customStyles = {
     ...inlineCss,
     display: 'none'
   }),
-  multiValue: async (styles, { data }) => {
+  multiValue: (styles, { data }) => {
     const style = {
       ...styles
     };
 
-    if (!(await isValidEmail(data.value).success)) {
+    if (!data.isValid) {
       style.color = 'white';
       style.backgroundColor = 'red';
     }
     return style;
   },
-  multiValueLabel: async (styles, { data }) => {
+  multiValueLabel: (styles, { data }) => {
     const style = {
       ...styles
     };
 
-    if (!(await isValidEmail(data.value).success)) {
+    if (!data.isValid) {
       style.color = 'white';
     }
     return style;
@@ -163,20 +150,32 @@ class RecipientsInput extends Component {
     }
   }
 
-  handleChange(data, { action }) {
+  async handleChange(data, { action }) {
     const { onUpdateData } = this.props;
     let items = data ? [...data] : [];
 
     if (items.length > 0) {
-      console.log('ITEMS', items);
+      const addrs = items.map(item => item.value);
+      const mailboxes = await mailbox.getMailboxPubKeys([addrs]);
+
       items = items.map(item => {
-        const test = isValidEmail(item.value);
+        let test = isValidEmail(item.value);
+
+        if(item.value.indexOf('telios.io') > -1 && !item.account_key) {
+          if(mailboxes[item.value] && mailboxes[item.value].account_key) {
+            test.isValid = true;
+            item.account_key = mailboxes[item.value].account_key
+          } else {
+            test.isValid = false;
+          }
+        }
+        
         return {
           label: typeof item.label === 'string' ? item.name : item.value,
           value: item.value,
           contactId: item.contactId,
-          isValid: test.success,
-          account_key: test.account_key
+          isValid: test.isValid,
+          account_key: item.account_key
         };
       });
 

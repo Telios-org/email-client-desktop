@@ -254,13 +254,14 @@ const Composer = (props: Props) => {
       if (recipients.to.arr.length > 0) {
         setActiveSendButton(true);
         toArr = recipients.to.arr
-          .filter(eml => eml.isValid || eml.preFill)
-          .map(eml => {
+          .filter(recip => recip.isValid || recip.preFill)
+          .map(recip => {
             return {
-              address: eml.value,
-              name: eml.name,
-              contactId: eml.contactId || null,
-              _id: eml.contactId || null
+              address: recip.value,
+              publicKey: recip.account_key,
+              name: recip.name,
+              contactId: recip.contactId || null,
+              _id: recip.contactId || null
             };
           });
       } else {
@@ -269,26 +270,28 @@ const Composer = (props: Props) => {
 
       if (recipients.cc.arr.length > 0) {
         ccArr = recipients.cc.arr
-          .filter(eml => eml.isValid || eml.preFill)
-          .map(eml => {
+          .filter(recip => recip.isValid || recip.preFill)
+          .map(recip => {
             return {
-              address: eml.value,
-              name: eml.name,
-              contactId: eml.contactId || null,
-              _id: eml.contactId || null
+              address: recip.value,
+              publicKey: recip.account_key,
+              name: recip.name,
+              contactId: recip.contactId || null,
+              _id: recip.contactId || null
             };
           });
       }
 
       if (recipients.bcc.arr.length > 0) {
         bccArr = recipients.bcc.arr
-          .filter(eml => eml.isValid || eml.preFill)
-          .map(eml => {
+          .filter(recip => recip.isValid || recip.preFill)
+          .map(recip => {
             return {
-              address: eml.value,
-              name: eml.name,
-              contactId: eml.contactId || null,
-              _id: eml.contactId || null
+              address: recip.value,
+              publicKey: recip.account_key,
+              name: recip.name,
+              contactId: recip.contactId || null,
+              _id: recip.contactId || null
             };
           });
       }

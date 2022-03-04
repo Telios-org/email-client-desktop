@@ -10,9 +10,9 @@
     hypercore "^9.0.0"
 
 "@hyperswarm/dht@next":
-  version "5.0.16"
-  resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-5.0.16.tgz#741951193b3ee9f62467858e786eb6613217d540"
-  integrity sha512-6kCafdH4KwiE+MySsEDhAAd0/jnwKD9eUoGRClRvwCinvuyghZDK0bA0ztF7U62dmd/SrLW/tsAhP2LvgD3ZfQ==
+  version "5.0.17"
+  resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-5.0.17.tgz#5747ada03ff161b15eaed4bd1338087806053f34"
+  integrity sha512-/ZlUSBTLR9uvzBF1V3sMzgzt8vtJp9FWikddPYYE0z0RXxpeyPkPlj+p6mLKKv66Obc4U/mYiuCc2f90vHVxcA==
   dependencies:
     "@hyperswarm/secret-stream" "^5.1.0"
     b4a "^1.3.1"
@@ -30,9 +30,9 @@
     xache "^1.0.0"
 
 "@hyperswarm/secret-stream@^5.0.0", "@hyperswarm/secret-stream@^5.1.0":
-  version "5.1.7"
-  resolved "https://registry.yarnpkg.com/@hyperswarm/secret-stream/-/secret-stream-5.1.7.tgz#7635feddef933433e4bd1d2cf7dd7f4b4e7fe1bd"
-  integrity sha512-nTXhq04+68kRFI8VYM/OpX+CCHmRn9YCmEWChq5P5WTbpWh7SdbPTgdn8Edw6g4eglmLG1PaUj6MdsLqSRG+Dw==
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@hyperswarm/secret-stream/-/secret-stream-5.2.0.tgz#26621646d3f696e81a33a92f61db31b20be9bfd3"
+  integrity sha512-GwgLlbJV0DgvdTm0hPfyM4IWcWqJXIPCgkZ/DAh5CJ0HX8WW/4pDw70h7fRK5zBU1XUT6IYO2QAOeqZS+e9Dvg==
   dependencies:
     b4a "^1.1.0"
     noise-curve-ed "^1.0.2"
@@ -40,6 +40,7 @@
     sodium-secretstream "^1.0.0"
     sodium-universal "^3.0.4"
     streamx "^2.10.2"
+    timeout-refresh "^2.0.0"
 
 "@journeyapps/sqlcipher@^4.0.0":
   version "4.1.0"
@@ -114,35 +115,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^4.0.0":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-4.0.1.tgz#5e7a9d7a7015ff6efb6b59599df7350b31ff2ce1"
-  integrity sha512-4TGRXzfhShANPdj/PRRJrez6IFTItue9PwOrpiWVx8yusKoIMBeDpNZdZHyZTmXFTcPK5lwoMGuIbNspduIBow==
-  dependencies:
-    "@telios/nebula-drive" "^5.0.0"
-    async "^3.2.0"
-    axios "^0.21.1"
-    bip39 "^3.0.4"
-    blakejs "^1.1.0"
-    chokidar "^3.5.1"
-    corestore "^5.8.2"
-    dat-encoding "^5.0.1"
-    jwt-decode "^2.2.0"
-    level "^6.0.1"
-    mailparser "^2.8.1"
-    memorystream "^0.3.1"
-    moment "^2.27.0"
-    multifeed "^6.0.0"
-    pump "^3.0.0"
-    random-access-memory "^3.1.1"
-    rimraf "^3.0.2"
-    sodium-native "^3.2.0"
-    uuid "^8.2.0"
-
-"@telios/client-sdk@^5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-5.0.1.tgz#2dc504186e3750f26d8beafc1c9d3f86fa91fffd"
-  integrity sha512-0ptqqoPZFmdcsKbDdTetBw6CUX9/z9s9F4rjYG/okOXmzbMHS0rTGfOovYXoSolLtI/8oJAPqnjpFN+Z2M7n7A==
+"@telios/client-sdk@^5.0.2":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-5.0.2.tgz#76af3fc07ed3990445ebe35bb0ac44574be02e3c"
+  integrity sha512-6xK2KRdkD1r1GCkdkOxYerhjpk1ULJ1wH/ZrY+zN3F1+ucOx6VKIzxB1vTSAwDOY4Irzv2AT1Qn/WgKhXpkaCg==
   dependencies:
     "@telios/nebula" "^1.5.5"
     async "^3.2.0"
@@ -164,7 +140,7 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
-"@telios/nebula-drive@^5.0.0", "@telios/nebula-drive@^5.3.1":
+"@telios/nebula-drive@^5.3.1":
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-5.3.2.tgz#8b2be13c2f5e7e1af09c7307fef72d6c34f1ac94"
   integrity sha512-3VRQeMqWf/KrzMUA96+to0hm6HQD0K02Qc/Zg2vLOGO/rIBEnCRS1/WVJxTLVKcNRgUDlt3YiBV7zQOeSCs4zg==
@@ -246,12 +222,12 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.2.5":
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.2.5.tgz#5ba2b2fd8e3fa25dd0fed9ac63edfd3d64cb6052"
-  integrity sha512-ygo/2QGCxHY4CUKfNr5JEr1EJZusZMzwK4KRpc8As8ABidnfAhWMMUXJjxgH0V0JSq9qq9Wm9karC/2I4RRoIw==
+"@telios/telios-client-backend@^3.2.6":
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.2.6.tgz#1143fc9316b67c10aa5891aa9eb6d6ce454f48e2"
+  integrity sha512-HRhCoFkmHsogjFXgtbRHyU7/hKBWzGj4Y/4SAwS9zmGUIhAsu1dmKfDuLtqtSDxWcL5LbhESoNAV1Hq40PpKGw==
   dependencies:
-    "@telios/client-sdk" "^5.0.1"
+    "@telios/client-sdk" "^5.0.2"
     "@telios/nebula" "^2.1.2"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     file-type "^16.5.3"
@@ -1473,9 +1449,9 @@ hypercore-crypto@^2.0.0, hypercore-crypto@^2.1.0, hypercore-crypto@^2.3.0:
     uint64be "^3.0.0"
 
 hypercore-crypto@^3.1.0:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/hypercore-crypto/-/hypercore-crypto-3.1.1.tgz#3404463cf0eaa1e9fe8643534774f6ab68afb027"
-  integrity sha512-FobsSSxNnFyTlRMVEZJ1JO1Vi1OTpa3KH73hvrdW5X89jlWi9c78x3wZW46cSYGxHaTxMOz9meImrBystogVQA==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/hypercore-crypto/-/hypercore-crypto-3.2.0.tgz#b53f15ac653973ddf788dcd5980c6efe2b72ee64"
+  integrity sha512-NeK+luJcbZfDEvjPVrr5EXyL+G3aocuatt3W7queC3MR3NHC0wvlVNVrijQX9bMTAOk+MuH5gVtcBghX4vvDzQ==
   dependencies:
     b4a "^1.1.0"
     compact-encoding "^2.5.1"
@@ -3175,6 +3151,11 @@ timeout-refresh@^1.0.0, timeout-refresh@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/timeout-refresh/-/timeout-refresh-1.0.3.tgz#7024a8ce0a09a57acc2ea86002048e6c0bff7375"
   integrity sha512-Mz0CX4vBGM5lj8ttbIFt7o4ZMxk/9rgudJRh76EvB7xXZMur7T/cjRiH2w4Fmkq0zxf2QpM8IFvOSRn8FEu3gA==
+
+timeout-refresh@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/timeout-refresh/-/timeout-refresh-2.0.0.tgz#0d0563ed1cd5f319bb0ac656a43d533f87dafb76"
+  integrity sha512-N/qi1NfneWGcCP1bH945YLTVuYHABSZT3lKA1NJRK2Ym/8Dsg/5mCru37Lc5SnaEZOtk9PIuciD7XwBgtN3o3A==
 
 tlds@1.208.0:
   version "1.208.0"
