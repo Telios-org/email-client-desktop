@@ -118,7 +118,7 @@ const Composer = (props: Props) => {
     const owner = mbox ?? mailbox;
 
     // Getting timestamp for email
-    const time = UTCtimestamp();
+    const time = UTCtimestamp().toString();
     // Getting the plain text off the htmlBody
     const plaintext = htmlToText.fromString(htmlBody);
 

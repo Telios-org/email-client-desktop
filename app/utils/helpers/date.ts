@@ -38,7 +38,7 @@ export const formatTimeOnly = date => {
 };
 
 export const UTCtimestamp = () => {
-  return DateTime.local().toUTC();
+  return DateTime.utc();
 };
 
 export const fullDatefromJS = date => {
