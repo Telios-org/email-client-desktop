@@ -768,8 +768,8 @@ export const loadMailboxes = () => async (
 
   const isAlias = activeAliasId !== undefined && activeAliasIndex !== null;
 
-  try {
-    mailboxes = await dispatch(fetchMailboxes());
+  // try {
+    dispatch(fetchMailboxes()).then(mailboxes => {
 
     console.log('MAILBOXES', mailboxes)
     console.log('activeMailboxIndex', activeMailboxIndex)
@@ -778,30 +778,49 @@ export const loadMailboxes = () => async (
 
     console.log('activeMailboxId', activeMailboxId)
 
-    folders = await dispatch(fetchMailboxFolders(activeMailboxId));
+    dispatch(fetchMailboxFolders(activeMailboxId)).then(_folders => {
+      console.log('folders', _folders)
+      folders = _folders
 
-    console.log('folders', folders)
+      dispatch(fetchMailboxNamespaces(activeMailboxId)).then(async _namespaces => {
+        namespaces = _namespaces
+        const namespaceKeys = namespaces.map(ns => ns.name);
 
+        if (namespaceKeys.length > 0) {
+          aliases = await dispatch(fetchMailboxAliases(namespaceKeys));
+        } else {
+          aliases = [];
+        }
+    
+        if (isAlias) {
+          activeAliasId = aliases[activeAliasIndex].folderId;
+          messages = await dispatch(fetchAliasMessages(activeAliasId));
+        } else {
+          activeFolderId = folders[activeFolderIndex].folderId;
+          messages = await dispatch(fetchFolderMessages(activeFolderId));
+        }
 
-    namespaces = await dispatch(fetchMailboxNamespaces(activeMailboxId));
+        console.log('MESSAGES', messages)
 
-    console.log('namespaces', namespaces)
+        dispatch(
+          fetchDataSuccess(
+            mailboxes,
+            activeMailboxId,
+            folders,
+            namespaces,
+            aliases,
+            activeFolderId,
+            messages
+          )
+        );
+      
+        return { mailboxes, folders, messages, namespaces, aliases };
+     })
+    })
 
-    const namespaceKeys = namespaces.map(ns => ns.name);
+    // console.log('namespaces', namespaces)
 
-    if (namespaceKeys.length > 0) {
-      aliases = await dispatch(fetchMailboxAliases(namespaceKeys));
-    } else {
-      aliases = [];
-    }
-
-    if (isAlias) {
-      activeAliasId = aliases[activeAliasIndex].folderId;
-      messages = await dispatch(fetchAliasMessages(activeAliasId));
-    } else {
-      activeFolderId = folders[activeFolderIndex].folderId;
-      messages = await dispatch(fetchFolderMessages(activeFolderId));
-    }
+    
 
     // Selection retention was removed for now
     // if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, activeFolderId)) {
@@ -815,24 +834,11 @@ export const loadMailboxes = () => async (
     //     );
     //   }
     // }
-  } catch (error) {
-    dispatch(fetchDataFailure(error));
-    return error;
-  }
-
-  dispatch(
-    fetchDataSuccess(
-      mailboxes,
-      activeMailboxId,
-      folders,
-      namespaces,
-      aliases,
-      activeFolderId,
-      messages
-    )
-  );
-
-  return { mailboxes, folders, messages, namespaces, aliases };
+    })
+  // } catch (error) {
+  //   dispatch(fetchDataFailure(error));
+  //   return error;
+  // }
 };
 
 // ALL BELOW SHOULD BE PLACE IN THE global.ts actions file

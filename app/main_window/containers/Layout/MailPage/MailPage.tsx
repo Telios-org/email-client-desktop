@@ -44,8 +44,9 @@ export default function MailPage() {
 
       // We don't always want the full state of the app to be refreshed
       if (fullSync) {
-        await dispatch(loadMailboxes(opts));
-        dispatch(fetchNewMessages());
+        dispatch(loadMailboxes(opts)).then(() => {
+          dispatch(fetchNewMessages());
+        })
       }
     });
 

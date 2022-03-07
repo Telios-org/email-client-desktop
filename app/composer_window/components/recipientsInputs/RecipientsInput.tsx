@@ -200,12 +200,14 @@ class RecipientsInput extends Component {
         const results = await ComposerService.searchContact(query);
 
         const contacts = results.map(contact => {
+
+          let label = contact.email;
+
+          if(contact.name) label = `${contact.name} <${contact.email}>`;
+
           return {
             contactId: contact.contactId,
-            label:
-              contact.name === contact.email
-                ? contact.name
-                : `${contact.name} <${contact.email}>`,
+            label: label,
             name: contact.name,
             value: contact.email,
             photo: contact.photo

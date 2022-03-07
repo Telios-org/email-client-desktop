@@ -28,89 +28,73 @@ class AccountService extends EventEmitter {
       }
     });
 
-    ipcRenderer.once('ACCOUNT_IPC::initAcct', async (evt, data) => {
-      try {
-        const account = await AccountService.initAccount(data);
+    ipcRenderer.once('ACCOUNT_IPC::initAcct', (evt, data) => {
+      AccountService.initAccount(data).then(account => {
         ipcRenderer.send('ACCOUNT_SERVICE::initAcctResponse', account);
         // Emitting the account data so it can be ingested by the Redux Store
         this.emit('ACCOUNT_SERVICE::accountData', account);
-      } catch (e) {
+      }).catch(e => {
         ipcRenderer.send('ACCOUNT_SERVICE::initAcctError', e);
-      }
+      })
     });
 
-    ipcRenderer.once('authenticate', async (evt, data) => {
-      try {
-        const account = await AccountService.authenticate(data);
+    ipcRenderer.once('authenticate', (evt, data) => {
+      AccountService.authenticate(data).then(account => {
         ipcRenderer.send('authResponse', account);
-      } catch (e) {
+      }).catch(e => {
         ipcRenderer.send('authError', e);
-      }
+      })
     });
 
-    ipcRenderer.once('loadMbox', async (evt, data) => {
-      try {
-        // Start incoming message listener
-        // await MessageIngressService.initMessageListener();
-
-        const account = await MailService.loadMailbox();
-
+    ipcRenderer.once('loadMbox', (evt, data) => {
+      MailService.loadMailbox().then(account => {
         ipcRenderer.send('loadMboxResponse', account);
-      } catch (e) {
+      }).catch(e => {
         ipcRenderer.send('loadMboxError', e);
-      }
+      })
     });
 
-    ipcRenderer.on('sendEmail', async (evt, data) => {
-      try {
-        const result = await MailService.send(data);
+    ipcRenderer.on('sendEmail', (evt, data) => {
+      MailService.send(data).then(result => {
         ipcRenderer.send('sendEmailResponse', result);
-      } catch (e) {
+      }).catch(e => {
         ipcRenderer.send('sendEmailError', e);
-      }
+      })
     });
 
-    ipcRenderer.on('IPC::saveMessageToDB', async (evt, data) => {
-      try {
-        await MailService.save(data);
-
+    ipcRenderer.on('IPC::saveMessageToDB', (evt, data) => {
+      MailService.save(data).then(() => {
         ipcRenderer.send('ACCOUNT SERVICE::saveMessageToDBResponse', null);
-      } catch (e) {
+      }).catch(e => {
         ipcRenderer.send('ACCOUNT SERVICE::saveMessageToDBError', e);
-      }
+      })
     });
 
-    ipcRenderer.on('saveFiles', async (evt, attachments) => {
-      try {
-        const res = await MailService.saveAttachmentsToDisk(attachments);
-
+    ipcRenderer.on('saveFiles', (evt, attachments) => {
+      MailService.saveAttachmentsToDisk(attachments).then(res => {
         ipcRenderer.send('saveFilesResponse', res);
-      } catch (e) {
+      }).catch(e => {
         ipcRenderer.send('saveFilesError', e);
-      }
+      })
     });
 
-    ipcRenderer.on('createContacts', async (evt, data) => {
-      try {
-        await ContactService.createContacts(data);
-
+    ipcRenderer.on('createContacts', (evt, data) => {
+      ContactService.createContacts(data).then(() => {
         ipcRenderer.send('createContactsResponse', null);
-      } catch (e) {
+      }).catch(e => {
         ipcRenderer.send('createContactsError', e);
-      }
+      })
     });
 
-    ipcRenderer.on('searchContact', async (evt, searchQuery) => {
-      try {
-        const contacts = await ContactService.searchContact(searchQuery);
-
-        ipcRenderer.send('searchContactResponse', contacts);
-      } catch (e) {
-        ipcRenderer.send('searchContactError', e);
-      }
+    ipcRenderer.on('searchContact', (evt, searchQuery) => {
+        ContactService.searchContact(searchQuery).then(contacts => {
+          ipcRenderer.send('searchContactResponse', contacts);
+        }).catch(e => {
+          ipcRenderer.send('searchContactError', e);
+        })
     });
 
-    ipcRenderer.on('exitProcess', async () => {
+    ipcRenderer.on('exitProcess', () => {
       channel.send({ event: 'exitProcess', payload: {} });
     });
 
@@ -189,7 +173,7 @@ class AccountService extends EventEmitter {
     });
 
     return new Promise((resolve, reject) => {
-      channel.once('account:login:callback', async m => {
+      channel.once('account:login:callback', m => {
         const { error, data } = m;
         let _data = { ...data };
 
@@ -197,14 +181,7 @@ class AccountService extends EventEmitter {
 
         ipcRenderer.invoke('MATOMO::init', { account: data, isNew: false });
 
-        try {
-          const stats = await this.retrieveStats();
-          if (stats) _data = { ...data, stats };
-        } catch (err) {
-          // possible connection issue
-          console.log('STATS ERROR:', err);
-        }
-        return resolve({ ..._data });
+        return resolve(_data)
       });
     });
   }

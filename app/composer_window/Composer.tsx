@@ -258,7 +258,7 @@ const Composer = (props: Props) => {
           .map(recip => {
             return {
               address: recip.value,
-              publicKey: recip.account_key,
+              account_key: recip.account_key,
               name: recip.name,
               contactId: recip.contactId || null,
               _id: recip.contactId || null
@@ -274,7 +274,7 @@ const Composer = (props: Props) => {
           .map(recip => {
             return {
               address: recip.value,
-              publicKey: recip.account_key,
+              account_key: recip.account_key,
               name: recip.name,
               contactId: recip.contactId || null,
               _id: recip.contactId || null
@@ -288,7 +288,7 @@ const Composer = (props: Props) => {
           .map(recip => {
             return {
               address: recip.value,
-              publicKey: recip.account_key,
+              account_key: recip.account_key,
               name: recip.name,
               contactId: recip.contactId || null,
               _id: recip.contactId || null

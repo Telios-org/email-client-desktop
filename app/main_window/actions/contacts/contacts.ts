@@ -104,7 +104,6 @@ export const commitContactsUpdates = (contact: ContactType) => {
     let c;
     try {
       if ('contactId' in contact) {
-        console.log('UPDATING', contact);
         await Contact.updateContact(contact);
         c = contact;
       } else {

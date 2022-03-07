@@ -115,10 +115,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-5.0.2.tgz#76af3fc07ed3990445ebe35bb0ac44574be02e3c"
-  integrity sha512-6xK2KRdkD1r1GCkdkOxYerhjpk1ULJ1wH/ZrY+zN3F1+ucOx6VKIzxB1vTSAwDOY4Irzv2AT1Qn/WgKhXpkaCg==
+"@telios/client-sdk@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-5.0.3.tgz#563d34c0cef337917add478e344bf394fdaf3255"
+  integrity sha512-/88Dyj8fUPqhE5qvjXpJDd+i/3vkTiA6+BryIjlED93KF4dmavcTBuYWjr/RdPFmR6GW8TTXK+soTj6qa4D0CA==
   dependencies:
     "@telios/nebula" "^1.5.5"
     async "^3.2.0"
@@ -164,10 +164,10 @@
     uuid "^8.2.0"
 
 "@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate.git":
-  version "2.0.5"
-  resolved "git+https://github.com/Telios-org/nebula-migrate.git#d6d1e35989dd65df456dce378f224c2437b598a6"
+  version "2.0.6"
+  resolved "git+https://github.com/Telios-org/nebula-migrate.git#0e937a8d76894fe4d116c0b2993aeb5cfa94c503"
   dependencies:
-    "@telios/nebula" "^1.5.5"
+    "@telios/nebula" "^2.1.2"
     "@telios/nebula-drive" "^5.3.1"
     hypercore "10.0.0-alpha.23"
 
@@ -222,12 +222,12 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.2.8":
-  version "3.2.8"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.2.8.tgz#837b87d16e584b55608c5479c5682581138cbf6b"
-  integrity sha512-50vOHZafxae82NRg1xFXhEhtV8Olgj6hbmsKibFn5NUpsK4t9u6pOABrMUh4mAW/fV3m3RAYTkJM3EZwJ3pxnQ==
+"@telios/telios-client-backend@^3.2.9":
+  version "3.2.9"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.2.9.tgz#7864a05c50d0cf0ca301fb753c253b92dfb3d4a4"
+  integrity sha512-4jj6H4Ds+AdISM0mLkjBs26hx03cPvtX4i+2y+u2j9TGpLc5fQKIAKe4EniRJfKlfz4rdnH/63SURWxbfYVgag==
   dependencies:
-    "@telios/client-sdk" "^5.0.2"
+    "@telios/client-sdk" "^5.0.3"
     "@telios/nebula" "^2.1.2"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     file-type "^16.5.3"
@@ -3035,9 +3035,9 @@ stopwords@^0.0.9:
   integrity sha512-2OF7/9f5buXrBB8De5ZAC9+g5nIw9SRx9ZsL3Qpz6znSfPEihOmaMnwJxXehynZ9AfRNroHIKEIcsEmRywVXVQ==
 
 streamx@^2.1.0, streamx@^2.10.0, streamx@^2.10.2, streamx@^2.10.3, streamx@^2.6.0, streamx@^2.6.6, streamx@^2.7.1:
-  version "2.12.2"
-  resolved "https://registry.yarnpkg.com/streamx/-/streamx-2.12.2.tgz#8c18e588f929ef1dea2ce7f32d12250d988d344f"
-  integrity sha512-NjGPzm2tnLOOPvbE/yxFoAgdYzvgjZkb9i4LgJokAfhLinMv2M7jevpIja+aP/ridUIfge9DGbB223kVzdrEzA==
+  version "2.12.3"
+  resolved "https://registry.yarnpkg.com/streamx/-/streamx-2.12.3.tgz#b6bdb8705e925801f71f2aba17d33546f1dd2822"
+  integrity sha512-im2U3yhz6NoJQzzn6AwBlb+MRuGLxlnXJXqZudQ9RZzsVcq9+MHTPGR5b4Rh23RSLQenqtBaMwemM61w10VcWQ==
   dependencies:
     fast-fifo "^1.0.0"
     queue-tick "^1.0.0"

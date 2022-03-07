@@ -94,20 +94,12 @@ export const retrieveStatsFailure = (error: Error) => {
 };
 
 export const retrieveStats = () => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch(retrieveStatsRequest());
-    let result;
 
-    try {
-      result = await AccountService.retrieveStats();
-      console.log('ACCOUNT STATS', result);
-    } catch (error) {
-      dispatch(retrieveStatsFailure(error));
-      return error;
-    }
-
-    dispatch(retrieveStatsSuccess(result));
-
-    return result;
+    AccountService.retrieveStats().then(result => {
+      dispatch(retrieveStatsSuccess(result))
+      return result
+    });
   };
 };

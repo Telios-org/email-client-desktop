@@ -57,8 +57,12 @@ class ComposerService {
   }
 
   static async createContacts(email, isInline) {
-    if (isInline) {
-      ContactService.createContacts([...email.to, ...email.cc, ...email.bcc])
+    const to = email.to.filter(item => !item._id)
+    const cc = email.cc.filter(item => !item._id)
+    const bcc = email.bcc.filter(item => !item._id)
+
+    if (isInline && to.length || cc.length || bcc.length) {
+      ContactService.createContacts([...to, ...cc, ...bcc])
         .then(res => {
           return true;
         })
@@ -66,14 +70,16 @@ class ComposerService {
           console.error(e);
         });
     } else {
-      ipcRenderer
-        .invoke('createContacts', [...email.to, ...email.cc, ...email.bcc])
-        .then(() => {
-          return true;
-        })
-        .catch(e => {
-          console.error(e);
-        });
+      if(to.length || cc.length || bcc.length) {
+        ipcRenderer
+          .invoke('createContacts', [...to, ...cc, ...bcc])
+          .then(() => {
+            return true;
+          })
+          .catch(e => {
+            console.error(e);
+          });
+      }
     }
   }
 
