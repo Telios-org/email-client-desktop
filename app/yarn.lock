@@ -206,10 +206,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.3.1.tgz#c5144925346f96d7740cf0d8a5918da48387c115"
-  integrity sha512-/26b5LNj7gTzYGCj8zCSpIquBDmKqejL1VQAtIvk8S46mbW9NMh6owuQnRfMlFGLa3+CCp5FbpbrwOGgzZY6tw==
+"@telios/telios-client-backend@^3.3.2":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.3.2.tgz#096fd40762ce207cc2dede804a9a47807d04135b"
+  integrity sha512-HdrRb75MFPysBbGIKO/dbQs0dkqwSd3bcS6ZQQxmvBr6PfZD7HFvVnoVrYgwJAafnB6QkCPVMAdpJkVsDW88Zw==
   dependencies:
     "@telios/client-sdk" "^5.0.3"
     "@telios/nebula" "^2.3.1"
