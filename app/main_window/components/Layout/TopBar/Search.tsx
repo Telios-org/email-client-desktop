@@ -117,7 +117,6 @@ const Search = () => {
     // setLoadingIndicator(true);
     if (searchQueryStr.replace(/\s/g, '').length !== 0) {
       const callResults = await Mail.search(searchQueryStr);
-      // console.log('SEARCH RESULTS::', callResults);
       if (callResults) {
         // Transforming data for easier ingestion by UI
         const transform = {};
@@ -211,8 +210,6 @@ const Search = () => {
           }
         });
 
-        // console.log('SEARCH TRANSFORM::', final);
-
         setItems(final);
         setFolderIdxResults(folderArr);
       }
@@ -220,10 +217,6 @@ const Search = () => {
       setItems([]);
       setFolderIdxResults({});
     }
-    // setTimeout(() => {
-    //   setLoadingIndicator(false);
-    // }, 300);
-    // setLoadingIndicator(false);
   };
 
   // Handles Selecting of a Search Result
@@ -442,7 +435,7 @@ const Search = () => {
                 order,
                 folderId,
                 aliasId,
-                id,
+                _id,
                 index
               } = item;
 
@@ -506,7 +499,7 @@ const Search = () => {
               'To: ');
 
               return (
-                <li className="py-0.5 px-2" key={`message_search_key_${id}`}>
+                <li className="py-0.5 px-2" key={`message_search_key_${_id}`}>
                   <div
                     className={`${
                       order === 'cap' ? styles.searchSvgLast : styles.searchSvg

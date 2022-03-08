@@ -137,7 +137,7 @@ export const fetchFolderMessages = (id: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     return new Promise((resolve, reject) => {
       dispatch(getFolderMessagesRequest());
-
+      console.time('GetMessagesByFolderId')
       Mail.getMessagesByFolderId(id, 20)
         .then(messages => {
           
@@ -152,7 +152,7 @@ export const fetchFolderMessages = (id: number) => {
               dispatch(fetchMsg(current[0]))
             }
           }
-
+          console.timeEnd('GetMessagesByFolderId')
           return resolve(messages)
         })
         .catch(err => {

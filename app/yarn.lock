@@ -77,20 +77,6 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@seald-io/binary-search-tree@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@seald-io/binary-search-tree/-/binary-search-tree-1.0.2.tgz#9f0e5cec5e0acf97f1b495f2f6d3476ddb6a94ed"
-  integrity sha512-+pYGvPFAk7wUR+ONMOlc6A+LUN4kOCFwyPLjyaeS7wVibADPHWYJNYsNtyIAwjF1AXQkuaXElnIc4XjKt55QZA==
-
-"@seald-io/nedb@^2.2.0":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@seald-io/nedb/-/nedb-2.2.1.tgz#e46fc4bb079f2c4f9da8e8d7485e581621db6a57"
-  integrity sha512-uUAUpMT8SyWIc+KISyRqQy95mCjY0hx8tudzFTuvyhtON1xnfrqSfMRNxaVhx/W2aeWqLRNUqhDH6L3Tm9sBhQ==
-  dependencies:
-    "@seald-io/binary-search-tree" "^1.0.2"
-    async "0.2.10"
-    localforage "^1.9.0"
-
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
@@ -164,10 +150,10 @@
     uuid "^8.2.0"
 
 "@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate.git":
-  version "2.0.6"
-  resolved "git+https://github.com/Telios-org/nebula-migrate.git#0e937a8d76894fe4d116c0b2993aeb5cfa94c503"
+  version "2.0.8"
+  resolved "git+https://github.com/Telios-org/nebula-migrate.git#91d431c42c641ef4b30c01ac953ad30b314e9d85"
   dependencies:
-    "@telios/nebula" "^2.1.2"
+    "@telios/nebula" "^2.3.1"
     "@telios/nebula-drive" "^5.3.1"
     hypercore "10.0.0-alpha.23"
 
@@ -196,14 +182,13 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.1.2.tgz#6ebfd45da80ce411ef0ef179c675aaa35d382b62"
-  integrity sha512-2XcYitH7wQbOqeoZuCOipzYla/dPGEFh08r4LBHFO95tJHBP1ypthIHP0PI6KnjmJx+uP4FLDoDjzlsaEdD0hg==
+"@telios/nebula@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.3.1.tgz#059f91f2537f4f3cee78ce8ffbbe1249848e8ec8"
+  integrity sha512-VpA8TIrYTNvogXWAaczuwAZgYVq19UwyEQOxVzTwK3CE6TwqHm/LQLYNfGkPHJPRLWgqHOtaaRHx6TwByHKoEw==
   dependencies:
     autobase "1.0.0-alpha.6"
     blakejs "^1.1.0"
-    chokidar "^3.5.1"
     codecs "^2.2.0"
     concat-stream "^2.0.0"
     corestore "^6.0.1-alpha.9"
@@ -215,20 +200,19 @@
     is-online "^9.0.1"
     memorystream "^0.3.1"
     natural "^5.1.11"
-    nedb-promises "^6.0.3"
     pump "^3.0.0"
     random-access-memory "^3.1.1"
     sodium-native "^3.2.0"
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.2.9":
-  version "3.2.9"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.2.9.tgz#7864a05c50d0cf0ca301fb753c253b92dfb3d4a4"
-  integrity sha512-4jj6H4Ds+AdISM0mLkjBs26hx03cPvtX4i+2y+u2j9TGpLc5fQKIAKe4EniRJfKlfz4rdnH/63SURWxbfYVgag==
+"@telios/telios-client-backend@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.3.1.tgz#c5144925346f96d7740cf0d8a5918da48387c115"
+  integrity sha512-/26b5LNj7gTzYGCj8zCSpIquBDmKqejL1VQAtIvk8S46mbW9NMh6owuQnRfMlFGLa3+CCp5FbpbrwOGgzZY6tw==
   dependencies:
     "@telios/client-sdk" "^5.0.3"
-    "@telios/nebula" "^2.1.2"
+    "@telios/nebula" "^2.3.1"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     file-type "^16.5.3"
     luxon "^2.3.1"
@@ -401,11 +385,6 @@ assert-plus@1.0.0, assert-plus@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/assert-plus/-/assert-plus-1.0.0.tgz#f12e0f3c5d77b0b1cdd9146942e4e96c1e4dd525"
   integrity sha1-8S4PPF13sLHN2RRpQuTpbB5N1SU=
-
-async@0.2.10:
-  version "0.2.10"
-  resolved "https://registry.yarnpkg.com/async/-/async-0.2.10.tgz#b6bbe0b0674b9d719708ca38de8c237cb526c3d1"
-  integrity sha1-trvgsGdLnXGXCMo43owjfLUmw9E=
 
 async@^3.2.0:
   version "3.2.3"
@@ -1666,11 +1645,6 @@ immediate@^3.2.3:
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.3.0.tgz#1aef225517836bcdf7f2a2de2600c79ff0269266"
   integrity sha512-HR7EVodfFUdQCTIeySw+WDRFJlPcLOJbXfwwZ7Oom6tjsvZ3bOkCDJHehQC3nxJrv7+f9XecwazynjU8e4Vw3Q==
 
-immediate@~3.0.5:
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
-  integrity sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=
-
 indent-string@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/indent-string/-/indent-string-4.0.0.tgz#624f8f4497d619b2d9768531d58f4122854d7251"
@@ -1994,26 +1968,12 @@ libqp@1.1.0:
   resolved "https://registry.yarnpkg.com/libqp/-/libqp-1.1.0.tgz#f5e6e06ad74b794fb5b5b66988bf728ef1dedbe8"
   integrity sha1-9ebgatdLeU+1tbZpiL9yjvHe2+g=
 
-lie@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/lie/-/lie-3.1.1.tgz#9a436b2cc7746ca59de7a41fa469b3efb76bd87e"
-  integrity sha1-mkNrLMd0bKWd56QfpGmz77dr2H4=
-  dependencies:
-    immediate "~3.0.5"
-
 linkify-it@3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/linkify-it/-/linkify-it-3.0.2.tgz#f55eeb8bc1d3ae754049e124ab3bb56d97797fb8"
   integrity sha512-gDBO4aHNZS6coiZCKVhSNh43F9ioIL4JwRjLZPkoLIY4yZFwg264Y5lu2x6rb1Js42Gh6Yqm2f6L2AJcnkzinQ==
   dependencies:
     uc.micro "^1.0.1"
-
-localforage@^1.9.0:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/localforage/-/localforage-1.10.0.tgz#5c465dc5f62b2807c3a84c0c6a1b1b3212781dd4"
-  integrity sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==
-  dependencies:
-    lie "3.1.1"
 
 lodash@^4.17.11:
   version "4.17.21"
@@ -2265,13 +2225,6 @@ natural@^5.1.11:
     sylvester "^0.0.12"
     underscore "^1.9.1"
     wordnet-db "^3.1.11"
-
-nedb-promises@^6.0.3:
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/nedb-promises/-/nedb-promises-6.0.3.tgz#3ab3fe5651310eb8b6ec8ee2d9aafedb703691e4"
-  integrity sha512-pd0N6EsIPhXsfqdLcBJGig1FoTdV8wtuiXB7rBUqycJdUSA6wdI5BlkwEAjDBWIwZc4+xqBHRLtuAB7/bjS+rg==
-  dependencies:
-    "@seald-io/nedb" "^2.2.0"
 
 needle@^2.2.1:
   version "2.9.1"
