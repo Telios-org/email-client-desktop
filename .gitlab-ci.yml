@@ -96,6 +96,7 @@ filesystemFix:win:
   script:
     - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com
     - docker run -v $PWD":/repo/" -w /repo/ registry.gitlab.com/telios2/telios-devops/bash/prd rm -rf ./release
+    - docker run -v $PWD":/repo/" -w /repo/ registry.gitlab.com/telios2/telios-devops/bash/prd rm -rf ./app/node_modules/@telios/
 
 electron-build:win:
   tags:
