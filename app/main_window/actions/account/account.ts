@@ -1,5 +1,6 @@
 import { AccountType, Dispatch, GetState } from '../../reducers/types';
 import AccountService from '../../../services/account.service';
+import MailboxService from '../../../services/mail.service';
 
 /*
  *  Load Account Information
@@ -23,10 +24,13 @@ export const updateProfileRequest = () => {
 };
 
 export const UPDATE_PROFILE_SUCCESS = 'ACCOUNT::UPDATE_PROFILE_SUCCESS';
-export const updateProfileSuccess = (account: AccountType) => {
+export const updateProfileSuccess = (
+  account: AccountType,
+  mailboxId: string
+) => {
   return {
     type: UPDATE_PROFILE_SUCCESS,
-    payload: account
+    payload: { ...account, mailboxId }
   };
 };
 
@@ -46,22 +50,28 @@ export const updateProfile = (data: {
     dispatch(updateProfileRequest());
 
     const {
-      account: { accountId }
+      account: { accountId },
+      mail: {
+        mailboxes: { allIds }
+      }
     } = getState();
 
     try {
-      console.log('PROFILE DATA', data);
+      console.log('PROFILE DATA', data, allIds[0]);
       // We purposefully only let this method update two parameters
       await AccountService.updateAccount({
         accountId,
         ...data
       });
+
+      // We want to change the Display Name of the primary mailbox at the same time.
+      await MailboxService.updateMailboxName(allIds[0], data.displayName);
     } catch (error) {
       dispatch(updateProfileFailure(error));
       return error;
     }
 
-    dispatch(updateProfileSuccess(data));
+    dispatch(updateProfileSuccess(data, allIds[0]));
 
     return 'Success';
   };
@@ -98,8 +108,8 @@ export const retrieveStats = () => {
     dispatch(retrieveStatsRequest());
 
     AccountService.retrieveStats().then(result => {
-      dispatch(retrieveStatsSuccess(result))
-      return result
+      dispatch(retrieveStatsSuccess(result));
+      return result;
     });
   };
 };

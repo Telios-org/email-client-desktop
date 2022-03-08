@@ -271,7 +271,7 @@ const BillingPayments = (props: Props) => {
                 </h4>
 
                 <p className="text-xs">
-                  Limit will reset on
+                  {`Limit will reset on `}
                   <span className="font-bold">
                     {stats?.dailyEmailResetDate?.toLocaleString(
                       DateTime.DATETIME_SHORT

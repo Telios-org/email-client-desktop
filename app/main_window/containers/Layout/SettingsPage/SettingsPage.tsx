@@ -3,7 +3,6 @@ import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tab } from '@headlessui/react';
 import { Filter, Wallet, Password, Setting, ShieldDone } from 'react-iconly';
-import { ChevronLeftIcon } from '@heroicons/react/solid';
 import BrowserView, { removeViews } from 'react-electron-browser-view';
 import { setTimeout } from 'timers';
 import { retrieveStats } from '../../../actions/account/account';

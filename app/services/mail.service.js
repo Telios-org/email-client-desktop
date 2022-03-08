@@ -4,7 +4,6 @@ const channel = require('./main.channel');
 const Login = require('./login.service');
 
 class MailService {
-
   static loadMailbox(payload) {
     channel.send({ event: 'loadMailbox', payload });
 
@@ -93,7 +92,10 @@ class MailService {
 
     const filepath = await dialog.showSaveDialogSync(options);
 
-    channel.send({ event: 'email:saveFiles', payload: { filepath, attachments } });
+    channel.send({
+      event: 'email:saveFiles',
+      payload: { filepath, attachments }
+    });
 
     return new Promise((resolve, reject) => {
       channel.once('email:saveFiles:callback', m => {
@@ -128,6 +130,21 @@ class MailService {
 
     return new Promise((resolve, reject) => {
       channel.once('mailbox:saveMailbox:callback', m => {
+        const { error, data } = m;
+        if (error) return reject(error);
+        return resolve(data);
+      });
+    });
+  }
+
+  static updateMailboxName(id, name) {
+    channel.send({
+      event: 'mailbox:updateMailboxName',
+      payload: { mailboxId: id, name }
+    });
+
+    return new Promise((resolve, reject) => {
+      channel.once('mailbox:updateMailboxName:callback', m => {
         const { error, data } = m;
         if (error) return reject(error);
         return resolve(data);

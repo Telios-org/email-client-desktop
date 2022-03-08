@@ -15,8 +15,8 @@ class AccountService extends EventEmitter {
 
         // Start incoming message listener
         // MessageIngressService.initMessageListener();
-
         ipcRenderer.send('ACCOUNT_SERVICE::createAccountResponse', account);
+        this.emit('ACCOUNT_SERVICE::accountData', account);
       } catch (e) {
         ipcRenderer.send('ACCOUNT_SERVICE::createAccountError', {
           error: {
@@ -124,7 +124,8 @@ class AccountService extends EventEmitter {
           signingKeypair,
           mnemonic,
           deviceId,
-          sig
+          sig,
+          accountId
         } = data;
 
         try {
@@ -149,12 +150,18 @@ class AccountService extends EventEmitter {
           });
 
           resolve({
+            accountId,
+            uid,
             secretBoxPubKey: secretBoxKeypair.publicKey,
             secretBoxPrivKey: secretBoxKeypair.privateKey,
             secretBoxSeedKey: secretBoxKeypair.seedKey,
             mnemonic,
-            signingPubKey: signingKeypair.publicKey,
-            signingPrivKey: signingKeypair.privateKey
+            deviceSigningPubKey: signingKeypair.publicKey,
+            deviceSigningPrivKey: signingKeypair.privateKey,
+            deviceId,
+            serverSig: sig,
+            displayName: null,
+            avatar: null
           });
         } catch (err) {
           console.log(err);

@@ -38,22 +38,23 @@ const account = (state: AccountType = initialState, action: AccountAction) => {
   let stats;
   switch (action.type) {
     case LOAD_ACCOUNT_DATA:
-      stats = action.payload.stats
+      // stats = action.payload.stats
       return {
         ...action.payload,
         stats: {
-          plan: stats.plan,
-          dailyEmailUsed: stats.daily_email_used,
-          namespaceUsed: stats.namespace_used,
-          aliasesUsed: stats.aliases_used,
-          storageSpaceUsed: stats.storage_space_used,
-          dailyEmailResetDate: DateTime.fromISO(stats.daily_email_reset_date),
-          lastUpdated: DateTime.fromISO(stats.last_updated),
-          maxOutgoingEmails: stats.maxOutgoingEmails,
-          maxAliasNames: stats.maxAliasNames,
-          maxAliasAddresses: stats.maxAliasAddresses,
-          maxGBCloudStorage: stats.maxGBCloudStorage,
-          maxGBBandwidth: stats.maxGBBandwidth
+          // plan: stats.plan,
+          // dailyEmailUsed: stats.daily_email_used,
+          // namespaceUsed: stats.namespace_used,
+          // aliasesUsed: stats.aliases_used,
+          // storageSpaceUsed: stats.storage_space_used,
+          // dailyEmailResetDate: DateTime.fromISO(stats.daily_email_reset_date),
+          // lastUpdated: DateTime.fromISO(stats.last_updated),
+          // maxOutgoingEmails: stats.maxOutgoingEmails,
+          // maxAliasNames: stats.maxAliasNames,
+          // maxAliasAddresses: stats.maxAliasAddresses,
+          // maxGBCloudStorage: stats.maxGBCloudStorage,
+          // maxGBBandwidth: stats.maxGBBandwidth
+          ...initialState.stats
         }
       };
     case RETRIEVE_STATS_SUCCESS:
