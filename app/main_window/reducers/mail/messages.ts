@@ -141,7 +141,7 @@ export default function messages(
           ...state.byId,
           ...arrayToObject(action.messages, 'emailId')
         },
-        allIds: [...state.allIds, ...idFromArrayDict(action.messages, 'emailId')]
+        allIds: [...new Set([...state.allIds, ...idFromArrayDict(action.messages, 'emailId')])]
       };
     default:
       return { ...state };

@@ -63,6 +63,7 @@ export default function MessageList(props: Props) {
   const dispatch = useDispatch();
 
   const [sort, setSort] = useState('');
+  const [lastStartIndex, setLastStartIndex] = useState(0);
   const currentFolderName = useSelector(selectActiveFolderName);
   const currentAliasName = useSelector(selectActiveAliasName);
   const messages = useSelector(currentMessageList);
@@ -177,7 +178,6 @@ export default function MessageList(props: Props) {
       if (currentFolderName === 'Drafts') {
         opts.reloadDb = true;
       }
-      console.log('MESSAGELIST', opts);
       ipcRenderer.send('RENDERER::closeComposerWindow', opts);
     }
 
@@ -300,15 +300,17 @@ export default function MessageList(props: Props) {
               return reject(err);
             });
         } else {
-          console.log('LOAD MORE ITEMS', folderId, startIndex)
-          dispatch(fetchMoreFolderMessages(folderId, startIndex))
-            .then(() => {
-              isLoading = false;
-              return resolve();
-            })
-            .catch(err => {
-              return reject(err);
-            });
+          if(lastStartIndex !== messages.allIds.length) {
+            setLastStartIndex(messages.allIds.length)
+            dispatch(fetchMoreFolderMessages(folderId, messages.allIds.length))
+              .then(() => {
+                isLoading = false;
+                return resolve();
+              })
+              .catch(err => {
+                return reject(err);
+              });
+          }
         }
       });
     }

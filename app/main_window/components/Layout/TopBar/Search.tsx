@@ -232,7 +232,8 @@ const Search = () => {
       if (selected.type === 'email') {
         msg = selected;
       }
-      await dispatch(selectSearch(payload, msg, searchQuery));
+      // console.log('SELECT SEARCH', payload, msg, searchQuery)
+      dispatch(selectSearch(payload, msg, searchQuery));
       setFocus(false);
       // Blurring the input field when closing the menu
       inputRef?.current?.blur();
@@ -435,7 +436,7 @@ const Search = () => {
                 order,
                 folderId,
                 aliasId,
-                _id,
+                emailId,
                 index
               } = item;
 
@@ -499,7 +500,7 @@ const Search = () => {
               'To: ');
 
               return (
-                <li className="py-0.5 px-2" key={`message_search_key_${_id}`}>
+                <li className="py-0.5 px-2" key={`message_search_key_${emailId}`}>
                   <div
                     className={`${
                       order === 'cap' ? styles.searchSvgLast : styles.searchSvg
