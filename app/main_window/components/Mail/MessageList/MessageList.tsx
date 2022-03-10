@@ -178,7 +178,6 @@ export default function MessageList(props: Props) {
       if (currentFolderName === 'Drafts') {
         opts.reloadDb = true;
       }
-      console.log('MESSAGELIST', opts);
       ipcRenderer.send('RENDERER::closeComposerWindow', opts);
     }
 
@@ -287,9 +286,6 @@ export default function MessageList(props: Props) {
   };
 
   const loadMoreItems = (startIndex: number, stopIndex: number) => {
-    console.log('messages.allIds.length',messages.allIds.length)
-    console.log('stopIndex',stopIndex)
-    console.log(' ')
     if (!isLoading && messages.allIds.length - 1 < stopIndex) {
       isLoading = true;
 
