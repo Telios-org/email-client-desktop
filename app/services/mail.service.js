@@ -110,17 +110,17 @@ class MailService {
       payload: { messages: opts.messages, type: opts.type }
     });
 
-    if (opts.async) {
-      return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+      if (opts.async) {
         channel.once('email:saveMessageToDB:callback', m => {
           const { error, data } = m;
           if (error) return reject(error);
           return resolve(data);
         });
-      });
-    }
-
-    return true;
+      } else {
+        resolve(true)
+      }
+    });
   }
 
   static saveMailbox(address) {

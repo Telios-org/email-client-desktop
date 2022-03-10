@@ -178,7 +178,6 @@ export const fetchMoreFolderMessages = (id: number, offset: number) => {
         Mail.getMessagesByFolderId(id, 20, offset)
           .then(messages => {
             dispatch(fetchMoreFolderMessagesSuccess(messages));
-            return resolve(messages)
           })
           .catch(err => {
             reject(err)

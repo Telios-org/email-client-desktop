@@ -150,8 +150,8 @@
     uuid "^8.2.0"
 
 "@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate.git":
-  version "2.0.8"
-  resolved "git+https://github.com/Telios-org/nebula-migrate.git#91d431c42c641ef4b30c01ac953ad30b314e9d85"
+  version "2.0.10"
+  resolved "git+https://github.com/Telios-org/nebula-migrate.git#e0f267e05941c2002889e27e00b8768ea5b5c77f"
   dependencies:
     "@telios/nebula" "^2.3.1"
     "@telios/nebula-drive" "^5.3.1"
@@ -182,10 +182,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@^2.3.1":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.3.1.tgz#059f91f2537f4f3cee78ce8ffbbe1249848e8ec8"
-  integrity sha512-VpA8TIrYTNvogXWAaczuwAZgYVq19UwyEQOxVzTwK3CE6TwqHm/LQLYNfGkPHJPRLWgqHOtaaRHx6TwByHKoEw==
+"@telios/nebula@^2.3.1", "@telios/nebula@^2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.4.1.tgz#2a554bbaf258dd32d004518c9925787cf23e31a4"
+  integrity sha512-PfBwhKBS+MIDLzvhW1SVzvmc6yNQGU9JhHriMTtwwCExuoUqOwuSGrIo7J4Wf1SrRwgQIWv7aYnSqOTaJOyQ0g==
   dependencies:
     autobase "1.0.0-alpha.6"
     blakejs "^1.1.0"
@@ -193,6 +193,7 @@
     concat-stream "^2.0.0"
     corestore "^6.0.1-alpha.9"
     dat-encoding "^5.0.1"
+    graceful-fs "^4.2.9"
     hyperbee "^1.6.3"
     hyperbeedeebee "git+https://github.com/hexadecible/hyperbeedeebee.git"
     hypercore "10.0.0-alpha.23"
@@ -206,13 +207,13 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.3.2":
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.3.2.tgz#096fd40762ce207cc2dede804a9a47807d04135b"
-  integrity sha512-HdrRb75MFPysBbGIKO/dbQs0dkqwSd3bcS6ZQQxmvBr6PfZD7HFvVnoVrYgwJAafnB6QkCPVMAdpJkVsDW88Zw==
+"@telios/telios-client-backend@^3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.4.2.tgz#331aec23a2417f5188cae777282434c5763ae56d"
+  integrity sha512-O64Mi/RosB6hdqbm7ddNYDtqa2Zq142gmt0iVUF0w5zS3+K6Y+3Mj1lmIZj3qSrTHVo7mND4QXjI8W4QDfe4hw==
   dependencies:
     "@telios/client-sdk" "^5.0.3"
-    "@telios/nebula" "^2.3.1"
+    "@telios/nebula" "^2.4.1"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     file-type "^16.5.3"
     luxon "^2.3.1"
@@ -1295,7 +1296,7 @@ got@^9.6.0:
     to-readable-stream "^1.0.0"
     url-parse-lax "^3.0.0"
 
-graceful-fs@^4.2.4:
+graceful-fs@^4.2.4, graceful-fs@^4.2.9:
   version "4.2.9"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.9.tgz#041b05df45755e587a24942279b9d113146e1c96"
   integrity sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==
@@ -2988,9 +2989,9 @@ stopwords@^0.0.9:
   integrity sha512-2OF7/9f5buXrBB8De5ZAC9+g5nIw9SRx9ZsL3Qpz6znSfPEihOmaMnwJxXehynZ9AfRNroHIKEIcsEmRywVXVQ==
 
 streamx@^2.1.0, streamx@^2.10.0, streamx@^2.10.2, streamx@^2.10.3, streamx@^2.6.0, streamx@^2.6.6, streamx@^2.7.1:
-  version "2.12.3"
-  resolved "https://registry.yarnpkg.com/streamx/-/streamx-2.12.3.tgz#b6bdb8705e925801f71f2aba17d33546f1dd2822"
-  integrity sha512-im2U3yhz6NoJQzzn6AwBlb+MRuGLxlnXJXqZudQ9RZzsVcq9+MHTPGR5b4Rh23RSLQenqtBaMwemM61w10VcWQ==
+  version "2.12.4"
+  resolved "https://registry.yarnpkg.com/streamx/-/streamx-2.12.4.tgz#0369848b20b8f79c65320735372df17cafcd9aff"
+  integrity sha512-K3xdIp8YSkvbdI0PrCcP0JkniN8cPCyeKlcZgRFSl1o1xKINCYM93FryvTSOY57x73pz5/AjO5B8b9BYf21wWw==
   dependencies:
     fast-fifo "^1.0.0"
     queue-tick "^1.0.0"
