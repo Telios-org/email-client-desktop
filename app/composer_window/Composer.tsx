@@ -2,6 +2,7 @@ import { ipcRenderer, remote } from 'electron';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { Notification, Divider } from 'rsuite';
+import { useDispatch } from 'react-redux';
 
 import { topicReference } from '@babel/types';
 import { useHandler } from '../utils/hooks/useHandler';
@@ -13,6 +14,8 @@ import { UTCtimestamp } from '../utils/helpers/date';
 // import editorHTMLexport from './utils/messageEditor/htmlExportOptions';
 
 import ComposerService from '../services/composer.service';
+
+import { fetchMsg } from '../main_window/actions/mail';
 
 // TYPESCRIPT TYPES
 import {
@@ -108,6 +111,8 @@ const Composer = (props: Props) => {
   // Using a callback Ref to get to the To field to be able to control focus.
   const [toRef, setToRef] = useState();
 
+  const dispatch = useDispatch();
+
   const handleEmailUpdate = (
     msg?: Email,
     content?: string,
@@ -148,24 +153,37 @@ const Composer = (props: Props) => {
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
-    if (isInline && message?.bodyAsHtml && folder?.name === 'Drafts') {
-      const draft = emailTransform(message, 'draftEdit', false);
-      const rcp = recipientTransform(mb, draft, 'draftEdit');
-      draft.to = rcp.data.to;
-      draft.cc = rcp.data.cc;
-      draft.bcc = rcp.data.bcc;
-      draft.from = rcp.data.from;
-      handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
-      setMailbox(mb);
-      setPrefillRecipients(rcp.ui);
-      if (draft.to.length > 0) {
-        setActiveSendButton(true);
-      }
+    if (isInline && folder?.name === 'Drafts') {
+      
 
-      if (prevMsgIdRef.current !== draft.emailId) {
-        // console.log('PREV EMAIL GUARD', message);
-        prevMsgIdRef.current = draft.emailId;
-      }
+        dispatch(fetchMsg(message.emailId))
+          .then(email => {      
+            const draft = emailTransform(email, 'draftEdit', false);
+            const rcp = recipientTransform(mb, draft, 'draftEdit');
+            draft.to = rcp.data.to;
+            draft.cc = rcp.data.cc;
+            draft.bcc = rcp.data.bcc;
+            draft.from = rcp.data.from;
+            handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
+            setMailbox(mb);
+            setPrefillRecipients(rcp.ui);
+            if (draft.to.length > 0) {
+              setActiveSendButton(true);
+            }
+
+            if (prevMsgIdRef.current !== draft.emailId) {
+              // console.log('PREV EMAIL GUARD', message);
+              prevMsgIdRef.current = draft.emailId;
+            }
+
+          })
+          .catch(err => {
+            console.error(err)
+            Notification.error({
+              title: 'Failed to load',
+              placement: 'bottomEnd'
+            });
+          });
     }
   }, [isInline, folder, message?.bodyAsHtml, message?.emailId]);
 
@@ -220,10 +238,8 @@ const Composer = (props: Props) => {
 
   useEffect(() => {
     if (editorState !== undefined && !composerReady && email !== null) {
-      console.log(editorState);
       setComposerReady(true);
     }
-    // console.log('EditorState?', editorState);
   }, [editorState, email]);
 
   useEffect(() => {
