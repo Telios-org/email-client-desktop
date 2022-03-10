@@ -290,6 +290,7 @@ export default function MessageList(props: Props) {
       isLoading = true;
 
       return new Promise((resolve, reject) => {
+        if(searchFilter) return resolve();
         if (aliasId) {
           dispatch(fetchMoreAliasMessages(aliasId, startIndex))
             .then(() => {
@@ -300,15 +301,15 @@ export default function MessageList(props: Props) {
               return reject(err);
             });
         } else {
-            setLastStartIndex(messages.allIds.length)
-            dispatch(fetchMoreFolderMessages(folderId, messages.allIds.length))
-              .then(() => {
-                isLoading = false;
-                return resolve();
-              })
-              .catch(err => {
-                return reject(err);
-              });
+          setLastStartIndex(messages.allIds.length)
+          dispatch(fetchMoreFolderMessages(folderId, messages.allIds.length))
+            .then(() => {
+              isLoading = false;
+              return resolve();
+            })
+            .catch(err => {
+              return reject(err);
+            });
         }
       });
     }
