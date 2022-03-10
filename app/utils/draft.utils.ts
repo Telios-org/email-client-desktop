@@ -59,6 +59,7 @@ export const recipientTransform = (
         return {
           label: recip.name || recip.address,
           value: recip.address,
+          isValid: true,
           preFill: true
         };
       })
@@ -73,6 +74,7 @@ export const recipientTransform = (
         return {
           label: recip.name || recip.address,
           value: recip.address,
+          isValid: true,
           preFill: true
         };
       })
@@ -87,6 +89,7 @@ export const recipientTransform = (
         return {
           label: recip.name || recip.address,
           value: recip.address,
+          isValid: true,
           preFill: true
         };
       })

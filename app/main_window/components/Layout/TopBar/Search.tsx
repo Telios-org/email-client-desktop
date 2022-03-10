@@ -91,7 +91,6 @@ const Search = () => {
 
   // Controls the Open state of the Menu
   useEffect(() => {
-    console.log('FOCUS CHANGING', isFocused);
     if (searchQuery.length > 0 && isFocused) {
       setStatus(true);
     } else {

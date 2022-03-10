@@ -126,6 +126,7 @@ function MessageDisplay(props: Props) {
   );
 
   const parsedSender = sender.name;
+  const senderEmail = sender.address;
   // Checking if Sender is in the Telios Network
   const senderInNetwork = sender.inNetwork;
 
@@ -319,7 +320,10 @@ function MessageDisplay(props: Props) {
         </div>
         <div className="flex-auto pl-4 select-none">
           <div className="flex flex-row justify-between">
-            <div className="text-md font-bold">{parsedSender}</div>
+            <div className="text-md font-bold relative group">
+              {parsedSender}
+              <span className="hidden group-hover:block absolute -bottom-6 left-5 bg-black opacity-75 text-white text-xs font-normal px-2 py-0.5 rounded shadow">{senderEmail}</span>
+            </div>
             <div className="text-xs text-gray-500 align-baseline items-baseline">{`${formattedDate} at ${time}`}</div>
           </div>
           <div className="text-xs text-gray-400">{`To: ${recipients.to.plainText}`}</div>
