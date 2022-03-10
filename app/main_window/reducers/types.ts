@@ -233,7 +233,7 @@ export type GlobalType = {
   activeFolderIndex: number;
   activeAliasIndex: number;
   activeAccountIndex: number;
-  searchFilteredMsg: string[];
+  searchFilteredMsg: boolean;
   msgListFilters:{
     [index: number | string]: any;
   };

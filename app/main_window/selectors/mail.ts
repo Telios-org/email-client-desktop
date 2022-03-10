@@ -143,7 +143,7 @@ export const aliasFolderIndex = createSelector([selectAllFolders], folders => {
   return folders.allIds.indexOf(0);
 });
 
-export const searchFilteredMessages = (state: StateType) =>
+export const searchFiltered = (state: StateType) =>
   state.globalState.searchFilteredMsg;
 
 export const messageListFilters = (state: StateType) =>
@@ -173,38 +173,33 @@ export const currentMessageList = createSelector(
     selectAllMessages,
     activeAliasId,
     activeFolderId,
-    searchFilteredMessages,
     readFilter,
     selectAllFoldersById
   ],
-  (rootMessages, aliasId, folderId, filter, readCondition, allFoldersById) => {
+  (rootMessages, aliasId, folderId, readCondition, allFoldersById) => {
     const { byId, allIds } = rootMessages;
-    const filteredArr = allIds.filter(
-      id => {
-        return (byId[id].folderId === folderId && byId[id].aliasId == aliasId) ||
+    const filteredArr = allIds.filter(id => {
+      return (
+        (byId[id].folderId === folderId && byId[id].aliasId == aliasId) ||
         ['Archives', 'Trash'].includes(allFoldersById[byId[id].folderId].name)
-      }
-    );
+      );
+    });
 
     let finalArray;
 
-    if (filter.length > 0) {
-      finalArray = filteredArr.filter(id => filter.includes(id));
-    } else {
-      switch (readCondition) {
-        case 'unread':
-          finalArray = [...filteredArr.filter(id => byId[id].unread)];
-          break;
+    switch (readCondition) {
+      case 'unread':
+        finalArray = [...filteredArr.filter(id => byId[id].unread)];
+        break;
 
-        case 'read':
-          finalArray = [...filteredArr.filter(id => !byId[id].unread)];
-          break;
+      case 'read':
+        finalArray = [...filteredArr.filter(id => !byId[id].unread)];
+        break;
 
-        case 'all':
-        default:
-          finalArray = [...filteredArr];
-          break;
-      }
+      case 'all':
+      default:
+        finalArray = [...filteredArr];
+        break;
     }
 
     const newByIds = {};

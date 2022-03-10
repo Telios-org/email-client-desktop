@@ -4,8 +4,13 @@ import { DebounceInput } from 'react-debounce-input';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { Search as SearchIcon } from 'react-iconly';
 import CustomIcon from '../../Mail/Navigation/NavIcons';
-import { selectSearch, clearSearchFilter } from '../../../actions/mail';
 import {
+  selectSearch,
+  clearSearchFilter,
+  folderSelection
+} from '../../../actions/mail';
+import {
+  activeFolderIndex,
   activeFolderId,
   activeAliasId,
   selectAllFoldersById,
@@ -79,12 +84,14 @@ const Search = () => {
   const activeAlias = useSelector(activeAliasId);
   const allFolders = useSelector(selectAllFoldersById);
   const allAliases = useSelector(selectAllAliasesById);
+  const currentFolderIdx = useSelector(activeFolderIndex);
 
   const menuRef = useRef();
   const inputRef = useRef();
 
   // Controls the Open state of the Menu
   useEffect(() => {
+    console.log('FOCUS CHANGING', isFocused);
     if (searchQuery.length > 0 && isFocused) {
       setStatus(true);
     } else {
@@ -172,7 +179,7 @@ const Search = () => {
             folderId: res.folderId,
             aliasId: res.aliasId,
             name: res.name,
-            messages: res.messages.map(m => m.emailId)
+            messages: res.messages
           });
 
           if (
@@ -220,7 +227,7 @@ const Search = () => {
   };
 
   // Handles Selecting of a Search Result
-  const handleSelect = async index => {
+  const handleSelect = index => {
     if (items.length > 0) {
       const selected = items[index];
       const payload = folderIdxResults.filter(
@@ -232,11 +239,13 @@ const Search = () => {
       if (selected.type === 'email') {
         msg = selected;
       }
-      // console.log('SELECT SEARCH', payload, msg, searchQuery)
-      dispatch(selectSearch(payload, msg, searchQuery));
+      // console.log('SELECT SEARCH', payload, msg, searchQuery);
       setFocus(false);
+      setStatus(false)
       // Blurring the input field when closing the menu
       inputRef?.current?.blur();
+      dispatch(selectSearch(payload, msg, searchQuery));
+
     }
   };
 
@@ -246,13 +255,14 @@ const Search = () => {
     inputRef?.current?.focus();
   };
 
-  const clearSearch = async () => {
+  const clearSearch = () => {
     setFocus(false);
     inputRef?.current?.blur();
     setSearchQuery('');
     setItems([]);
     setFolderIdxResults({});
-    await dispatch(clearSearchFilter());
+    dispatch(clearSearchFilter());
+    dispatch(folderSelection(currentFolderIdx));
   };
 
   // Pseudo-Focus Controls for Menu Items, determine the highlighting
@@ -351,12 +361,12 @@ const Search = () => {
     }
   };
 
-  const handleGlobalKeyDown = async (
+  const handleGlobalKeyDown = (
     key: string,
     event: React.KeyboardEvent<HTMLDivElement>
   ) => {
     if (!isOpen && key === 'esc') {
-      await clearSearch();
+      clearSearch();
     }
   };
 
@@ -461,8 +471,7 @@ const Search = () => {
                       tabIndex={0}
                       onKeyDown={handleKeyDown}
                       onMouseEnter={() =>
-                        calculateActiveIndex(Focus.Specific, index)
-                      }
+                        calculateActiveIndex(Focus.Specific, index)}
                       onMouseLeave={() => calculateActiveIndex(Focus.Nothing)}
                     >
                       <div className="mr-3 w-4 relative">
@@ -500,7 +509,10 @@ const Search = () => {
               'To: ');
 
               return (
-                <li className="py-0.5 px-2" key={`message_search_key_${emailId}`}>
+                <li
+                  className="py-0.5 px-2"
+                  key={`message_search_key_${emailId}`}
+                >
                   <div
                     className={`${
                       order === 'cap' ? styles.searchSvgLast : styles.searchSvg
@@ -516,8 +528,7 @@ const Search = () => {
                       onKeyDown={handleKeyDown}
                       onClick={e => handleSelect(index)}
                       onMouseEnter={() =>
-                        calculateActiveIndex(Focus.Specific, index)
-                      }
+                        calculateActiveIndex(Focus.Specific, index)}
                       onMouseLeave={() => calculateActiveIndex(Focus.Nothing)}
                     >
                       <div className="mr-2 w-4 relative flex items-center">

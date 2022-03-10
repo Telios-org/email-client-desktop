@@ -45,7 +45,7 @@ const initialState = {
   // NOT THE ID
   activeFolderIndex: 0,
   activeAliasIndex: null,
-  searchFilteredMsg: [],
+  searchFilteredMsg: false,
   msgListFilters: {},
   loading: false,
   status: 'online',
@@ -130,7 +130,7 @@ const globalState = (
           }
         },
         highlightText: '',
-        searchFilteredMsg: [],
+        searchFilteredMsg: false,
         activeFolderIndex: action.index,
         activeAliasIndex: null
       };
@@ -145,7 +145,7 @@ const globalState = (
           }
         },
         highlightText: '',
-        searchFilteredMsg: [],
+        searchFilteredMsg: false,
         activeFolderIndex: 4,
         activeAliasIndex: action.index
       };
@@ -196,7 +196,7 @@ const globalState = (
     case CLEAR_SEARCH_FILTER:
       return {
         ...state,
-        searchFilteredMsg: [],
+        searchFilteredMsg: false,
         highlightText: ''
       };
     case UPDATE_NETWORK_STATUS:

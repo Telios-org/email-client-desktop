@@ -1,3 +1,5 @@
+/* eslint-disable promise/catch-or-return */
+/* eslint-disable promise/always-return */
 /* eslint-disable promise/no-nesting */
 import { updateFolderCount } from './mailbox/folders';
 
@@ -137,10 +139,9 @@ export const fetchFolderMessages = (id: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     return new Promise((resolve, reject) => {
       dispatch(getFolderMessagesRequest());
-      console.time('GetMessagesByFolderId')
+      console.time('GetMessagesByFolderId');
       Mail.getMessagesByFolderId(id, 20)
         .then(messages => {
-          
           dispatch(getFolderMessagesSuccess(messages));
 
           const { activeMsgId } = getState().globalState;
@@ -149,17 +150,17 @@ export const fetchFolderMessages = (id: number) => {
             const foldersActiveMsg = activeMsgId[id].id;
             const current = messages.filter(m => m.id === foldersActiveMsg);
             if (current.length === 1) {
-              dispatch(fetchMsg(current[0]))
+              dispatch(fetchMsg(current[0]));
             }
           }
-          console.timeEnd('GetMessagesByFolderId')
-          return resolve(messages)
+          console.timeEnd('GetMessagesByFolderId');
+          return resolve(messages);
         })
         .catch(err => {
           dispatch(getFolderMessagesFailure(err));
-          reject(err)
-        })
-    })
+          reject(err);
+        });
+    });
   };
 };
 
@@ -175,14 +176,14 @@ export const fetchMoreFolderMessagesSuccess = (messages: MailMessageType[]) => {
 export const fetchMoreFolderMessages = (id: number, offset: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     return new Promise((resolve, reject) => {
-        Mail.getMessagesByFolderId(id, 20, offset)
-          .then(messages => {
-            dispatch(fetchMoreFolderMessagesSuccess(messages));
-          })
-          .catch(err => {
-            reject(err)
-          })
-    })
+      Mail.getMessagesByFolderId(id, 20, offset)
+        .then(messages => {
+          dispatch(fetchMoreFolderMessagesSuccess(messages));
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   };
 };
 
@@ -224,12 +225,12 @@ export const fetchMailboxFolders = (id: number) => {
       Mail.getMailboxFolders(id)
         .then(folders => {
           dispatch(getMailboxFoldersSuccess(id, folders));
-          return resolve(folders)
+          return resolve(folders);
         })
         .catch(err => {
           dispatch(getMailboxFoldersFailure(err));
-        })
-    })
+        });
+    });
   };
 };
 
@@ -499,7 +500,7 @@ export function fetchNewMessages() {
   return async (dispatch: Dispatch) => {
     return new Promise((resolve, reject) => {
       dispatch(fetchNewMessageRequest());
-      
+
       Mail.getNewMail()
         .then(data => {
           if (data.meta.length > 0) {
@@ -507,7 +508,7 @@ export function fetchNewMessages() {
               async: false,
               meta: data.meta,
               account: data.account
-            })
+            });
             dispatch(fetchNewMessageSuccess());
             return resolve();
           }
@@ -590,10 +591,7 @@ export const msgSelectionFlow = (id: string, folderId: number) => {
 
 export const MSG_SELECTION_FLOW_SUCCESS =
   'MAILPAGE::MSG_SELECTION_FLOW_SUCCESS';
-export const msgSelectionFlowSuccess = (
-  id: string,
-  folderId: number
-) => {
+export const msgSelectionFlowSuccess = (id: string, folderId: number) => {
   return {
     type: MSG_SELECTION_FLOW_SUCCESS,
     id,
@@ -662,7 +660,10 @@ export const folderSelectionFlowFailure = (error: Error) => {
   };
 };
 
-export const folderSelection = (folderIndex: number) => {
+export const folderSelection = (
+  folderIndex: number,
+  searchList: any[] = []
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(folderSelectionFlow(folderIndex));
 
@@ -671,34 +672,28 @@ export const folderSelection = (folderIndex: number) => {
     const newFolderId = foldersArray[folderIndex];
     const activeMsgIdObj = globalState.activeMsgId;
 
+    if (searchList.length === 0) {
+      return new Promise((resolve, reject) => {
+        dispatch(fetchFolderMessages(newFolderId))
+          .then(messages => {
+            dispatch(
+              folderSelectionFlowSuccess(folderIndex, newFolderId, messages)
+            );
+            return resolve();
+          })
+          .catch(err => {
+            return reject(err);
+          });
+      });
+    }
+
     return new Promise((resolve, reject) => {
-      dispatch(fetchFolderMessages(newFolderId))
-        .then(messages => {
-          if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, newFolderId)) {
-            const foldersActiveMsg = activeMsgIdObj[newFolderId].id;
-
-            // Making sure the message selection has not been set to null before trying to fetch the message.
-            if (foldersActiveMsg) {
-
-              dispatch(fetchMsg(foldersActiveMsg))
-                .then(fullActiveMsg => {
-                  messages = messages.map(m =>
-                    m.id !== fullActiveMsg.id ? m : fullActiveMsg
-                  );
-                  dispatch(folderSelectionFlowSuccess(folderIndex, newFolderId, messages));
-                  return resolve();
-                })
-            }
-          } else {
-            dispatch(folderSelectionFlowSuccess(folderIndex, newFolderId, messages));
-            return resolve()
-          }
-        })
-        .catch(err => {
-          return reject(err)
-        })
-    })
-  }
+      dispatch(
+        folderSelectionFlowSuccess(folderIndex, newFolderId, searchList)
+      );
+      return resolve();
+    });
+  };
 };
 
 /*
@@ -768,76 +763,56 @@ export const loadMailboxes = () => async (
   const isAlias = activeAliasId !== undefined && activeAliasIndex !== null;
 
   // try {
-    dispatch(fetchMailboxes()).then(mailboxes => {
-
-    console.log('MAILBOXES', mailboxes)
-    console.log('activeMailboxIndex', activeMailboxIndex)
+  dispatch(fetchMailboxes()).then(mailboxes => {
+    console.log('MAILBOXES', mailboxes);
+    console.log('activeMailboxIndex', activeMailboxIndex);
 
     activeMailboxId = mailboxes[activeMailboxIndex].mailboxId;
 
-    console.log('activeMailboxId', activeMailboxId)
+    console.log('activeMailboxId', activeMailboxId);
 
     dispatch(fetchMailboxFolders(activeMailboxId)).then(_folders => {
-      console.log('folders', _folders)
-      folders = _folders
+      console.log('folders', _folders);
+      folders = _folders;
 
-      dispatch(fetchMailboxNamespaces(activeMailboxId)).then(async _namespaces => {
-        namespaces = _namespaces
-        const namespaceKeys = namespaces.map(ns => ns.name);
+      dispatch(fetchMailboxNamespaces(activeMailboxId)).then(
+        async _namespaces => {
+          namespaces = _namespaces;
+          const namespaceKeys = namespaces.map(ns => ns.name);
 
-        if (namespaceKeys.length > 0) {
-          aliases = await dispatch(fetchMailboxAliases(namespaceKeys));
-        } else {
-          aliases = [];
+          if (namespaceKeys.length > 0) {
+            aliases = await dispatch(fetchMailboxAliases(namespaceKeys));
+          } else {
+            aliases = [];
+          }
+
+          if (isAlias) {
+            activeAliasId = aliases[activeAliasIndex].folderId;
+            messages = await dispatch(fetchAliasMessages(activeAliasId));
+          } else {
+            activeFolderId = folders[activeFolderIndex].folderId;
+            messages = await dispatch(fetchFolderMessages(activeFolderId));
+          }
+
+          console.log('MESSAGES', messages);
+
+          dispatch(
+            fetchDataSuccess(
+              mailboxes,
+              activeMailboxId,
+              folders,
+              namespaces,
+              aliases,
+              activeFolderId,
+              messages
+            )
+          );
+
+          return { mailboxes, folders, messages, namespaces, aliases };
         }
-    
-        if (isAlias) {
-          activeAliasId = aliases[activeAliasIndex].folderId;
-          messages = await dispatch(fetchAliasMessages(activeAliasId));
-        } else {
-          activeFolderId = folders[activeFolderIndex].folderId;
-          messages = await dispatch(fetchFolderMessages(activeFolderId));
-        }
-
-        console.log('MESSAGES', messages)
-
-        dispatch(
-          fetchDataSuccess(
-            mailboxes,
-            activeMailboxId,
-            folders,
-            namespaces,
-            aliases,
-            activeFolderId,
-            messages
-          )
-        );
-      
-        return { mailboxes, folders, messages, namespaces, aliases };
-     })
-    })
-
-    // console.log('namespaces', namespaces)
-
-    
-
-    // Selection retention was removed for now
-    // if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, activeFolderId)) {
-    //   const foldersActiveMsg = activeMsgIdObj[activeFolderId].id;
-
-    //   // Making sure the message selection has not been set to null before trying to fetch the message.
-    //   if (foldersActiveMsg) {
-    //     const fullActiveMsg = await dispatch(fetchMsg(foldersActiveMsg));
-    //     messages = messages.map(m =>
-    //       m.id !== fullActiveMsg.id ? m : fullActiveMsg
-    //     );
-    //   }
-    // }
-    })
-  // } catch (error) {
-  //   dispatch(fetchDataFailure(error));
-  //   return error;
-  // }
+      );
+    });
+  });
 };
 
 // ALL BELOW SHOULD BE PLACE IN THE global.ts actions file
@@ -850,7 +825,7 @@ export const setHighlightValue = (query: string) => {
 };
 
 export const SET_SEARCH_FILTER = 'GLOBAL::SET_SEARCH_FILTER';
-export const setSearchFilter = (payload: string[]) => {
+export const setSearchFilter = (payload: boolean) => {
   return {
     type: SET_SEARCH_FILTER,
     payload
@@ -881,13 +856,13 @@ export const selectSearch = (
     const isAlias = payload.aliasId !== null && payload.name !== 'Trash';
     if (isAlias) {
       const aliasIndex = aliasAllIds.indexOf(payload.aliasId);
-      await dispatch(aliasSelection(aliasIndex));
+      await dispatch(aliasSelection(aliasIndex, payload.messages));
     } else {
       const folderIndex = foldersAllIds.indexOf(payload.folderId);
-      await dispatch(folderSelection(folderIndex));
+      await dispatch(folderSelection(folderIndex, payload.messages));
     }
 
-    dispatch(setSearchFilter(payload.messages));
+    dispatch(setSearchFilter(true));
     await dispatch(setHighlightValue(searchQuery));
 
     // If we actually select a specific message and not just a folder.

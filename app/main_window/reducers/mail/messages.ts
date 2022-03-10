@@ -44,7 +44,7 @@ export default function messages(
             ...state.byId,
             [action.message.emailId]: { ...message }
           }
-        }
+        };
       }
       return { ...state };
     case MARK_UNREAD_SUCCESS:
@@ -100,17 +100,17 @@ export default function messages(
     case FETCH_MAIL_DATA_SUCCESS:
     case FOLDER_SELECTION_FLOW_SUCCESS:
     case ALIAS_SELECTION_FLOW_SUCCESS:
-      if(action.messages) {
+      if (action.messages) {
         return {
           ...state,
           byId: {
             ...arrayToObject(action.messages, 'emailId')
           },
-          allIds: [...idFromArrayDict(action.messages, 'emailId')]
+          allIds: [...new Set([...idFromArrayDict(action.messages, 'emailId')])]
         };
       }
 
-      return { ...state }
+      return { ...state };
     case UPDATE_MESSAGE_LIST:
       _byId = { ...state.byId };
       _allIds = [...state.allIds];
@@ -141,7 +141,12 @@ export default function messages(
           ...state.byId,
           ...arrayToObject(action.messages, 'emailId')
         },
-        allIds: [...new Set([...state.allIds, ...idFromArrayDict(action.messages, 'emailId')])]
+        allIds: [
+          ...new Set([
+            ...state.allIds,
+            ...idFromArrayDict(action.messages, 'emailId')
+          ])
+        ]
       };
     default:
       return { ...state };

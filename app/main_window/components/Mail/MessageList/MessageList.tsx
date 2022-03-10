@@ -43,7 +43,7 @@ import {
   activeFolderId,
   activeAliasId,
   selectActiveAliasName,
-  searchFilteredMessages,
+  searchFiltered,
   readFilter as msgFilter
 } from '../../../selectors/mail';
 
@@ -71,7 +71,7 @@ export default function MessageList(props: Props) {
   const activeSelectedRange = useSelector(activeMessageSelectedRange);
   const folderId = useSelector(activeFolderId);
   const aliasId = useSelector(activeAliasId);
-  const searchFilter = useSelector(searchFilteredMessages);
+  const searchFilter = useSelector(searchFiltered);
   const readFilter = useSelector(msgFilter);
 
   const { editorIsOpen } = useSelector(selectGlobalState);
@@ -343,14 +343,14 @@ export default function MessageList(props: Props) {
             {currentAliasName || currentFolderName || ''}
             <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
           </div>
-          {searchFilter.length > 0 && (
+          {searchFilter && (
             <div className="flex items-center ml-2 ">
               <span className="text-xs text-coolGray-400">( search )</span>
             </div>
           )}
         </div>
         <div className="items-end flex">
-          {![2, 3, 4].includes(folderId) && searchFilter.length === 0 && (
+          {![2, 3, 4].includes(folderId) && !searchFilter && (
             <div className="flex flex-row text-xs rounded px-2 py-1 text-gray-300 content-center select-none">
               <div
                 className={`px-2 py-1 mr-2 outline-none ${

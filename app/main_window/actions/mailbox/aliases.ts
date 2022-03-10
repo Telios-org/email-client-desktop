@@ -481,7 +481,10 @@ export const aliasSelectionFlowFailure = (error: Error) => {
   };
 };
 
-export const aliasSelection = (aliasIndex: number) => {
+export const aliasSelection = (
+  aliasIndex: number,
+  searchList: any[] = []
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(aliasSelectionFlow(aliasIndex));
 
@@ -493,7 +496,11 @@ export const aliasSelection = (aliasIndex: number) => {
     let messages;
 
     try {
-      messages = await dispatch(fetchAliasMessages(newAliasId));
+      if (searchList.length > 0) {
+        messages = searchList;
+      } else {
+        messages = await dispatch(fetchAliasMessages(newAliasId));
+      }
 
       // if (Object.prototype.hasOwnProperty.call(activeMsgIdObj, newAliasId)) {
       //   const aliasesActiveMsg = activeMsgIdObj[newAliasId].id;
