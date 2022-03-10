@@ -150,10 +150,10 @@
     uuid "^8.2.0"
 
 "@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate.git":
-  version "2.0.10"
-  resolved "git+https://github.com/Telios-org/nebula-migrate.git#52ccfb3dea1205c7e7cf0038838f1154dd80dd6c"
+  version "2.0.11"
+  resolved "git+https://github.com/Telios-org/nebula-migrate.git#e8d6f724ac41ff5918f5bc641187b43790ccd0c5"
   dependencies:
-    "@telios/nebula" "^2.4.2"
+    "@telios/nebula" "^2.4.3"
     "@telios/nebula-drive" "^5.3.1"
     hypercore "10.0.0-alpha.23"
 
@@ -182,10 +182,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@^2.4.2":
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.4.2.tgz#e4efe40e8cc3798e7f1efc288d4d9511e1f2cbf7"
-  integrity sha512-gAaXzdk2iyh3c1/SHIk7mNWT9OFWwrMRc8XUJfiHSsD3G9Eecf7Ci4+t+RGYcOtx2WZU9+Sg4t6sl7EBxK3Vvg==
+"@telios/nebula@^2.4.3":
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.4.3.tgz#118c4ad0b282a95a269f054bbbba081fbb82d5d1"
+  integrity sha512-wnHY3KnOUL8LcwtJBkpYmfpY+f+WJdJiEXjMgeLDFN6MZtVj7hqVrWPopIqxkyz9d2zHNObU++P2epGFQt7wWQ==
   dependencies:
     autobase "1.0.0-alpha.6"
     blakejs "^1.1.0"
@@ -207,13 +207,13 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.4.3":
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.4.3.tgz#831a07945c93fe0e65d10a47bb6e7f76dd680463"
-  integrity sha512-JjBonNpJxKc3VGDWRNsvg77Fqficc6DZrtvsUDcZvLskVkIZzTp0sDEOkNP8cIqr0SWX6AbhDvEwZWAfebMEVg==
+"@telios/telios-client-backend@^3.4.4":
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.4.4.tgz#00b851dd90574d331a82b361dba1580e4afb1666"
+  integrity sha512-fOyPKG2XAWxJzIJz2Zh7yfkdP8Vebjxj3bkrbGEAMDXV2UFmWFtRVfBI54O/lAofBNUrBwcI7ZLj+YW+dS111Q==
   dependencies:
     "@telios/client-sdk" "^5.0.3"
-    "@telios/nebula" "^2.4.2"
+    "@telios/nebula" "^2.4.3"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     file-type "^16.5.3"
     luxon "^2.3.1"
