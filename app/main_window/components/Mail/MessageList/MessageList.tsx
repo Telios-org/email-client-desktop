@@ -300,7 +300,6 @@ export default function MessageList(props: Props) {
               return reject(err);
             });
         } else {
-          if(lastStartIndex !== messages.allIds.length) {
             setLastStartIndex(messages.allIds.length)
             dispatch(fetchMoreFolderMessages(folderId, messages.allIds.length))
               .then(() => {
@@ -310,7 +309,6 @@ export default function MessageList(props: Props) {
               .catch(err => {
                 return reject(err);
               });
-          }
         }
       });
     }
