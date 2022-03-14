@@ -1,4 +1,5 @@
-const { ipcMain } = require('electron');
+const { ipcMain, dialog } = require('electron');
+const fs = require('fs');
 const store = require('../Store');
 
 module.exports = windowManager => {
@@ -22,24 +23,38 @@ module.exports = windowManager => {
     });
   });
 
-  ipcMain.handle('getAccount', async (e, payload) => {
-    let account = payload;
-
-    if (!account.password || !account.email) {
-      account = store.getAccountSecrets();
-    }
+  ipcMain.handle('LOGIN_SERVICE::initAccount', async (e, payload) => {
+    const account = payload;
 
     const mainWindow = windowManager.getWindow('mainWindow');
-    mainWindow.webContents.send('getAcct', account);
+    mainWindow.webContents.send('ACCOUNT_IPC::initAcct', account);
 
     return new Promise((resolve, reject) => {
       mainWindow.webContents.on('ipc-message', (e, channel, data) => {
-        if (channel === 'getAcctResponse') {
+        if (channel === 'ACCOUNT_SERVICE::initAcctResponse') {
           store.setAccountSecrets(account);
           resolve(data);
         }
 
-        if (channel === 'getAcctError') {
+        if (channel === 'ACCOUNT_SERVICE::initAcctError') {
+          resolve({ error: { message: data.message }});
+        }
+      });
+    });
+  });
+
+  ipcMain.handle('ACCOUNT_SERVICE::getAccount', async (e, payload) => {
+    const account = store.getAccount();
+    const mainWindow = windowManager.getWindow('mainWindow');
+    mainWindow.webContents.send('ACCOUNT_IPC::getAccount', account);
+
+    return new Promise((resolve, reject) => {
+      mainWindow.webContents.on('ipc-message', (e, channel, data) => {
+        if (channel === 'ACCOUNT_SERVICE::getAccountResponse') {
+          resolve(data);
+        }
+
+        if (channel === 'ACCOUNT_SERVICE::getAccountResponseError') {
           reject(data);
         }
       });
@@ -61,5 +76,25 @@ module.exports = windowManager => {
         }
       });
     });
+  });
+
+  ipcMain.handle('ACCOUNT_SERVICE::uploadAvatar', async event => {
+    const options = {
+      title: 'Select your profile picture',
+      buttonLabel: 'Select',
+      filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif', 'jpeg'] }],
+      properties: ['openFile']
+    };
+
+    const { canceled, filePaths } = await dialog.showOpenDialog(options);
+
+    if (!canceled) {
+      const data = await fs.readFileSync(filePaths[0], {
+        encoding: 'base64'
+      });
+      return { canceled, data };
+    }
+
+    return { canceled, data: '' };
   });
 };

@@ -3,11 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 // EXTERNAL LIBRARIES
 import { Badge } from 'rsuite';
-import { DragPreviewImage, useDrag, useDragLayer } from 'react-dnd';
+import { DragPreviewImage, useDrag } from 'react-dnd';
 // import {CustomDragLayer} from './CustomDragLayer';
-
-// INCONSET ICONS
-import { AiOutlinePaperClip } from 'react-icons/ai';
 
 // CSS/LESS STYLES
 import styles from './MessagePreview.css';
@@ -29,16 +26,18 @@ import {
 
 // REDUX ACTIONS
 import { msgRangeSelection } from '../../../../actions/mail';
-import { moveMessagesToFolder } from '../../../../actions/mailbox/messages';
 
 // TYPESCRIPT TYPES
 import { MailMessageType } from '../../../../reducers/types';
 
 // COMPONENTS
 import PreviewIconBar from './PreviewIconBar';
-import AvatarLoader from './AvatarLoader';
 
-const { formatDateDisplay } = require('../../../../utils/date.util');
+// UTILS
+import peopleHeaderParser from '../../../../../utils/contact.util';
+import stringToHslColor from '../../../../../utils/avatar.util';
+
+const { formatDateDisplay } = require('../../../../../utils/helpers/date');
 
 type Props = {
   onMsgClick: (message: MailMessageType, id: number) => void;
@@ -50,17 +49,11 @@ type Props = {
 export default function MessagePreview(props: Props) {
   const currentFolder = useSelector(selectActiveFolder);
   const currentAliasName = useSelector(selectActiveAliasName);
-  const {
-    onMsgClick,
-    onDropResult,
-    index,
-    previewStyle,
-  } = props;
+  const { onMsgClick, onDropResult, index, previewStyle } = props;
 
   const dispatch = useDispatch();
 
   const [isHover, setIsHover] = useState(false);
-  const [displayLoader, setLoader] = useState(false);
   const [isRead, setIsRead] = useState(false);
 
   const messages = useSelector(currentMessageList);
@@ -70,7 +63,8 @@ export default function MessagePreview(props: Props) {
   const message = useSelector(state => selectMessageByIndex(state, index));
 
   const {
-    id,
+    emailId,
+    aliasId,
     folderId,
     subject,
     fromJSON,
@@ -81,11 +75,11 @@ export default function MessagePreview(props: Props) {
     unread
   } = message;
   const activeMessageId = useSelector(activeMsgId);
-  const isActive = id === activeMessageId || selected.items.indexOf(message.id) > -1;
-
+  const isActive =
+    emailId === activeMessageId || selected.items.indexOf(message.emailId) > -1;
 
   const [{ opacity }, drag, preview] = useDrag({
-    item: { id, unread, folderId, type: 'message' },
+    item: { emailId, unread, folderId, type: 'message', aliasId },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult();
       if (item && dropResult) {
@@ -105,24 +99,24 @@ export default function MessagePreview(props: Props) {
     files = attachments;
   }
 
-  const senderEmail = JSON.parse(fromJSON)[0].address;
-  const parsedSender = JSON.parse(fromJSON)[0].name || senderEmail;
+  // We don't want to display the same people whether its incoming or outgoing;
+  const direction =
+    currentFolder.name === 'Sent' || currentFolder.name === 'Drafts'
+      ? 'outgoing'
+      : 'incoming';
 
+  const { previewHead, sender } = peopleHeaderParser(
+    toJSON,
+    fromJSON,
+    undefined,
+    undefined,
+    direction
+  );
+
+  const parsedSender = sender.name;
   // Checking if Sender is in the Telios Network
-  let senderInNetwork = false;
-  if (senderEmail) {
-    senderInNetwork = senderEmail.indexOf('@telios.io') > -1;
-  }
-  // ^^^^
+  const senderInNetwork = sender.inNetwork;
 
-  const parsedRecipient = JSON.parse(toJSON).reduce(function (
-    previous: string,
-    current: { name: string; address: string }
-  ) {
-    const val = current.name || current.address;
-    return `${previous + val} `;
-  },
-    'To: ');
   const parsedDate = formatDateDisplay(date);
 
   // Determines if the platform specific toggle selection in group key was used
@@ -157,7 +151,7 @@ export default function MessagePreview(props: Props) {
       messages.allIds.forEach((msg, index) => {
         if (index === newSelection.startIdx && index === newSelection.endIdx) {
           newSelection.items.push(msg);
-          newLoaders.push(msg.id);
+          newLoaders.push(msg.emailId);
         }
 
         if (
@@ -168,7 +162,7 @@ export default function MessagePreview(props: Props) {
           newSelection.exclude.indexOf(index) === -1
         ) {
           newSelection.items.push(msg);
-          newLoaders.push(msg.id);
+          newLoaders.push(msg.emailId);
         }
 
         if (
@@ -259,21 +253,8 @@ export default function MessagePreview(props: Props) {
       // Regular click without holding shift or ctrl/cmd
       // will reset selection and select a single item.
       onMsgClick(message, index);
-      setLoader(false);
     }
   };
-
-  const handleLoaderComplete = () => {
-    dispatch(moveMessagesToFolder([{
-      id: message.id,
-      unread: 0,
-      folder: {
-        fromId: currentFolder.id,
-        toId: 2,
-        name: 'Read'
-      }
-    }]));
-  }
 
   return (
     <div>
@@ -295,32 +276,31 @@ export default function MessagePreview(props: Props) {
           overflow-hidden
           ${isActive ? 'bg-blue-50' : 'hover:bg-coolGray-50'}`}
           >
-            <div className="flex justify-center w-6 flex-shrink-0 items-center pt-0.5">
-              {unread === 1 &&
-                !isRead &&
-                currentFolder.name !== 'Sent' &&
-                currentFolder.name !== 'Drafts' && (
-                  <Badge className="bg-purple-600" />
-                )}
+            <div className="flex justify-center w-6 shrink-0 items-center pt-0.5">
+              {unread && !isRead && direction === 'incoming' && (
+                <Badge className="bg-purple-600" />
+              )}
             </div>
             <div className="pt-3 mr-3">
-              <AvatarLoader
-                parsedSender={parsedSender}
-                displayLoader={displayLoader}
-                onLoaderCompletion={handleLoaderComplete}
-              />
+              <span
+                className="inline-flex items-center justify-center h-10 w-10 rounded-full"
+                style={{
+                  backgroundColor: stringToHslColor(parsedSender, 50, 50)
+                }}
+              >
+                <span className="font-medium leading-none text-white">
+                  {sender.avatarInitials}
+                </span>
+              </span>
             </div>
 
             <div className="flex-auto flex-col py-2 pr-3 leading-tight">
               <div className="flex-row flex pb-1 font-medium">
                 <div
                   id="sender"
-                  className="flex-auto leading-tight line-clamp-1 break-all font-bold"
+                  className="flex-auto leading-tight line-clamp-1 break-all font-bold overflow-hidden"
                 >
-                  {currentFolder.name === 'Sent' ||
-                    currentFolder.name === 'Drafts'
-                    ? parsedRecipient
-                    : parsedSender}
+                  {previewHead}
                 </div>
 
                 <div className="ml-2 text-xs font-bold flex self-end text-trueGray-500">
@@ -330,8 +310,9 @@ export default function MessagePreview(props: Props) {
 
               <div
                 id="subject"
-                className={`flex flex-1 flex-row justify-between ${unread === 1 && !isRead ? 'text-purple-600 font-bold' : ''
-                  }`}
+                className={`flex flex-1 flex-row justify-between ${
+                  unread && !isRead ? 'text-purple-600 font-bold' : ''
+                }`}
               >
                 <div className="flex flex-1 leading-tight overflow-hidden text-sm break-all line-clamp-1">
                   {subject}
@@ -343,8 +324,8 @@ export default function MessagePreview(props: Props) {
                     attachment={files && files.length > 0}
                     isInNetwork={senderInNetwork}
                     isHover={isHover}
-                    messageId={id}
-                    activeFolderId={currentFolder.id}
+                    messageId={emailId}
+                    activeFolderId={currentFolder.folderId}
                   />
                 </div>
               </div>

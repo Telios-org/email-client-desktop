@@ -9,7 +9,7 @@ import {
 } from '../../actions/mailbox/folders';
 
 import { MailType, MailAction } from '../types';
-import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
+import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
 
 // const clone = require('rfdc')();
 
@@ -27,17 +27,17 @@ export default function folders(
     case FETCH_MAIL_DATA_SUCCESS:
       return {
         byId: {
-          ...arrayToObject(action.folders, 'id')
+          ...arrayToObject(action.folders, 'folderId')
         },
-        allIds: [...idFromArrayDict(action.folders)]
+        allIds: [...idFromArrayDict(action.folders, 'folderId')]
       };
     case CREATE_NEW_FOLDER_SUCCESS:
       return {
         byId: {
           ...state.byId,
-          [action.folder.id]: action.folder
+          [action.folder.folderId]: action.folder
         },
-        allIds: [...state.allIds, action.folder.id]
+        allIds: [...state.allIds, action.folder.folderId]
       };
     case UPDATE_FOLDER_COUNT:
       if (action.id) {

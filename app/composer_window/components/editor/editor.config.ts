@@ -103,6 +103,7 @@ export const DEFAULT_CSS = `
             background-clip: padding-box;
             border-radius: .3125rem; /* 5px */
             background-color: var(--scrollbar-thumb-color, rgba(0, 0, 0, 0.35) );
+            
         }
         *::-webkit-scrollbar-track {
             background-color: transparent;

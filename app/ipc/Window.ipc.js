@@ -1,7 +1,6 @@
-const { emailTransform } = require('../composer_window/utils/draft.utils');
-
-const { ipcMain, nativeTheme, dialog } = require('electron');
+const { ipcMain, nativeTheme, dialog, BrowserView } = require('electron');
 const path = require('path');
+const { emailTransform } = require('../utils/draft.utils');
 const store = require('../Store');
 
 module.exports = (windowManager, createMainWindow, createLoginWindow) => {

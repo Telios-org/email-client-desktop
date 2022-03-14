@@ -31,7 +31,7 @@ const NavStack = (props: Props) => {
   return (
     <>
       <div
-        className={`w-full h-12 flex justify-center items-center cursor-pointer outline-none mb-6 relative ${
+        className={`w-full h-12 flex justify-center items-center cursor-pointer outline-none relative ${
           active === eventKey ? '' : ''
         } `}
         onClick={handleSelect}

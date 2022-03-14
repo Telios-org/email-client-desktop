@@ -14,8 +14,11 @@ import { Show, Hide, Lock } from 'react-iconly';
 import Store from 'electron-store';
 import i18n from '../../i18n/i18n';
 
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, remote } = require('electron');
+const fs = require('fs');
 const LoginService = require('../../services/login.service');
+
+const { dialog } = remote;
 
 const { StringType } = Schema.Types;
 const errorStyles = errorVisible => {
@@ -27,24 +30,35 @@ const errorStyles = errorVisible => {
 };
 
 // THE FUNCTIONS BELOW SHOULD BE MOVED TO A SEPARATE UTILITY FILE PROBABLY
-const getAccount = async (name, password) => {
-  try {
-    const account = await LoginService.getAccount(password, name);
+const initAccount = async (name, password) => {
+  let account;
 
-    return account;
+  try {
+    account = await LoginService.initAccount(password, name);
   } catch (err) {
+    console.log('INITACCOUNT ERR', err);
+  }
+
+  if (account?.error?.message?.indexOf('Unable to decrypt message') > -1) {
     ipcRenderer.send('restartMainWindow');
     throw i18n.t('login.incorrectPass');
   }
+
+  if (account?.error?.message?.indexOf('ELOCKED') > -1) {
+    ipcRenderer.send('restartMainWindow');
+    throw account.error.message;
+  }
+
+  return account;
 };
 
-const loadMailbox = async () => {
-  try {
-    await LoginService.loadMailbox();
-  } catch (err) {
-    console.log(err);
-  }
-};
+// const loadMailbox = async () => {
+//   try {
+//     await LoginService.loadMailbox();
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
 const goToMainWindow = account => {
   ipcRenderer.send('showMainWindow', account);
@@ -70,6 +84,8 @@ type State = {
   canSubmit: boolean;
   loading: boolean;
   visiblePassword: boolean;
+  showMigrationScreen: boolean;
+  account: any;
 };
 
 class Login extends Component<Props, State> {
@@ -96,7 +112,9 @@ class Login extends Component<Props, State> {
       formError: null,
       canSubmit: false,
       loading: false,
-      visiblePassword: false
+      visiblePassword: false,
+      showMigrationScreen: false,
+      account: null
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -113,12 +131,25 @@ class Login extends Component<Props, State> {
 
     try {
       this.store.set('lastAccount', selectedAccount);
-      const account = await getAccount(selectedAccount, masterpass);
-      await loadMailbox();
+      const accountMigrated = await LoginService.checkMigrationStatus(
+        selectedAccount
+      );
 
-      goToMainWindow(account);
+      if (accountMigrated) {
+        const account = await initAccount(selectedAccount, masterpass);
+        goToMainWindow(account);
+        this.clearState();
+      } else {
+        this.setState({ showMigrationScreen: true });
+        const account = await initAccount(selectedAccount, masterpass);
 
-      this.clearState();
+        if (account.mnemonic) {
+          this.setState({
+            showMigrationScreen: false,
+            account
+          });
+        }
+      }
     } catch (err) {
       let error = null;
       if (typeof err === 'string') {
@@ -178,6 +209,24 @@ class Login extends Component<Props, State> {
     this.setState({ visiblePassword: !visiblePassword });
   }
 
+  // For migration
+  // eslint-disable-next-line class-methods-use-this
+  async saveKey(key: string) {
+    try {
+      const { filePath } = await dialog.showSaveDialog({
+        title: 'Save Passphrase',
+        defaultPath: 'passphrase.txt',
+        filters: [{ name: 'Text file', extensions: ['txt'] }]
+      });
+
+      if (filePath) {
+      fs.writeFileSync(filePath, key, 'utf-8'); // eslint-disable-line
+      }
+    } catch (error) {
+      console.log('Recovery File Saving Error', error);
+    }
+  }
+
   render() {
     const {
       selectedAccount,
@@ -185,11 +234,13 @@ class Login extends Component<Props, State> {
       formValue,
       canSubmit,
       loading,
-      visiblePassword
+      visiblePassword,
+      showMigrationScreen,
+      account
     } = this.state;
     const { accounts, onUpdateActive } = this.props;
 
-    if (accounts.length > 0) {
+    if (accounts.length > 0 && !showMigrationScreen && account === null) {
       return (
         <div className="flex flex-col h-full">
           <div className="text-2xl text-gray-700 font-semibold mb-6 select-none">
@@ -280,6 +331,80 @@ class Login extends Component<Props, State> {
             block
           >
             {i18n.t('login.register')}
+          </Button>
+        </div>
+      );
+    }
+    // the below is only for nebula migration purposes (Feb 2022)
+    if (showMigrationScreen) {
+      return (
+        <div className="flex flex-col h-full items-center mt-24">
+          <div className="text-sm text-gray-500 mb-8 select-none px-2 text-center">
+            Migrating your account to the latest and greatest.
+          </div>
+          <svg
+            className="animate-spin h-10 w-10 text-gray-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+          <div className="text-sm text-gray-500 mt-8 select-none px-2 text-center">
+            Thank you for being an early adopter.
+          </div>
+        </div>
+      );
+    }
+
+    if (account && account.mnemonic !== null) {
+      return (
+        <div className="flex flex-col h-full items-center mt-4">
+          <div className="flex-none mb-6">
+            <div className="text-xl text-gray-700 font-semibold select-none">
+              Recovery Update
+            </div>
+
+            <div className="text-sm text-gray-500 mt-6 select-none">
+              As part of our upgrade we had to generate new recovery
+              passpharses, it can now be used to recover lost passwords.
+            </div>
+          </div>
+          <div className="select-all text-sm text-gray-600 font-medium rounded p-4 mb-8 bg-gray-200 break-words">
+            {account.mnemonic}
+          </div>
+
+          <Button
+            className="mb-4"
+            appearance="ghost"
+            block
+            onClick={() => this.saveKey(account.mnemonic)}
+          >
+            Download Key
+          </Button>
+
+          <Button
+            appearance="primary"
+            type="button"
+            block
+            onClick={() => {
+              goToMainWindow(account);
+              this.clearState();
+            }}
+          >
+            Go to mailbox
           </Button>
         </div>
       );

@@ -1,4 +1,4 @@
-import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
+import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
 import { FETCH_MAIL_DATA_SUCCESS } from '../../actions/mail';
 
 import { REGISTER_NAMESPACE_SUCCESS } from '../../actions/mailbox/aliases';

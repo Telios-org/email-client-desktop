@@ -4,8 +4,13 @@ import { DebounceInput } from 'react-debounce-input';
 import KeyboardEventHandler from 'react-keyboard-event-handler';
 import { Search as SearchIcon } from 'react-iconly';
 import CustomIcon from '../../Mail/Navigation/NavIcons';
-import { selectSearch, clearSearchFilter } from '../../../actions/mail';
 import {
+  selectSearch,
+  clearSearchFilter,
+  folderSelection
+} from '../../../actions/mail';
+import {
+  activeFolderIndex,
   activeFolderId,
   activeAliasId,
   selectAllFoldersById,
@@ -15,7 +20,7 @@ import {
 import styles from './Search.css';
 
 const Mail = require('../../../../services/mail.service');
-const { formatDateDisplay } = require('../../../utils/date.util');
+const { formatDateDisplay } = require('../../../../utils/helpers/date');
 
 enum Focus {
   /** Focus the first non-disabled item. */
@@ -79,6 +84,7 @@ const Search = () => {
   const activeAlias = useSelector(activeAliasId);
   const allFolders = useSelector(selectAllFoldersById);
   const allAliases = useSelector(selectAllAliasesById);
+  const currentFolderIdx = useSelector(activeFolderIndex);
 
   const menuRef = useRef();
   const inputRef = useRef();
@@ -117,7 +123,6 @@ const Search = () => {
     // setLoadingIndicator(true);
     if (searchQueryStr.replace(/\s/g, '').length !== 0) {
       const callResults = await Mail.search(searchQueryStr);
-      // console.log('SEARCH RESULTS::', callResults);
       if (callResults) {
         // Transforming data for easier ingestion by UI
         const transform = {};
@@ -173,7 +178,7 @@ const Search = () => {
             folderId: res.folderId,
             aliasId: res.aliasId,
             name: res.name,
-            messages: res.messages.map(m => m.id)
+            messages: res.messages
           });
 
           if (
@@ -211,8 +216,6 @@ const Search = () => {
           }
         });
 
-        // console.log('SEARCH TRANSFORM::', final);
-
         setItems(final);
         setFolderIdxResults(folderArr);
       }
@@ -220,14 +223,10 @@ const Search = () => {
       setItems([]);
       setFolderIdxResults({});
     }
-    // setTimeout(() => {
-    //   setLoadingIndicator(false);
-    // }, 300);
-    // setLoadingIndicator(false);
   };
 
   // Handles Selecting of a Search Result
-  const handleSelect = async index => {
+  const handleSelect = index => {
     if (items.length > 0) {
       const selected = items[index];
       const payload = folderIdxResults.filter(
@@ -239,10 +238,13 @@ const Search = () => {
       if (selected.type === 'email') {
         msg = selected;
       }
-      await dispatch(selectSearch(payload, msg, searchQuery));
+      // console.log('SELECT SEARCH', payload, msg, searchQuery);
       setFocus(false);
+      setStatus(false)
       // Blurring the input field when closing the menu
       inputRef?.current?.blur();
+      dispatch(selectSearch(payload, msg, searchQuery));
+
     }
   };
 
@@ -252,13 +254,14 @@ const Search = () => {
     inputRef?.current?.focus();
   };
 
-  const clearSearch = async () => {
+  const clearSearch = () => {
     setFocus(false);
     inputRef?.current?.blur();
     setSearchQuery('');
     setItems([]);
     setFolderIdxResults({});
-    await dispatch(clearSearchFilter());
+    dispatch(clearSearchFilter());
+    dispatch(folderSelection(currentFolderIdx));
   };
 
   // Pseudo-Focus Controls for Menu Items, determine the highlighting
@@ -357,19 +360,21 @@ const Search = () => {
     }
   };
 
-  const handleGlobalKeyDown = async (
+  const handleGlobalKeyDown = (
     key: string,
     event: React.KeyboardEvent<HTMLDivElement>
   ) => {
     if (!isOpen && key === 'esc') {
-      await clearSearch();
+      clearSearch();
     }
   };
 
   return (
     <div
       className={`outline-none w-full transition-colors rounded relative inline-block mt-0.5 ${
-        isFocused || searchQuery !== '' ? 'bg-white' : 'bg-coolGray-800 cursor-pointer'
+        isFocused || searchQuery !== ''
+          ? 'bg-white'
+          : 'bg-coolGray-800 cursor-pointer'
       }`}
       ref={menuRef}
       role="searchbox"
@@ -388,7 +393,8 @@ const Search = () => {
               ? styles.activeSearch
               : styles.iddleSearch
           }`}
-        >
+        />
+        <div className="flex flex-row items-center">
           <SearchIcon
             set="broken"
             size="small"
@@ -439,7 +445,7 @@ const Search = () => {
                 order,
                 folderId,
                 aliasId,
-                id,
+                emailId,
                 index
               } = item;
 
@@ -502,7 +508,10 @@ const Search = () => {
               'To: ');
 
               return (
-                <li className="py-0.5 px-2" key={`message_search_key_${id}`}>
+                <li
+                  className="py-0.5 px-2"
+                  key={`message_search_key_${emailId}`}
+                >
                   <div
                     className={`${
                       order === 'cap' ? styles.searchSvgLast : styles.searchSvg

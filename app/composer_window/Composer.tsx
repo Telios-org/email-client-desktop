@@ -2,17 +2,20 @@ import { ipcRenderer, remote } from 'electron';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { Notification, Divider } from 'rsuite';
+import { useDispatch } from 'react-redux';
 
 import { topicReference } from '@babel/types';
 import { useHandler } from '../utils/hooks/useHandler';
 import { Editor, MessageInputs, TopBar, Attachments } from './components';
 
-import { recipientTransform, emailTransform } from './utils/draft.utils';
+import { recipientTransform, emailTransform } from '../utils/draft.utils';
 
-import { ISOtimestamp } from '../main_window/utils/date.util';
+import { UTCtimestamp } from '../utils/helpers/date';
 // import editorHTMLexport from './utils/messageEditor/htmlExportOptions';
 
 import ComposerService from '../services/composer.service';
+
+import { fetchMsg } from '../main_window/actions/mail';
 
 // TYPESCRIPT TYPES
 import {
@@ -108,6 +111,8 @@ const Composer = (props: Props) => {
   // Using a callback Ref to get to the To field to be able to control focus.
   const [toRef, setToRef] = useState();
 
+  const dispatch = useDispatch();
+
   const handleEmailUpdate = (
     msg?: Email,
     content?: string,
@@ -118,7 +123,7 @@ const Composer = (props: Props) => {
     const owner = mbox ?? mailbox;
 
     // Getting timestamp for email
-    const time = ISOtimestamp();
+    const time = UTCtimestamp().toString();
     // Getting the plain text off the htmlBody
     const plaintext = htmlToText.fromString(htmlBody);
 
@@ -148,24 +153,37 @@ const Composer = (props: Props) => {
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
-    if (isInline && message?.bodyAsHtml && folder?.name === 'Drafts') {
-      const draft = emailTransform(message, 'draftEdit', false);
-      const rcp = recipientTransform(mb, draft, 'draftEdit');
-      draft.to = rcp.data.to;
-      draft.cc = rcp.data.cc;
-      draft.bcc = rcp.data.bcc;
-      draft.from = rcp.data.from;
-      handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
-      setMailbox(mb);
-      setPrefillRecipients(rcp.ui);
-      if (draft.to.length > 0) {
-        setActiveSendButton(true);
-      }
+    if (isInline && folder?.name === 'Drafts') {
+      
 
-      if (prevMsgIdRef.current !== draft.emailId) {
-        // console.log('PREV EMAIL GUARD', message);
-        prevMsgIdRef.current = draft.emailId;
-      }
+        dispatch(fetchMsg(message.emailId))
+          .then(email => {      
+            const draft = emailTransform(email, 'draftEdit', false);
+            const rcp = recipientTransform(mb, draft, 'draftEdit');
+            draft.to = rcp.data.to;
+            draft.cc = rcp.data.cc;
+            draft.bcc = rcp.data.bcc;
+            draft.from = rcp.data.from;
+            handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
+            setMailbox(mb);
+            setPrefillRecipients(rcp.ui);
+            if (draft.to.length > 0) {
+              setActiveSendButton(true);
+            }
+
+            if (prevMsgIdRef.current !== draft.emailId) {
+              // console.log('PREV EMAIL GUARD', message);
+              prevMsgIdRef.current = draft.emailId;
+            }
+
+          })
+          .catch(err => {
+            console.error(err)
+            Notification.error({
+              title: 'Failed to load',
+              placement: 'bottomEnd'
+            });
+          });
     }
   }, [isInline, folder, message?.bodyAsHtml, message?.emailId]);
 
@@ -220,10 +238,8 @@ const Composer = (props: Props) => {
 
   useEffect(() => {
     if (editorState !== undefined && !composerReady && email !== null) {
-      console.log(editorState);
       setComposerReady(true);
     }
-    // console.log('EditorState?', editorState);
   }, [editorState, email]);
 
   useEffect(() => {
@@ -254,9 +270,15 @@ const Composer = (props: Props) => {
       if (recipients.to.arr.length > 0) {
         setActiveSendButton(true);
         toArr = recipients.to.arr
-          .filter(eml => eml.isValid || eml.preFill)
-          .map(eml => {
-            return { address: eml.value, name: eml.label };
+          .filter(recip => recip.isValid || recip.preFill)
+          .map(recip => {
+            return {
+              address: recip.value,
+              account_key: recip.account_key,
+              name: recip.name,
+              contactId: recip.contactId || null,
+              _id: recip.contactId || null
+            };
           });
       } else {
         setActiveSendButton(false);
@@ -264,17 +286,29 @@ const Composer = (props: Props) => {
 
       if (recipients.cc.arr.length > 0) {
         ccArr = recipients.cc.arr
-          .filter(eml => eml.isValid || eml.preFill)
-          .map(eml => {
-            return { address: eml.value, name: eml.label };
+          .filter(recip => recip.isValid || recip.preFill)
+          .map(recip => {
+            return {
+              address: recip.value,
+              account_key: recip.account_key,
+              name: recip.name,
+              contactId: recip.contactId || null,
+              _id: recip.contactId || null
+            };
           });
       }
 
       if (recipients.bcc.arr.length > 0) {
         bccArr = recipients.bcc.arr
-          .filter(eml => eml.isValid || eml.preFill)
-          .map(eml => {
-            return { address: eml.value, name: eml.label };
+          .filter(recip => recip.isValid || recip.preFill)
+          .map(recip => {
+            return {
+              address: recip.value,
+              account_key: recip.account_key,
+              name: recip.name,
+              contactId: recip.contactId || null,
+              _id: recip.contactId || null
+            };
           });
       }
 
@@ -291,6 +325,7 @@ const Composer = (props: Props) => {
         ]
       };
 
+      console.log('DRAFT', draft);
       handleEmailUpdate(draft, undefined, undefined);
     },
     { debounce: 250 }
@@ -352,6 +387,7 @@ const Composer = (props: Props) => {
     handleEmailUpdate();
     setTimeout(async () => {
       try {
+        console.log(email);
         await ComposerService.send(email, isInline);
 
         setLoading(false);
@@ -400,7 +436,7 @@ const Composer = (props: Props) => {
           <div className="w-16 text-gray-600 p-2 self-center">Subject</div>
           <div className="flex w-full">
             <DebounceInput
-              className="pl-1 focus:outline-none w-full py-2 text-gray-800 bg-transparent"
+              className="pl-1 focus:outline-none w-full py-2 text-gray-800 bg-transparent border-0 focus:ring-0"
               minLength={1}
               value={email?.subject ?? ''}
               debounceTimeout={250}

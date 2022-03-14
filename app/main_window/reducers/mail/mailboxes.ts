@@ -3,8 +3,9 @@ import {
   CREATE_LOCAL_MAILBOX_SUCCESS,
   GET_MAILBOXES_REQUEST_SUCCESS
 } from '../../actions/mail';
+import { UPDATE_PROFILE_SUCCESS } from '../../actions/account/account';
 import { MailType, MailAction } from '../types';
-import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
+import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
 
 const initialState = {
   byId: {},
@@ -32,12 +33,26 @@ export default function mailboxes(
           ...newMailboxesObj,
           [action.activeMailboxId]: {
             ...newMailboxesObj[action.activeMailboxId],
-            folders: action.folders?.map(fd => fd.id)
+            folders: action.folders?.map(fd => fd.folderId)
           }
         },
         allIds: [...idFromArrayDict(action.mailboxes)]
       };
     }
+
+    case UPDATE_PROFILE_SUCCESS: {
+      return {
+        byId: {
+          ...state.byId,
+          [action.payload.mailboxId]: {
+            ...state.byId[action.payload.mailboxId],
+            name: action.payload.displayName
+          }
+        },
+        allIds: [...state.allIds]
+      };
+    }
+
     // case GET_MAILBOX_FOLDERS_REQUEST_SUCCESS:
     //   if (action.id !== undefined) {
     //     return {

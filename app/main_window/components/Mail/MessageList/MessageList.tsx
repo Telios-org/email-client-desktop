@@ -43,7 +43,7 @@ import {
   activeFolderId,
   activeAliasId,
   selectActiveAliasName,
-  searchFilteredMessages,
+  searchFiltered,
   readFilter as msgFilter
 } from '../../../selectors/mail';
 
@@ -63,6 +63,7 @@ export default function MessageList(props: Props) {
   const dispatch = useDispatch();
 
   const [sort, setSort] = useState('');
+  const [lastStartIndex, setLastStartIndex] = useState(0);
   const currentFolderName = useSelector(selectActiveFolderName);
   const currentAliasName = useSelector(selectActiveAliasName);
   const messages = useSelector(currentMessageList);
@@ -70,12 +71,10 @@ export default function MessageList(props: Props) {
   const activeSelectedRange = useSelector(activeMessageSelectedRange);
   const folderId = useSelector(activeFolderId);
   const aliasId = useSelector(activeAliasId);
-  const searchFilter = useSelector(searchFilteredMessages);
+  const searchFilter = useSelector(searchFiltered);
   const readFilter = useSelector(msgFilter);
 
   const { editorIsOpen } = useSelector(selectGlobalState);
-
-  // console.log('READFILTER', readFilter);
 
   const virtualLoaderRef = useRef(null);
 
@@ -89,6 +88,7 @@ export default function MessageList(props: Props) {
     selected: SelectionRange,
     folderId: number
   ) => {
+
     dispatch(msgRangeSelection(selected, folderId));
   };
 
@@ -121,7 +121,8 @@ export default function MessageList(props: Props) {
         const { unread } = messages.byId[id];
 
         return {
-          id: messages.byId[id].id,
+          emailId: messages.byId[id].emailId,
+          id: messages.byId[id].emailId,
           unread,
           folder: {
             fromId: messages.byId[id].folderId,
@@ -135,7 +136,8 @@ export default function MessageList(props: Props) {
 
       selection = [
         {
-          id: item.id,
+          emailId: item.emailId,
+          id: item.emailId,
           unread,
           folder: {
             fromId: item.folderId,
@@ -167,7 +169,7 @@ export default function MessageList(props: Props) {
       startIdx: index,
       endIdx: index,
       exclude: [],
-      items: [message.id]
+      items: [message.emailId]
     };
 
     if (editorIsOpen) {
@@ -176,7 +178,6 @@ export default function MessageList(props: Props) {
       if (currentFolderName === 'Drafts') {
         opts.reloadDb = true;
       }
-      console.log('MESSAGELIST', opts);
       ipcRenderer.send('RENDERER::closeComposerWindow', opts);
     }
 
@@ -184,7 +185,7 @@ export default function MessageList(props: Props) {
     // we dispatch the message selection action
     if (
       editorIsOpen ||
-      activeMsgId !== message.id ||
+      activeMsgId !== message.emailId ||
       activeSelectedRange.items.length > 1
     ) {
       selectMessage(message);
@@ -221,7 +222,7 @@ export default function MessageList(props: Props) {
 
   const itemKey = (index, data) => {
     const msgId = data.messages.allIds[index];
-    return data.messages.byId[msgId].id;
+    return data.messages.byId[msgId].emailId;
   };
 
   // Removing these to reevaluate if we need them. Including custom scrollbars creates a lot of
@@ -281,7 +282,7 @@ export default function MessageList(props: Props) {
   // }
 
   const isItemLoaded = (index: number) => {
-    return index < 50;
+    return index < 20;
   };
 
   const loadMoreItems = (startIndex: number, stopIndex: number) => {
@@ -289,6 +290,7 @@ export default function MessageList(props: Props) {
       isLoading = true;
 
       return new Promise((resolve, reject) => {
+        if(searchFilter) return resolve();
         if (aliasId) {
           dispatch(fetchMoreAliasMessages(aliasId, startIndex))
             .then(() => {
@@ -299,7 +301,8 @@ export default function MessageList(props: Props) {
               return reject(err);
             });
         } else {
-          dispatch(fetchMoreFolderMessages(folderId, startIndex))
+          setLastStartIndex(messages.allIds.length)
+          dispatch(fetchMoreFolderMessages(folderId, messages.allIds.length))
             .then(() => {
               isLoading = false;
               return resolve();
@@ -315,11 +318,11 @@ export default function MessageList(props: Props) {
   const setReadFilter = (status: string) => {
     switch (status) {
       case 'read':
-        dispatch(setMsgListFilter({ unread: 0 }, folderId, aliasId));
+        dispatch(setMsgListFilter({ unread: false }, folderId, aliasId));
         break;
 
       case 'unread':
-        dispatch(setMsgListFilter({ unread: 1 }, folderId, aliasId));
+        dispatch(setMsgListFilter({ unread: true }, folderId, aliasId));
         break;
 
       case 'all':
@@ -339,14 +342,14 @@ export default function MessageList(props: Props) {
             {currentAliasName || currentFolderName || ''}
             <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
           </div>
-          {searchFilter.length > 0 && (
+          {searchFilter && (
             <div className="flex items-center ml-2 ">
               <span className="text-xs text-coolGray-400">( search )</span>
             </div>
           )}
         </div>
         <div className="items-end flex">
-          {![2, 3, 4].includes(folderId) && searchFilter.length === 0 && (
+          {![2, 3, 4].includes(folderId) && !searchFilter && (
             <div className="flex flex-row text-xs rounded px-2 py-1 text-gray-300 content-center select-none">
               <div
                 className={`px-2 py-1 mr-2 outline-none ${

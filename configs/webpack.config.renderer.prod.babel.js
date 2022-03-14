@@ -98,6 +98,13 @@ export default merge.smart(baseConfig, {
           }
         }
       },
+      // TTF Font
+      {
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+        use: {
+          loader: 'file-loader'
+        }
+      },
       // SVG Font
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,

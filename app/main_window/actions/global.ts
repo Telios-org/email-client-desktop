@@ -37,3 +37,11 @@ export const setMsgListFilter = (
     aliasId
   };
 };
+
+export const REFRESH_TOKEN = 'GLOBAL::REFRESH_TOKEN';
+export const refreshToken = (token: string) => {
+  return {
+    type: REFRESH_TOKEN,
+    token
+  };
+};

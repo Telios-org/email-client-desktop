@@ -27,11 +27,7 @@ import {
 
 import { ALIAS_SELECTION_FLOW_SUCCESS } from '../actions/mailbox/aliases';
 
-import {
-  TOGGLE_EDITOR,
-  UPDATE_NETWORK_STATUS,
-  SET_MSGLIST_FILTER
-} from '../actions/global';
+import { TOGGLE_EDITOR, UPDATE_NETWORK_STATUS, REFRESH_TOKEN, SET_MSGLIST_FILTER } from '../actions/global';
 
 const initialState = {
   activeMsgId: {},
@@ -49,7 +45,7 @@ const initialState = {
   // NOT THE ID
   activeFolderIndex: 0,
   activeAliasIndex: null,
-  searchFilteredMsg: [],
+  searchFilteredMsg: false,
   msgListFilters: {},
   loading: false,
   status: 'online',
@@ -57,6 +53,7 @@ const initialState = {
   editorIsOpen: false,
   editorAction: '',
   highlightText: '',
+  authToken: '',
   accounts: []
 };
 
@@ -133,7 +130,7 @@ const globalState = (
           }
         },
         highlightText: '',
-        searchFilteredMsg: [],
+        searchFilteredMsg: false,
         activeFolderIndex: action.index,
         activeAliasIndex: null
       };
@@ -148,7 +145,7 @@ const globalState = (
           }
         },
         highlightText: '',
-        searchFilteredMsg: [],
+        searchFilteredMsg: false,
         activeFolderIndex: 4,
         activeAliasIndex: action.index
       };
@@ -199,7 +196,7 @@ const globalState = (
     case CLEAR_SEARCH_FILTER:
       return {
         ...state,
-        searchFilteredMsg: [],
+        searchFilteredMsg: false,
         highlightText: ''
       };
     case UPDATE_NETWORK_STATUS:
@@ -207,6 +204,11 @@ const globalState = (
         ...state,
         status: action.status
       };
+    case REFRESH_TOKEN:
+      return {
+        ...state,
+        authToken: action.token
+      }
     default:
       return state;
   }

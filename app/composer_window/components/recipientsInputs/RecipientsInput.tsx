@@ -3,6 +3,7 @@ import CreatableSelect from 'react-select/creatable';
 import { components } from 'react-select';
 import { Avatar, Whisper, Tooltip } from 'rsuite';
 
+import ClientSDK from '@telios/client-sdk';
 import { Recipient } from '../../../main_window/reducers/types';
 
 import ComposerService from '../../../services/composer.service';
@@ -11,11 +12,22 @@ import {
   validateTeliosEmail
 } from '../../../utils/helpers/regex';
 
+const envAPI = require('../../../env_api.json');
+
+const params = window.location.search.replace('?', '');
+const env = params.split('=')[1];
+const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
+
+const teliosSDK = new ClientSDK({
+  provider: requestBase
+});
+const mailbox = teliosSDK.Mailbox;
+
 const isValidEmail = (email: string) => {
   if (email.indexOf('telios.io') > -1) {
-    return validateTeliosEmail(email);
+    return { isValid: validateTeliosEmail(email), account_key: null}
   }
-  return validateEmail(email);
+  return { isValid: !!validateEmail(email), account_key: null};
 };
 
 const customStyles = {
@@ -26,6 +38,10 @@ const customStyles = {
     ...inlineCss,
     display: 'none'
   }),
+  input: inlineCss => ({
+    ...inlineCss,
+    '--tw-ring-inset': '0px!important'
+  }),
   placeholder: inlineCss => ({
     ...inlineCss,
     display: 'none'
@@ -35,7 +51,7 @@ const customStyles = {
       ...styles
     };
 
-    if (!isValidEmail(data.value)) {
+    if (!data.isValid) {
       style.color = 'white';
       style.backgroundColor = 'red';
     }
@@ -46,7 +62,7 @@ const customStyles = {
       ...styles
     };
 
-    if (!isValidEmail(data.value)) {
+    if (!data.isValid) {
       style.color = 'white';
     }
     return style;
@@ -134,16 +150,32 @@ class RecipientsInput extends Component {
     }
   }
 
-  handleChange(data, { action }) {
+  async handleChange(data, { action }) {
     const { onUpdateData } = this.props;
     let items = data ? [...data] : [];
 
     if (items.length > 0) {
+      const addrs = items.map(item => item.value);
+      const mailboxes = await mailbox.getMailboxPubKeys([addrs]);
+
       items = items.map(item => {
+        let test = isValidEmail(item.value);
+
+        if(item.value.indexOf('telios.io') > -1 && !item.account_key) {
+          if(mailboxes[item.value] && mailboxes[item.value].account_key) {
+            test.isValid = true;
+            item.account_key = mailboxes[item.value].account_key
+          } else {
+            test.isValid = false;
+          }
+        }
+        
         return {
-          label: typeof item.label === 'string' ? item.label : item.value,
+          label: typeof item.label === 'string' ? item.name : item.value,
           value: item.value,
-          isValid: !!isValidEmail(item.value)
+          contactId: item.contactId,
+          isValid: test.isValid,
+          account_key: item.account_key
         };
       });
 
@@ -168,12 +200,16 @@ class RecipientsInput extends Component {
         const results = await ComposerService.searchContact(query);
 
         const contacts = results.map(contact => {
+
+          let label = contact.email;
+
+          if(contact.name) label = `${contact.name} <${contact.email}>`;
+
           return {
-            label:
-              contact.name === contact.address
-                ? contact.name
-                : `${contact.name} <${contact.address}>`,
-            value: contact.address,
+            contactId: contact.contactId,
+            label: label,
+            name: contact.name,
+            value: contact.email,
             photo: contact.photo
           };
         });

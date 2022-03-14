@@ -71,7 +71,7 @@ export default function AliasModal(props: Props) {
   }, [firstNamespace, show]);
 
   const handleSubmit = async () => {
-    const { id } = mailbox;
+    const { mailboxId } = mailbox;
     const { namespace } = formValue;
 
     // In case of retry clear out error block.
@@ -84,7 +84,7 @@ export default function AliasModal(props: Props) {
 
     if (validateString(namespace)) {
       const { status, success } = await dispatch(
-        registerNamespace(id, namespace.toLowerCase())
+        registerNamespace(mailboxId, namespace.toLowerCase())
       );
 
       if (!success && status === 'already-registered') {
@@ -160,7 +160,7 @@ export default function AliasModal(props: Props) {
               <b>{`#myalias@${domain}`}</b>
             </p>
             <p className="text-sm">
-              You namespace is unique to you. You can choose it yourself or
+              Your namespace is unique to you. You can choose it yourself or
               randomly generate it.
             </p>
           </div>

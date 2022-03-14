@@ -1,10 +1,10 @@
-const worker = require('../workers/main.worker');
+const channel = require('./main.channel');
 const { ipcRenderer } = require('electron');
 const pkg = require('../../package.json');
 
 class NotifierService {
   constructor() {
-    worker.on('notify', m => {
+    channel.on('notify', m => {
       const { data, error } = m;
 
       if(error) {

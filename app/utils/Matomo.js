@@ -1,7 +1,9 @@
 const axios = require('axios');
 const envAPI = require('../env_api.json');
-const { Account } = require('@telios/client-sdk');
+const ClientSDK = require('@telios/client-sdk');
 
+const teliosSDK = new ClientSDK();
+const { Account } = teliosSDK;
 class Matomo {
   constructor(account, userAgent) {
     const env = process.env.NODE_ENV;

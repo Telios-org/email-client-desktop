@@ -44,16 +44,17 @@ export const fetchRolladex = () => {
 
     try {
       const result = await Contact.getAllContacts();
+      
       contacts = result.map((c: any) => {
-        const address = c.address ? JSON.parse(c.address) : [];
-        const phone = c.phone ? JSON.parse(c.phone) : [];
-        const organization = c.organization ? JSON.parse(c.organization) : [];
+        // const address = c.address ? JSON.parse(c.address) : [];
+        // const phone = c.phone ? JSON.parse(c.phone) : [];
+        // const organization = c.organization ? JSON.parse(c.organization) : [];
         const birthday = c.birthday ? new Date(c.birthday) : null;
         return {
           ...c,
-          address,
-          phone,
-          organization,
+          // address,
+          // phone,
+          // organization,
           birthday
         };
       });
@@ -102,7 +103,7 @@ export const commitContactsUpdates = (contact: ContactType) => {
     dispatch(contactSaveRequest());
     let c;
     try {
-      if ('id' in contact) {
+      if ('contactId' in contact) {
         await Contact.updateContact(contact);
         c = contact;
       } else {
@@ -113,10 +114,9 @@ export const commitContactsUpdates = (contact: ContactType) => {
       dispatch(contactSaveFailure(error));
       return error;
     }
-
     dispatch(contactSaveSuccess(c));
 
-    return 'handled';
+    return c;
   };
 };
 
@@ -133,10 +133,10 @@ export const contactDeletionRequest = () => {
 
 export const CONTACT_DELETION_REQUEST_SUCCESS =
   'CONTACT::CONTACT_DELETION_REQUEST_SUCCESS';
-export const contactDeletionSuccess = (contactId: number) => {
+export const contactDeletionSuccess = (contactId: any) => {
   return {
     type: CONTACT_DELETION_REQUEST_SUCCESS,
-    id: contactId
+    contactId: contactId
   };
 };
 
@@ -153,6 +153,7 @@ export const deleteContact = (contactId: number) => {
   return async (dispatch: Dispatch) => {
     dispatch(contactDeletionRequest());
     try {
+      console.log('DELETE ', contactId)
       await Contact.removeContact(contactId);
     } catch (error) {
       dispatch(contactDeletionFailure(error));

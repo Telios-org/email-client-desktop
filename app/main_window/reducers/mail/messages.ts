@@ -3,7 +3,8 @@ import {
   SAVE_INCOMING_MESSAGES_SUCCESS,
   MSG_SELECTION_FLOW_SUCCESS,
   FOLDER_SELECTION_FLOW_SUCCESS,
-  FETCH_MORE_FOLDER_MESSAGES_SUCCESS
+  FETCH_MORE_FOLDER_MESSAGES_SUCCESS,
+  FETCH_MSG_BODY_SUCCESS
 } from '../../actions/mail';
 import {
   SAVE_SENT_MESSAGE_SUCCESS,
@@ -17,7 +18,7 @@ import {
   FETCH_MORE_ALIAS_MESSAGES_SUCCESS
 } from '../../actions/mailbox/aliases';
 import { MailType, MailAction } from '../types';
-import { arrayToObject, idFromArrayDict } from '../../utils/reducer.util';
+import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
 
 const initialState = {
   byId: {},
@@ -32,13 +33,16 @@ export default function messages(
   let _byId;
   let _allIds;
   switch (action.type) {
-    case MSG_SELECTION_FLOW_SUCCESS:
+    case FETCH_MSG_BODY_SUCCESS:
       if (action.message) {
+        const message = { ...action.message };
+        message.unread = false;
+
         return {
           ...state,
           byId: {
             ...state.byId,
-            [action.message.id]: { ...action.message }
+            [action.message.emailId]: { ...message }
           }
         };
       }
@@ -49,7 +53,7 @@ export default function messages(
           ...state,
           byId: {
             ...state.byId,
-            [action.id]: { ...state.byId[action.id], unread: 1 }
+            [action.id]: { ...state.byId[action.id], unread: true }
           }
         };
       }
@@ -76,9 +80,9 @@ export default function messages(
           return {
             ...state,
             byId: {
-              ...arrayToObject(sortedMessages)
+              ...arrayToObject(sortedMessages, 'emailId')
             },
-            allIds: [...idFromArrayDict(sortedMessages)]
+            allIds: [...idFromArrayDict(sortedMessages, 'emailId')]
           };
         }
       }
@@ -96,13 +100,17 @@ export default function messages(
     case FETCH_MAIL_DATA_SUCCESS:
     case FOLDER_SELECTION_FLOW_SUCCESS:
     case ALIAS_SELECTION_FLOW_SUCCESS:
-      return {
-        ...state,
-        byId: {
-          ...arrayToObject(action.messages)
-        },
-        allIds: [...idFromArrayDict(action.messages)]
-      };
+      if (action.messages) {
+        return {
+          ...state,
+          byId: {
+            ...arrayToObject(action.messages, 'emailId')
+          },
+          allIds: [...new Set([...idFromArrayDict(action.messages, 'emailId')])]
+        };
+      }
+
+      return { ...state };
     case UPDATE_MESSAGE_LIST:
       _byId = { ...state.byId };
       _allIds = [...state.allIds];
@@ -113,7 +121,7 @@ export default function messages(
         action.updateType === 'remove'
       ) {
         for (let i = 0; i < action.messages.length; i += 1) {
-          const msgId = action.messages[i].id || action.messages[i].emailId;
+          const msgId = action.messages[i].emailId;
 
           delete _byId[msgId];
           _allIds = _allIds.filter(id => id !== msgId);
@@ -131,9 +139,14 @@ export default function messages(
         ...state,
         byId: {
           ...state.byId,
-          ...arrayToObject(action.messages)
+          ...arrayToObject(action.messages, 'emailId')
         },
-        allIds: [...state.allIds, ...idFromArrayDict(action.messages)]
+        allIds: [
+          ...new Set([
+            ...state.allIds,
+            ...idFromArrayDict(action.messages, 'emailId')
+          ])
+        ]
       };
     default:
       return { ...state };

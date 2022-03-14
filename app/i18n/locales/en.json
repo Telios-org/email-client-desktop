@@ -66,7 +66,8 @@
       "tooWeakErr": "This password is too weak to safely use.",
       "emailNotAvailable": "This email is not available.",
       "betaCodeNotValid": "Invalid Beta Access Code. If you received this code from us, please reach out to Support.",
-      "connecting": "Connecting to peer network..."
+      "connecting": "Connecting to peer network...",
+      "unexpected": "Oho! An unexpected error ocurred, please contact support if it keeps happening."
     },
     "mailbox": {
       "newMsg": "New Message",

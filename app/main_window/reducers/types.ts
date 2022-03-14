@@ -1,7 +1,44 @@
 import { Dispatch as ReduxDispatch, Store as ReduxStore, Action } from 'redux';
 
+export type AccountType = {
+  accountId: number;
+  uid: string;
+  driveEncryptionKey: string;
+  secretBoxPubKey: string;
+  secretBoxPrivKey: string;
+  deviceSigningPubKey: string;
+  deviceSigningPrivKey: string;
+  serverSig: string;
+  deviceId: string;
+  displayName: string;
+  avatar: any;
+  stats: AccountStats;
+};
+
+export type AccountAction = {
+  type: string;
+  payload?: any;
+  error?: string | Error;
+};
+
+export type AccountStats = {
+  plan: string;
+  dailyEmailUsed: number;
+  dailyEmailResetDate: string | null;
+  namespaceUsed: number;
+  aliasesUsed: number;
+  storageSpaceUsed: number;
+  lastUpdated: string | null;
+  maxOutgoingEmails: number;
+  maxAliasNames: number;
+  maxAliasAddresses: number;
+  maxGBCloudStorage: number;
+  maxGBBandwidth: number;
+};
+
 export type ContactType = {
   id?: number;
+  contactId: string;
   name: string;
   givenName?: string;
   familyName?: string;
@@ -36,7 +73,7 @@ export type ContactsType = Array<ContactType>;
 
 export type ContactAction = {
   type: string;
-  id?: number;
+  contactId?: any;
   payload?: ContactType;
   error?: string | Error;
 };
@@ -44,6 +81,8 @@ export type ContactAction = {
 export type Recipient = {
   label: string;
   value: string;
+  name: string;
+  contactId: string;
   isValid: boolean;
 };
 
@@ -139,7 +178,7 @@ export type ExternalMailMessageType = {
 
 export type NamespaceType = {
   name: string;
-  mailboxId: number;
+  mailboxId: any;
   publicKey: string;
   privateKey: string;
   domain: string;
@@ -148,6 +187,7 @@ export type NamespaceType = {
 
 export type AliasesType = {
   aliasId: string;
+  mailboxId: any;
   name: string;
   description: string;
   namespaceKey: string;
@@ -160,13 +200,14 @@ export type AliasesType = {
 export type FolderType = {
   id: number;
   name: string;
-  mailboxId: number;
+  mailboxId: any;
   messages: number[];
   count: number;
 };
 
 export type MailboxType = {
   id: number | null;
+  mailboxId: any;
   address: string;
   name: string;
   isPrimary?: boolean;
@@ -192,7 +233,7 @@ export type GlobalType = {
   activeFolderIndex: number;
   activeAliasIndex: number;
   activeAccountIndex: number;
-  searchFilteredMsg: string[];
+  searchFilteredMsg: boolean;
   msgListFilters:{
     [index: number | string]: any;
   };
@@ -207,6 +248,7 @@ export type GlobalType = {
       };
     };
   };
+  authToken: string;
   accounts: Array<string>;
   loading: boolean;
   editorIsOpen: boolean;
@@ -232,6 +274,7 @@ export type MailType = {
 
 export type StateType = {
   client: ClientType;
+  account: AccountType;
   mail: {
     mailboxes: MailType;
     folders: MailType;
@@ -271,7 +314,7 @@ export type MailAction = {
   folders?: FolderType[];
   messages?: MailMessageType[];
   mailbox?: MailboxType;
-  mailboxId?: number;
+  mailboxId?: any;
   activeFolderId?: number;
   searchQuery?: string;
   status?: string;
@@ -331,12 +374,13 @@ export type MailMessageType = {
   // the _id that is assigned to the raw message when delivered
   _id?: string;
   id: string;
+  emailId: string;
+  mailboxId: any;
   folderId: number;
   isPreview: boolean;
   aliasId: string;
   createdAt: string;
   updatedAt: string;
-  // mailboxId: number; THIS WILL BE NEEDED WHEN MULTIPLE MAILBOX ARE PRESENT
   headers: any;
   active: boolean;
   subject: string;
@@ -347,7 +391,7 @@ export type MailMessageType = {
   bccJSON: string;
   bodyAsHtml: string;
   bodyAsText: string;
-  unread: number;
+  unread: boolean;
   labels: Array<LabelType>;
   path: string;
   attachments: Array<AttachmentType>;

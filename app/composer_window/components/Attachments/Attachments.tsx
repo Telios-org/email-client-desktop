@@ -11,7 +11,7 @@ import styles from './Attachments.css';
 const mime = require('mime-types');
 const path = require('path');
 const clone = require('rfdc')();
-const humanFileSize = require('../../../main_window/utils/attachment.util');
+const humanFileSize = require('../../../utils/attachment.util');
 
 type Props = {
   attachments: AttachmentType[];
@@ -38,7 +38,7 @@ const AttachmentItem = ({
   >
     <AttachmentPreview attachment={item} key={item.filename} />
     <div className="pl-4 pr-2 flex flex-col">
-      <div className="text-sm font-medium text-gray-600 w-40 overflow-ellipsis overflow-hidden">
+      <div className="text-sm font-medium text-gray-600 w-40 text-ellipsis overflow-hidden">
         {item.filename}
       </div>
       <div>
@@ -132,7 +132,7 @@ const Attachments = (props: Props) => {
         ))}
       </ul>
       {attachments.length > 0 && (
-        <Divider className="mt-2">
+        <Divider className="mt-2 text-center">
           <Dropdown
             title="Attachments"
             size="xs"

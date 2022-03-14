@@ -1,72 +1,19 @@
 const { ipcRenderer } = require('electron');
 const MailService = require('./mail.service');
 const ContactService = require('./contact.service');
-const FileService = require('./file.service');
-const { v4: uuidv4 } = require('uuid');
 
 class ComposerService {
   static async send(email, isInline) {
-    let details;
-    let eml = { ...email }
-    let _attachments = [];
-    let totalAttachmentSize = 0;
 
-    // Save individual attachments
-    if(eml.attachments && eml.attachments.length) {
-
-      for(let attachment of eml.attachments) {
-        await new Promise((resolve, reject) => {
-          try {
-            totalAttachmentSize += attachment.size;
-            
-            // Don't send file data if size is over 25mb
-            if(totalAttachmentSize > 25000000) {
-              FileService.saveFileToDrive(attachment).then(file => {
-                console.log('DONE SAVING FILE TO DRIVE', file)
-
-                _attachments.push({
-                  filename: attachment.filename,
-                  contentType: file.contentType || file.mimetype,
-                  size: file.size,
-                  discoveryKey: file.discovery_key,
-                  hash: file.hash,
-                  path: file.path,
-                  header: file.header,
-                  key: file.key
-                })
-
-                resolve();
-              }).catch(e => {
-                console.error(e);
-                reject(e);
-              })
-            } else {
-              _attachments.push(attachment);
-              resolve();
-            }
-            
-          } catch(e) {
-            console.error(e);
-            reject(e)
-          }
-        })
-      }
-
-      eml.attachments = _attachments;
-    }
+    if(!email.attachments) email.attachments = []
 
     if (isInline) {
-      details = await MailService.send(eml);
+      await MailService.send(email);
     } else {
-      details = await ComposerService.sendEmail(eml);
+      await ComposerService.sendEmail(email);
     }
 
-    eml.path = details.path;
-    eml.encKey = details.key;
-    eml.encHeader = details.header;
-
-    ComposerService.save(eml, isInline);
-    ComposerService.createContacts(eml, isInline);
+    ComposerService.createContacts(email, isInline);
   }
 
   static async sendEmail(email) {
@@ -81,25 +28,6 @@ class ComposerService {
           return reject(err);
         });
     });
-  }
-
-  static async save(email, isInline, mailProps) {
-    if (isInline) {
-      await MailService.save({ messages: [email], type: 'Sent', sync: true });
-    } else {
-      ipcRenderer
-        .invoke('COMPOSER SERVICE::saveMessageToDB', {
-          messages: [email],
-          type: 'Sent',
-          sync: true
-        })
-        .then(() => {
-          return true;
-        })
-        .catch(e => {
-          console.error(e);
-        });
-    }
   }
 
   static async uploadAttachments() {
@@ -129,8 +57,12 @@ class ComposerService {
   }
 
   static async createContacts(email, isInline) {
-    if (isInline) {
-      ContactService.createContacts([...email.to, ...email.cc, ...email.bcc])
+    const to = email.to.filter(item => !item._id)
+    const cc = email.cc.filter(item => !item._id)
+    const bcc = email.bcc.filter(item => !item._id)
+
+    if (isInline && to.length || cc.length || bcc.length) {
+      ContactService.createContacts([...to, ...cc, ...bcc])
         .then(res => {
           return true;
         })
@@ -138,14 +70,16 @@ class ComposerService {
           console.error(e);
         });
     } else {
-      ipcRenderer
-        .invoke('createContacts', [...email.to, ...email.cc, ...email.bcc])
-        .then(() => {
-          return true;
-        })
-        .catch(e => {
-          console.error(e);
-        });
+      if(to.length || cc.length || bcc.length) {
+        ipcRenderer
+          .invoke('createContacts', [...to, ...cc, ...bcc])
+          .then(() => {
+            return true;
+          })
+          .catch(e => {
+            console.error(e);
+          });
+      }
     }
   }
 
