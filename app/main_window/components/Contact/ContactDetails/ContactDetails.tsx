@@ -114,7 +114,7 @@ const ContactDetails = (props: Props) => {
     onSubmit: async data => {
       const finalForm = { ...data };
       Object.keys(finalForm).forEach(d => {
-        if (finalForm[d].trim() === '') {
+        if (finalForm[d]?.trim() === '') {
           finalForm[d] = null;
         } else if (d === 'birthday') {
           finalForm[d] = fromStringToJSDate(finalForm[d]);
@@ -127,10 +127,9 @@ const ContactDetails = (props: Props) => {
       const input: ContactType = rebuildArrObject(finalForm);
       setEditMode(false);
 
-      console.log('UPDATE', input);
       const result = await dispatch(commitContactsUpdates(input));
       const newObj = { ...result };
-      console.log('RETURN', newObj);
+
       if (result && result.contactId) {
         setSaveSucceeded(true);
         // newObj.contactId = result.contactId;
