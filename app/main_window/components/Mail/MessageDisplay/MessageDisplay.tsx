@@ -121,7 +121,7 @@ function MessageDisplay(props: Props) {
     toJSON,
     fromJSON,
     ccJSON,
-    undefined,
+    bccJSON,
     direction
   );
 
