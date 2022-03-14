@@ -69,7 +69,8 @@ const ContactDetails = (props: Props) => {
       givenName: contact?.givenName || '',
       familyName: contact?.familyName || '',
       nickname: contact?.nickname || '',
-      birthday: (contact?.birthday && fromJSDateToString(contact?.birthday)) || '',
+      birthday:
+        (contact?.birthday && fromJSDateToString(contact?.birthday)) || '',
       photo: contact?.photo || '',
       email: contact?.email || '',
       phone_value_0:
@@ -113,12 +114,13 @@ const ContactDetails = (props: Props) => {
     onSubmit: async data => {
       const finalForm = { ...data };
       Object.keys(finalForm).forEach(d => {
-        if (finalForm[d] === '') {
+        if (finalForm[d].trim() === '') {
           finalForm[d] = null;
         } else if (d === 'birthday') {
           finalForm[d] = fromStringToJSDate(finalForm[d]);
         }
       });
+
       if (finalForm.contactId === null) {
         delete finalForm.contactId;
       }
@@ -190,7 +192,9 @@ const ContactDetails = (props: Props) => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
             <div className="flex relative">
-              {(profile.nickname || profile?.name?.trim().length > 0 || profile.email) && (
+              {(profile.nickname ||
+                profile?.name?.trim().length > 0 ||
+                profile.email) && (
                 <span
                   className="inline-flex items-center justify-center h-32 w-32 rounded-full ring-4 ring-white"
                   style={{
@@ -200,15 +204,14 @@ const ContactDetails = (props: Props) => {
                   <span className="text-3xl font-medium leading-none text-white">
                     {initials(
                       profile.nickname ||
-                        ((profile.givenName ||
-                          profile.familyName )&&
+                        ((profile.givenName || profile.familyName) &&
                           profile.name) ||
                         profile.email
                     )}
                   </span>
                 </span>
               )}
-              {profile.name === ' ' &&
+              {profile.name.trim().length === 0 &&
                 profile.nickname.length === 0 &&
                 profile?.email.length === 0 && (
                   <>
@@ -327,7 +330,9 @@ const ContactDetails = (props: Props) => {
           </div>
           <div className="block mt-6 min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-gray-900 truncate w-full min-h-[62px]">
-              {(profile.nickname.length === 0 && profile.name.trim().length === 0) && profile.email}
+              {profile.nickname.length === 0 &&
+                profile.name.trim().length === 0 &&
+                profile.email}
               {profile.nickname || profile.name}
               {profile?.nickname?.length > 0 &&
                 (profile.givenName.length > 0 ||
