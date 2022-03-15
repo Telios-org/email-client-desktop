@@ -102,6 +102,10 @@ electron-build:win:
   tags:
     - electron-win
   extends: .electron-release-build
+  only:
+    refs:
+      - master
+      - beta
   variables:
     PLATFORM: win
     GIT_STRATEGY: fetch
@@ -126,6 +130,10 @@ electron-build:linux:
   tags:
     - docker
   extends: .electron-release-build
+  only:
+    refs:
+      - master
+      - beta
   variables:
     PLATFORM: linux
   after_script:
