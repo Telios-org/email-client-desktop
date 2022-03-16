@@ -1,0 +1,98 @@
+https://play.tailwindcss.com/Ke32sEZYpT?file=config
+
+
+<div class="bg-gray-50 min-h-screen flex items-center justify-center px-16">
+  <div class="relative w-full max-w-lg">
+    <div class="absolute -top-10 left-1 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-90 animate-blob"></div>
+    <div class="absolute -top-10 right-1 w-72 h-72 bg-sky-300 rounded-full mix-blend-multiply filter blur-xl opacity-90 animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-2 left-24 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-90 animate-blob animation-delay-4000"></div>
+    <div class="absolute top-12 left-24 w-72 h-72 bg-violet-300 rounded-full mix-blend-multiply filter blur-xl opacity-90 animate-blob animation-delay-6000"></div>
+    <div class="m-10 mt-20 relative space-y-4">
+      <h1 class="text-white text-center text-5xl font-sans font-medium subpixel-antialiased tracking-tighter">
+        <span class="relative opacity-0 animate-move-text animation-delay-500">W</span>
+        <span class="relative opacity-0 animate-move-text animation-delay-600">e</span>
+        <span class="relative opacity-0 animate-move-text animation-delay-700">l</span>
+        <span class="relative opacity-0 animate-move-text animation-delay-800">c</span>
+        <span class="relative opacity-0 animate-move-text animation-delay-900">o</span>
+        <span class="relative opacity-0 animate-move-text animation-delay-1000">m</span>
+        <span class="relative opacity-0 animate-move-text animation-delay-1100">e</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+
+  .animation-delay-6000 {
+    animation-delay: 6s;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 1.5s;
+  }
+  .animation-delay-600 {
+    animation-delay: 1.6s;
+  }
+  .animation-delay-700 {
+    animation-delay: 1.7s;
+  }
+  .animation-delay-800 {
+    animation-delay: 1.8s;
+  }
+  .animation-delay-900 {
+    animation-delay: 1.9s;
+  }
+  .animation-delay-1000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-1100 {
+    animation-delay: 2.1s;
+  }
+}
+
+module.exports = {
+  theme: {
+    extend: {
+      animation: {
+        
+        blob: 'blob 8s infinite',
+        'move-text': 'move-text 0.75s forwards',
+      },
+      keyframes: {
+        blob: {
+          '0%': {
+            transform: 'translate(0px, 0px) scale(1)',
+          },
+          '33%': {
+            transform: 'translate(-10px, -10px) scale(1.2)',
+          },
+          '66%': {
+            transform: 'translate(10px, 10px) scale(0.9)',
+          },
+          '100%': {
+            transform: 'tranlate(0px, 0px) scale(1)',
+          },
+        },
+        'move-text': {
+          '0%': { bottom: '-0.2em', opacity: '0' },
+          '50% ': { bottom: '0.2em', opacity: '0.5' },
+          '100%': { bottom: '0', opacity: '0.8' },
+        },
+      },
+    },
+  },
+  variants: {
+    extend: {},
+  },
+  plugins: [],
+}
