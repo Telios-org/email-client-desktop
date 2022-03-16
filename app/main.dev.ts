@@ -47,6 +47,10 @@ if (
   require('electron-debug')();
 }
 
+process.on("uncaughtException", (err) => {
+  console.log(err)
+});
+
 // Turning that off for now
 // if (process.env.NODE_ENV === 'development') {
 //   try {
