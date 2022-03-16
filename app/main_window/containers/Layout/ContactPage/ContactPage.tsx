@@ -166,7 +166,7 @@ const ContactPage = () => {
   };
 
   const initials = name => {
-    const senderArr = name.split(' ');
+    const senderArr = name.trim().split(' ');
     if (senderArr.length > 1) {
       return (`${senderArr[0][0]}${senderArr[1][0]}` || '').toUpperCase();
     }
@@ -341,7 +341,7 @@ const ContactPage = () => {
                             className="inline-flex items-center justify-center h-10 w-10 rounded-full"
                             style={{
                               backgroundColor: stringToHslColor(
-                                person.email,
+                                person.email || 'missing',
                                 50,
                                 50
                               )
