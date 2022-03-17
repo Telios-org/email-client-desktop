@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
+import Store from 'electron-store';
 import { DateTime } from 'luxon';
 import axios from 'axios';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
@@ -29,6 +30,8 @@ const humanFileSize = require('../../../utils/attachment.util');
 const params = window.location.search.replace('?', '');
 const env = params.split('=')[1];
 const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
+const store = new Store();
+const channel = store.get('channel');
 
 type Props = {
   handleOverlay: (url: string) => void;
@@ -49,7 +52,9 @@ const BillingPayments = (props: Props) => {
   const [showPricing, setShowPricing] = useState(false);
   const [pricingData, setPricingData] = useState([]);
   const [currentPlan, setCurrentPlan] = useState(undefined);
-  const pricingFeature = false;
+  
+  //TODO: Remove this hardcoded channel flag.
+  const pricingFeature = channel !== 'latest';
 
   const pctString = (numerator, denominator) => {
     const value = Math.round((numerator / denominator) * 100);
