@@ -78,7 +78,7 @@ class MailService {
         buttonLabel: 'Save Attachment',
         defaultPath: path.join(
           app.getPath('downloads'),
-          attachments[0].filename
+          attachments[0].filename || 'unnamed-file'
         ),
         properties: ['showOverwriteConfirmation', 'createDirectory']
       };
