@@ -112,7 +112,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
       window: {
         show: false,
         width: 720,
-        height: 535,
+        height: 600,
         resizable: true,
         frame: false,
         titleBarStyle: 'hiddenInset',
@@ -132,25 +132,13 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     });
 
     // Need to fetch the latest draft in the inline composer.
-    const draftEmail = store.getNewDraft();
+    const draftEmail = store.getNewDraft() || store.getInitialDraft();
 
     let composerContent = null;
 
     if (draftEmail) {
       composerContent = {
         ...content,
-        // message: {
-        //   emailId: draftEmail.emailId,
-        //   date: draftEmail.date,
-        //   toJSON: JSON.stringify(draftEmail.to),
-        //   fromJSON: JSON.stringify(draftEmail.from),
-        //   ccJSON: JSON.stringify(draftEmail.cc),
-        //   bccJSON: JSON.stringify(draftEmail.bcc),
-        //   subject: draftEmail.subject,
-        //   bodyAsText: draftEmail.bodyAsText || draftEmail.text_body,
-        //   bodyAsHtml: draftEmail.bodyAsHtml || draftEmail.html_body,
-        //   attachments: draftEmail.attachments
-        // }
         message: emailTransform(draftEmail, 'popOut', false)
       };
     } else {

@@ -82,7 +82,7 @@ const Attachments = (props: Props) => {
   const attachmentsTransform = attClone.map(a => {
       const extension = mime.extension(a.mimetype);
       const readableSize = humanFileSize(a.size, true, 2);
-      const filename = path.basename(a.filename);
+      const filename = path.basename(a.filename || '');
 
       return Object.assign(a, { extension, readableSize, filename });
   });
@@ -102,7 +102,7 @@ const Attachments = (props: Props) => {
     const res = await ComposerService.saveFiles([att]);
     if (res === 'success') {
       Notification.success({
-        title: `${att.filename} Saved`,
+        title: `${att.filename || 'Unnamed File'} Saved`,
         placement: 'bottomEnd'
       });
     }

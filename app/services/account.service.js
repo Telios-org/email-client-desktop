@@ -237,7 +237,7 @@ class AccountService extends EventEmitter {
 
         if (error) return reject(error);
 
-        return resolve(data.token);
+        return resolve(data);
       });
     });
   }

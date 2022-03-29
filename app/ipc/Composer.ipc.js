@@ -204,6 +204,9 @@ module.exports = windowManager => {
     if (initialDraft && JSON.stringify(oldVal) === JSON.stringify(newVal)) {
       store.setDraftDirty(false);
     }
+
+    // console.log('RENDERER::updateComposerDraft', email);
+
   });
 
   ipcMain.on('RENDERER::closeComposerWindow', async (event, opts) => {
