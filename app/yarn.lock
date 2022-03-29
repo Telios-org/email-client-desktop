@@ -126,6 +126,31 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
+"@telios/client-sdk@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-5.1.0.tgz#2f09786add38480e3c93c11831f0ec2197ce498d"
+  integrity sha512-PKxMghwm5KD/CZzMAqRxbEwNjUkuHa8+82s7g2R9dj0We3Ok8RrA+YkvilaBXMLxpnUCeBzp0Wyl+2McQrOaYw==
+  dependencies:
+    "@telios/nebula" "^1.5.5"
+    async "^3.2.0"
+    axios "^0.21.1"
+    bip39 "^3.0.4"
+    blakejs "^1.1.0"
+    chokidar "^3.5.1"
+    corestore "^5.8.2"
+    dat-encoding "^5.0.1"
+    jwt-decode "^2.2.0"
+    level "^6.0.1"
+    mailparser "^2.8.1"
+    memorystream "^0.3.1"
+    moment "^2.27.0"
+    multifeed "^6.0.0"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    rimraf "^3.0.2"
+    sodium-native "^3.2.0"
+    uuid "^8.2.0"
+
 "@telios/nebula-drive@^5.3.1":
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-5.3.2.tgz#8b2be13c2f5e7e1af09c7307fef72d6c34f1ac94"
@@ -207,13 +232,38 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.4.7":
-  version "3.4.7"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.4.7.tgz#82e7f66353cffd8d8c01c3ab7ab33467ee2dcb97"
-  integrity sha512-MJjqpTuIGfbAtn2ugobTBoCdala+ubK/C5lwJMRupRscAiaXfdpAao2KSqHRTT6XlAMLWZIohPC66qi2NRhB/A==
+"@telios/nebula@^2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.5.0.tgz#a526b20872dc60ac2a166843e982b2308c26dc40"
+  integrity sha512-kjKli+vxuQaGMf4OYBCBbZI9OGHIV6HUo0NlRgMsyYfOQLxxiW2U7S13YSbf0N0dONxSxS2XQrtvg86rhbjB6Q==
   dependencies:
-    "@telios/client-sdk" "^5.0.3"
-    "@telios/nebula" "^2.4.3"
+    autobase "1.0.0-alpha.6"
+    blakejs "^1.1.0"
+    codecs "^2.2.0"
+    concat-stream "^2.0.0"
+    corestore "^6.0.1-alpha.9"
+    dat-encoding "^5.0.1"
+    graceful-fs "^4.2.9"
+    hyperbee "^1.6.3"
+    hyperbeedeebee "git+https://github.com/hexadecible/hyperbeedeebee.git"
+    hypercore "10.0.0-alpha.23"
+    hyperswarm "^3.0.1"
+    is-online "^9.0.1"
+    memorystream "^0.3.1"
+    natural "^5.1.11"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    sodium-native "^3.2.0"
+    stopwords "^0.0.9"
+    uuid "^8.2.0"
+
+"@telios/telios-client-backend@^3.5.2":
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.5.2.tgz#a297d8803ef6c07718cc7294e6e6f50938d93255"
+  integrity sha512-8RXKUxo98aTeJvSKBS8iWI1qsBV/O5XSZ3584QsRaVMx0S9ZuXRv7lqduyOiKHazYy7S4fctZNkeeMsi437MCQ==
+  dependencies:
+    "@telios/client-sdk" "^5.1.0"
+    "@telios/nebula" "^2.5.0"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     file-type "^16.5.3"
     luxon "^2.3.1"
