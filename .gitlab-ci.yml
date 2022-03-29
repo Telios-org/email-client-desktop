@@ -63,6 +63,7 @@ version-beta:
     - beta
   variables:
     CHANNEL: "-beta"
+    SIGNING_PUB_KEY: $SIGNING_PUB_KEY
 
 .electron-release-build:
   stage: build
