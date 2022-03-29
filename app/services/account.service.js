@@ -14,7 +14,7 @@ class AccountService extends EventEmitter {
         const account = await AccountService.createAccount(data);
 
         // Start incoming message listener
-        // MessageIngressService.initMessageListener();
+        MessageIngressService.initMessageListener();
         ipcRenderer.send('ACCOUNT_SERVICE::createAccountResponse', account);
         this.emit('ACCOUNT_SERVICE::accountData', account);
       } catch (e) {
@@ -30,6 +30,7 @@ class AccountService extends EventEmitter {
 
     ipcRenderer.once('ACCOUNT_IPC::initAcct', (evt, data) => {
       AccountService.initAccount(data).then(account => {
+        MessageIngressService.initMessageListener();
         ipcRenderer.send('ACCOUNT_SERVICE::initAcctResponse', account);
         // Emitting the account data so it can be ingested by the Redux Store
         this.emit('ACCOUNT_SERVICE::accountData', account);
