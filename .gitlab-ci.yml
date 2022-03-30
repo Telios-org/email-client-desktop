@@ -56,7 +56,7 @@ version:
   only:
     - master
   variables:
-    SIGNING_PUB_KEY: $SIGNING_PRIV_KEY_PROD
+    SIGNING_PUB_KEY: $SIGNING_PUB_KEY_PROD
 
 version-beta:
   extends:
@@ -65,7 +65,7 @@ version-beta:
     - beta
   variables:
     CHANNEL: "-beta"
-    SIGNING_PUB_KEY: $SIGNING_PRIV_KEY_PROD
+    SIGNING_PUB_KEY: $SIGNING_PUB_KEY_PROD
 
 .electron-release-build:
   stage: build
