@@ -205,8 +205,6 @@ module.exports = windowManager => {
       store.setDraftDirty(false);
     }
 
-    // console.log('RENDERER::updateComposerDraft', email);
-
   });
 
   ipcMain.on('RENDERER::closeComposerWindow', async (event, opts) => {
@@ -221,8 +219,6 @@ module.exports = windowManager => {
     const mainWindow = windowManager.getWindow('mainWindow');
     const draft = store.getNewDraft();
     const isDirty = store.getDraftDirty();
-
-    // console.log('RENDERER::closeComposerWindow', action, draft, isDirty);
 
     if (isDirty && !action) {
       windowManager

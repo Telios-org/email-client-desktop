@@ -20,10 +20,11 @@ module.exports = (windowManager) => {
           sound
         },
         function(err, response) {
+          // TODO: select message and bring window to foreground when clicked
           // Only bring app to the foreground if the notification was clicked
-          if(response !== 'timeout') {
-            mainWindow.show();
-          }
+          // if(response !== 'timeout') {
+          //   mainWindow.show();
+          // }
         }
       );
     }
