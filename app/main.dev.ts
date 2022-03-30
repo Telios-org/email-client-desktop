@@ -19,6 +19,8 @@ const Store = require('electron-store');
 
 const store = new Store();
 
+console.log('SIGNING_PUB_KEY', process.env.SIGNING_PUB_KEY)
+
 let channel = process.env.CHANNEL || 'latest';
 
 // Check if user manually changed channel, if so override environment channel

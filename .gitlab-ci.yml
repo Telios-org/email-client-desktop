@@ -55,8 +55,6 @@ version:
     - .set_version
   only:
     - master
-  variables:
-    SIGNING_PUB_KEY: $SIGNING_PUB_KEY_PROD
 
 version-beta:
   extends:
@@ -65,11 +63,14 @@ version-beta:
     - beta
   variables:
     CHANNEL: "-beta"
-    SIGNING_PUB_KEY: $SIGNING_PUB_KEY_PROD
 
 .electron-release-build:
   stage: build
   image: registry.gitlab.com/telios2/telios-devops/electronbuilder:wine
+  variables:
+    SIGNING_PUB_KEY: $SIGNING_PUB_KEY_PROD
+  before_script:
+    - SIGNING_PUB_KEY="${SIGNING_PUB_KEY_PROD}"
   script:
     - mkdir -p release_signing/tmp
     - yarn install
