@@ -91,7 +91,7 @@
     "messageToolbar": {
       "saveDraft": "Save & Close",
       "openWindow": "Pop Out",
-      "discardDraft": "Discard",
+      "discardDraft": "Delete",
       "delete": "Delete",
       "move": "Move",
       "unreadToggle": "Mark Unread",

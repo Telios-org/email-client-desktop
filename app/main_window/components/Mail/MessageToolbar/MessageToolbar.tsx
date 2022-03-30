@@ -388,7 +388,7 @@ export default function MessageToolbar(props: Props) {
             className=""
             tpPlacement="bottom"
             tpTrigger="hover"
-            tpText="Discard Draft"
+            tpText="Delete Draft"
             set="iconly"
           >
             {i18n.t('messageToolbar.discardDraft')}

@@ -63,7 +63,7 @@ if (
 }
 
 process.on("uncaughtException", (err) => {
-  console.log(err)
+  console.log("uncaughtException", err)
 });
 
 // Turning that off for now
@@ -148,13 +148,16 @@ const createLoginWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
+  console.log('window-all-closed');
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
 app.on('will-quit', e => {
+  console.log('will-quit');
   process.exit(0);
+  console.log('will-quit', 'process-exit');
 });
 
 app.on('ready', async () => {
@@ -166,6 +169,7 @@ app.on('ready', async () => {
   await createLoginWindow();
 
   app.on('before-quit', () => {
+    console.log('before-quit');
     mainWindow.removeAllListeners('close');
     mainWindow.close();
   });
