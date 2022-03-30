@@ -67,12 +67,8 @@ version-beta:
 .electron-release-build:
   stage: build
   image: registry.gitlab.com/telios2/telios-devops/electronbuilder:wine
-  variables:
-    SIGNING_PUB_KEY: $SIGNING_PUB_KEY_PROD
   script:
-    - export SIGNING_PUB_KEY="${SIGNING_PUB_KEY}"
-    - echo $SIGNING_PUB_KEY_PROD
-    - echo $SIGNING_PUB_KEY
+    - export SIGNING_PUB_KEY="${SIGNING_PUB_KEY_PROD}"
     - mkdir -p release_signing/tmp
     - yarn install
     - yarn package-${PLATFORM}
