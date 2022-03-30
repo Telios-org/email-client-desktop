@@ -75,7 +75,7 @@ version-beta:
     - yarn package-${PLATFORM}
     - git status
   artifacts:
-    paths:-
+    paths:
       - release/*.exe*
       - release/*.msi
       - release/*.dmg*
