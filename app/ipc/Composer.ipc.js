@@ -205,8 +205,6 @@ module.exports = windowManager => {
       store.setDraftDirty(false);
     }
 
-    // console.log('RENDERER::updateComposerDraft', email);
-
   });
 
   ipcMain.on('RENDERER::closeComposerWindow', async (event, opts) => {
