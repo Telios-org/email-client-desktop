@@ -98,11 +98,15 @@
       ]
     },
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "verifyUpdateCodeSignature": true,
       "publisherName": "Telios Technologies, Inc",
       "signAndEditExecutable": true,
-      "signingHashAlgorithms": ["sha256"],
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
       "sign": "./sign.js"
     },
     "linux": {

@@ -105,7 +105,7 @@ const BillingPayments = (props: Props) => {
   const openStripe = async (endpoint, plan) => {
     try {
       const token = await AccountService.refreshToken();
-      console.log('TOKEN', token);
+
       let options = {
         method: 'post',
         url: `${requestBase}/stripe/customer-portal`,

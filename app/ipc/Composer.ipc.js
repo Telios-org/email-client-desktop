@@ -222,8 +222,6 @@ module.exports = windowManager => {
     const draft = store.getNewDraft();
     const isDirty = store.getDraftDirty();
 
-    // console.log('RENDERER::closeComposerWindow', action, draft, isDirty);
-
     if (isDirty && !action) {
       windowManager
         .showMessageBox({ event, browserWindow: null, draft })
