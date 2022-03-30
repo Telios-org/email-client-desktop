@@ -70,6 +70,7 @@ version-beta:
   script:
     - export SIGNING_PUB_KEY="${SIGNING_PUB_KEY_PROD}"
     - echo $SIGNING_PUB_KEY
+    - echo ${SIGNING_PUB_KEY}
     - mkdir -p release_signing/tmp
     - yarn install
     - yarn package-${PLATFORM}
