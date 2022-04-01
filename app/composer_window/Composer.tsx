@@ -162,7 +162,6 @@ const Composer = (props: Props) => {
       dispatch !== null &&
       message.emailId !== null
     ) {
-      console.log('MSG', message);
       dispatch(fetchMsg(message.emailId))
         .then(email => {
           const draft = emailTransform(email, 'draftEdit', false);

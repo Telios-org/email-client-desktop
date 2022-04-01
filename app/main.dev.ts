@@ -66,7 +66,7 @@ process.on("uncaughtException", (err) => {
   console.log("uncaughtException", err)
 });
 
-// Turning that off for now
+// Turning this off for now
 // if (process.env.NODE_ENV === 'development') {
 //   try {
 //     // console.log('ENV VARS', process.env);
@@ -148,7 +148,6 @@ const createLoginWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  console.log('window-all-closed');
   if (process.platform !== 'darwin') {
     app.quit();
   }
