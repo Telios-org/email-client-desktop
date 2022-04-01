@@ -156,7 +156,12 @@ const Composer = (props: Props) => {
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
-    if (isInline && folder?.name === 'Drafts' && dispatch !== null) {
+    if (
+      isInline &&
+      folder?.name === 'Drafts' &&
+      dispatch !== null &&
+      message.emailId !== null
+    ) {
       dispatch(fetchMsg(message.emailId))
         .then(email => {
           const draft = emailTransform(email, 'draftEdit', false);
@@ -176,7 +181,6 @@ const Composer = (props: Props) => {
             // console.log('PREV EMAIL GUARD', message);
             prevMsgIdRef.current = draft.emailId;
           }
-
         })
         .catch(err => {
           console.error(err);

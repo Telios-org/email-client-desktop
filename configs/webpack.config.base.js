@@ -50,7 +50,8 @@ export default {
 
   plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
+      SIGNING_PUB_KEY: "fa8932f0256a4233dde93195d24a6ae4d93cc133d966f3c9f223e555953c70c1"
     }),
 
     new webpack.NamedModulesPlugin()
