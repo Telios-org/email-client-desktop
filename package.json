@@ -354,6 +354,7 @@
     "rfdc": "^1.1.4",
     "rsuite": "^4.8.1",
     "seedrandom": "^3.0.5",
+    "sound-play": "^1.1.0",
     "source-map-support": "^0.5.16",
     "squire-rte": "^1.11.3",
     "styled-components": "^5.2.1",
