@@ -12633,9 +12633,9 @@ react-highlight-words@^0.16.0:
     memoize-one "^4.0.0"
     prop-types "^15.5.8"
 
-"react-html-parser@git+ssh://git@github.com:Telios-org/react-html-parser.git":
+"react-html-parser@git+https://github.com/Telios-org/react-html-parser.git":
   version "2.0.4"
-  resolved "git+ssh://git@github.com:Telios-org/react-html-parser.git#e2e6e47a8666b500ef9843d9012eab930c9dadaf"
+  resolved "git+https://github.com/Telios-org/react-html-parser.git#e2e6e47a8666b500ef9843d9012eab930c9dadaf"
   dependencies:
     htmlparser2 "^3.9.0"
 
