@@ -19,8 +19,6 @@ const Store = require('electron-store');
 
 const store = new Store();
 
-console.log('SIGNING_PUB_KEY', process.env.SIGNING_PUB_KEY)
-
 let channel = process.env.CHANNEL || 'latest';
 
 // Check if user manually changed channel, if so override environment channel
@@ -155,10 +153,6 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('will-quit', e => {
-  process.exit(0);
-});
-
 app.on('ready', async () => {
   if (!fs.existsSync(`${app.getPath('userData')}/Accounts`)) {
     fs.mkdirSync(`${app.getPath('userData')}/Accounts`);
@@ -168,6 +162,7 @@ app.on('ready', async () => {
   await createLoginWindow();
 
   app.on('before-quit', () => {
+    mainWindow.webContents.send('exitProcess');
     mainWindow.removeAllListeners('close');
     mainWindow.close();
   });

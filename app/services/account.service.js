@@ -96,7 +96,7 @@ class AccountService extends EventEmitter {
     });
 
     ipcRenderer.on('exitProcess', () => {
-      channel.send({ event: 'exitProcess', payload: {} });
+      channel.send({ event: 'account:exit', payload: {} });
     });
 
     channel.on('syncMail', () => {
