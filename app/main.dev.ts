@@ -63,7 +63,7 @@ if (
 }
 
 process.on("uncaughtException", (err) => {
-  console.log(err)
+  console.log("uncaughtException", err)
 });
 
 // Turning that off for now
@@ -148,6 +148,7 @@ const createLoginWindow = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
+  console.log('window-all-closed');
   if (process.platform !== 'darwin') {
     app.quit();
   }

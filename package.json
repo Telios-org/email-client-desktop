@@ -330,7 +330,7 @@
     "react-dom": "^16.12.0",
     "react-electron-browser-view": "^3.0.0",
     "react-highlight-words": "^0.16.0",
-    "react-html-parser": "^2.0.2",
+    "react-html-parser": "git+ssh://git@github.com:Telios-org/react-html-parser.git",
     "react-i18next": "^11.7.3",
     "react-iconly": "^1.1.3",
     "react-icons": "^3.10.0",
