@@ -59,8 +59,8 @@
     "files": [
       "dist/",
       "img/",
+      "sounds/",
       "node_modules/",
-      "workers/",
       "services/",
       "models/",
       "utils/",
@@ -71,7 +71,8 @@
       "main.prod.js.map",
       "Store.js",
       "env_api.json",
-      "package.json"
+      "package.json",
+      "./resources/**/*"
     ],
     "mac": {
       "icon": "./resources/icon.icns",
@@ -101,6 +102,7 @@
       "target": [
         "nsis"
       ],
+      "icon": "./resources/icon.png",
       "verifyUpdateCodeSignature": true,
       "publisherName": "Telios Technologies, Inc",
       "signAndEditExecutable": true,
