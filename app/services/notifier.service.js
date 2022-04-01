@@ -11,11 +11,10 @@ class NotifierService {
         return console.log(error);
       }
 
-      const { icon, title, message, metadata, sound } = data;
+      const { title, message, metadata, sound } = data;
 
       ipcRenderer.send('notify', {
         appID: pkg.build.appId,
-        icon,
         title,
         message,
         metadata,

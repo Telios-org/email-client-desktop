@@ -59,8 +59,8 @@
     "files": [
       "dist/",
       "img/",
+      "sounds/",
       "node_modules/",
-      "workers/",
       "services/",
       "models/",
       "utils/",
@@ -71,7 +71,8 @@
       "main.prod.js.map",
       "Store.js",
       "env_api.json",
-      "package.json"
+      "package.json",
+      "./resources/**/*"
     ],
     "mac": {
       "icon": "./resources/icon.icns",
@@ -101,6 +102,7 @@
       "target": [
         "nsis"
       ],
+      "icon": "./resources/icon.png",
       "verifyUpdateCodeSignature": true,
       "publisherName": "Telios Technologies, Inc",
       "signAndEditExecutable": true,
@@ -352,6 +354,7 @@
     "rfdc": "^1.1.4",
     "rsuite": "^4.8.1",
     "seedrandom": "^3.0.5",
+    "sound-play": "^1.1.0",
     "source-map-support": "^0.5.16",
     "squire-rte": "^1.11.3",
     "styled-components": "^5.2.1",
