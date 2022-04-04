@@ -509,9 +509,10 @@ export function fetchNewMessages() {
               meta: data.meta,
               account: data.account
             });
-            dispatch(fetchNewMessageSuccess());
-            return resolve();
           }
+
+          dispatch(fetchNewMessageSuccess());
+          return resolve();
         })
         .catch(err => {
           console.log(err);
