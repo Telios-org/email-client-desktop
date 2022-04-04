@@ -8,7 +8,6 @@ import { debounce } from 'lodash';
 import Highlighter from 'react-highlight-words';
 import { Whisper, Tooltip, Avatar, Loader } from 'rsuite';
 import ReactHtmlParser, {
-  processNodes,
   convertNodeToElement,
   htmlparser2
 } from 'react-html-parser';

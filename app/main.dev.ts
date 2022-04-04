@@ -11,7 +11,7 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { app, nativeTheme } from 'electron';
+import { app, nativeTheme, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 
@@ -19,11 +19,26 @@ const Store = require('electron-store');
 
 const store = new Store();
 
+let channel = process.env.CHANNEL || 'latest';
+
+// Check if user manually changed channel, if so override environment channel
+// with channel name set in electron store.
+const _channel = store.get('channel');
+if(_channel && _channel !== channel) {
+  channel = _channel
+} else {
+  store.set('channel', channel);
+}
+
 export default class AppUpdater {
   constructor() {
+    if(channel && channel.indexOf('-') > -1) {
+      channel = channel.replace('-', '')
+    }
+
     if (process.env.NODE_ENV === 'production') {
       log.transports.file.level = 'info';
-      autoUpdater.channel = 'latest';
+      autoUpdater.channel = channel;
       autoUpdater.logger = log;
       autoUpdater.allowDowngrade = true;
       autoUpdater.checkForUpdatesAndNotify();
@@ -48,10 +63,10 @@ if (
 }
 
 process.on("uncaughtException", (err) => {
-  console.log(err)
+  console.log("uncaughtException", err)
 });
 
-// Turning that off for now
+// Turning this off for now
 // if (process.env.NODE_ENV === 'development') {
 //   try {
 //     // console.log('ENV VARS', process.env);
@@ -138,10 +153,6 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('will-quit', e => {
-  process.exit(0);
-});
-
 app.on('ready', async () => {
   if (!fs.existsSync(`${app.getPath('userData')}/Accounts`)) {
     fs.mkdirSync(`${app.getPath('userData')}/Accounts`);
@@ -150,8 +161,8 @@ app.on('ready', async () => {
   const mainWindow = await createMainWindow();
   await createLoginWindow();
 
-  app.on('window-all-closed', app.quit);
   app.on('before-quit', () => {
+    mainWindow.webContents.send('exitProcess');
     mainWindow.removeAllListeners('close');
     mainWindow.close();
   });
@@ -171,6 +182,13 @@ app.on('activate', async () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (windowManager.getWindow('mainWindow') === null) await createMainWindow();
-  if (windowManager.getWindow('loginWindow') === null)
-    await createLoginWindow();
+  if (windowManager.getWindow('loginWindow') === null) await createLoginWindow();
 });
+
+ipcMain.handle('updateChannel', async (e, data) => {
+  channel = data;
+  store.set('channel', data);
+  app.relaunch();
+  app.exit(0);
+})
+ 

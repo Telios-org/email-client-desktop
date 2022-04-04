@@ -111,7 +111,10 @@ const Composer = (props: Props) => {
   // Using a callback Ref to get to the To field to be able to control focus.
   const [toRef, setToRef] = useState();
 
-  const dispatch = useDispatch();
+  let dispatch = null;
+  if (isInline) {
+    dispatch = useDispatch();
+  }
 
   const handleEmailUpdate = (
     msg?: Email,
@@ -153,37 +156,39 @@ const Composer = (props: Props) => {
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
-    if (isInline && folder?.name === 'Drafts') {
-      
+    if (
+      isInline &&
+      folder?.name === 'Drafts' &&
+      dispatch !== null &&
+      message.emailId !== null
+    ) {
+      dispatch(fetchMsg(message.emailId))
+        .then(email => {
+          const draft = emailTransform(email, 'draftEdit', false);
+          const rcp = recipientTransform(mb, draft, 'draftEdit');
+          draft.to = rcp.data.to;
+          draft.cc = rcp.data.cc;
+          draft.bcc = rcp.data.bcc;
+          draft.from = rcp.data.from;
+          handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
+          setMailbox(mb);
+          setPrefillRecipients(rcp.ui);
+          if (draft.to.length > 0) {
+            setActiveSendButton(true);
+          }
 
-        dispatch(fetchMsg(message.emailId))
-          .then(email => {      
-            const draft = emailTransform(email, 'draftEdit', false);
-            const rcp = recipientTransform(mb, draft, 'draftEdit');
-            draft.to = rcp.data.to;
-            draft.cc = rcp.data.cc;
-            draft.bcc = rcp.data.bcc;
-            draft.from = rcp.data.from;
-            handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
-            setMailbox(mb);
-            setPrefillRecipients(rcp.ui);
-            if (draft.to.length > 0) {
-              setActiveSendButton(true);
-            }
-
-            if (prevMsgIdRef.current !== draft.emailId) {
-              // console.log('PREV EMAIL GUARD', message);
-              prevMsgIdRef.current = draft.emailId;
-            }
-
-          })
-          .catch(err => {
-            console.error(err)
-            Notification.error({
-              title: 'Failed to load',
-              placement: 'bottomEnd'
-            });
+          if (prevMsgIdRef.current !== draft.emailId) {
+            // console.log('PREV EMAIL GUARD', message);
+            prevMsgIdRef.current = draft.emailId;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          Notification.error({
+            title: 'Failed to load',
+            placement: 'bottomEnd'
           });
+        });
     }
   }, [isInline, folder, message?.bodyAsHtml, message?.emailId]);
 
@@ -191,9 +196,9 @@ const Composer = (props: Props) => {
   // We get the draft email from the IPC Draft storage that was initialized by 'RENDERER::ingestDraftForInlineComposer' or 'RENDERER::showComposerWindow'
   // In another electron window, the redux store is unavailable
   useEffect(() => {
-    if (folder?.name !== 'Drafts') {
+    if (folder?.name !== 'Drafts' || (folder?.name === 'Drafts' && !isInline)) {
       ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
-        // console.log('IPC event handler', content, windowID);
+        console.log('IPC event handler', content, windowID);
         // The email has already been formatted according to the editorAction
         // it happened in the Window IPC.
         const draft = clone(content.message);

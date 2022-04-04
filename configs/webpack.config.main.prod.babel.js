@@ -56,12 +56,10 @@ export default merge.smart(baseConfig, {
      * NODE_ENV should be production so that modules do not perform certain
      * development checks
      */
-    // new webpack.EnvironmentPlugin({
-    //   NODE_ENV: 'production',
-    //   DEBUG_PROD: false,
-    //   START_MINIMIZED: false,
-    //   E2E_BUILD: false
-    // })
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'production',
+      SIGNING_KEY_PUB: "fa8932f0256a4233dde93195d24a6ae4d93cc133d966f3c9f223e555953c70c1"
+    })
   ],
 
   /**

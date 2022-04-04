@@ -121,8 +121,6 @@ electron-build:win:
     #- choco install visualstudio2019buildtools visualstudio2019-workload-vctools
     - npm config set msvs_version 2019
     - $ENV:PATH="$ENV:PATH;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Python38\Scripts\;C:\Python38\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files\nodejs\;C:\Users\Gar\AppData\Local\Microsoft\WindowsApps;;C:\Users\Gar\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Gar\AppData\Roaming\npm"
-    - $ENV:NEBULA_CLIENT_KEY=""
-    - $ENV:NEBULA_SERVER_KEY=""
   after_script:
     - dir release
 

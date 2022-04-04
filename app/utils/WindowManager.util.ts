@@ -35,7 +35,7 @@ export default class WindowManager {
 
       pids = pids.filter(pid => {
         try {
-        process.kill(pid);
+          process.kill(pid);
         } catch(e) {}
 
         return false;
