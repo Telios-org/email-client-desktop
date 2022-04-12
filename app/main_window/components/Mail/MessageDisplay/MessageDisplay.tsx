@@ -354,6 +354,7 @@ function MessageDisplay(props: Props) {
                   <div style={divStyle}>
                     {renderHTML(bodyAsHtml)}
 
+                    {/* Closing loader if html is blank, 1px */}
                     <img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
                   </div>
                 )}
