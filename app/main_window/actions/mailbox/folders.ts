@@ -2,7 +2,7 @@ import Mail from '../../../services/mail.service';
 
 import { Dispatch, GetState, FolderType } from '../../reducers/types';
 
-export const UPDATE_FOLDER_COUNT = 'GLOBAL::UPDATE_FOLDER_COUNT';
+export const UPDATE_FOLDER_COUNT = 'FOLDER::UPDATE_FOLDER_COUNT';
 const updateCount = (id: number, amount: number) => {
   return {
     type: UPDATE_FOLDER_COUNT,
