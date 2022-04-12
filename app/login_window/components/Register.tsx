@@ -90,10 +90,10 @@ class Register extends Component<Props, State> {
         masterpass: '',
         confirmpass: '',
         recoveryemail: '',
-        checkbox: [],
-        betacode: ''
+        checkbox: []
+        // betacode: ''
       },
-      step: 0,
+      step: 1,
       formError: {},
       formSuccess: {},
       canSubmit: false,
@@ -115,7 +115,7 @@ class Register extends Component<Props, State> {
     this.onChangeRecoveryEmail = this.onChangeRecoveryEmail.bind(this);
     this.onChangePass = this.onChangePass.bind(this);
     this.onChangeConfirmPass = this.onChangeConfirmPass.bind(this);
-    this.onChangeBetaCode = this.onChangeBetaCode.bind(this);
+    // this.onChangeBetaCode = this.onChangeBetaCode.bind(this);
     this.handleNextStep = this.handleNextStep.bind(this);
     this.isNextStepDisabled = this.isNextStepDisabled.bind(this);
     this.passwordStrengthlass = this.passwordStrengthlass.bind(this);
@@ -123,64 +123,64 @@ class Register extends Component<Props, State> {
     this.togglePassword = this.togglePassword.bind(this);
   }
 
-  onChangeBetaCode = debounce(async input => {
-    // eslint-disable-next-line prefer-const
-    let { formError, formSuccess, betaCheckLoading, nextStepDisabled } = {
-      ...this.state
-    };
+  // onChangeBetaCode = debounce(async input => {
+  //   // eslint-disable-next-line prefer-const
+  //   let { formError, formSuccess, betaCheckLoading, nextStepDisabled } = {
+  //     ...this.state
+  //   };
 
-    const options = {
-      url: `${requestBase}/account/beta/verify`,
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: {
-        vcode: input
-      }
-    };
+  //   const options = {
+  //     url: `${requestBase}/account/beta/verify`,
+  //     method: 'post',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     data: {
+  //       vcode: input
+  //     }
+  //   };
 
-    if (!input) {
-      betaCheckLoading = false;
-      delete formSuccess.betacode;
-      formError.betacode = i18n.t('form.betaCodeRequired');
-      this.setState({
-        betaCheckLoading,
-        formSuccess,
-        formError,
-        nextStepDisabled: true
-      });
-      return;
-    }
+  //   if (!input) {
+  //     betaCheckLoading = false;
+  //     delete formSuccess.betacode;
+  //     formError.betacode = i18n.t('form.betaCodeRequired');
+  //     this.setState({
+  //       betaCheckLoading,
+  //       formSuccess,
+  //       formError,
+  //       nextStepDisabled: true
+  //     });
+  //     return;
+  //   }
 
-    delete formSuccess.betacode;
-    delete formError.betacode;
-    betaCheckLoading = true;
-    this.setState({ betaCheckLoading, formSuccess, formError });
+  //   delete formSuccess.betacode;
+  //   delete formError.betacode;
+  //   betaCheckLoading = true;
+  //   this.setState({ betaCheckLoading, formSuccess, formError });
 
-    try {
-      const result = await axios(options);
-      betaCheckLoading = false;
-      formSuccess.betacode = true;
-      nextStepDisabled = false;
-    } catch (error) {
-      betaCheckLoading = false;
-      formError.betacode = i18n.t('register.betaCodeNotValid');
+  //   try {
+  //     const result = await axios(options);
+  //     betaCheckLoading = false;
+  //     formSuccess.betacode = true;
+  //     nextStepDisabled = false;
+  //   } catch (error) {
+  //     betaCheckLoading = false;
+  //     formError.betacode = i18n.t('register.betaCodeNotValid');
 
-      if (error.response && error.response.status !== 400) {
-        formError.betacode = error;
-      }
+  //     if (error.response && error.response.status !== 400) {
+  //       formError.betacode = error;
+  //     }
 
-      nextStepDisabled = true;
-    }
+  //     nextStepDisabled = true;
+  //   }
 
-    this.setState({
-      betaCheckLoading,
-      formSuccess,
-      formError,
-      nextStepDisabled
-    });
-  }, 500);
+  //   this.setState({
+  //     betaCheckLoading,
+  //     formSuccess,
+  //     formError,
+  //     nextStepDisabled
+  //   });
+  // }, 500);
 
   // onChangeBetaCode = formValue => {
   //   const state = { ...this.state };
@@ -267,7 +267,7 @@ class Register extends Component<Props, State> {
     const errors = Object.keys(formError).length;
 
     if (
-      formValue.betacode &&
+      // formValue.betacode &&
       formValue.email &&
       formValue.masterpass &&
       formValue.confirmpass &&
@@ -281,8 +281,8 @@ class Register extends Component<Props, State> {
         const acct = await Login.createAccount({
           password: formValue.masterpass,
           email: email.toLowerCase(),
-          recoveryEmail: formValue.recoveryemail.toLowerCase(),
-          vcode: formValue.betacode
+          recoveryEmail: formValue.recoveryemail.toLowerCase()
+          // vcode: formValue.betacode
         });
 
         console.log(acct);
@@ -354,7 +354,7 @@ class Register extends Component<Props, State> {
     const errors = Object.keys(formError).length;
 
     if (
-      formValue.betacode &&
+      // formValue.betacode &&
       formValue.email &&
       formValue.masterpass &&
       formValue.checkbox.includes('emailComm') &&
@@ -498,7 +498,7 @@ class Register extends Component<Props, State> {
   isNextStepDisabled(currentStep: number) {
     const { formSuccess } = this.state;
     if (
-      (currentStep === 0 && formSuccess.betacode) ||
+      // (currentStep === 0 && formSuccess.betacode) ||
       (currentStep === 1 && formSuccess.checkboxes) ||
       (currentStep === 2 && formSuccess.email) ||
       currentStep === 5
@@ -618,7 +618,7 @@ class Register extends Component<Props, State> {
           )}
         </div>
         <div className="flex-1">
-          {step === 0 && (
+          {/* {step === 0 && (
             <>
               <FormGroup className="mb-0 -mt-2">
                 <ControlLabel className="font-medium text-gray-500 select-none">
@@ -645,7 +645,6 @@ class Register extends Component<Props, State> {
                       formError.betacode && (
                         <BsXCircleFill className="text-red-500" />
                       )}
-                    {/* <BsCheck className="mr-1 text-gray-400" /> */}
                   </InputGroup.Addon>
                 </InputGroup>
                 <div
@@ -656,7 +655,7 @@ class Register extends Component<Props, State> {
                 </div>
               </FormGroup>
             </>
-          )}
+          )} */}
           {step === 1 && (
             <>
               <FormGroup className="-mt-2">
@@ -978,7 +977,7 @@ class Register extends Component<Props, State> {
         {step !== 5 && (
           <div className="w-8/12 flex-none self-center mb-2 registrationSteps select-none">
             <Steps current={step} small>
-              <Steps.Item onClick={() => this.handleNextStep(0)} />
+              {/* <Steps.Item onClick={() => this.handleNextStep(0)} /> */}
               <Steps.Item onClick={() => this.handleNextStep(1)} />
               <Steps.Item onClick={() => this.handleNextStep(2)} />
               <Steps.Item onClick={() => this.handleNextStep(3)} />
