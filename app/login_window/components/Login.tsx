@@ -29,15 +29,26 @@ const errorStyles = errorVisible => {
   };
 };
 
+// const win = require('electron').remote.getCurrentWindow()
+// const { app } = require('electron').remote
+// var dock = app.dock
+
+// let c = 0
+// const total = 340
+
+// setInterval(() => {
+
+//   if(c < total) c += 3
+//   dock.setBadge(''+c)
+//   // update progress bar to next value
+//   // values between 0 and 1 will show progress, >1 will show indeterminate or stick at 100%
+//   win.setProgressBar(c/total)
+
+// }, 1000)
+
 // THE FUNCTIONS BELOW SHOULD BE MOVED TO A SEPARATE UTILITY FILE PROBABLY
 const initAccount = async (name, password) => {
-  let account;
-
-  try {
-    account = await LoginService.initAccount(password, name);
-  } catch (err) {
-    console.log('INITACCOUNT ERR', err);
-  }
+  const account = await LoginService.initAccount(password, name);
 
   if (account?.error?.message?.indexOf('Unable to decrypt message') > -1) {
     ipcRenderer.send('restartMainWindow');

@@ -51,6 +51,9 @@ import { StateType, FolderType } from '../../../reducers/types';
 // NAV ICON DICTIONNARY
 import CustomIcon from './NavIcons';
 
+const { app } = require('electron').remote
+const dock = app.dock
+
 type Props = {
   onRefreshData: () => void;
   inProgress: (bool: boolean) => void;
@@ -85,6 +88,19 @@ export default function Navigation(props: Props) {
   const foldersArray = useSelector(
     (state: StateType) => state.mail.folders.allIds
   );
+
+  let totalUnreadCount = 0
+
+  for(const id of foldersArray) {
+    const folder = allFolders[id];
+    totalUnreadCount += folder.count
+  }
+
+  if(totalUnreadCount > 0) {
+    dock.setBadge('' + totalUnreadCount);
+  } else {
+    dock.setBadge('');
+  }
 
   const selectFolder = async (index: string, isAlias, e) => {
     if (

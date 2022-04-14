@@ -9,6 +9,8 @@ import styles from './SyncNotification.css';
 
 import classNames from '../../../../utils/helpers/css';
 
+const win = require('electron').remote.getCurrentWindow();
+
 type Props = {
   inProgress: (isBusy: boolean) => void;
 };
@@ -23,6 +25,10 @@ const SyncNotification = (props: Props) => {
 
   useEffect(() => {
     MessageIngress.on('MESSAGE_INGRESS_SERVICE::messageSyncStarted', t => {
+      if(win) {
+        win.setProgressBar(0);
+      }
+
       setLoaded(0);
       setTotal(t);
       inProgress(true);
@@ -33,12 +39,20 @@ const SyncNotification = (props: Props) => {
       setLoaded(data.index);
       setTotal(data.total);
 
+      if(win) {
+        win.setProgressBar(data.index / data.total);
+      }
+
       if (data.index > 0 && !isLoading) {
         inProgress(true);
         setIsLoading(true);
       }
 
       if (data.done) {
+        if(win) {
+          win.setProgressBar(-1);
+        }
+
         dispatch(saveIncomingMessages(data.messages, data.newAliases));
 
         inProgress(false);
