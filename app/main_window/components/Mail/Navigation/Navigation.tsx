@@ -89,17 +89,24 @@ export default function Navigation(props: Props) {
     (state: StateType) => state.mail.folders.allIds
   );
 
-  let totalUnreadCount = 0
+  // Show total unread count as badge for Mac OS only
+  if(dock) {
+    let totalUnreadCount = 0
 
-  for(const id of foldersArray) {
-    const folder = allFolders[id];
-    totalUnreadCount += folder.count
-  }
+    for(const id of foldersArray) {
+      const folder = allFolders[id];
 
-  if(totalUnreadCount > 0) {
-    dock.setBadge('' + totalUnreadCount);
-  } else {
-    dock.setBadge('');
+      if(folder.name !== 'Trash' || folder.name !== 'Sent' || folder.name !== 'Drafts' && folder.count) {
+        totalUnreadCount += folder.count
+      }
+    }
+
+  
+    if(totalUnreadCount > 0) {
+      dock.setBadge('' + totalUnreadCount);
+    } else {
+      dock.setBadge('');
+    }
   }
 
   const selectFolder = async (index: string, isAlias, e) => {
