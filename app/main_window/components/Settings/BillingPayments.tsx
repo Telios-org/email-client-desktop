@@ -1,5 +1,4 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
-import Store from 'electron-store';
 import { DateTime } from 'luxon';
 import axios from 'axios';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
@@ -38,8 +37,6 @@ const humanFileSize = require('../../../utils/attachment.util');
 const params = window.location.search.replace('?', '');
 const env = params.split('=')[1];
 const requestBase = env === 'production' ? envAPI.prod : envAPI.dev;
-const store = new Store();
-const channel = store.get('channel');
 
 type Props = {
   handleOverlay: (url: string) => void;
@@ -63,9 +60,6 @@ const BillingPayments = (props: Props) => {
   const [currentPlan, setCurrentPlan] = useState(undefined);
   const [appSumoCode, setAppSumoCode] = useState(null);
   const [upgradeLoader, setUpgradeLoader] = useState(false);
-
-  // TODO: Remove this hardcoded channel flag.
-  const pricingFeature = channel !== 'latest';
 
   const pctString = (numerator, denominator) => {
     const value = Math.round((numerator / denominator) * 100);
@@ -325,7 +319,7 @@ const BillingPayments = (props: Props) => {
               )}
             </div>
           </div>
-          {pricingFeature && currentPlan?.type !== 'appsumo' && (
+          {currentPlan?.type !== 'appsumo' && (
             <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
               <a
                 href=""
@@ -363,7 +357,7 @@ const BillingPayments = (props: Props) => {
               </div>
             </div>
           )}
-          {pricingFeature && currentPlan?.id === 'appsumot1' && (
+          {currentPlan?.id === 'appsumot1' && (
             <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
               <a
                 href="https://appsumo.com/products/telios/"
@@ -521,8 +515,7 @@ const BillingPayments = (props: Props) => {
                     </div>
                   </div>
                 </div>
-                {pricingFeature &&
-                  stats?.maxOutgoingEmails !== 0 &&
+                {stats?.maxOutgoingEmails !== 0 &&
                   currentPlan?.type !== 'appsumo' && (
                     <div className="flex justify-end items-center">
                       <button
@@ -534,8 +527,7 @@ const BillingPayments = (props: Props) => {
                       </button>
                     </div>
                   )}
-                {pricingFeature &&
-                  stats?.maxOutgoingEmails !== 0 &&
+                {stats?.maxOutgoingEmails !== 0 &&
                   currentPlan?.id === 'appsumot1' && (
                     <div className="flex justify-end items-center">
                       <a
@@ -604,8 +596,7 @@ const BillingPayments = (props: Props) => {
                       </div>
                     </div>
                   </div>
-                  {pricingFeature &&
-                    currentPlan?.maxAliasNames !== 0 &&
+                  {currentPlan?.maxAliasNames !== 0 &&
                     currentPlan?.type !== 'appsumo' && (
                       <div className="flex justify-end items-center">
                         <button
@@ -617,8 +608,7 @@ const BillingPayments = (props: Props) => {
                         </button>
                       </div>
                     )}
-                  {pricingFeature &&
-                    currentPlan?.maxAliasNames !== 0 &&
+                  {currentPlan?.maxAliasNames !== 0 &&
                     currentPlan?.id === 'appsumot1' && (
                       <div className="flex justify-end items-center">
                         <a
@@ -669,8 +659,7 @@ const BillingPayments = (props: Props) => {
                       </div>
                     </div>
                   </div>
-                  {pricingFeature &&
-                    stats.maxAliasAddresses !== 0 &&
+                  {stats.maxAliasAddresses !== 0 &&
                     currentPlan?.type !== 'appsumo' && (
                       <div className="flex justify-end items-center">
                         <button
@@ -682,8 +671,7 @@ const BillingPayments = (props: Props) => {
                         </button>
                       </div>
                     )}
-                  {pricingFeature &&
-                    stats.maxAliasAddresses !== 0 &&
+                  {stats.maxAliasAddresses !== 0 &&
                     currentPlan?.id === 'appsumot1' && (
                       <div className="flex justify-end items-center">
                         <a
@@ -726,7 +714,6 @@ const BillingPayments = (props: Props) => {
                       <span className="text-purple-500 font-bold">
                         {humanFileSize(stats.storageSpaceUsed, true, 2)}
                       </span>
-                      {pricingFeature && (
                         <>
                           {` of `}
                           <span className="font-bold">
@@ -738,28 +725,25 @@ const BillingPayments = (props: Props) => {
                           </span>
                           {` included`}
                         </>
-                      )}
                     </span>
                   </div>
-                  {pricingFeature && (
-                    <div className="relative pt-1">
-                      <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
-                        <div
-                          style={{
-                            width: pctValues.storagePct
-                          }}
-                          className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
-                            pctValues.storagePct === '100%'
-                              ? 'bg-red-500'
-                              : 'bg-blueGray-400'
-                          }`}
-                        />
-                      </div>
+  
+                  <div className="relative pt-1">
+                    <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
+                      <div
+                        style={{
+                          width: pctValues.storagePct
+                        }}
+                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
+                          pctValues.storagePct === '100%'
+                            ? 'bg-red-500'
+                            : 'bg-blueGray-400'
+                        }`}
+                      />
                     </div>
-                  )}
+                  </div>
                 </div>
-                {pricingFeature &&
-                  currentPlan?.maxGBCloudStorage !== 1000 &&
+                {currentPlan?.maxGBCloudStorage !== 1000 &&
                   currentPlan?.type !== 'appsumo' && (
                     <div className="flex justify-end items-center">
                       <button
@@ -771,8 +755,7 @@ const BillingPayments = (props: Props) => {
                       </button>
                     </div>
                   )}
-                {pricingFeature &&
-                  currentPlan?.maxGBCloudStorage !== 1000 &&
+                {currentPlan?.maxGBCloudStorage !== 1000 &&
                   currentPlan?.id === 'appsumot1' && (
                     <div className="flex justify-end items-center">
                       <a
