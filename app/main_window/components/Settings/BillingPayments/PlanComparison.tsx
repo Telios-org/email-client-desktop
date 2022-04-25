@@ -18,18 +18,25 @@ const PlanComparison = (props: Props) => {
 
   const [limitedOffer, setLimitedOffer] = useState([] as any[]);
   const [subscriptions, setSubscriptions] = useState([] as any[]);
+  const [appSumo, setAppSumo] = useState([] as any[]);
   const [currentPricing, setCurrentPricing] = useState(undefined);
 
   useEffect(() => {
     setCurrentPricing(
       pricingData.filter(p => p.id === currentPlan.toLowerCase())[0]
     );
-    console.log('CURRENT PRICING', currentPricing, pricingData);
+    console.log(
+      'CURRENT PRICING',
+      currentPlan.toLowerCase(),
+      currentPricing,
+      pricingData
+    );
   }, [currentPlan, pricingData]);
 
   useEffect(() => {
     setLimitedOffer(pricingData.filter(p => p.type === 'limited'));
     setSubscriptions(pricingData.filter(p => p.type === 'subscription'));
+    setAppSumo(pricingData.filter(p => p.type === 'appsumo'));
   }, [pricingData]);
 
   return (
@@ -85,7 +92,9 @@ const PlanComparison = (props: Props) => {
                               aria-hidden="true"
                             />
                           </div>
-                          <p className="ml-3 text-sm text-gray-700">{feature}</p>
+                          <p className="ml-3 text-sm text-gray-700">
+                            {feature}
+                          </p>
                         </li>
                       ))}
                     </ul>
@@ -96,7 +105,7 @@ const PlanComparison = (props: Props) => {
                     Pay once, own it forever
                   </p>
                   <div className="mt-4 flex items-center justify-center text-2xl font-extrabold text-gray-900">
-                    <span>$349</span>
+                    <span>$199</span>
                     <span className="ml-3 text-base font-medium text-gray-500">
                       USD
                     </span>
@@ -112,7 +121,7 @@ const PlanComparison = (props: Props) => {
                       </button>
                     </div>
                   )}
-                  { currentPricing?.order === offer?.order && (
+                  {currentPricing?.order === offer?.order && (
                     <div className="mt-6 relative">
                       <button
                         type="button"
@@ -176,20 +185,20 @@ const PlanComparison = (props: Props) => {
               <div className="mt-4 flex items-center justify-center text-2xl font-extrabold text-gray-900">
                 {plan.price !== 0 && (
                   <>
-                    <span>{`$${plan.price.monthly}`}</span>
+                    <span>{`$${plan?.price?.monthly}`}</span>
                     <div className="ml-4 flex flex-col items-start">
                       <span className="text-xs font-bold text-gray-500">
                         USD / mo
                       </span>
                       <span className="text-xs font-bold text-gray-500">
-                        {`Yearly ($${plan.price.yearly})`}
+                        {`Yearly ($${plan?.price?.yearly})`}
                       </span>
                     </div>
                   </>
                 )}
                 {plan.price === 0 && <span>FREE</span>}
               </div>
-              {( plan.order > currentPricing?.order) &&  plan.id !== 'free' && (
+              {plan.order > currentPricing?.order && plan.id !== 'free' && (
                 <div className="mt-6 relative">
                   <button
                     type="button"
@@ -200,7 +209,7 @@ const PlanComparison = (props: Props) => {
                   </button>
                 </div>
               )}
-              {(plan.order < currentPricing?.order ) && plan.id !== 'free' && (
+              {plan.order < currentPricing?.order && plan.id !== 'free' && (
                 <div className="mt-6 relative">
                   <button
                     type="button"
@@ -211,7 +220,7 @@ const PlanComparison = (props: Props) => {
                   </button>
                 </div>
               )}
-              {( plan.order === currentPricing?.order) &&  plan.id !== 'free' && (
+              {plan.order === currentPricing?.order && plan.id !== 'free' && (
                 <div className="mt-6 relative">
                   <button
                     type="button"

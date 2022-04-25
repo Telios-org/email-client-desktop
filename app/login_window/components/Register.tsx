@@ -9,6 +9,7 @@ import {
   AiOutlineHistory,
   AiFillCloseCircle
 } from 'react-icons/ai';
+import { CheckIcon, XIcon } from '@heroicons/react/outline';
 import { Show, Hide, Lock } from 'react-iconly';
 import {
   Form,
@@ -75,6 +76,8 @@ type State = {
   emailCheckLoading: boolean;
   betaCheckLoading: boolean;
   nextStepDisabled: boolean;
+  code1: boolean | null;
+  code2: boolean | null;
   passwordStrength: number | null;
   crackTime: string | null;
   account: any;
@@ -90,7 +93,9 @@ class Register extends Component<Props, State> {
         masterpass: '',
         confirmpass: '',
         recoveryemail: '',
-        checkbox: []
+        checkbox: [],
+        code1: '',
+        code2: ''
         // betacode: ''
       },
       step: 1,
@@ -101,6 +106,8 @@ class Register extends Component<Props, State> {
       betaCheckLoading: false,
       emailCheckLoading: false,
       nextStepDisabled: true,
+      code1: null,
+      code2: null,
       passwordStrength: null,
       crackTime: null,
       account: {
@@ -115,7 +122,8 @@ class Register extends Component<Props, State> {
     this.onChangeRecoveryEmail = this.onChangeRecoveryEmail.bind(this);
     this.onChangePass = this.onChangePass.bind(this);
     this.onChangeConfirmPass = this.onChangeConfirmPass.bind(this);
-    // this.onChangeBetaCode = this.onChangeBetaCode.bind(this);
+    this.onChangeAppSumoCode = this.onChangeAppSumoCode.bind(this);
+    this.onCheckAppSumoCode = this.onCheckAppSumoCode.bind(this);
     this.handleNextStep = this.handleNextStep.bind(this);
     this.isNextStepDisabled = this.isNextStepDisabled.bind(this);
     this.passwordStrengthlass = this.passwordStrengthlass.bind(this);
@@ -123,82 +131,47 @@ class Register extends Component<Props, State> {
     this.togglePassword = this.togglePassword.bind(this);
   }
 
-  // onChangeBetaCode = debounce(async input => {
-  //   // eslint-disable-next-line prefer-const
-  //   let { formError, formSuccess, betaCheckLoading, nextStepDisabled } = {
-  //     ...this.state
-  //   };
+  onCheckAppSumoCode = debounce(async (input, id) => {
+    // eslint-disable-next-line prefer-const
+    if (input.length > 0) {
+      const options = {
+        url: `${requestBase}/account/beta/verify`,
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          vcode: input
+        }
+      };
 
-  //   const options = {
-  //     url: `${requestBase}/account/beta/verify`,
-  //     method: 'post',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //     data: {
-  //       vcode: input
-  //     }
-  //   };
+      try {
+        await axios(options);
+        const obj = {};
+        obj[id] = true;
+        this.setState(obj);
+      } catch (e) {
+        const obj = {};
+        obj[id] = false;
+        this.setState(obj);
+      }
+    } else {
+      const obj = {};
+      obj[id] = null;
+      this.setState(obj);
+    }
+  }, 500);
 
-  //   if (!input) {
-  //     betaCheckLoading = false;
-  //     delete formSuccess.betacode;
-  //     formError.betacode = i18n.t('form.betaCodeRequired');
-  //     this.setState({
-  //       betaCheckLoading,
-  //       formSuccess,
-  //       formError,
-  //       nextStepDisabled: true
-  //     });
-  //     return;
-  //   }
+  onChangeAppSumoCode = (event, id) => {
+    const val = event.target.value;
+    const { formValue } = {
+      ...this.state
+    };
+    formValue[id] = val;
+    this.setState({ formValue });
 
-  //   delete formSuccess.betacode;
-  //   delete formError.betacode;
-  //   betaCheckLoading = true;
-  //   this.setState({ betaCheckLoading, formSuccess, formError });
-
-  //   try {
-  //     const result = await axios(options);
-  //     betaCheckLoading = false;
-  //     formSuccess.betacode = true;
-  //     nextStepDisabled = false;
-  //   } catch (error) {
-  //     betaCheckLoading = false;
-  //     formError.betacode = i18n.t('register.betaCodeNotValid');
-
-  //     if (error.response && error.response.status !== 400) {
-  //       formError.betacode = error;
-  //     }
-
-  //     nextStepDisabled = true;
-  //   }
-
-  //   this.setState({
-  //     betaCheckLoading,
-  //     formSuccess,
-  //     formError,
-  //     nextStepDisabled
-  //   });
-  // }, 500);
-
-  // onChangeBetaCode = formValue => {
-  //   const state = { ...this.state };
-  //   const { formSuccess, formError } = state;
-
-  //   if (!formValue.betacode) {
-  //     delete formSuccess.betacode;
-  //     formError.betacode = i18n.t('form.betaCodeRequired');
-  //     this.setState({ formError, formSuccess });
-  //     return;
-  //   }
-
-  //   delete formError.betacode;
-  //   delete formSuccess.betacode;
-
-  //   // INSERT HERE THE CHECK FOR VALIDITY OF BETACODE
-  //   formSuccess.betacode = true;
-  // };
+    this.onCheckAppSumoCode(val, id);
+  };
 
   onChangeEmail = debounce(async input => {
     // eslint-disable-next-line prefer-const
@@ -259,7 +232,7 @@ class Register extends Component<Props, State> {
   }, 500);
 
   async handleRegister() {
-    const { formValue, formError, step } = this.state;
+    const { formValue, formError, step, code1, code2 } = this.state;
     this.onChangePass(formValue);
     this.onChangeConfirmPass(formValue);
     this.onChangeRecoveryEmail(formValue);
@@ -277,12 +250,23 @@ class Register extends Component<Props, State> {
       this.setState({ formSuccess: {}, loading: true });
       const email = `${formValue.email}@${mailDomain}`;
 
+      const appsumoCodes = [];
+
+      if (code1 && formValue.code1.length > 0){
+        appsumoCodes.push(formValue.code1);
+      }
+      if (code2 && formValue.code2.length > 0){
+        appsumoCodes.push(formValue.code2);
+      }
+
+        console.log('APPSUMO CODES', appsumoCodes)
+
       try {
         const acct = await Login.createAccount({
           password: formValue.masterpass,
           email: email.toLowerCase(),
-          recoveryEmail: formValue.recoveryemail.toLowerCase()
-          // vcode: formValue.betacode
+          recoveryEmail: formValue.recoveryemail.toLowerCase(),
+          vcode: appsumoCodes
         });
 
         console.log(acct);
@@ -574,7 +558,9 @@ class Register extends Component<Props, State> {
       passwordStrength,
       crackTime,
       account,
-      visiblePassword
+      visiblePassword,
+      code1,
+      code2
     } = this.state;
 
     const { onUpdateActive, firstAccount } = this.props;
@@ -612,50 +598,12 @@ class Register extends Component<Props, State> {
             {i18n.t(`register.steps.${step}.header`)}
           </div>
           {i18n.t(`register.steps.${step}.description`).length > 0 && (
-            <div className="text-sm text-gray-500 mt-6 select-none">
+            <div className="text-sm text-gray-500 mt-4 select-none">
               {i18n.t(`register.steps.${step}.description`)}
             </div>
           )}
         </div>
         <div className="flex-1">
-          {/* {step === 0 && (
-            <>
-              <FormGroup className="mb-0 -mt-2">
-                <ControlLabel className="font-medium text-gray-500 select-none">
-                  {i18n.t('global.code')}
-                </ControlLabel>
-                <InputGroup className="w-full" inside>
-                  <FormControl
-                    name="betacode"
-                    onChange={this.onChangeBetaCode}
-                  />
-                  <InputGroup.Addon className="bg-transparent">
-                    {betaCheckLoading &&
-                      !formSuccess.betacode &&
-                      !formError.betacode && (
-                        <AiOutlineLoading3Quarters className="loading-indicator" />
-                      )}
-                    {!betaCheckLoading &&
-                      formSuccess.betacode &&
-                      !formError.betacode && (
-                        <BsCheckCircle className="text-green-500" />
-                      )}
-                    {!betaCheckLoading &&
-                      !formSuccess.betacode &&
-                      formError.betacode && (
-                        <BsXCircleFill className="text-red-500" />
-                      )}
-                  </InputGroup.Addon>
-                </InputGroup>
-                <div
-                  className="text-sm"
-                  style={errorStyles(formError.betacode)}
-                >
-                  {formError.betacode}
-                </div>
-              </FormGroup>
-            </>
-          )} */}
           {step === 1 && (
             <>
               <FormGroup className="-mt-2">
@@ -751,8 +699,67 @@ class Register extends Component<Props, State> {
                     No special characters other than .
                   </HelpBlock>
                 </div>
-                <div className="text-sm" style={errorStyles(formError.email)}>
-                  {formError.email}
+                <div className="text-sm text-red-500 h-8">
+                  <span>{formError.email}</span>
+                </div>
+                <ControlLabel className="font-medium text-gray-500 select-none">
+                  AppSumo Code
+{' '}
+                  <span className="text-sm font-light">(optional)</span>
+                </ControlLabel>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="mt-2 col-span-1 relative rounded-md">
+                    <input
+                      type="text"
+                      name="appsumot1"
+                      placeholder="Code 1"
+                      value={formValue.code1}
+                      onChange={e => this.onChangeAppSumoCode(e, 'code1')}
+                      className="block w-full border border-gray-200 
+                      rounded-md shadow-sm py-2 px-3 focus:outline-none 
+                      focus:ring-sky-600 focus:border-sky-600 text-sm"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      {code1 && code1 !== null && (
+                        <CheckIcon
+                          className="h-5 w-5 text-green-500"
+                          aria-hidden="true"
+                        />
+                      )}
+                      {!code1 && code1 !== null && (
+                        <XIcon
+                          className="h-5 w-5 text-red-500"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <div className="mt-2 col-span-1 relative rounded-md">
+                    <input
+                      type="text"
+                      name="appsumot2"
+                      placeholder="Code 2"
+                      value={formValue.code2}
+                      onChange={e => this.onChangeAppSumoCode(e, 'code2')}
+                      className="block w-full border border-gray-200 
+                      rounded-md shadow-sm py-2 px-3 focus:outline-none 
+                      focus:ring-sky-600 focus:border-sky-600 text-sm"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      {code2 && code2 !== null && (
+                        <CheckIcon
+                          className="h-5 w-5 text-green-500"
+                          aria-hidden="true"
+                        />
+                      )}
+                      {!code2 && code2 !== null && (
+                        <XIcon
+                          className="h-5 w-5 text-red-500"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </FormGroup>
             </>
@@ -974,6 +981,73 @@ class Register extends Component<Props, State> {
             </Button>
           )}
         </div>
+        {/* {step === 5 && (
+            <>
+              <FormGroup className="mb-0 -mt-2">
+                <ControlLabel className="font-medium text-gray-500 select-none">
+                  Optional - AppSumo Code
+                </ControlLabel>
+                <InputGroup className="w-full" inside>
+                  <FormControl
+                    name="betacode"
+                    onChange={this.onChangeBetaCode}
+                  />
+                  <InputGroup.Addon className="bg-transparent">
+                    {betaCheckLoading &&
+                      !formSuccess.betacode &&
+                      !formError.betacode && (
+                        <AiOutlineLoading3Quarters className="loading-indicator" />
+                      )}
+                    {!betaCheckLoading &&
+                      formSuccess.betacode &&
+                      !formError.betacode && (
+                        <BsCheckCircle className="text-green-500" />
+                      )}
+                    {!betaCheckLoading &&
+                      !formSuccess.betacode &&
+                      formError.betacode && (
+                        <BsXCircleFill className="text-red-500" />
+                      )}
+                  </InputGroup.Addon>
+                </InputGroup>
+                <div
+                  className="text-sm"
+                  style={errorStyles(formError.betacode)}
+                >
+                  {formError.betacode}
+                </div>
+                <InputGroup className="w-full" inside>
+                  <FormControl
+                    name="betacode"
+                    onChange={this.onChangeBetaCode}
+                  />
+                  <InputGroup.Addon className="bg-transparent">
+                    {betaCheckLoading &&
+                      !formSuccess.betacode &&
+                      !formError.betacode && (
+                        <AiOutlineLoading3Quarters className="loading-indicator" />
+                      )}
+                    {!betaCheckLoading &&
+                      formSuccess.betacode &&
+                      !formError.betacode && (
+                        <BsCheckCircle className="text-green-500" />
+                      )}
+                    {!betaCheckLoading &&
+                      !formSuccess.betacode &&
+                      formError.betacode && (
+                        <BsXCircleFill className="text-red-500" />
+                      )}
+                  </InputGroup.Addon>
+                </InputGroup>
+                <div
+                  className="text-sm"
+                  style={errorStyles(formError.betacode)}
+                >
+                  {formError.betacode}
+                </div>
+              </FormGroup>
+            </>
+          )} */}
         {step !== 5 && (
           <div className="w-8/12 flex-none self-center mb-2 registrationSteps select-none">
             <Steps current={step} small>
