@@ -196,27 +196,16 @@ const BillingPayments = (props: Props) => {
           }
         };
       }
-      console.log(options);
+      
       const {
         data: { url }
       } = await axios(options);
-      console.log(url);
+
       handleOverlay(url);
     } catch (error) {
       console.log(error);
     }
   };
-
-  if (showPricing) {
-    return (
-      <PlanComparison
-        currentPlan={stats.plan}
-        hide={togglePriceCompare}
-        pricingData={pricingData}
-        onStripeOpen={openStripe}
-      />
-    );
-  }
 
   const checkCode = async appsumocode => {
     const options = {
@@ -249,6 +238,17 @@ const BillingPayments = (props: Props) => {
     manualChange('code', val);
     verifyCode(val);
   };
+
+  if (showPricing) {
+    return (
+      <PlanComparison
+        currentPlan={stats.plan}
+        hide={togglePriceCompare}
+        pricingData={pricingData}
+        onStripeOpen={openStripe}
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">

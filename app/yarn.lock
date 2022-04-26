@@ -101,12 +101,37 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^5.0.3", "@telios/client-sdk@^5.1.1":
+"@telios/client-sdk@^5.0.3":
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-5.1.1.tgz#d80df0fcd05c5357ab5f1b930a070ec856f4c6fe"
   integrity sha512-d72G5xyLiBpUMnIjnZSlbnQ5o8qLCOy6NEx7Bjw4rahyw1/LJweRnhfrSKra6tZnLDEsH9h8hf+JPuBDcBJYXA==
   dependencies:
     "@telios/nebula" "^2.5.1"
+    async "^3.2.0"
+    axios "^0.21.1"
+    bip39 "^3.0.4"
+    blakejs "^1.1.0"
+    chokidar "^3.5.1"
+    corestore "^5.8.2"
+    dat-encoding "^5.0.1"
+    jwt-decode "^2.2.0"
+    level "^6.0.1"
+    mailparser "^2.8.1"
+    memorystream "^0.3.1"
+    moment "^2.27.0"
+    multifeed "^6.0.0"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    rimraf "^3.0.2"
+    sodium-native "^3.2.0"
+    uuid "^8.2.0"
+
+"@telios/client-sdk@^5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-5.1.2.tgz#ef26b4ebc1ce650c54ce75f1f01f70fd18d6fa45"
+  integrity sha512-5S8vGn2Lgfs9OY+OMz/Kt1LQUEVsxJ4SDc1c6PPAwg+ERKcUbu2MX1QdN/aRV1n9xAQ4WLV+FaeDoS9kI8xKTw==
+  dependencies:
+    "@telios/nebula" "^2.5.6"
     async "^3.2.0"
     axios "^0.21.1"
     bip39 "^3.0.4"
@@ -182,13 +207,39 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.5.12":
-  version "3.5.12"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.5.12.tgz#12faf6b9556856f640f4837cc11e8ae6bf62668c"
-  integrity sha512-2iz70DXDFyF115kCjyHJb1qgs1pSf/ya+2ir7JArzXm7Err369geNFCy55loRn2ev+naeXEGdOiFM3QLjSP2Ww==
+"@telios/nebula@^2.5.6":
+  version "2.5.6"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-2.5.6.tgz#077d962108942e08e0d73fa16f27dbd402ccaf59"
+  integrity sha512-kW5kWy/Hv7qqnrz248EcHIhq+mhvT4M/XVn+ZTjj+AeFqBoUixjmVK3RdP7MAyghDeoRqWDKvNvwsxe2NrzpNw==
   dependencies:
-    "@telios/client-sdk" "^5.1.1"
-    "@telios/nebula" "^2.5.1"
+    autobase "1.0.0-alpha.6"
+    blakejs "^1.1.0"
+    codecs "^2.2.0"
+    concat-stream "^2.0.0"
+    corestore "6.0.1-alpha.9"
+    dat-encoding "^5.0.1"
+    data-store "^4.0.3"
+    graceful-fs "^4.2.9"
+    hyperbee "1.7.0"
+    hyperbeedeebee "git+https://github.com/hexadecible/hyperbeedeebee.git"
+    hypercore "10.0.0-alpha.23"
+    hyperswarm "3.0.2"
+    is-online "^9.0.1"
+    memorystream "^0.3.1"
+    natural "^5.1.11"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    sodium-native "^3.2.0"
+    stopwords "^0.0.9"
+    uuid "^8.2.0"
+
+"@telios/telios-client-backend@^3.5.14":
+  version "3.5.14"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.5.14.tgz#9169a39d86c1e3dea85f681ebf68a74632cd8307"
+  integrity sha512-i9cPXnffaUE1FC9mXw7h5WuvjAf8XAxhb5luoIl9kb/KhZACyI3bU8r9S4dDgc2Cc5rRhp8v68/YBj1YPx7qGA==
+  dependencies:
+    "@telios/client-sdk" "^5.1.2"
+    "@telios/nebula" "^2.5.6"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     env-cmd "^10.1.0"
     file-type "^16.5.3"
@@ -821,6 +872,14 @@ dat-encoding@^5.0.1:
   dependencies:
     safe-buffer "^5.0.1"
 
+data-store@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/data-store/-/data-store-4.0.3.tgz#d055c55f3fa776daa3a5664cf715d3fe689c3afb"
+  integrity sha512-AhPSqGVCSrFgi1PtkOLxYRrVhzbsma/drtxNkwTrT2q+LpLTG3AhOW74O/IMRy1cWftBx93SuLLKF19YsKkUMg==
+  dependencies:
+    get-value "^3.0.1"
+    set-value "^3.0.1"
+
 debounceify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/debounceify/-/debounceify-1.0.0.tgz#182889d32bab2dbcc0ad76861f9332f4a6509ff1"
@@ -1223,6 +1282,13 @@ get-stream@^5.1.0:
   dependencies:
     pump "^3.0.0"
 
+get-value@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/get-value/-/get-value-3.0.1.tgz#5efd2a157f1d6a516d7524e124ac52d0a39ef5a8"
+  integrity sha512-mKZj9JLQrwMBtj5wxi6MH8Z5eSKaERpAwjg43dPtlGI1ZVEgH/qC7T8/6R2OBSUA+zzHBZgICsVJaEIV2tKTDA==
+  dependencies:
+    isobject "^3.0.1"
+
 getpass@^0.1.1:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/getpass/-/getpass-0.1.7.tgz#5eff8e3e684d569ae4cb2b1282604e8ba62149fa"
@@ -1397,7 +1463,7 @@ http2-wrapper@^1.0.0-beta.5.2:
     quick-lru "^5.1.1"
     resolve-alpn "^1.0.0"
 
-hyperbee@^1.6.3:
+hyperbee@1.7.0, hyperbee@^1.6.3:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/hyperbee/-/hyperbee-1.7.0.tgz#6dfbd551d877d8a9d39cacca077d22b0b7c1c753"
   integrity sha512-gV1maZK6fyD4UlMGTS23bi8/nnsPyq7Jn2Qzr5n3qPCQOUN3Y9vEN4oqnJxTenaOSNvDta6g0wzzSeYxYY21og==
@@ -1772,6 +1838,13 @@ is-path-inside@^3.0.2:
   resolved "https://registry.yarnpkg.com/is-path-inside/-/is-path-inside-3.0.3.tgz#d231362e53a07ff2b0e0ea7fed049161ffd16283"
   integrity sha512-Fd4gABb+ycGAmKou8eMftCupSir5lRxqf4aD/vd0cD2qc4HL07OjCeuHMr8Ro4CoMaeCKDB0/ECBOVWjTwUvPQ==
 
+is-plain-object@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/is-plain-object/-/is-plain-object-2.0.4.tgz#2c163b3fafb1b606d9d17928f05c2a1c38e07677"
+  integrity sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og==
+  dependencies:
+    isobject "^3.0.1"
+
 is-typedarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-typedarray/-/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
@@ -1793,6 +1866,11 @@ isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
+
+isobject@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
+  integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
 isstream@~0.1.2:
   version "0.1.2"
@@ -2831,6 +2909,13 @@ set-blocking@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
   integrity sha1-BF+XgtARrppoA93TgrJDkrPYkPc=
+
+set-value@^3.0.1:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/set-value/-/set-value-3.0.2.tgz#74e8ecd023c33d0f77199d415409a40f21e61b90"
+  integrity sha512-npjkVoz+ank0zjlV9F47Fdbjfj/PfXyVhZvGALWsyIYU/qrMzpi6avjKW3/7KeSU2Df3I46BrN1xOI1+6vW0hA==
+  dependencies:
+    is-plain-object "^2.0.4"
 
 sha.js@^2.4.0, sha.js@^2.4.8:
   version "2.4.11"
