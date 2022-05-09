@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+// REDUX ACTION
+import { setActivePage } from '../../../../actions/global';
+
 // COMPONENTS
 import AliasModal from './Modal/AliasModal';
 import NamespaceBlock from './NamespaceBlock';
@@ -25,7 +28,8 @@ export default function AliasSection(props: Props) {
   };
 
   const handleAlias = () => {
-    setShowAliasModal(true);
+    // setShowAliasModal(true);
+    dispatch(setActivePage('aliases'));
   };
 
   return (

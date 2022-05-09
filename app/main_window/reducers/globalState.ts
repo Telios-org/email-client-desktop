@@ -27,7 +27,13 @@ import {
 
 import { ALIAS_SELECTION_FLOW_SUCCESS } from '../actions/mailbox/aliases';
 
-import { TOGGLE_EDITOR, UPDATE_NETWORK_STATUS, REFRESH_TOKEN, SET_MSGLIST_FILTER } from '../actions/global';
+import {
+  TOGGLE_EDITOR,
+  UPDATE_NETWORK_STATUS,
+  REFRESH_TOKEN,
+  SET_MSGLIST_FILTER,
+  SET_ACTIVE_PAGE
+} from '../actions/global';
 
 const initialState = {
   activeMsgId: {},
@@ -54,7 +60,8 @@ const initialState = {
   editorAction: '',
   highlightText: '',
   authToken: '',
-  accounts: []
+  accounts: [],
+  activePage: 'mail'
 };
 
 const globalState = (
@@ -74,6 +81,12 @@ const globalState = (
         error: action.error,
         editorIsOpen: false
         // activeMsgId: null
+      };
+
+    case SET_ACTIVE_PAGE:
+      return {
+        ...state,
+        activePage: action.activePage
       };
 
     case MSG_RANGE_SELECTION:
@@ -208,7 +221,7 @@ const globalState = (
       return {
         ...state,
         authToken: action.token
-      }
+      };
     default:
       return state;
   }
