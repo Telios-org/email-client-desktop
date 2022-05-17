@@ -20,7 +20,7 @@ class MessageIngressService extends EventEmitter {
     this.newAliases = [];
     this.retryQueue = [];
     this.account = null;
-    this.MAX_RETRY = 1;
+    this.MAX_RETRY = 3;
     this.folderCounts = {};
 
     channel.on('account:newMessage', async m => {
