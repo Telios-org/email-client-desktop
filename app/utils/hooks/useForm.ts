@@ -101,7 +101,8 @@ const useForm = options => {
     handleSubmit,
     resetForm,
     isDirty,
-    errors
+    errors,
+    setErrors
   };
 };
 

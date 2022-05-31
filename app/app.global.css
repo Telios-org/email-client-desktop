@@ -80,7 +80,8 @@ body {
     scrollbar-color: var(--scrollbar-thumb-color) transparent;
 }
 *::-webkit-scrollbar {
-    width: 0.625rem; /* 10px */
+   /* width: 0.625rem; /* 10px */
+    width: 0rem;
     height: 0.625rem;
 }
 *::-webkit-scrollbar-thumb {
@@ -92,6 +93,7 @@ body {
 }
 *::-webkit-scrollbar-track {
     background-color: transparent;
+    width: 0px;
 }
 *::-webkit-scrollbar-thumb:horizontal:hover,
 *::-webkit-scrollbar-thumb:vertical:hover {

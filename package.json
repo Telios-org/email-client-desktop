@@ -288,7 +288,7 @@
   },
   "dependencies": {
     "@bigheads/core": "^0.3.3",
-    "@headlessui/react": "^1.4.2",
+    "@headlessui/react": "^1.6.2",
     "@heroicons/react": "^1.0.5",
     "@popperjs/core": "^2.11.0",
     "@rsuite/icons": "^1.0.0",
