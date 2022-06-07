@@ -37,7 +37,6 @@ const NamespaceRegistration = forwardRef((props: Props, ref) => {
 
   // dispatch(registerNamespace(mailboxId, data.namespace.toLowerCase()));
   const handleSubmit = async () => {
-    console.log('SUBMITTING');
     setLoader(true);
     // In case of retry clear out error block.
     setError({
@@ -49,8 +48,6 @@ const NamespaceRegistration = forwardRef((props: Props, ref) => {
       const results = await dispatch(
         registerNamespace(mailboxId, namespace.toLowerCase())
       );
-
-      console.log(results);
 
       if (!results?.success && results?.status === 'already-registered') {
         setError({
@@ -138,14 +135,16 @@ const NamespaceRegistration = forwardRef((props: Props, ref) => {
             </b>
             <b>{`+myalias@${domain}`}</b>
           </p>
-          <p className="text-sm flex pl-7 pt-2">
+          <p className="text-sm inline-block pl-7 pt-2">
             You can choose it yourself or
             <LightningBoltIcon
-              className="h-4 w-4 text-gray-400 m-0 mx-1"
+              className="h-4 w-4 text-gray-400 m-0 mx-1 inline"
               aria-hidden="true"
             />
-{' '}
-            randomly generate it. Your namespace is unique to you.
+            randomly generate it. Your namespace is unique to you. If you run
+            out, head to your
+            <span className="font-semibold">account settings</span> and upgrade
+            your plan.
           </p>
         </div>
         <div className="bg-white w-full scrollbar-hide mt-4 max-w-sm m-auto relative">
@@ -178,7 +177,9 @@ const NamespaceRegistration = forwardRef((props: Props, ref) => {
               />
             </button>
           </div>
-          <div className="absolute text-red-500 text-sm mt-2 pl-2">{error?.msg}</div>
+          <div className="absolute text-red-500 text-sm mt-2 pl-2">
+            {error?.msg}
+          </div>
         </div>
       </div>
 

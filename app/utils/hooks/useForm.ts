@@ -27,6 +27,13 @@ const useForm = options => {
     });
   };
 
+  const bulkChange = (obj: any) => {
+    setData({
+      ...data,
+      ...obj
+    });
+  }
+
   const resetForm = () => {
     setData(initialData);
   };
@@ -98,6 +105,7 @@ const useForm = options => {
     data,
     handleChange,
     manualChange,
+    bulkChange,
     handleSubmit,
     resetForm,
     isDirty,
