@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setActivePage } from '../../../../actions/global';
 
 // COMPONENTS
-import AliasModal from './Modal/AliasModal';
+// import AliasModal from './Modal/AliasModal';
 import NamespaceBlock from './NamespaceBlock';
 
 // INTERNATIONALIZATION
@@ -38,7 +38,7 @@ export default function AliasSection(props: Props) {
         handleAlias={handleAlias}
         handleSelectAction={handleSelectAction}
       />
-      <AliasModal show={showAliasModal} onHide={handleHideAliasModal} />
+      {/* <AliasModal show={showAliasModal} onHide={handleHideAliasModal} /> */}
     </>
   );
 }

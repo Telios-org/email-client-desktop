@@ -11,6 +11,7 @@ import NamespaceRegistration from './Routes/NamespaceRegistration';
 import AliasManagement from './Routes/AliasManagement';
 import AliasRegistration from './Routes/AliasRegistration';
 import AliasEdit from './Routes/AliasEdit';
+import AliasDelete from './Routes/AliasDelete';
 
 // ACTION CREATORS
 import { setActivePage } from '../../../actions/global';
@@ -143,6 +144,23 @@ const AliasesPage = () => {
                       leaveTo="opacity-0 scale-95"
                     >
                       <AliasEdit
+                        close={closeModal}
+                        domain={mailDomain}
+                        aliasId={selectedAlias}
+                      />
+                    </Transition.Child>
+                  )}
+                  {modal === 'aliasDelete' && (
+                    <Transition.Child
+                      as={Fragment}
+                      enter="ease-out duration-300"
+                      enterFrom="opacity-0 scale-95"
+                      enterTo="opacity-100 scale-100"
+                      leave="ease-in duration-200"
+                      leaveFrom="opacity-100 scale-100"
+                      leaveTo="opacity-0 scale-95"
+                    >
+                      <AliasDelete
                         close={closeModal}
                         domain={mailDomain}
                         aliasId={selectedAlias}

@@ -6,11 +6,11 @@ import { AtSymbolIcon, PlusIcon } from '@heroicons/react/outline';
 import { Switch } from '@headlessui/react';
 
 // SELECTORS
-import { Edit, Delete, Danger, Paper } from 'react-iconly';
+import { Edit, Delete, Paper } from 'react-iconly';
 import { selectAllNamespaces } from '../../../../selectors/mail';
 
 // ACTION CREATORS
-import { updateAlias, removeAlias } from '../../../../actions/mailbox/aliases';
+import { updateAlias } from '../../../../actions/mailbox/aliases';
 
 // UTILS
 import { formatDateDisplay } from '../../../../../utils/helpers/date';
@@ -35,10 +35,6 @@ const AliasManagement = (props: Props) => {
   const dispatch = useDispatch();
   const aliases = useSelector(state => state.mail.aliases);
   const namespaces = useSelector(selectAllNamespaces);
-
-  const [showDelete, setShowDelete] = useState(false);
-  const [deleteObj, setDeleteObj] = useState({});
-  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const { openModalRoute, aliasSelection } = props;
 
@@ -74,21 +70,9 @@ const AliasManagement = (props: Props) => {
     openModalRoute('aliasEdit');
   };
 
-  const handleDeleteAlias = async () => {
-    const payload = {
-      namespaceName: deleteObj.ns,
-      domain,
-      address: deleteObj.alias
-    };
-    setDeleteLoading(true);
-    await dispatch(removeAlias(payload));
-    setDeleteLoading(false);
-    setShowDelete(false);
-  };
-
-  const handleDeleteAction = rowData => {
-    setDeleteObj(rowData);
-    setShowDelete(true);
+  const triggerDeleteAlias = (aliasId: string) => {
+    aliasSelection(aliasId);
+    openModalRoute('aliasDelete');
   };
 
   return (
@@ -315,7 +299,11 @@ const AliasManagement = (props: Props) => {
                                       size="small"
                                       className="hover:text-red-500"
                                       style={{ cursor: 'pointer' }}
-                                      onClick={() => handleDeleteAction(alias)}
+                                      onClick={() =>
+                                        triggerDeleteAlias(
+                                          `${alias.ns}#${alias.alias}`
+                                        )
+                                      }
                                     />
                                   </div>
                                 </td>
