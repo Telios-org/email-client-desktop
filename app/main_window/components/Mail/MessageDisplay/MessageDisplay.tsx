@@ -176,6 +176,7 @@ function MessageDisplay(props: Props) {
 
     if (node.type === 'tag' && node.name === 'a') {
       node.attribs.target = '_blank';
+      node.attribs.title = node.attribs.href;
       return convertNodeToElement(node, index, transform);
     }
 
