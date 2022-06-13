@@ -35,7 +35,9 @@ import {
   selectAllFoldersById,
   selectActiveMailbox,
   activeFolderId,
-  activeAliasId
+  activeAliasId,
+  selectAllNamespaces,
+  selectAllAliases
 } from '../../../selectors/mail';
 
 // REDUX ACTION CREATORS
@@ -61,6 +63,8 @@ type Props = {
 
 export default function Navigation(props: Props) {
   const mailbox = useSelector(selectActiveMailbox);
+  const namespaces = useSelector(selectAllNamespaces);
+  const aliases = useSelector(selectAllAliases);
   const allFolders = useSelector(selectAllFoldersById);
   const folderId = useSelector(activeFolderId);
   // const history = useHistory();
@@ -71,6 +75,8 @@ export default function Navigation(props: Props) {
     dispatch(toggleEditor('brandNewComposer', true));
     await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
+      namespaces,
+      aliases,
       message: {},
       editorAction: 'new'
     });

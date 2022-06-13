@@ -7,10 +7,7 @@ import { AtSymbolIcon, LightningBoltIcon } from '@heroicons/react/outline';
 import { generateSlug } from 'random-word-slugs';
 
 // SELECTORS
-import {
-  selectActiveMailbox,
-  selectFirstNamespace
-} from '../../../../selectors/mail';
+import { selectActiveMailbox } from '../../../../selectors/mail';
 
 // REDUX ACTION
 import { registerNamespace } from '../../../../actions/mailbox/aliases';
@@ -143,9 +140,11 @@ const NamespaceRegistration = forwardRef((props: Props, ref) => {
             />
             randomly generate it. Your namespace is unique to you. If you run
             out, head to your
-            <span className="font-semibold">account settings</span> and upgrade
+            <span className="font-semibold">account settings</span>
+{' '}
+and upgrade
             your plan.
-          </p>
+</p>
         </div>
         <div className="bg-white w-full scrollbar-hide mt-4 max-w-sm m-auto relative">
           {/* <label

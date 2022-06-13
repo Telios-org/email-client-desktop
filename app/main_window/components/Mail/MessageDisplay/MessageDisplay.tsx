@@ -44,7 +44,9 @@ import { fetchMsg } from '../../../actions/mail';
 // REDUX STATE SELECTORS
 import {
   selectActiveMailbox,
-  selectActiveFolderName
+  selectActiveFolderName,
+  selectAllNamespaces,
+  selectAllAliases
 } from '../../../selectors/mail';
 
 // TYPESCRIPT TYPES
@@ -75,6 +77,8 @@ function MessageDisplay(props: Props) {
   } = props;
 
   const mailbox = useSelector(selectActiveMailbox);
+  const namespaces = useSelector(selectAllNamespaces);
+  const aliases = useSelector(selectAllAliases);
   const currentFolderName = useSelector(selectActiveFolderName);
   const [loaded, setLoaded] = useState(false);
   const [iframeReady, setIframeReady] = useState(false);
@@ -205,6 +209,8 @@ function MessageDisplay(props: Props) {
     dispatch(replyMessage(false));
     await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
+      namespaces,
+      aliases,
       message,
       editorAction: 'reply'
     });
@@ -214,6 +220,8 @@ function MessageDisplay(props: Props) {
     dispatch(replyMessage(true));
     await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
+      namespaces,
+      aliases,
       message,
       editorAction: 'replyAll'
     });
@@ -223,6 +231,8 @@ function MessageDisplay(props: Props) {
     dispatch(forwardMessage());
     await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
+      namespaces,
+      aliases,
       message,
       editorAction: 'forward'
     });

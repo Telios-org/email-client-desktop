@@ -1,8 +1,19 @@
 import React, { useState, forwardRef, Ref } from 'react';
 import RecipientsInput from '../recipientsInputs/RecipientsInput';
-import { Recipients, Recipient } from '../../../main_window/reducers/types';
+import {
+  Recipients,
+  Recipient,
+  MailboxType,
+  MailType
+} from '../../../main_window/reducers/types';
+
+// INTERNAL COMPONENTS
+import FromInput from '../FromInput';
 
 type Props = {
+  mailbox: MailboxType;
+  aliases: MailType;
+  namespaces: MailboxType;
   onUpdateRecipients: (recipients: Recipients) => void;
   setToRef: (node) => void;
   defaultRecipients?: Recipients;
@@ -12,6 +23,9 @@ const clone = require('rfdc')();
 
 const MessageInputs = (props: Props, ref) => {
   const {
+    mailbox,
+    aliases,
+    namespaces,
     onUpdateRecipients,
     setToRef,
     defaultRecipients = {
@@ -44,7 +58,6 @@ const MessageInputs = (props: Props, ref) => {
 
   const handleUpdate = (field: string, arr: Array<Recipient>) => {
     const newRecip = clone(recipients);
-
     newRecip[field].arr = arr;
     setRecipients(newRecip);
     onUpdateRecipients(newRecip);
@@ -64,6 +77,16 @@ const MessageInputs = (props: Props, ref) => {
 
   return (
     <div className="px-3 z-10">
+      <div className="border-b flex flex-row relative">
+        <div className="w-12 text-gray-600 p-2">From</div>
+        <div className="w-full">
+          <FromInput
+            mailbox={mailbox}
+            aliases={aliases}
+            namespaces={namespaces}
+          />
+        </div>
+      </div>
       <div className="border-b flex relative">
         <div className="w-8 text-gray-600 p-2">To</div>
         <div className="w-full">

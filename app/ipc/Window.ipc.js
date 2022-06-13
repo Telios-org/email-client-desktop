@@ -196,7 +196,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
   ipcMain.handle(
     'RENDERER::ingestDraftForInlineComposer',
     async (event, content) => {
-      const { message, mailbox, editorAction } = content;
+      const { message, mailbox, namespaces, aliases, editorAction } = content;
 
       const newDraft = emailTransform(message, editorAction, true);
 
@@ -210,6 +210,8 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
       const newContent = {
         mailbox,
+        namespaces,
+        aliases,
         editorAction,
         message: {
           ...newDraft

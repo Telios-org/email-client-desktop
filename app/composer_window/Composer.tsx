@@ -24,7 +24,8 @@ import {
   Recipients,
   FolderType,
   MailboxType,
-  MailMessageType
+  MailMessageType,
+  MailType
 } from '../main_window/reducers/types';
 
 import { EditorIframeRef } from './components/editor/types';
@@ -77,6 +78,8 @@ type Props = {
   isInline: boolean;
   folder: FolderType;
   mailbox: MailboxType;
+  namespaces: MailType;
+  aliases: MailType;
   message: MailMessageType;
 };
 
@@ -87,7 +90,9 @@ const Composer = (props: Props) => {
     onMaximmize,
     folder,
     message,
-    mailbox: mb
+    mailbox: mb,
+    namespaces,
+    aliases
   } = props;
 
   const editorRef = useRef<EditorIframeRef>(null);
@@ -99,9 +104,12 @@ const Composer = (props: Props) => {
   const [activeSendButton, setActiveSendButton] = useState(false);
   const [email, setEmail] = useState<Email | null>(null);
   const [mailbox, setMailbox] = useState<MailboxType>(mb ?? mailboxTemplate);
+  const [ns, setNs] = useState<MailType | null>(namespaces);
+  const [al, setAl] = useState<MailType | null>(aliases);
   const [prefillRecipients, setPrefillRecipients] = useState(
     prefillRecipientsTemplate
   );
+  const [senderAddress, setSenderAddress] = useState(null);
   const [editorReady, setEditorReady] = useState(false);
   const [composerReady, setComposerReady] = useState(false);
   const [editorState, setEditorState] = useState<string | undefined>();
@@ -172,6 +180,8 @@ const Composer = (props: Props) => {
           draft.from = rcp.data.from;
           handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
           setMailbox(mb);
+          setNs(namespaces);
+          setAl(aliases);
           setPrefillRecipients(rcp.ui);
           if (draft.to.length > 0) {
             setActiveSendButton(true);
@@ -214,6 +224,8 @@ const Composer = (props: Props) => {
 
         handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
         setMailbox(content.mailbox);
+        setNs(content.namespaces);
+        setAl(content.aliases);
         setPrefillRecipients(rcp.ui);
         setWindowId(windowID);
 
@@ -345,6 +357,13 @@ const Composer = (props: Props) => {
     handleEmailUpdate(newEmail);
   };
 
+  const onSenderChange = newVal => {
+    const newEmail = clone(email);
+    newEmail.subject = value;
+
+    handleEmailUpdate(newEmail);
+  }
+
   const handleEditorReady = useCallback(() => setEditorReady(true), []);
 
   const onAttachmentChange = (newArray: AttachmentType[]) => {
@@ -430,6 +449,9 @@ const Composer = (props: Props) => {
         </div>
       )}
       <MessageInputs
+        mailbox={mailbox}
+        namespaces={ns}
+        aliases={al}
         onUpdateRecipients={onUpdateRecipients}
         defaultRecipients={prefillRecipients}
         setToRef={node => {
