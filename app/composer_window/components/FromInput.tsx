@@ -22,10 +22,11 @@ type Props = {
   mailbox: MailboxType;
   aliases: MailType;
   namespaces: MailType;
+  onSenderChange: (obj) => void
 };
 
 const FromInput = (props: Props) => {
-  const { mailbox, aliases, namespaces } = props;
+  const { mailbox, aliases, namespaces, onSenderChange } = props;
   const [data, setData] = useState([]);
   const [selected, setSelected] = useState(null);
 

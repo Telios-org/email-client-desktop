@@ -13,9 +13,10 @@ import FromInput from '../FromInput';
 type Props = {
   mailbox: MailboxType;
   aliases: MailType;
-  namespaces: MailboxType;
+  namespaces: MailType;
   onUpdateRecipients: (recipients: Recipients) => void;
   setToRef: (node) => void;
+  onSenderChange: (obj) => void;
   defaultRecipients?: Recipients;
 };
 
@@ -28,6 +29,7 @@ const MessageInputs = (props: Props, ref) => {
     namespaces,
     onUpdateRecipients,
     setToRef,
+    onSenderChange,
     defaultRecipients = {
       to: {
         arr: []
@@ -84,6 +86,7 @@ const MessageInputs = (props: Props, ref) => {
             mailbox={mailbox}
             aliases={aliases}
             namespaces={namespaces}
+            onSenderChange={onSenderChange}
           />
         </div>
       </div>

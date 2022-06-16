@@ -182,6 +182,7 @@ const Composer = (props: Props) => {
           setMailbox(mb);
           setNs(namespaces);
           setAl(aliases);
+          setSenderAddress(rcp.data.from);
           setPrefillRecipients(rcp.ui);
           if (draft.to.length > 0) {
             setActiveSendButton(true);
@@ -454,6 +455,7 @@ const Composer = (props: Props) => {
         aliases={al}
         onUpdateRecipients={onUpdateRecipients}
         defaultRecipients={prefillRecipients}
+        onSenderChange={setSenderAddress}
         setToRef={node => {
           setToRef(node);
         }}
