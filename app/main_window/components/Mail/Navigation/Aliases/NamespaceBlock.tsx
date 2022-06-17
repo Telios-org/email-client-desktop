@@ -157,7 +157,7 @@ export default function NamespaceBlock(props: Props) {
                       style={{ cursor: 'pointer' }}
                       onClick={() => {
                         clipboard.writeText(
-                          `${alias.name}+${alias.namespaceKey}@${ns[alias.namespaceKey].domain}`
+                          `${alias.namespaceKey}+${alias.name}@${ns[alias.namespaceKey].domain}`
                         );
                       }}
                     />

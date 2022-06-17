@@ -1,6 +1,6 @@
 const { ipcMain, nativeTheme, dialog, BrowserView } = require('electron');
 const path = require('path');
-const { emailTransform } = require('../utils/draft.utils');
+const { emailTransform, assembleFromDataSet } = require('../utils/draft.utils');
 const store = require('../Store');
 
 module.exports = (windowManager, createMainWindow, createLoginWindow) => {
@@ -200,6 +200,22 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
       const newDraft = emailTransform(message, editorAction, true);
 
+      const data = assembleFromDataSet(mailbox, namespaces, aliases);
+
+      let filteredArray = [];
+      if (message?.toJSON) {
+        filteredArray = data.filter(value =>
+          JSON.parse(message.toJSON)
+            .map(m => m.address.replace(/[-+#]/gm, ''))
+            .includes(value.address.replace(/[-+#]/gm, ''))
+        );
+      }
+
+      if (filteredArray.length === 1) {
+        newDraft.from = filteredArray;
+      } else {
+        newDraft.from = data[0]; // which should be the main account
+      }
       // console.log('WINDOWSIPC::DRAFT', newDraft);
 
       store.setInitialDraft(newDraft);

@@ -11,9 +11,9 @@ import {
 import FromInput from '../FromInput';
 
 type Props = {
-  mailbox: MailboxType;
-  aliases: MailType;
-  namespaces: MailType;
+  fromDataSet: { address: string; name: string }[];
+  fromAddress: { address: string; name: string };
+  onFromChange: (obj: { address: string; name: string }) => void;
   onUpdateRecipients: (recipients: Recipients) => void;
   setToRef: (node) => void;
   onSenderChange: (obj) => void;
@@ -24,9 +24,9 @@ const clone = require('rfdc')();
 
 const MessageInputs = (props: Props, ref) => {
   const {
-    mailbox,
-    aliases,
-    namespaces,
+    fromDataSet,
+    fromAddress,
+    onFromChange,
     onUpdateRecipients,
     setToRef,
     onSenderChange,
@@ -83,10 +83,9 @@ const MessageInputs = (props: Props, ref) => {
         <div className="w-12 text-gray-600 p-2">From</div>
         <div className="w-full">
           <FromInput
-            mailbox={mailbox}
-            aliases={aliases}
-            namespaces={namespaces}
-            onSenderChange={onSenderChange}
+            fromDataSet={fromDataSet}
+            fromAddress={fromAddress}
+            onFromChange={onFromChange}
           />
         </div>
       </div>

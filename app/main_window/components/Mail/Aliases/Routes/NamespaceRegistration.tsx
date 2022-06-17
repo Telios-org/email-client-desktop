@@ -179,7 +179,19 @@ and upgrade
           <div className="absolute text-red-500 text-sm mt-2 pl-2">
             {error?.msg}
           </div>
+          <div className="text-xs text-gray-400 pt-3 mt-6">
+              <b>Note:</b> Namespaces are NOT currently DELETABLE so chose wisely!
+            </div>
+            <p className="text-xs text-gray-400 pt-3">
+            <b>Tip:</b> A namespace allows you to do ON THE FLY alias creation. 
+            On any website you can use an email you made up on the spot with that namespace.
+            i.e. namespace+sickblog@telios.io that folder will create once it recieves it first email. 
+          </p>
+          <p className="text-xs text-gray-400">
+            <b>i.e.</b> namespace+sickblog@telios.io that folder will create as soon as its receives it first email. 
+          </p>
         </div>
+        
       </div>
 
       <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-14">

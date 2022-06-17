@@ -4,7 +4,8 @@ import { DateTime } from 'luxon';
 import {
   Email,
   MailMessageType,
-  MailboxType
+  MailboxType,
+  MailType
 } from '../main_window/reducers/types';
 
 export const recipientTransform = (
@@ -102,7 +103,7 @@ export const recipientTransform = (
       to,
       cc,
       bcc,
-      from: [
+      from: email?.from ?? [
         {
           address: ownerMailbox.address,
           name: ownerMailbox.name ? ownerMailbox.name : ownerMailbox.address
@@ -126,8 +127,6 @@ const attr = (message: MailMessageType, action: string) => {
     },
     'To: '
   );
-
-  
 
   const dt = DateTime.fromISO(message.date, {
     zone: 'utc'
@@ -224,4 +223,39 @@ export const emailTransform = (
   };
 
   return newMessage;
+};
+
+export const assembleFromDataSet = (
+  mailbox: MailboxType,
+  namespaces: MailType,
+  aliases: MailType
+): { address: string; name: string }[] => {
+  if (mailbox?.address && aliases?.allIds && namespaces?.allIds) {
+    const newArr = aliases.allIds
+      .filter(a => !aliases.byId[a].disabled)
+      .map(id => ({
+        address: `${aliases.byId[id].namespaceKey}+${aliases.byId[id].name}@${
+          namespaces.byId[aliases.byId[id].namespaceKey].domain
+        }`,
+        name: `${aliases.byId[id].namespaceKey}+${aliases.byId[id].name}@${
+          namespaces.byId[aliases.byId[id].namespaceKey].domain
+        }`
+      }));
+
+    const arr = [
+      {
+        address: mailbox.address,
+        name: mailbox.name ? mailbox.name : mailbox.address
+      },
+      ...newArr
+    ];
+
+    const uniqueObjArray = [
+      ...new Map(arr.map(item => [item.address, item])).values()
+    ];
+
+    return uniqueObjArray;
+  }
+
+  return [];
 };

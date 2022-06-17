@@ -19,54 +19,21 @@ function classNames(...classes) {
 }
 
 type Props = {
-  mailbox: MailboxType;
-  aliases: MailType;
-  namespaces: MailType;
-  onSenderChange: (obj) => void
+  fromDataSet: { address: string; name: string }[];
+  fromAddress: { address: string; name: string };
+  onFromChange: (obj: { address: string; name: string }) => void;
 };
 
 const FromInput = (props: Props) => {
-  const { mailbox, aliases, namespaces, onSenderChange } = props;
-  const [data, setData] = useState([]);
-  const [selected, setSelected] = useState(null);
-
-  useEffect(() => {
-    if (mailbox?.address && aliases?.allIds && namespaces?.allIds) {
-      const newArr = aliases.allIds
-        .filter(a => !aliases.byId[a].disabled)
-        .map(id => ({
-          address: `${aliases.byId[id].namespaceKey}+${aliases.byId[id].name}@${
-            namespaces.byId[aliases.byId[id].namespaceKey].domain
-          }`,
-          name: `${aliases.byId[id].namespaceKey}+${aliases.byId[id].name}@${
-            namespaces.byId[aliases.byId[id].namespaceKey].domain
-          }`
-        }));
-
-      const arr = [
-        {
-          address: mailbox.address,
-          name: mailbox.name ? mailbox.name : mailbox.address
-        },
-        ...newArr
-      ];
-
-      const uniqueObjArray = [
-        ...new Map(arr.map(item => [item.address, item])).values()
-      ];
-
-      setData(uniqueObjArray);
-      setSelected(uniqueObjArray[0]);
-    }
-  }, [mailbox, aliases, namespaces]);
+  const { fromDataSet, fromAddress, onFromChange } = props;
 
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={fromAddress} onChange={onFromChange}>
       {({ open }) => (
         <>
           <div className="relative mt-0.5">
             <Listbox.Button className="bg-white relative w-full pl-3 pr-10 py-2 text-left cursor-default focus:outline-none sm:text-xs">
-              <span className="block truncate">{selected?.address}</span>
+              <span className="block truncate">{fromAddress?.address}</span>
               <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                 <SelectorIcon
                   className="h-4 w-4 text-gray-400"
@@ -83,7 +50,7 @@ const FromInput = (props: Props) => {
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute z-10 mt-2 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                {data.map(email => (
+                {fromDataSet.map(email => (
                   <Listbox.Option
                     key={email.address}
                     className={({ active }) =>

@@ -8,7 +8,11 @@ import { topicReference } from '@babel/types';
 import { useHandler } from '../utils/hooks/useHandler';
 import { Editor, MessageInputs, TopBar, Attachments } from './components';
 
-import { recipientTransform, emailTransform } from '../utils/draft.utils';
+import {
+  recipientTransform,
+  emailTransform,
+  assembleFromDataSet
+} from '../utils/draft.utils';
 
 import { UTCtimestamp } from '../utils/helpers/date';
 // import editorHTMLexport from './utils/messageEditor/htmlExportOptions';
@@ -104,12 +108,17 @@ const Composer = (props: Props) => {
   const [activeSendButton, setActiveSendButton] = useState(false);
   const [email, setEmail] = useState<Email | null>(null);
   const [mailbox, setMailbox] = useState<MailboxType>(mb ?? mailboxTemplate);
-  const [ns, setNs] = useState<MailType | null>(namespaces);
-  const [al, setAl] = useState<MailType | null>(aliases);
   const [prefillRecipients, setPrefillRecipients] = useState(
     prefillRecipientsTemplate
   );
-  const [senderAddress, setSenderAddress] = useState(null);
+  const [fromAddress, setFromAddress] = useState<{
+    address: string;
+    name: string;
+  } | null>(null);
+  const [fromDataSet, setFromDataSet] = useState<
+    { address: string; name: string }[]
+  >([]);
+
   const [editorReady, setEditorReady] = useState(false);
   const [composerReady, setComposerReady] = useState(false);
   const [editorState, setEditorState] = useState<string | undefined>();
@@ -138,15 +147,17 @@ const Composer = (props: Props) => {
     // Getting the plain text off the htmlBody
     const plaintext = htmlToText.fromString(htmlBody);
 
+    const from = draft?.from ?? [
+      {
+        address: owner.address,
+        name: owner.name ? owner.name : owner.address
+      }
+    ];
+
     const eml = {
       ...clone(draft),
       date: time,
-      from: [
-        {
-          address: owner.address,
-          name: owner.name ? owner.name : owner.address
-        }
-      ],
+      from,
       fromJSON: JSON.stringify(draft?.from),
       toJSON: JSON.stringify(draft?.to),
       ccJSON: JSON.stringify(draft?.cc),
@@ -154,6 +165,9 @@ const Composer = (props: Props) => {
       bodyAsText: plaintext,
       bodyAsHtml: htmlBody
     };
+
+    console.log('FROM EMAIL', from);
+    console.log(eml);
 
     if (htmlBody !== editorState) {
       setEditorState(htmlBody);
@@ -180,9 +194,14 @@ const Composer = (props: Props) => {
           draft.from = rcp.data.from;
           handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
           setMailbox(mb);
-          setNs(namespaces);
-          setAl(aliases);
-          setSenderAddress(rcp.data.from);
+          const data = assembleFromDataSet(mb, namespaces, aliases);
+          setFromDataSet(data);
+          if (draft.from.length === 1) {
+            setFromAddress(draft.from[0]);
+          } else {
+            setFromAddress(data[0]);
+          }
+
           setPrefillRecipients(rcp.ui);
           if (draft.to.length > 0) {
             setActiveSendButton(true);
@@ -225,8 +244,17 @@ const Composer = (props: Props) => {
 
         handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
         setMailbox(content.mailbox);
-        setNs(content.namespaces);
-        setAl(content.aliases);
+        const data = assembleFromDataSet(
+          content.mailbox,
+          content.namespaces,
+          content.aliases
+        );
+        setFromDataSet(data);
+        if (draft.from.length === 1) {
+          setFromAddress(draft.from[0]);
+        } else {
+          setFromAddress(data[0]);
+        }
         setPrefillRecipients(rcp.ui);
         setWindowId(windowID);
 
@@ -358,12 +386,13 @@ const Composer = (props: Props) => {
     handleEmailUpdate(newEmail);
   };
 
-  const onSenderChange = newVal => {
+  const onFromChange = (obj: { address: string; name: string }) => {
     const newEmail = clone(email);
-    newEmail.subject = value;
+    newEmail.from = [obj];
+    setFromAddress(obj);
 
     handleEmailUpdate(newEmail);
-  }
+  };
 
   const handleEditorReady = useCallback(() => setEditorReady(true), []);
 
@@ -450,12 +479,11 @@ const Composer = (props: Props) => {
         </div>
       )}
       <MessageInputs
-        mailbox={mailbox}
-        namespaces={ns}
-        aliases={al}
+        fromDataSet={fromDataSet}
+        fromAddress={fromAddress}
+        onFromChange={onFromChange}
         onUpdateRecipients={onUpdateRecipients}
         defaultRecipients={prefillRecipients}
-        onSenderChange={setSenderAddress}
         setToRef={node => {
           setToRef(node);
         }}
