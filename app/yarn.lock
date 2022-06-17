@@ -101,10 +101,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^6.0.2", "@telios/client-sdk@^6.1.3":
-  version "6.1.3"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.1.3.tgz#061e082d18b778fc341f2a777a813f8bf2cc8173"
-  integrity sha512-yEHrR59jNKwztdWfmdrcsTlwWk7/fx9Has9GvwrP0Sx0/VfVejpn384GIIqPVrCbVHi8Zv1gE9YupJNoD6V+hA==
+"@telios/client-sdk@^6.1.4":
+  version "6.1.4"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.1.4.tgz#cfac18c119edac58c71a0e9c01d5ab6c1420ed69"
+  integrity sha512-OPq3WY8lB+tRCVmZ7J3jG/a4U/LNwrLayKw9g+xl0Wz4wcvtMkLhMqyAiJ/ZdPk1n+aS3+rwqXtJpfglY7BETQ==
   dependencies:
     "@telios/nebula" "^3.0.1"
     async "^3.2.0"
@@ -209,12 +209,12 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.7.0.tgz#d0380db3cafb0f13d298d199d266ecd3766eec13"
-  integrity sha512-En2tJv9vTvqOsZeO4KPbtOhlVT/XKL0R3jeJDrQr7bgjOC5YPLKastOcTjzMfwOpUOgTDdKru017JXBYmcPLiQ==
+"@telios/telios-client-backend@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.7.2.tgz#683d0608d0090b181947f07ed0482ce3e93843a7"
+  integrity sha512-W6QGw9cO7cQ49tvw1VzFDv8WSieoCS5K8RhFOD33dfZzUL54MqBk/xJ0rUiC9dA8Csu6g9rLowMXcjK+OWmKrw==
   dependencies:
-    "@telios/client-sdk" "^6.0.2"
+    "@telios/client-sdk" "^6.1.4"
     "@telios/nebula" "^3.0.1"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     env-cmd "^10.1.0"
