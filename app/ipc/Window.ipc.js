@@ -203,9 +203,9 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
       const data = assembleFromDataSet(mailbox, namespaces, aliases);
 
       let filteredArray = [];
-      if (message?.toJSON) {
+      if (message['toJSON']) {
         filteredArray = data.filter(value =>
-          JSON.parse(message.toJSON)
+          JSON.parse(message['toJSON'])
             .map(m => m.address.replace(/[-+#]/gm, ''))
             .includes(value.address.replace(/[-+#]/gm, ''))
         );
