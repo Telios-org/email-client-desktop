@@ -3,7 +3,8 @@ import {
   Menu,
   shell,
   BrowserWindow,
-  MenuItemConstructorOptions
+  MenuItemConstructorOptions,
+  clipboard
 } from 'electron';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
@@ -24,6 +25,8 @@ export default class MenuBuilder {
       process.env.DEBUG_PROD === 'true'
     ) {
       this.setupDevelopmentEnvironment();
+    } else {
+      this.setupProductionEnvironment();
     }
 
     const template =
@@ -39,7 +42,7 @@ export default class MenuBuilder {
 
   setupDevelopmentEnvironment(): void {
     this.mainWindow.webContents.on('context-menu', (_, props) => {
-      const { x, y } = props;
+      const { x, y, editFlags, linkURL, selectionText } = props;
 
       Menu.buildFromTemplate([
         {
@@ -47,7 +50,75 @@ export default class MenuBuilder {
           click: () => {
             this.mainWindow.webContents.inspectElement(x, y);
           }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Copy Link',
+          click: () => {
+            clipboard.writeText(linkURL);
+          },
+          visible: linkURL.length > 0
+        },
+        // {
+        //   type: 'separator'
+        // },
+        // {
+        //   label: 'Cut',
+        //   role: 'cut',
+        //   accelerator: 'CommandOrControl+X',
+        //   visible: editFlags.canCut && isEditable
+        // },
+        // {
+        //   label: 'Copy',
+        //   role: 'copy',
+        //   // accelerator: 'CommandOrControl+C',
+        //   visible: editFlags.canCopy
+        // },
+        // {
+        //   label: 'Paste',
+        //   role: 'paste',
+        //   accelerator: 'CommandOrControl+V',
+        //   visible: editFlags.canPaste && isEditable
+        // }
+      ]).popup({ window: this.mainWindow });
+    });
+  }
+
+  setupProductionEnvironment(): void {
+    this.mainWindow.webContents.on('context-menu', (_, props) => {
+      const { x, y, editFlags, linkURL, selectionText } = props;
+
+      Menu.buildFromTemplate([
+        {
+          label: 'Copy Link',
+          click: () => {
+            clipboard.writeText(linkURL);
+          },
+          visible: linkURL.length > 0
         }
+        // {
+        //   type: 'separator'
+        // },
+        // {
+        //   label: 'Cut',
+        //   role: 'cut',
+        //   accelerator: 'CommandOrControl+X',
+        //   visible: editFlags.canCut && isEditable
+        // },
+        // {
+        //   label: 'Copy',
+        //   role: 'copy',
+        //   // accelerator: 'CommandOrControl+C',
+        //   visible: selectionText.length > 0 // using selectionText instead isEditable or canCopy bc menu shows always otherwise | ALSO DIDN' WORK
+        // },
+        // {
+        //   label: 'Paste',
+        //   role: 'paste',
+        //   accelerator: 'CommandOrControl+V',
+        //   visible: editFlags.canPaste && isEditable
+        // }
       ]).popup({ window: this.mainWindow });
     });
   }

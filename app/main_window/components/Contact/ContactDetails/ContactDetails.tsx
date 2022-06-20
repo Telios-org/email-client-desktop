@@ -10,7 +10,7 @@ import PhoneField from './PhoneField';
 import AddressField from './AddressField';
 import NotesField from './NotesField';
 import DeleteModal from './DeleteModal';
-import Notification from './Notification';
+import Notification from '../../Global/Notification';
 
 // Action Creators
 import {
@@ -461,6 +461,8 @@ const ContactDetails = (props: Props) => {
         show={showNotification}
         setShow={setShowNotification}
         success={saveSucceeded}
+        successMsg="Successfully saved!"
+        errorMsg="Something went wrong!"
       />
     </form>
   );

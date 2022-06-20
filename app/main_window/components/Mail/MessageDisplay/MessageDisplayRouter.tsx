@@ -13,7 +13,9 @@ import {
   selectActiveFolder,
   activeMessageObject,
   activeMessageSelectedRange,
-  selectActiveMailbox
+  selectActiveMailbox,
+  selectAllNamespaces,
+  selectAllAliases
 } from '../../../selectors/mail';
 
 type Props = {
@@ -32,6 +34,8 @@ function MessageDisplayRouter(props: Props) {
   const highlight = useSelector(state => state.globalState.highlightText);
 
   const mailbox = useSelector(selectActiveMailbox);
+  const namespaces = useSelector(selectAllNamespaces);
+  const aliases = useSelector(selectAllAliases);
   const currentFolder = useSelector(selectActiveFolder);
   const message = useSelector(activeMessageObject);
   const selectedItems = useSelector(activeMessageSelectedRange).items;
@@ -72,6 +76,8 @@ function MessageDisplayRouter(props: Props) {
           onMaximize={onComposerMaximize}
           folder={currentFolder}
           mailbox={mailbox}
+          namespaces={namespaces}
+          aliases={aliases}
           message={message}
           isInline
         />

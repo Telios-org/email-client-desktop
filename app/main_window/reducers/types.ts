@@ -255,6 +255,7 @@ export type GlobalType = {
   editorAction: string;
   highlightText?: string;
   error: string | Error;
+  activePage: 'mail' | 'contacts' | 'settings' | 'aliases';
 };
 
 export type MailType = {

@@ -92,7 +92,7 @@ export default function NamespaceBlock(props: Props) {
           >
             {i18n.t('mailbox.aliases')}
           </div>
-          <div className="group-hover:visible invisible flex-none mr-2 inline-block items-center flex hover:bg-gray-200 cursor-pointer text-gray-600 rounded p-1">
+          <div className="group-hover:visible invisible flex-none mr-4 items-center flex hover:bg-gray-200 cursor-pointer text-gray-600 rounded p-1">
             {/* <Icon
               icon="plus"
               
@@ -144,7 +144,7 @@ export default function NamespaceBlock(props: Props) {
                   {alias.name}
                 </span>
 
-                <div className="opacity-0 group-hover:opacity-100 flex text-sm h-6 items-center mr-2">
+                <div className="opacity-0 group-hover:opacity-100 flex text-sm h-6 items-center mr-4">
                   <Whisper
                     trigger="click"
                     placement="top"
@@ -157,7 +157,7 @@ export default function NamespaceBlock(props: Props) {
                       style={{ cursor: 'pointer' }}
                       onClick={() => {
                         clipboard.writeText(
-                          `${alias.aliasId}@${ns[alias.namespaceKey].domain}`
+                          `${alias.namespaceKey}+${alias.name}@${ns[alias.namespaceKey].domain}`
                         );
                       }}
                     />

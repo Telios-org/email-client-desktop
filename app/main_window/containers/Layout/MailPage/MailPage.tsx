@@ -12,7 +12,7 @@ import { clearActiveMessage } from '../../../actions/mailbox/messages';
 import { toggleEditor } from '../../../actions/global';
 
 // Selectors
-import { activeFolderId, selectActiveMailbox } from '../../../selectors/mail';
+import { activeFolderId, selectActiveMailbox, selectAllAliases, selectAllNamespaces } from '../../../selectors/mail';
 
 // Components IMPORTS
 import MessageList from '../../../components/Mail/MessageList/MessageList';
@@ -29,6 +29,8 @@ export default function MailPage() {
 
   const folderId = useSelector(activeFolderId);
   const mailbox = useSelector(selectActiveMailbox);
+  const namespaces = useSelector(selectAllNamespaces);
+  const aliases = useSelector(selectAllAliases);
 
   const [loading, setLoading] = useState(false);
   const [panelWidths, setPanelWidths] = useState({ nav: 200, msgList: 445 });
@@ -92,6 +94,8 @@ export default function MailPage() {
     toggleEditorState('composerMaximize', false);
     await ipcRenderer.invoke('RENDERER::showComposerWindow', {
       mailbox,
+      namespaces,
+      aliases,
       editorAction: 'maximize'
     });
   };

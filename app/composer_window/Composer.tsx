@@ -8,7 +8,11 @@ import { topicReference } from '@babel/types';
 import { useHandler } from '../utils/hooks/useHandler';
 import { Editor, MessageInputs, TopBar, Attachments } from './components';
 
-import { recipientTransform, emailTransform } from '../utils/draft.utils';
+import {
+  recipientTransform,
+  emailTransform,
+  assembleFromDataSet
+} from '../utils/draft.utils';
 
 import { UTCtimestamp } from '../utils/helpers/date';
 // import editorHTMLexport from './utils/messageEditor/htmlExportOptions';
@@ -24,7 +28,8 @@ import {
   Recipients,
   FolderType,
   MailboxType,
-  MailMessageType
+  MailMessageType,
+  MailType
 } from '../main_window/reducers/types';
 
 import { EditorIframeRef } from './components/editor/types';
@@ -77,6 +82,8 @@ type Props = {
   isInline: boolean;
   folder: FolderType;
   mailbox: MailboxType;
+  namespaces: MailType;
+  aliases: MailType;
   message: MailMessageType;
 };
 
@@ -87,7 +94,9 @@ const Composer = (props: Props) => {
     onMaximmize,
     folder,
     message,
-    mailbox: mb
+    mailbox: mb,
+    namespaces,
+    aliases
   } = props;
 
   const editorRef = useRef<EditorIframeRef>(null);
@@ -102,6 +111,14 @@ const Composer = (props: Props) => {
   const [prefillRecipients, setPrefillRecipients] = useState(
     prefillRecipientsTemplate
   );
+  const [fromAddress, setFromAddress] = useState<{
+    address: string;
+    name: string;
+  } | null>(null);
+  const [fromDataSet, setFromDataSet] = useState<
+    { address: string; name: string }[]
+  >([]);
+
   const [editorReady, setEditorReady] = useState(false);
   const [composerReady, setComposerReady] = useState(false);
   const [editorState, setEditorState] = useState<string | undefined>();
@@ -130,15 +147,17 @@ const Composer = (props: Props) => {
     // Getting the plain text off the htmlBody
     const plaintext = htmlToText.fromString(htmlBody);
 
+    const from = draft?.from ?? [
+      {
+        address: owner.address,
+        name: owner.name ? owner.name : owner.address
+      }
+    ];
+
     const eml = {
       ...clone(draft),
       date: time,
-      from: [
-        {
-          address: owner.address,
-          name: owner.name ? owner.name : owner.address
-        }
-      ],
+      from,
       fromJSON: JSON.stringify(draft?.from),
       toJSON: JSON.stringify(draft?.to),
       ccJSON: JSON.stringify(draft?.cc),
@@ -146,6 +165,9 @@ const Composer = (props: Props) => {
       bodyAsText: plaintext,
       bodyAsHtml: htmlBody
     };
+
+    console.log('FROM EMAIL', from);
+    console.log(eml);
 
     if (htmlBody !== editorState) {
       setEditorState(htmlBody);
@@ -172,6 +194,14 @@ const Composer = (props: Props) => {
           draft.from = rcp.data.from;
           handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
           setMailbox(mb);
+          const data = assembleFromDataSet(mb, namespaces, aliases);
+          setFromDataSet(data);
+          if (draft.from.length === 1) {
+            setFromAddress(draft.from[0]);
+          } else {
+            setFromAddress(data[0]);
+          }
+
           setPrefillRecipients(rcp.ui);
           if (draft.to.length > 0) {
             setActiveSendButton(true);
@@ -214,6 +244,17 @@ const Composer = (props: Props) => {
 
         handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
         setMailbox(content.mailbox);
+        const data = assembleFromDataSet(
+          content.mailbox,
+          content.namespaces,
+          content.aliases
+        );
+        setFromDataSet(data);
+        if (draft.from.length === 1) {
+          setFromAddress(draft.from[0]);
+        } else {
+          setFromAddress(data[0]);
+        }
         setPrefillRecipients(rcp.ui);
         setWindowId(windowID);
 
@@ -345,6 +386,14 @@ const Composer = (props: Props) => {
     handleEmailUpdate(newEmail);
   };
 
+  const onFromChange = (obj: { address: string; name: string }) => {
+    const newEmail = clone(email);
+    newEmail.from = [obj];
+    setFromAddress(obj);
+
+    handleEmailUpdate(newEmail);
+  };
+
   const handleEditorReady = useCallback(() => setEditorReady(true), []);
 
   const onAttachmentChange = (newArray: AttachmentType[]) => {
@@ -430,6 +479,9 @@ const Composer = (props: Props) => {
         </div>
       )}
       <MessageInputs
+        fromDataSet={fromDataSet}
+        fromAddress={fromAddress}
+        onFromChange={onFromChange}
         onUpdateRecipients={onUpdateRecipients}
         defaultRecipients={prefillRecipients}
         setToRef={node => {

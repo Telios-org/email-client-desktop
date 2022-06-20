@@ -8,10 +8,12 @@ type Props = {
   show: boolean;
   setShow: (val) => void;
   success: boolean;
+  successMsg: string;
+  errorMsg: string;
 };
 
 const Notification = (props: Props) => {
-  const { show, setShow, success } = props;
+  const { show, setShow, success, successMsg, errorMsg } = props;
 
   useEffect(() => {
     let timeout = null;
@@ -60,7 +62,7 @@ const Notification = (props: Props) => {
                       </div>
                       <div className="ml-3 w-0 flex-1 pt-0.5">
                         <p className="text-sm font-medium text-gray-900">
-                          Successfully saved!
+                          {successMsg}
                         </p>
                       </div>
                     </>
@@ -75,7 +77,7 @@ const Notification = (props: Props) => {
                       </div>
                       <div className="ml-3 w-0 flex-1 pt-0.5">
                         <p className="text-sm font-medium text-gray-900">
-                          Something went wrong!
+                          {errorMsg}
                         </p>
                       </div>
                     </>

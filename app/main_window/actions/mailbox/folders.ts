@@ -20,7 +20,9 @@ export const updateFolderCount = (id: number, amount: number) => {
       mail: { folders }
     } = getState();
 
-    const currCount = folders?.byId[id].count;
+    let currCount = folders?.byId[id]?.count;
+
+    if(!currCount) currCount = 0
 
     let change = amount;
 
