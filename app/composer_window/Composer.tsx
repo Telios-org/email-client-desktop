@@ -363,12 +363,7 @@ const Composer = (props: Props) => {
         to: toArr,
         cc: ccArr,
         bcc: bccArr,
-        from: [
-          {
-            address: mailbox.address,
-            name: mailbox.name ? mailbox.name : mailbox.address
-          }
-        ]
+        from: fromAddress
       };
 
       console.log('DRAFT', draft);
