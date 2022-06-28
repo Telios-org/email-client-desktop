@@ -78,12 +78,16 @@ const AliasDelete = forwardRef((props: Props, ref) => {
           <div className="mt-2 text-sm text-gray-500">
             <p className="leading-relaxed">
               <b>
-                {` ${deleteObj?.namespaceKey}#`}
+                {` ${
+                  deleteObj?.namespaceKey === null
+                    ? ''
+                    : `${deleteObj?.namespaceKey}+`
+                }`}
                 <span className="text-purple-600">{deleteObj?.name}</span>
                 {`@${domain} `}
               </b>
-              will be removed from your list of aliases and its incoming
-              traffic blocked.
+              will be removed from your list of aliases and its incoming traffic
+              blocked.
             </p>
             {/* <p className="text-xs">
               You can recreate this alias only through the app (as opposed to

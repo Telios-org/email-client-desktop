@@ -13,6 +13,7 @@ import MailService from '../../services/mail.service';
 
 // HELPER
 import { arrayToObject } from '../../utils/reducer.util';
+import sortingHat from '../../utils/helpers/sort';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');

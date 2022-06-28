@@ -62,7 +62,11 @@ export default function aliases(
         ]
       };
     case UPDATE_ALIAS_SUCCESS:
-      aliasId = `${action.payload.namespaceName}#${action.payload.address}`;
+      if (action.payload.namespaceName === null) {
+        aliasId = `${action.payload.address}`;
+      } else {
+        aliasId = `${action.payload.namespaceName}#${action.payload.address}`;
+      }
 
       return {
         byId: {

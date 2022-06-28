@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon';
 
+import sortingHat from './helpers/sort';
+
 // TYPESCRIPT TYPES
 import {
   Email,
@@ -240,7 +242,8 @@ export const assembleFromDataSet = (
         name: `${aliases.byId[id].namespaceKey}+${aliases.byId[id].name}@${
           namespaces.byId[aliases.byId[id].namespaceKey].domain
         }`
-      }));
+      }))
+      .sort(sortingHat('en', 'address'));
 
     const arr = [
       {

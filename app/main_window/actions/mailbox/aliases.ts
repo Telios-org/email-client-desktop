@@ -111,7 +111,7 @@ export const aliasRegistrationFailure = (error: string, alias: string) => {
 };
 
 export const registerAlias = (
-  namespaceName: string,
+  namespaceName: string | null,
   domain: string,
   address: string,
   description: string,
@@ -193,7 +193,7 @@ export const aliasUpdateFailure = (
 };
 
 export const updateAlias = (payload: {
-  namespaceName: string;
+  namespaceName: string | null;
   domain: string;
   address: string;
   description: string;
@@ -210,7 +210,12 @@ export const updateAlias = (payload: {
       disabled
     } = payload;
     dispatch(
-      startAliasUpdate(`${namespaceName}#${address}@${domain}`, payload)
+      startAliasUpdate(
+        `${
+          namespaceName === null ? '' : `${namespaceName}#`
+        }${address}@${domain}`,
+        payload
+      )
     );
     try {
       await Mail.updateAliasAddress({
@@ -225,7 +230,9 @@ export const updateAlias = (payload: {
       dispatch(
         aliasUpdateFailure(
           error,
-          `${namespaceName}#${address}@${domain}`,
+          `${
+            namespaceName === null ? '' : `${namespaceName}#`
+          }${address}@${domain}`,
           payload
         )
       );
@@ -286,7 +293,12 @@ export const removeAlias = (payload: {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { namespaceName, domain, address } = payload;
     dispatch(
-      startAliasRemove(`${namespaceName}#${address}@${domain}`, payload)
+      startAliasRemove(
+        `${
+          namespaceName === null ? '' : `${namespaceName}#`
+        }${address}@${domain}`,
+        payload
+      )
     );
 
     const {
@@ -319,7 +331,10 @@ export const removeAlias = (payload: {
 
       const aliasMsg = messages
         .filter(msg => {
-          return msg.aliasId === `${namespaceName}#${address}`;
+          return (
+            msg.aliasId ===
+            `${namespaceName === null ? '' : `${namespaceName}#`}${address}`
+          );
         })
         .map(msg => {
           return {
@@ -360,7 +375,13 @@ export const removeAlias = (payload: {
       };
     }
 
-    dispatch(aliasRemoveSuccess({ aliasId: `${namespaceName}#${address}` }));
+    dispatch(
+      aliasRemoveSuccess({
+        aliasId: `${
+          namespaceName === null ? '' : `${namespaceName}#`
+        }${address}`
+      })
+    );
     return { status: 'removed', success: true };
   };
 };
@@ -481,10 +502,7 @@ export const aliasSelectionFlowFailure = (error: Error) => {
   };
 };
 
-export const aliasSelection = (
-  aliasIndex: number,
-  searchList: any[] = []
-) => {
+export const aliasSelection = (aliasIndex: number, searchList: any[] = []) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(aliasSelectionFlow(aliasIndex));
 

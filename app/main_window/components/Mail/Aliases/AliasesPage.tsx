@@ -31,14 +31,21 @@ const AliasesPage = () => {
   const [saveSucceeded, setSaveSucceeded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
-  const closeModal = (isSuccess: boolean, message: string) => {
-    setIsOpen(false);
-
+  const callToaster = (isSuccess: boolean, message: string) => {
     if (isSuccess) {
       setSaveSucceeded(true);
       setNotifMessage(message);
       setShowNotification(true);
+    } else {
+      setSaveSucceeded(false);
+      setNotifMessage(message);
+      setShowNotification(true);
     }
+  };
+
+  const closeModal = (isSuccess: boolean, message: string) => {
+    setIsOpen(false);
+    callToaster(isSuccess, message);
   };
 
   const openModal = (route: string) => {
@@ -80,7 +87,11 @@ const AliasesPage = () => {
           </div>
         </div>
         <div className="py-2 flex flex-col grow relative">
-          <AliasManagement openModalRoute={openModal} aliasSelection={setAliasSelection}/>
+          <AliasManagement
+            openModalRoute={openModal}
+            aliasSelection={setAliasSelection}
+            callToaster={callToaster}
+          />
           <Transition appear show={isOpen} as={Fragment}>
             <Dialog
               as="div"
