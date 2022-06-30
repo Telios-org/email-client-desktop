@@ -9,9 +9,10 @@ const stringThemUp = (
       current: { name: string; address: string },
       currentIndex: number
     ) => {
-      const name = current.name && current.name.trim() !== current.address.trim()
-        ? `${current.name} ${complex ? `<${current.address}>` : ''}`
-        : `${current.address}`;
+      const name =
+        current.name && current.name.trim() !== current.address.trim()
+          ? `${current.name} ${complex ? `<${current.address}>` : ''}`
+          : `${current.address}`;
 
       let val = name;
 
@@ -41,16 +42,23 @@ const peopleHeaderParser = (
   direction: 'incoming' | 'outgoing' = 'incoming'
 ) => {
   const to = { arr: JSON.parse(toJSON), plainText: '' };
-  const from = { arr: JSON.parse(fromJSON), plainText: '' };
+  let from = { arr: JSON.parse(fromJSON), plainText: '' };
   const cc = { arr: JSON.parse(ccJSON), plainText: '' };
   const bcc = { arr: JSON.parse(bccJSON), plainText: '' };
 
+  if (!Array.isArray(from.arr)) {
+    from = { arr: [from.arr], plainText: from.plainText };
+  }
+
   let previewHead;
   const sender = {
-    name: from.arr[0].name && from.arr[0].name.length ? from.arr[0].name : from.arr[0].address,
-    address: from.arr[0].address,
-    hasName: !!from.arr[0].name, // will simplify UI code to know if name and address are the same.
-    inNetwork: from.arr[0].address.indexOf('telios.io') > -1,
+    name:
+      from.arr[0]?.name && from.arr[0]?.name?.length
+        ? from.arr[0]?.name
+        : from.arr[0]?.address,
+    address: from.arr[0]?.address,
+    hasName: !!from.arr[0]?.name, // will simplify UI code to know if name and address are the same.
+    inNetwork: from.arr[0]?.address.indexOf('telios.io') > -1,
     avatarInitials: ''
   };
 
@@ -72,7 +80,6 @@ const peopleHeaderParser = (
   cc.plainText = stringThemUp(cc.arr);
   bcc.plainText = stringThemUp(bcc.arr);
   from.plainText = stringThemUp(from.arr);
-
 
   return {
     previewHead,

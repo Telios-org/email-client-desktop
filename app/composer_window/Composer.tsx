@@ -111,10 +111,13 @@ const Composer = (props: Props) => {
   const [prefillRecipients, setPrefillRecipients] = useState(
     prefillRecipientsTemplate
   );
-  const [fromAddress, setFromAddress] = useState<{
-    address: string;
-    name: string;
-  } | null>(null);
+  const [fromAddress, setFromAddress] = useState<
+    | {
+        address: string;
+        name: string;
+      }[]
+    | null
+  >(null);
   const [fromDataSet, setFromDataSet] = useState<
     { address: string; name: string }[]
   >([]);
@@ -197,9 +200,9 @@ const Composer = (props: Props) => {
           const data = assembleFromDataSet(mb, namespaces, aliases);
           setFromDataSet(data);
           if (draft.from.length === 1) {
-            setFromAddress(draft.from[0]);
+            setFromAddress(draft.from);
           } else {
-            setFromAddress(data[0]);
+            setFromAddress([data[0]]);
           }
 
           setPrefillRecipients(rcp.ui);
@@ -251,9 +254,9 @@ const Composer = (props: Props) => {
         );
         setFromDataSet(data);
         if (draft.from.length === 1) {
-          setFromAddress(draft.from[0]);
+          setFromAddress(draft.from);
         } else {
-          setFromAddress(data[0]);
+          setFromAddress([data[0]]);
         }
         setPrefillRecipients(rcp.ui);
         setWindowId(windowID);
@@ -363,7 +366,7 @@ const Composer = (props: Props) => {
         to: toArr,
         cc: ccArr,
         bcc: bccArr,
-        from: fromAddress
+        from: [fromAddress]
       };
 
       console.log('DRAFT', draft);
@@ -475,7 +478,7 @@ const Composer = (props: Props) => {
       )}
       <MessageInputs
         fromDataSet={fromDataSet}
-        fromAddress={fromAddress}
+        fromAddress={Array.isArray(fromAddress) ? fromAddress[0] : fromAddress}
         onFromChange={onFromChange}
         onUpdateRecipients={onUpdateRecipients}
         defaultRecipients={prefillRecipients}

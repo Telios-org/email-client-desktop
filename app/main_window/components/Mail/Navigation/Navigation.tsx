@@ -54,7 +54,8 @@ import { StateType, FolderType } from '../../../reducers/types';
 import CustomIcon from './NavIcons';
 
 const { app } = require('electron').remote
-const dock = app.dock
+
+const {dock} = app;
 
 type Props = {
   onRefreshData: () => void;
@@ -96,20 +97,23 @@ export default function Navigation(props: Props) {
   );
 
   // Show total unread count as badge for Mac OS only
-  if(dock) {
-    let totalUnreadCount = 0
+  if (dock) {
+    let totalUnreadCount = 0;
 
-    for(const id of foldersArray) {
+    for (const id of foldersArray) {
       const folder = allFolders[id];
 
-      if(folder.name !== 'Trash' || folder.name !== 'Sent' || folder.name !== 'Drafts' && folder.count) {
-        totalUnreadCount += folder.count
+      if (
+        folder.name !== 'Trash' ||
+        folder.name !== 'Sent' ||
+        (folder.name !== 'Drafts' && folder.count)
+      ) {
+        totalUnreadCount += folder.count;
       }
     }
 
-  
-    if(totalUnreadCount > 0) {
-      dock.setBadge('' + totalUnreadCount);
+    if (totalUnreadCount > 0) {
+      dock.setBadge(`${  totalUnreadCount}`);
     } else {
       dock.setBadge('');
     }
@@ -188,7 +192,7 @@ export default function Navigation(props: Props) {
 
   const MainFolders = ({ active, onSelect, folders, ...props }) => {
     return (
-      <ul className="select-none -mb-3">
+      <ul className="select-none">
         {folders.map((id, index) => {
           const folder = allFolders[id];
 
@@ -201,8 +205,12 @@ export default function Navigation(props: Props) {
             const [{ canDrop, isOver }, drop] = useDrop({
               accept: 'message',
               canDrop: (item, monitor) => {
-                if(folder.folderId === 4 || folder.folderId !== 4 && !item.aliasId) return true
-                return false
+                if (
+                  folder.folderId === 4 ||
+                  (folder.folderId !== 4 && !item.aliasId)
+                )
+                  return true;
+                return false;
               },
               drop: () => ({ id: folder.folderId, name: folder.name }),
               collect: monitor => ({
@@ -215,7 +223,7 @@ export default function Navigation(props: Props) {
 
             return (
               <li
-                className={`flex relative px-2 my-0.5 mb-0 p-0.5 text-gray-500 items-center
+                className={`flex relative ml-2 my-0.5 mb-0 p-0.5 text-gray-500 items-center
                 ${
                   active === index && !isDrop
                     ? 'text-gray-600 font-bold '
@@ -419,43 +427,45 @@ export default function Navigation(props: Props) {
   };
 
   return (
-    <div className="flex w-full h-full relative mb-16">
-      <div className="flex-1">
-        <div className="h-14 flex justify-center items-center">
-          <Button
-            appearance="primary"
-            onClick={newMessageAction}
-            block
-            className="bg-gradient-to-bl from-purple-600 to-purple-500 rounded text-sm flex flex-row w-40 justify-center shadow active:shadow-sm"
-          >
-            <span>New Message</span>
-            <EditSquare
-              set="broken"
-              className="text-white ml-4 mt-0.5"
-              size="small"
-            />
-          </Button>
-        </div>
-        <Scrollbars style={{ height: '100%' }} hideTracksWhenNotNeeded autoHide>
-          <div>
-            <MainFolders
-              appearance="subtle"
-              reversed
-              folders={foldersArray}
-              active={activeFolderIndex}
-              onSelect={selectFolder}
-            />
-            {/* <OtherFolders
+    <div className="flex flex-col w-full h-full relative overflow-x-hidden">
+      <div className="h-14 flex justify-center items-center mb-3">
+        <Button
+          appearance="primary"
+          onClick={newMessageAction}
+          block
+          className="bg-gradient-to-bl from-purple-600 to-purple-500 rounded text-sm flex flex-row w-40 justify-center shadow active:shadow-sm"
+        >
+          <span>New Message</span>
+          <EditSquare
+            set="broken"
+            className="text-white ml-4 mt-0.5"
+            size="small"
+          />
+        </Button>
+      </div>
+      <Scrollbars
+        hideTracksWhenNotNeeded
+        autoHide
+        renderView={props => <div {...props} className="overflow-x-hidden" />}
+      >
+        <div>
+          <MainFolders
+            appearance="subtle"
+            reversed
+            folders={foldersArray}
+            active={activeFolderIndex}
+            onSelect={selectFolder}
+          />
+          {/* <OtherFolders
               appearance="subtle"
               reversed
               folders={foldersArray}
               active={activeFolderIndex}
               onSelect={selectFolder}
             /> */}
-            <AliasSection handleSelectAction={selectFolder} />
-          </div>
-        </Scrollbars>
-      </div>
+          <AliasSection handleSelectAction={selectFolder} />
+        </div>
+      </Scrollbars>
       {/* <NewFolderModal
         show={showFolderModal}
         showDelete={showDeleteFolderModal}

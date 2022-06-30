@@ -21,7 +21,7 @@ function classNames(...classes) {
 
 type Props = {
   fromDataSet: { address: string; name: string }[];
-  fromAddress: { address: string; name: string };
+  fromAddress: { address: string; name: string } | null;
   onFromChange: (obj: { address: string; name: string }) => void;
 };
 

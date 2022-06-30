@@ -233,16 +233,25 @@ export const assembleFromDataSet = (
   aliases: MailType
 ): { address: string; name: string }[] => {
   if (mailbox?.address && aliases?.allIds && namespaces?.allIds) {
+    const mainDomain = mailbox.address.split('@')[1];
+
     const newArr = aliases.allIds
       .filter(a => !aliases.byId[a].disabled)
-      .map(id => ({
-        address: `${aliases.byId[id].namespaceKey}+${aliases.byId[id].name}@${
-          namespaces.byId[aliases.byId[id].namespaceKey].domain
-        }`,
-        name: `${aliases.byId[id].namespaceKey}+${aliases.byId[id].name}@${
-          namespaces.byId[aliases.byId[id].namespaceKey].domain
-        }`
-      }))
+      .map(id => {
+        const ns = aliases.byId[id].namespaceKey;
+        let nsDomain = null;
+        console.log('MAP', ns, nsDomain, mainDomain);
+        if (ns !== null) {
+          nsDomain = namespaces.byId[ns].domain;
+        }
+
+        return {
+          address: `${ns ? `${ns}+` : ''}${aliases.byId[id].name}@${nsDomain ||
+            mainDomain}`,
+          name: `${ns ? `${ns}+` : ''}${aliases.byId[id].name}@${nsDomain ||
+            mainDomain}`
+        };
+      })
       .sort(sortingHat('en', 'address'));
 
     const arr = [
