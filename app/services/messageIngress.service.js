@@ -88,7 +88,7 @@ class MessageIngressService extends EventEmitter {
         this.handleDone();
       }
 
-      if (data.file && data.file.failed === this.MAX_RETRY) {
+      if (data.file && data.file.failed >= this.MAX_RETRY) {
         console.log(`File ${data.file.hash} failed all attempts!`);
 
         // Goes into drive's dead letter queue

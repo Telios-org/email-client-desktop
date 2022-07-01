@@ -45,7 +45,8 @@ import styles from '../Navigation.css';
 import {
   selectAllAliasesById,
   aliasFolderIndex,
-  selectAllNamespaces
+  selectAllNamespaces,
+  currentMessageList
 } from '../../../../selectors/mail';
 
 // TYPESCRIPT TYPES
@@ -90,7 +91,8 @@ export default function NamespaceBlock(props: Props) {
       id: index,
       name: d.name,
       ns: d.namespaceKey,
-      disabled: d.disabled
+      disabled: d.disabled,
+      count: d.count
     };
   });
 
@@ -104,13 +106,18 @@ export default function NamespaceBlock(props: Props) {
 
   const Row = (subProps: {
     text: string;
+    ns: string | null;
     show: boolean;
-    unread: number;
     icon: 'hashtag' | 'lightning';
   }) => {
-    const { text, show, unread, icon } = subProps;
+    const { text, show, icon, ns } = subProps;
 
     const nsActive = AliasData.filter(a => a.id === active)[0]?.ns ?? undefined;
+
+    const unread = AliasData.filter(f => f.ns === ns).reduce(
+      (prev, curr) => prev + curr.count,
+      0
+    );
 
     return (
       <div className="pl-5 py-1 group flex w-full justify-between">
@@ -166,7 +173,7 @@ export default function NamespaceBlock(props: Props) {
         </div>
 
         {unread > 0 && (
-          <span className="bg-gray-300 text-gray-600 font-medium mr-2 inline-block py-0.5 px-2 text-xs rounded">
+          <span className="bg-purple-300/60 text-purple-600 font-semibold mr-2 inline-block py-0.5 px-2 text-xs rounded">
             {unread}
           </span>
         )}
@@ -217,7 +224,7 @@ export default function NamespaceBlock(props: Props) {
         </div>
 
         {alias?.count > 0 && (
-          <span className="group-hover:hidden bg-gray-200 text-gray-600 font-medium ml-1 mr-2 inline-block py-0.5 px-2 text-xs rounded">
+          <span className="group-hover:hidden bg-gray-200 text-gray-600 font-semibold ml-1 mr-2 inline-block py-0.5 px-2 text-xs rounded">
             {alias?.count}
           </span>
         )}
@@ -232,8 +239,7 @@ export default function NamespaceBlock(props: Props) {
             onClick={() =>
               clipboard.writeText(
                 `${alias.ns ? `${alias.ns}+` : ''}${alias.name}@${mailDomain}`
-              )
-            }
+              )}
           />
           <span className="bg-gray-900 opacity-80 text-white font-medium tracking-wide absolute right-8 top-1 z-30 px-2 py-1 text-xs rounded hidden group-focus:block">
             Copied!
@@ -246,7 +252,7 @@ export default function NamespaceBlock(props: Props) {
   return (
     <>
       <div className="select-none mb-16">
-        <Disclosure>
+        <Disclosure defaultOpen>
           {({ open }) => (
             <>
               <Disclosure.Button
@@ -256,7 +262,7 @@ export default function NamespaceBlock(props: Props) {
                 <div className="flex flex-row ml-4">
                   <ChevronDownIcon
                     className={`mr-1 mt-0.5 h-5 w-5 text-gray-600 rounded hover:bg-gray-200 transition-transform ${
-                      !open ? '' : 'transform -rotate-90 '
+                      open ? '' : 'transform -rotate-90 '
                     }`}
                   />
                   <div
@@ -279,7 +285,7 @@ export default function NamespaceBlock(props: Props) {
                 </div>
               </Disclosure.Button>
               <Transition
-                show={!open}
+                show={open}
                 enter="transition duration-100 ease-out"
                 enterFrom="transform scale-95 opacity-0"
                 enterTo="transform scale-100 opacity-100"
@@ -302,10 +308,8 @@ export default function NamespaceBlock(props: Props) {
                               >
                                 <Row
                                   text={ns}
+                                  ns={ns}
                                   show={subopen}
-                                  unread={AliasData.filter(
-                                    f => f.ns === ns
-                                  ).reduce((prev, curr) => prev + curr.count)}
                                   icon="hashtag"
                                 />
                               </Disclosure.Button>
@@ -328,9 +332,7 @@ export default function NamespaceBlock(props: Props) {
                               <Row
                                 text="random"
                                 show={subopen}
-                                unread={AliasData.filter(
-                                  f => f.ns === null
-                                ).reduce((prev, curr) => prev + curr.count)}
+                                ns={null}
                                 icon="lightning"
                               />
                             </Disclosure.Button>

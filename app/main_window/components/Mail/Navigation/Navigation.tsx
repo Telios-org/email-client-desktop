@@ -260,10 +260,10 @@ export default function Navigation(props: Props) {
                 <span className="flex-auto pl-3 leading-loose align-middle text-sm self-center">
                   {folder.name}
                 </span>
-                {folder.name !== 'Sent' && folder.name !== 'Trash' && (
+                {folder.name !== 'Sent' && folder.name !== 'Trash' && folder.count > 0 && (
                   <div
-                    className={`w-6 h-6 text-purple-700 font-semibold text-sm
-                    flex-initial text-right leading-loose self-center flex items-center justify-center`}
+                    className={` bg-purple-300/60 text-purple-600 font-semibold py-0.5 px-2 text-xs rounded mr-2
+                    flex-initial text-right self-center flex items-center justify-center`}
                   >
                     {folder.count ? folder.count : ''}
                   </div>
