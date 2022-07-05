@@ -69,9 +69,9 @@ const SyncNotification = (props: Props) => {
 
   return (
     <div
-      className={`absolute inset-x-0 bottom-0 h-16 m-1 
+      className={`relative bg-coolGray-100 border-t border-gray-200 w-full inset-x-0 bottom-0 h-16 p-1 mb-2 
     text-gray-500 transition-all duration-1000 ease-in-out
-    ${isLoading ? 'opacity-100' : 'opacity-0'}
+    ${isLoading ? 'show' : 'hide'}
     `}
     >
       <div className="w-full text-xs pl-2 pt-2 animate-pulse font-medium">

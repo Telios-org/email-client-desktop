@@ -13,6 +13,7 @@ import MailService from '../../services/mail.service';
 
 // HELPER
 import { arrayToObject } from '../../utils/reducer.util';
+import sortingHat from '../../utils/helpers/sort';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -20,7 +21,7 @@ function classNames(...classes) {
 
 type Props = {
   fromDataSet: { address: string; name: string }[];
-  fromAddress: { address: string; name: string };
+  fromAddress: { address: string; name: string } | null;
   onFromChange: (obj: { address: string; name: string }) => void;
 };
 

@@ -2,6 +2,7 @@ const { ipcMain, nativeTheme, dialog, BrowserView } = require('electron');
 const path = require('path');
 const { emailTransform, assembleFromDataSet } = require('../utils/draft.utils');
 const store = require('../Store');
+const { Console } = require('console');
 
 module.exports = (windowManager, createMainWindow, createLoginWindow) => {
   const saveDraft = payload => {
@@ -198,9 +199,16 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     async (event, content) => {
       const { message, mailbox, namespaces, aliases, editorAction } = content;
 
+      console.log(content);
+
       const newDraft = emailTransform(message, editorAction, true);
 
+      console.log(newDraft);
+
+
       const data = assembleFromDataSet(mailbox, namespaces, aliases);
+
+      console.log(data);
 
       let filteredArray = [];
       if (message['toJSON']) {

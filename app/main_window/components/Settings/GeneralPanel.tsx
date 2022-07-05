@@ -42,7 +42,7 @@ const GeneralPanel = () => {
     validations: {
       displayName: {
         pattern: {
-          value: /^$|^([a-zA-Z0-9\.\-\/]+\s)*[a-zA-Z0-9\.\-\/]+$/, // empty ^$ or string
+          value: /^$|^([A-Za-zÀ-ÖØ-öø-ÿ0-9\.\-\/]+\s)*[A-Za-zÀ-ÖØ-öø-ÿ0-9\.\-\/]+$/, // empty ^$ or string
           message: 'No special characters allowed except for . - / allowed.'
         }
       }

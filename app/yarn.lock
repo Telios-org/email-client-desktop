@@ -127,6 +127,32 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
+"@telios/client-sdk@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.2.0.tgz#659a87aaa3d9f8ea47ccd1f185d8e3a0b5a59eed"
+  integrity sha512-zUNbX8fVkI7WE7DASYndhC174zb+TLH0o7ZIg1LCpIbwTeLrCUWDNsD75jvV4ppgZJE62TsA8/HmVfzSz7gGjQ==
+  dependencies:
+    "@telios/nebula" "^3.0.1"
+    async "^3.2.0"
+    axios "^0.21.1"
+    bip39 "^3.0.4"
+    blakejs "^1.1.0"
+    chokidar "^3.5.1"
+    corestore "^5.8.2"
+    dat-encoding "^5.0.1"
+    jwt-decode "^2.2.0"
+    level "^6.0.1"
+    mailparser "^2.8.1"
+    memorystream "^0.3.1"
+    moment "^2.27.0"
+    multifeed "^6.0.0"
+    node-fetch "^2.6.1"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    rimraf "^3.0.2"
+    sodium-native "^3.2.0"
+    uuid "^8.2.0"
+
 "@telios/nebula-drive@^5.3.1":
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/@telios/nebula-drive/-/nebula-drive-5.3.2.tgz#8b2be13c2f5e7e1af09c7307fef72d6c34f1ac94"
@@ -209,10 +235,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^3.7.2":
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.7.2.tgz#683d0608d0090b181947f07ed0482ce3e93843a7"
-  integrity sha512-W6QGw9cO7cQ49tvw1VzFDv8WSieoCS5K8RhFOD33dfZzUL54MqBk/xJ0rUiC9dA8Csu6g9rLowMXcjK+OWmKrw==
+"@telios/telios-client-backend@^3.7.6":
+  version "3.7.6"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-3.7.6.tgz#0b8c1d75a4155e7e07054b05689d05a24e96eb70"
+  integrity sha512-OaTXa0eKrp78Qe/4ZHf//78NaBT7U0BvhxFZ9sa5/C/NkLSiKj6MU9gjw9G8q+7ZhPNadmBehSfNcDmkUvECZA==
   dependencies:
     "@telios/client-sdk" "^6.1.4"
     "@telios/nebula" "^3.0.1"

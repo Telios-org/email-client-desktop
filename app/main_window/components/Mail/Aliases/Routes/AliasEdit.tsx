@@ -54,7 +54,7 @@ const AliasEdit = forwardRef((props: Props, ref) => {
     errors
   } = useForm({
     initialValues: {
-      namespace: '',
+      namespace: null,
       alias: '',
       description: '',
       fwdAddresses: []
@@ -70,6 +70,15 @@ const AliasEdit = forwardRef((props: Props, ref) => {
 
       setSubmitError('');
       setLoader(true);
+
+      console.log({
+        namespaceName: namespace,
+        domain,
+        address: alias,
+        description,
+        fwdAddresses: fwd,
+        disabled: a.disabled
+      });
 
       const res = await dispatch(
         updateAlias({
@@ -128,8 +137,8 @@ const AliasEdit = forwardRef((props: Props, ref) => {
       </Dialog.Title>
       <div className="px-6">
         <div className="text-sm">
-          <p className="text-sm text-center font-bold bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded max-w-sm mx-auto">
-            {`${form.namespace.length === 0 ? 'namespace' : form.namespace}+`}
+          <p className="text-sm text-center font-bold bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded max-w-md mx-auto">
+            {`${form.namespace === null ? '' : `${form.namespace}+`}`}
             <span className="text-purple-600">
               {form.alias.length === 0 ? 'alias' : form.alias}
             </span>
@@ -143,7 +152,7 @@ const AliasEdit = forwardRef((props: Props, ref) => {
           </span>
         </div> */}
       </div>
-      <form className="max-w-sm m-auto">
+      <form className="max-w-md m-auto">
         <div className="mt-6">
           <Combobox
             value={form.fwdAddresses}
@@ -231,16 +240,12 @@ const AliasEdit = forwardRef((props: Props, ref) => {
                       className={({ active }) => {
                         return classNames(
                           'relative cursor-default select-none py-2 pl-3 pr-9 focus:outline-none',
-                          active ? 'bg-sky-600 text-white' : 'text-gray-900'
+                          active ? 'bg-sky-500 text-white' : 'text-gray-900'
                         );
                       }}
                     >
-                      Add
-                      <b>
-"{queryFwd}
-"
-</b>
-{' '}
+                      Add{' '}
+                      <b>"{queryFwd}"</b>{' '}
                     </Combobox.Option>
                   )}
                   {filteredForwards.map(fwd => (
@@ -250,7 +255,7 @@ const AliasEdit = forwardRef((props: Props, ref) => {
                       className={({ active }) => {
                         return classNames(
                           'relative cursor-default select-none py-2 pl-3 pr-9 focus:outline-none',
-                          active ? 'bg-sky-600 text-white' : 'text-gray-900'
+                          active ? 'bg-sky-500 text-white' : 'text-gray-900'
                         );
                       }}
                     >
@@ -308,7 +313,6 @@ const AliasEdit = forwardRef((props: Props, ref) => {
               value={form.description}
               onChange={handleChange('description')}
               className="form-textarea shadow-sm focus:ring-purple-500 focus:border-purple-500 block w-full sm:text-sm border-gray-300 rounded-md"
-              defaultValue=""
             />
           </div>
           <div className="text-xs text-red-500 absolute -bottom-7 text-center w-full">
@@ -316,11 +320,9 @@ const AliasEdit = forwardRef((props: Props, ref) => {
           </div>
         </div>
         <div className="text-xs text-gray-400 pt-3 mt-6">
-          <b>Note:</b>
-{' '}
-The + separator is interchangeable with - or # in case a
+          <b>Note:</b> The + separator is interchangeable with - or # in case a
           website doesn't accept certain characters
-</div>
+        </div>
       </form>
       <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-4">
         <button
