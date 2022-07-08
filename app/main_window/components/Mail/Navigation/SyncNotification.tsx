@@ -39,7 +39,7 @@ const SyncNotification = (props: Props) => {
       setLoaded(data.index);
       setTotal(data.total);
 
-      if(win) {
+      if(win && data.total > 0) {
         win.setProgressBar(data.index / data.total);
       }
 

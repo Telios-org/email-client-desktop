@@ -150,6 +150,8 @@ const Composer = (props: Props) => {
     // Getting the plain text off the htmlBody
     const plaintext = htmlToText.fromString(htmlBody);
 
+    console.log(draft);
+
     const from = draft?.from ?? [
       {
         address: owner.address,
@@ -194,7 +196,7 @@ const Composer = (props: Props) => {
           draft.to = rcp.data.to;
           draft.cc = rcp.data.cc;
           draft.bcc = rcp.data.bcc;
-          draft.from = rcp.data.from;
+          draft.from = JSON.parse(email.fromJSON);
           handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
           setMailbox(mb);
           const data = assembleFromDataSet(mb, namespaces, aliases);
@@ -202,7 +204,7 @@ const Composer = (props: Props) => {
           if (draft.from.length === 1) {
             setFromAddress(draft.from);
           } else {
-            setFromAddress([data[0]]);
+            setFromAddress([draft.from[0]]);
           }
 
           setPrefillRecipients(rcp.ui);
@@ -243,7 +245,9 @@ const Composer = (props: Props) => {
         draft.to = rcp.data.to;
         draft.cc = rcp.data.cc;
         draft.bcc = rcp.data.bcc;
-        draft.from = rcp.data.from;
+        draft.from = JSON.parse(draft.fromJSON);
+
+        console.log(draft);
 
         handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
         setMailbox(content.mailbox);
@@ -366,7 +370,7 @@ const Composer = (props: Props) => {
         to: toArr,
         cc: ccArr,
         bcc: bccArr,
-        from: [fromAddress]
+        from: Array.isArray(fromAddress) ? fromAddress : [fromAddress]
       };
 
       console.log('DRAFT', draft);

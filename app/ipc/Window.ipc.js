@@ -199,16 +199,16 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     async (event, content) => {
       const { message, mailbox, namespaces, aliases, editorAction } = content;
 
-      console.log(content);
+      // console.log(content);
 
       const newDraft = emailTransform(message, editorAction, true);
 
-      console.log(newDraft);
+      // console.log(newDraft);
 
 
       const data = assembleFromDataSet(mailbox, namespaces, aliases);
 
-      console.log(data);
+      // console.log(data);
 
       let filteredArray = [];
       if (message['toJSON']) {
