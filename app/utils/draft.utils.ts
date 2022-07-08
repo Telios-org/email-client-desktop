@@ -105,7 +105,7 @@ export const recipientTransform = (
       to,
       cc,
       bcc,
-      from: email?.from ?? [
+      from: [
         {
           address: ownerMailbox.address,
           name: ownerMailbox.name ? ownerMailbox.name : ownerMailbox.address

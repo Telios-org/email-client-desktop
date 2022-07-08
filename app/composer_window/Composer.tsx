@@ -245,12 +245,13 @@ const Composer = (props: Props) => {
         draft.to = rcp.data.to;
         draft.cc = rcp.data.cc;
         draft.bcc = rcp.data.bcc;
-        draft.from = JSON.parse(draft.fromJSON);
+        draft.from =
+          windowID === 'mainWindow'
+            ? rcp.data.from
+            : JSON.parse(draft.fromJSON);
 
         console.log(draft);
 
-        handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
-        setMailbox(content.mailbox);
         const data = assembleFromDataSet(
           content.mailbox,
           content.namespaces,
@@ -262,6 +263,9 @@ const Composer = (props: Props) => {
         } else {
           setFromAddress([data[0]]);
         }
+
+        handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
+        setMailbox(content.mailbox);
         setPrefillRecipients(rcp.ui);
         setWindowId(windowID);
 
