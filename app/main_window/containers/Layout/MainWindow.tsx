@@ -19,7 +19,10 @@ import { StateType } from '../../reducers/types';
 const account = new Account();
 const notifier = new Notifier();
 
+const { app } = require('electron').remote;
 const themeUtils = require('../../../utils/themes.util');
+
+const { dock } = app;
 
 export default function MainWindow() {
   const dispatch = useDispatch();
@@ -47,6 +50,9 @@ export default function MainWindow() {
     });
 
     return () => {
+      if (dock) {
+        dock.setBadge('');
+      }
       account.removeAllListeners('ACCOUNT_SERVICE::accountData');
       account.removeAllListeners('ACCOUNT_SERVICE::refreshToken');
       ipcRenderer.removeAllListeners('dark-mode');

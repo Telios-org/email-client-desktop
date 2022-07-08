@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ipcRenderer } from 'electron';
 
@@ -96,28 +96,41 @@ export default function Navigation(props: Props) {
     (state: StateType) => state.mail.folders.allIds
   );
 
-  // Show total unread count as badge for Mac OS only
-  if (dock) {
-    let totalUnreadCount = 0;
+  
 
-    for (const id of foldersArray) {
-      const folder = allFolders[id];
+  useEffect(() => {
+      // Show total unread count as badge for Mac OS only
+    if (dock) {
+      let totalUnreadCount = 0;
 
-      if (
-        folder.name !== 'Trash' ||
-        folder.name !== 'Sent' ||
-        (folder.name !== 'Drafts' && folder.count)
-      ) {
-        totalUnreadCount += folder.count;
+      for (const id of foldersArray) {
+        const folder = allFolders[id];
+
+        if (
+          (folder.name !== 'Trash' ||
+          folder.name !== 'Sent' ||
+          (folder.name !== 'Drafts' && folder.count)) && folder.type !== 'hidden'
+        ) {
+          console.log(folder.count, folder.name);
+          totalUnreadCount += folder.count;
+        }
+      }
+
+      for (const id of aliases.allIds) {
+        const alias = aliases.byId[id];
+          totalUnreadCount += alias.count;
+      }
+
+
+      if (totalUnreadCount > 0) {
+        dock.setBadge(`${totalUnreadCount}`);
+      } else {
+        dock.setBadge('');
       }
     }
 
-    if (totalUnreadCount > 0) {
-      dock.setBadge(`${  totalUnreadCount}`);
-    } else {
-      dock.setBadge('');
-    }
-  }
+  }, [foldersArray, aliases.byId])
+  
 
   const selectFolder = async (index: string, isAlias, e) => {
     if (
