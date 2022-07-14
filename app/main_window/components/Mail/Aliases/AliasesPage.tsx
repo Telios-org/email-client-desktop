@@ -43,9 +43,11 @@ const AliasesPage = () => {
     }
   };
 
-  const closeModal = (isSuccess: boolean, message: string) => {
+  const closeModal = (isSuccess: boolean, message: string, show = true) => {
     setIsOpen(false);
-    callToaster(isSuccess, message);
+    if (show) {
+      callToaster(isSuccess, message);
+    }
   };
 
   const openModal = (route: string) => {

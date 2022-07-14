@@ -35,7 +35,7 @@ import classNames from '../../../../../utils/helpers/css';
 import generateRandomString from '../../../../../utils/helpers/generators';
 
 type Props = {
-  close: (isSuccess: boolean, message: string) => void;
+  close: (isSuccess: boolean, message: string, show?: boolean) => void;
   domain: string;
 };
 
@@ -140,6 +140,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
 
   useEffect(() => {
     if (namespaces.allIds.length > 0) {
+      console.log('CHANGING NS from 143');
       manualChange('namespace', namespaces.allIds[0]);
     }
   }, [namespaces]);
@@ -161,12 +162,17 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
           namespace: namespaces.allIds[0],
           alias: ''
         });
-      }else{
+      } else {
         manualChange('alias', '');
       }
       setSubmitError('');
     }
-  }, [type, randomFormat]);
+  }, [type, step]);
+
+  useEffect(() => {
+    generateRandomAlias();
+    setSubmitError('');
+  }, [randomFormat]);
 
   return (
     <Dialog.Panel
@@ -265,7 +271,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
           <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-4">
             <button
               type="button"
-              onClick={() => close(false, '')}
+              onClick={() => close(false, '', false)}
               className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 mr-3"
             >
               Cancel
@@ -373,7 +379,8 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                                 active
                                   ? 'bg-sky-500 text-white'
                                   : 'text-gray-900'
-                              }`}
+                              }`
+                            }
                             style={{ cursor: 'pointer' }}
                             value={ns}
                           >
@@ -453,8 +460,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                                     ? 'bg-sky-500 text-white'
                                     : 'text-gray-900',
                                   'cursor-default select-none relative py-2 pl-8 pr-4'
-                                )
-                              }
+                                )}
                               style={{ cursor: 'pointer' }}
                               value={fmt}
                             >
@@ -776,7 +782,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
             <div>
               <button
                 type="button"
-                onClick={() => close(false, '')}
+                onClick={() => close(false, '', false)}
                 className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 mr-3"
               >
                 Cancel

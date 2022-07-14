@@ -20,6 +20,7 @@ const useForm = options => {
     val: any,
     sanitizeFn?: (i: any) => string
   ) => {
+    console.log('key::', key, 'val::', val);
     const value = sanitizeFn ? sanitizeFn(val) : val;
     setData({
       ...data,
@@ -28,6 +29,7 @@ const useForm = options => {
   };
 
   const bulkChange = (obj: any) => {
+    console.log(obj);
     setData({
       ...data,
       ...obj
