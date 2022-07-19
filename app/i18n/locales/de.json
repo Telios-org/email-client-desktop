@@ -1,0 +1,113 @@
+{
+  "translation": {
+    "global": {
+      "email": "Email",
+      "masterPass": "Master-Passwort",
+      "recoveryEmail": "Wiederherstellung E-Mail",
+      "login": "Login",
+      "register": "Registrieren",
+      "code": "Code",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "submit": "Absenden",
+      "create": "Erstellen",
+      "cancel": "Abbrechen",
+      "update": "Aktualisieren",
+      "updateFolder": "Ordner aktualisieren",
+      "createFolder": "Erstellen eines neuen Ordners"
+    },
+    "firstScreen": {
+      "register": "Ihr Konto erstellen"
+    },
+    "login": {
+      "text": "Willkommen zurück! Bitte geben Sie Ihr Master-Passwort ein, um Ihr Konto zu entsperren.",
+      "register": "Stattdessen registrieren",
+      "incorrectPass": "Ihr Passwort ist ungültig."
+    },
+    "register": {
+      "steps": {
+        "0": {
+          "header": "Beta-Zugang",
+          "description": "Geben Sie Ihren Beta-Zugangscode ein. Wenn Sie noch keinen Beta-Zugangscode haben, tragen Sie sich bitte auf unserer Website in die Warteliste ein. Wir werden Sie per E-Mail mit einem Beta-Zugangscode benachrichtigen, sobald wir für Sie bereit sind."
+        },
+        "1": {
+          "header": "Beta-Zustimmung",
+          "description": ""
+        },
+        "2": {
+          "header": "Konto erstellen",
+          "description": "Wählen Sie eine E-Mail-Adresse. Vielleicht eine, bei der es dir nicht peinlich ist, sie mit deiner Mutter zu teilen."
+        },
+        "3": {
+          "header": "Master-Passwort",
+          "description": ""
+        },
+        "4": {
+          "header": "Wiederherstellung E-Mail",
+          "description": "Sie haben also Kaffee auf Ihren Computer verschüttet und jetzt funktioniert er nicht mehr? Diese E-Mail-Adresse kann verwendet werden, um Ihre verschlüsselten Daten abzurufen (wenn Sie sich dafür entschieden haben, Ihre verschlüsselten Daten in unserer Cloud-Sicherung zu speichern)."
+        },
+        "5": {
+          "header": "Wiederherstellungsphrase",
+          "description": "Sollten Sie Ihr Passwort oder Ihr Gerät verlieren, können Sie mit diesem Satz Ihr Konto wiederherstellen. Prägen Sie sich diesen Satz gut ein oder bewahren Sie ihn an einem sicheren Ort auf, z. B. unter Ihrem Kopfkissen."
+        }
+      },
+      "confirmPass": "Bestätigen Sie Ihr Passwort",
+      "login": "Stattdessen anmelden",
+      "passTitle": "Ein Master-Passwort erstellen",
+      "passInstructions": "Dieses Passwort ist das einzige Passwort, das Sie jemals benötigen werden, um auf Telios-Dienste zuzugreifen. Bei der Erstellung Ihres Passworts wird ein privater Verschlüsselungsschlüssel auf Ihrem lokalen Computer generiert, der nur Ihnen bekannt ist.",
+      "strength": "Stärke",
+      "veryWeak": "Sehr Schwach",
+      "weak": "Schwach",
+      "strong": "Stark",
+      "strongDesc": "Nicht schlecht, aber du kannst es besser...",
+      "veryStrong": "Sehr Stark",
+      "veryStrongDesc": "Das ist ein sehr schwer zu erratendes Passwort!",
+      "timeDescription": "So lange würde es ungefähr dauern, dieses Passwort bei 10k Versuchen pro Sekunde zu knacken",
+      "tooWeakErr": "Dieses Passwort ist zu schwach, um es sicher zu verwenden.",
+      "emailNotAvailable": "Diese E-Mail ist nicht verfügbar.",
+      "betaCodeNotValid": "Ungültiger Beta-Zugangscode. Wenn Sie diesen Code von uns erhalten haben, wenden Sie sich bitte an den Support.",
+      "connecting": "Verbindung zum Peer-Netzwerk...",
+      "unexpected": "Oho! Es ist ein unerwarteter Fehler aufgetreten. Bitte kontaktieren Sie den Support, wenn dieser Fehler weiterhin auftritt."
+    },
+    "mailbox": {
+      "newMsg": "Neue Nachricht",
+      "inbox": "Posteingang",
+      "drafts": "Entwürfe",
+      "sent": "Gesendet",
+      "spam": "Spam",
+      "trash": "Papierkorb",
+      "noMessages": "Keine Nachrichten",
+      "folders": "Ordner",
+      "folderName": "Ordnername",
+      "syncingInProgress": "Synchronisiere neue Nachrichten...",
+      "aliases": "Aliases",
+      "accountNamespace": "Konto-Namensraum"
+    },
+    "aliasing": {
+      "ns_choose": "Wählen Sie Ihren Alias-Namensraum",
+      "alias_management": "Alias-Verwaltung",
+      "alias_registration": "Neuen Alias erstellen"
+    },
+    "messageToolbar": {
+      "saveDraft": "Speichern & Schließen",
+      "openWindow": "Pop Out",
+      "discardDraft": "Löschen",
+      "delete": "Löschen",
+      "move": "Verschieben",
+      "unreadToggle": "Ungelesen markieren",
+      "refresh": "Sync"
+    },
+    "form": {
+      "emailRequired": "E-Mail ist erforderlich.",
+      "recoveryRequired": "Eine Wiederherstellungs-E-Mail ist erforderlich.",
+      "recoveryEmailInvalid": "Die Wiederherstellungs-E-Mail ist ungültig.",
+      "recoveryEmaiAlreadyUsed": "Die Wiederherstellungs-E-Mail ist bereits in Gebrauch.",
+      "masterPassRequired": "Ein Master-Passwort ist erforderlich.",
+      "weakPass": "Passwort ist zu schwach.",
+      "passMismatch": "Passwörter stimmen nicht überein.",
+      "confirmRequired": "Das Passwort muss bestätigt werden.",
+      "betaCodeRequired": "Zugangscode für die Registrierung erforderlich",
+      "betaConsent": "Für die Beta ist eine Zustimmung erforderlich"
+    }
+  }
+}
