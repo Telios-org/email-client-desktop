@@ -1,9 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
+import { HistoryRouter as Router } from 'redux-first-history/rr6';
 import { History } from 'history';
 import { Store } from './reducers/types';
-import Routes from './Routes';
+import RoutesTable from './RoutesTable';
 
 type Props = {
   store: Store;
@@ -12,9 +12,9 @@ type Props = {
 
 const Root = ({ store, history }: Props) => (
   <Provider store={store}>
-    <ConnectedRouter history={history}>
-      <Routes />
-    </ConnectedRouter>
+    <Router history={history}>
+      <RoutesTable />
+    </Router>
   </Provider>
 );
 

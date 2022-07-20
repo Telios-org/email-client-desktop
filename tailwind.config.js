@@ -28,7 +28,9 @@ const theme = {
     violet: colors.violet,
     pink: colors.pink,
     rose: colors.rose,
-    fuchsia: colors.fuchsia
+    fuchsia: colors.fuchsia,
+    stone: colors.stone,
+    slate: colors.slate
   },
   // Should switch all em units to pixel for a better system.
   fontSize: {

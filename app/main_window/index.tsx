@@ -2,11 +2,14 @@
 // import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
-import { configureStore, history } from './store/configureStore';
+import { configureStore, createHistory } from './store/configureStore';
 // import 'tailwindcss/tailwind.css';
 import '../app.global.css';
 
 const store = configureStore();
+const history = createHistory(store);
+
+console.log(store, history);
 
 // const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
