@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () =>
   render(
     <HashRouter>
       <Routes>
-        <Route path="/" element={<LoginWindow />} />
+        <Route path="/*" element={<LoginWindow />} />
       </Routes>
     </HashRouter>,
     // <LoginWindow />
