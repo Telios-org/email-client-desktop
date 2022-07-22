@@ -8,7 +8,7 @@ import styles from './LoginWindow.css';
 
 // INTERNAL COMPONENTS
 import Login from './routes/Login';
-import Sync from './routes/Sync';
+import SyncRoutes from './routes/sync/SyncRoutes';
 
 const LoginWindow = () => {
   return (
@@ -20,7 +20,7 @@ const LoginWindow = () => {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Login />} />
-          <Route path="/sync" element={<Sync />} />
+          <Route path="/sync/*" element={<SyncRoutes />} />
           <Route path="/forgotten-password" element={<Login />} />
         </Routes>
       </div>

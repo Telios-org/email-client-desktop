@@ -13,7 +13,7 @@ import i18n from '../../i18n/i18n';
 import IntroHeader from '../window_compoments/IntroHeader';
 import { Dropdown } from '../../global_components/menu';
 import { Password } from '../../global_components/input-groups';
-import { Button } from '../../global_components/button';
+import { Button, NavButton } from '../../global_components/button';
 import { Divider } from '../../global_components/layout';
 
 // INTERNAL SERVICES
@@ -93,10 +93,11 @@ const Login = () => {
 
   return (
     <div className="max-w-xs mx-auto">
-      <IntroHeader
-        title="Login."
-        subheader="Choose your account and enter your master password below"
-      />
+      <IntroHeader title="Login.">
+        <p className="text-sm pt-2 text-gray-500">
+          Choose your account and enter your master password below
+        </p>
+      </IntroHeader>
       <form onSubmit={handleLogin} className="mt-4 space-y-4">
         <Dropdown
           label="Account"
@@ -134,8 +135,12 @@ const Login = () => {
       </form>
       <Divider label="or" className="mt-4" />
       <div className="flex space-x-4 mt-4">
-        <Button variant="outline">New Account</Button>
-        <Button variant="outline">Sync New Device</Button>
+        <NavButton variant="outline" to="/register">
+          New Account
+        </NavButton>
+        <NavButton variant="outline" to="/sync">
+          Sync New Device
+        </NavButton>
       </div>
     </div>
   );

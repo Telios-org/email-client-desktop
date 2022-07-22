@@ -61,6 +61,28 @@ module.exports = windowManager => {
     });
   });
 
+  ipcMain.handle('ACCOUNT_SERVICE::getSyncInfo', async (e, payload) => {
+    const account = store.getAccountApi();
+    const { code } = payload;
+    const results = await account.getSyncInfo({
+      code
+    });
+    const loginWindow = windowManager.getWindow('loginWindow');
+    loginWindow.webContents.send('ACCOUNT_IPC::getSyncInfo', results);
+
+    return new Promise((resolve, reject) => {
+      loginWindow.webContents.on('ipc-message', (e, channel, data) => {
+        if (channel === 'ACCOUNT_SERVICE::getSyncInfoResponse') {
+          resolve(data);
+        }
+
+        if (channel === 'ACCOUNT_SERVICE::getSyncInfoResponseError') {
+          reject(data);
+        }
+      });
+    });
+  });
+
   ipcMain.handle('loadMailbox', async e => {
     const mainWindow = windowManager.getWindow('mainWindow');
     mainWindow.webContents.send('loadMbox');

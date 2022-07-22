@@ -150,6 +150,10 @@ class Store {
     return this.theme;
   }
 
+  getAccountApi() {
+    return this.api.account();
+  }
+
   refreshToken() {
     console.log(this.account);
     const teliosSDK = new ClientSDK();
