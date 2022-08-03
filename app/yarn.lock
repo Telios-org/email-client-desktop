@@ -127,12 +127,12 @@
     sodium-native "^3.2.0"
     uuid "^8.2.0"
 
-"@telios/client-sdk@^6.2.0":
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.2.0.tgz#659a87aaa3d9f8ea47ccd1f185d8e3a0b5a59eed"
-  integrity sha512-zUNbX8fVkI7WE7DASYndhC174zb+TLH0o7ZIg1LCpIbwTeLrCUWDNsD75jvV4ppgZJE62TsA8/HmVfzSz7gGjQ==
+"@telios/client-sdk@^6.2.5":
+  version "6.2.5"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.2.5.tgz#65b5d8b1bb66bedcca0ff0cba00ad656286cfdd6"
+  integrity sha512-Xsq9Bkn/ShyHMzuQ7jpW3X5mvZI7IS58JgVuAisBGVq+9pziZ6sRsp96ncT9jnBOUhPih+Jn1/bwEP7WNLga3g==
   dependencies:
-    "@telios/nebula" "^3.0.1"
+    "@telios/nebula" "^3.1.3"
     async "^3.2.0"
     axios "^0.21.1"
     bip39 "^3.0.4"
@@ -213,6 +213,32 @@
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.0.1.tgz#c4f9eb7b12a77b09f20992659391a5da4427bb7d"
   integrity sha512-OwzTG+sOHo6WiFlvGIKvyU8NdiL2+od0Y6IFdV9gjOca5LDSZ1TdXGMPywGgv08WJlmkGv97HYHGBnNqI+bFZw==
+  dependencies:
+    autobase "1.0.0-alpha.6"
+    blakejs "^1.1.0"
+    codecs "^2.2.0"
+    concat-stream "^2.0.0"
+    corestore "6.0.1-alpha.9"
+    dat-encoding "^5.0.1"
+    data-store "^4.0.3"
+    graceful-fs "^4.2.9"
+    hyperbee "1.7.0"
+    hyperbeedeebee "git+https://github.com/hexadecible/hyperbeedeebee.git"
+    hypercore "10.0.0-alpha.23"
+    hyperswarm "3.0.2"
+    is-online "^9.0.1"
+    memorystream "^0.3.1"
+    natural "^5.1.11"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    sodium-javascript "^0.8.0"
+    stopwords "^0.0.9"
+    uuid "^8.2.0"
+
+"@telios/nebula@^3.1.3":
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.4.4.tgz#7e19ba9537cc86a70b3abcde5e0109b862c75ffc"
+  integrity sha512-cmW0H66+jFnq5UgO83PIsOaiyJvyVtncS8tnGI6IYU+oMRihu1/i0p12ZLAftnz4S9ajxsgFsV41Sy/3wDGmKQ==
   dependencies:
     autobase "1.0.0-alpha.6"
     blakejs "^1.1.0"

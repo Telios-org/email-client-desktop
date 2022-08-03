@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEventHandler } from 'react';
 
 // EXTERNAL LIBRARY
 import { EyeIcon, EyeOffIcon } from '@heroicons/react/outline';

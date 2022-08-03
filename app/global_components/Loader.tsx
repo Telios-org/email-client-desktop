@@ -1,6 +1,6 @@
 import React from 'react'
 
-import clsx from 'clsx'
+import clsx from 'clsx';
 
 const Loader = (props) => {
 const { className = "-ml-1 mr-3 h-5 w-5 text-gray-600" } = props

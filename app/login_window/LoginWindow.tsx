@@ -8,7 +8,7 @@ import styles from './LoginWindow.css';
 
 // INTERNAL COMPONENTS
 import Login from './routes/Login';
-import SyncRoutes from './routes/sync/SyncRoutes';
+import SyncRoutes from './routes/sync';
 
 const LoginWindow = () => {
   return (
