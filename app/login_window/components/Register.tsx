@@ -9,7 +9,7 @@ import {
   AiOutlineHistory,
   AiFillCloseCircle
 } from 'react-icons/ai';
-import { CheckIcon, XIcon } from '@heroicons/react/outline';
+import { CheckIcon, XIcon } from '@heroicons/react/solid';
 import { Show, Hide, Lock } from 'react-iconly';
 import {
   Form,

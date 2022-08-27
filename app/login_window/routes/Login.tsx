@@ -65,7 +65,8 @@ const Login = () => {
     }
   }, [accounts]);
 
-  const handleLogin = async () => {
+  const handleLogin = async e => {
+    e.preventDefault();
     setLoading(true);
     try {
       const selection = activeAcct?.id;
@@ -119,7 +120,8 @@ const Login = () => {
             className=""
           />
           <Link
-            to="/forgotten-password"
+            to="/forgotpassword"
+            state={{ email: activeAcct?.id }}
             className="block w-full text-right mt-3 text-xs text-purple-500 hover:text-purple-600 font-medium"
           >
             Forgot Password?
@@ -135,7 +137,7 @@ const Login = () => {
       </form>
       <Divider label="or" className="mt-4" />
       <div className="flex space-x-4 mt-4">
-        <NavButton variant="outline" to="/register">
+        <NavButton variant="outline" to="/registration">
           New Account
         </NavButton>
         <NavButton variant="outline" to="/sync">

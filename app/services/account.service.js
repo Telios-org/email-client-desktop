@@ -227,6 +227,26 @@ class AccountService extends EventEmitter {
     });
   }
 
+  static resetAccountPassword(params) {
+    const { passphrase, email, newPass } = params;
+
+    channel.send({
+      event: 'account:resetPassword',
+      payload: { passphrase, email, newPass }
+    });
+
+    return new Promise((resolve, reject) => {
+      channel.once('account:resetPassword:callback', m => {
+        const { error, data } = m;
+        const _data = { ...data };
+        console.log(m);
+        if (error) return reject(error);
+
+        return resolve(_data);
+      });
+    });
+  }
+
   static async retrieveStats() {
     channel.send({
       event: 'account:retrieveStats'
@@ -277,6 +297,7 @@ class AccountService extends EventEmitter {
       ipcRenderer
         .invoke('ACCOUNT_SERVICE::getSyncInfo', { code })
         .then(data => {
+          console.log(data);
           return resolve(data);
         })
         .catch(e => {

@@ -13,7 +13,7 @@ import {
   AtSymbolIcon,
   LightningBoltIcon,
   ChevronLeftIcon
-} from '@heroicons/react/outline';
+} from '@heroicons/react/solid';
 import {
   CheckIcon,
   SelectorIcon,

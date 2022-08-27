@@ -1,5 +1,4 @@
-import Input from "./Input";
+import Input from './Input';
 import Password from './Password';
 
-
-export { Password, Input }
+export { Password, Input };

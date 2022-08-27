@@ -13,6 +13,10 @@ const styles = {
     btn:
       'w-full px-4 py-3 flex justify-center rounded-md shadow-sm text-sm text-gray-400 hover:text-gray-500 font-medium  border border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-gray-300',
     spinner: ''
+  },
+  disabled: {
+    btn:  'w-full flex justify-center px-6 py-3 rounded-md shadow-sm text-sm font-medium text-white border border-gray-200 bg-gray-200 text-gray-300',
+    spinner: ''
   }
 };
 
@@ -21,26 +25,37 @@ type Props = {
   type?: 'button' | 'submit';
   className?: string;
   loading?: boolean;
+  disabled?: boolean;
   onClick?: () => void;
   children: any;
 };
 
 const Button = ({
-  variant = 'primary',
-  type = 'submit',
+  variant,
+  type,
   className,
   onClick,
-  loading = false,
+  loading,
   children,
+  disabled,
   ...props
 }: Props) => {
-  const cls = clsx(styles[variant].btn, className);
+  const cls = clsx(
+    disabled ? styles.disabled.btn : styles[variant].btn,
+    className
+  );
   const spinnerClass = clsx(
     styles[variant].spinner,
     'animate-spin -ml-1 mr-3 h-5 w-5'
   );
   return (
-    <button type={type} className={cls} onClick={onClick} {...props}>
+    <button
+      type={type}
+      className={cls}
+      onClick={onClick}
+      disabled={disabled}
+      {...props}
+    >
       {!loading && children}
       {loading && (
             <svg className={spinnerClass} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -57,6 +72,7 @@ Button.defaultProps = {
   type: 'submit',
   className: '',
   loading: false,
+  disabled: false,
   onClick: () => {}
 };
 

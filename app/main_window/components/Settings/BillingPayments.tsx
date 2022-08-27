@@ -9,7 +9,7 @@ import {
   HashtagIcon,
   DatabaseIcon,
   UploadIcon
-} from '@heroicons/react/outline';
+} from '@heroicons/react/solid';
 
 import { values } from 'lodash';
 import { retrieveStats } from '../../actions/account/account';

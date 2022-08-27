@@ -3,7 +3,7 @@ import React from 'react';
 // EXTERNAL LIBRAIRIES
 import { useNavigate } from 'react-router';
 import clsx from 'clsx';
-import { ChevronLeftIcon } from '@heroicons/react/outline';
+import { ChevronLeftIcon } from '@heroicons/react/solid';
 
 type Props = {
   className?: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { XIcon } from '@heroicons/react/outline';
+import { XIcon } from '@heroicons/react/solid';
 
 type Props = {
   handleClose: () => void;

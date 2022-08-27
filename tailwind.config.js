@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 const colors = require('tailwindcss/colors');
 
 const theme = {
@@ -131,9 +132,10 @@ const plugins = [
 
 module.exports = {
   content: [
-    './app/main_window/**/*.tsx',
-    './app/login_window/**/*.tsx',
-    './app/composer_window/**/*.tsx'
+    './app/main_window/**/*.{html,js,tsx}',
+    './app/login_window/**/*.{html,js,tsx}',
+    './app/composer_window/**/*.{html,js,tsx}',
+    './app/global_components/**/*.{html,js,tsx}'
   ],
   important: true,
   theme,

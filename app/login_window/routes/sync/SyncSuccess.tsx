@@ -42,7 +42,7 @@ const SyncSuccess = () => {
         </div>
       </div>
       <div className="max-w-xs mx-auto h-full">
-        <IntroHeader title="Sync.">
+        <IntroHeader title="Sync Success.">
           <p className="text-sm pt-2 text-gray-500">bla bla bla</p>
         </IntroHeader>
         <div className="mt-4">

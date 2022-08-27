@@ -2,7 +2,7 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SearchIcon } from '@heroicons/react/solid';
-import { PlusIcon } from '@heroicons/react/outline';
+import { PlusIcon } from '@heroicons/react/solid';
 import { BigHead } from '@bigheads/core';
 
 // Internal Components

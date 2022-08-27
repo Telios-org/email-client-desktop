@@ -2,7 +2,7 @@ import React, { useState, Fragment, forwardRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 // EXTERNAL LIBRARIES
-import { XIcon } from '@heroicons/react/outline';
+import { XIcon } from '@heroicons/react/solid';
 import { Dialog, Transition } from '@headlessui/react';
 
 // INTERNAL LIBRARIES

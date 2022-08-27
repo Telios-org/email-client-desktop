@@ -23,6 +23,7 @@ const useAccountSync = (
   const initSync = (driveKey: string, email: string, password: string) => {
     setIsLoading(true);
     if (password && email && driveKey) {
+      console.log(password, email, driveKey);
       channel.send({
         event: 'account:sync',
         payload: {
@@ -43,6 +44,7 @@ const useAccountSync = (
 
   useEffect(() => {
     const syncEventCallback = async (msg: any) => {
+      console.log(msg);
       const { data, error } = msg;
       if (error) {
         setIsLoading(false);
@@ -60,6 +62,9 @@ const useAccountSync = (
         setIsLoading(false);
       }
     };
+    channel.on('debug', data => {
+      console.log('DEBUG', data);
+    });
     channel.on('account:sync:callback', syncEventCallback);
     // return () => {
     //   channel.removeListener('account:sync:callback', syncEventCallback);

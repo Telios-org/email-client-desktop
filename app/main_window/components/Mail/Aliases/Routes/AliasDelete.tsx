@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // EXTERNAL LIBRARIES
 import { Dialog } from '@headlessui/react';
-import { ExclamationIcon, LightningBoltIcon } from '@heroicons/react/outline';
+import { ExclamationIcon, LightningBoltIcon } from '@heroicons/react/solid';
 
 // INTERNAL LIBRAIRIES
 import useForm from '../../../../../utils/hooks/useForm';

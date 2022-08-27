@@ -63,12 +63,14 @@ module.exports = windowManager => {
 
   ipcMain.handle('ACCOUNT_SERVICE::getSyncInfo', async (e, payload) => {
     const account = store.getAccountApi();
+    console.log(account);
     const { code } = payload;
+    console.log(code);
     const {
       drive_key: driveKey = undefined,
       peer_pub_key: peerPubKey = undefined,
       email = undefined
-    } = await account.getSyncInfo({ code });
+    } = await account.getSyncInfo(code);
     console.log('CODE::', code, 'RESULTS::', { driveKey, peerPubKey, email });
     return { driveKey, peerPubKey, email };
 

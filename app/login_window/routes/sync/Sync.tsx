@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 // EXTERNAL LIBRAIRIES
 import { useNavigate } from 'react-router';
-import { ChevronRightIcon } from '@heroicons/react/outline';
+import { ChevronRightIcon } from '@heroicons/react/solid';
 // INTERNAL SERVICES
 import AccountService from '../../../services/account.service';
 // INTERNAL COMPONENTS
@@ -15,21 +15,24 @@ const Sync = () => {
   const [code, setCode] = useState('');
   const navigate = useNavigate();
 
-  const getSyncInfo = async (e) => {
+  const getSyncInfo = async e => {
     e.preventDefault();
     setLoading(true);
-    const {
-      drive_key: driveKey,
-      peer_pub_key: peerPubKey,
-      email
-    } = await AccountService.getSyncInfo(code);
-    navigate('./masterpassword', {
-      state: {
-        driveKey,
-        email
-        // email:"test@telios.io"
-      }
-    });
+    AccountService.getSyncInfo(code)
+      .then(data => {
+        const { driveKey, email } = data;
+        navigate('./masterpassword', {
+          state: {
+            driveKey,
+            email
+          }
+        });
+        return true;
+      })
+      .catch(error => {
+        setLoading(false);
+        console.log(error);
+      });
   };
 
   return (
