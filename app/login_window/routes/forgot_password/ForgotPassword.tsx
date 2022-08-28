@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 // INTERNAL COMPONENTS
 import { Button, BackButton, Close } from '../../../global_components/button';
-import IntroHeader from '../../window_compoments/IntroHeader';
+import IntroHeader from '../../window_components/IntroHeader';
 import { Textareas } from '../../../global_components/textareas';
 import { Input, Password } from '../../../global_components/input-groups';
 

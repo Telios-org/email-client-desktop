@@ -13,16 +13,11 @@ import Store from 'electron-store';
 
 // Internal Librairies
 import ClientSDK from '@telios/client-sdk';
-import { validateEmail } from '../../../utils/helpers/regex';
+import { externalEmailRE } from '../../../utils/helpers/regex';
 
 // Internal Helper Librairies
 import useForm from '../../../utils/hooks/useForm';
 
-const { ipcRenderer, remote } = require('electron');
-
-const { dialog } = remote;
-const fs = require('fs');
-const zxcvbn = require('zxcvbn');
 const envAPI = require('../../../env_api.json');
 
 const Login = require('../../../services/login.service');
@@ -42,6 +37,7 @@ const mailbox = teliosSDK.Mailbox;
 
 const Registration = () => {
   const navigate = useNavigate();
+  const [Account, setAccount] = useState();
 
   const {
     handleSubmit,
@@ -50,6 +46,7 @@ const Registration = () => {
     resetForm,
     isDirty,
     runValidations,
+    bulkChange,
     data,
     errors
   } = useForm({
@@ -57,6 +54,10 @@ const Registration = () => {
       recoveryEmail: '',
       password: '',
       confirmPassword: '',
+      passwordStrength: {
+        score: 0,
+        crackTime: ''
+      },
       email: '',
       terms: false,
       marketing: false
@@ -89,11 +90,16 @@ const Registration = () => {
           value: true,
           message: 'Required field.'
         },
+        pattern: {
+          value: externalEmailRE,
+          message: 'Invalid email address'
+        },
         custom: {
           isValid: async (value, data) => {
-            return validateEmail(value);
+            const recov = await mailbox.isValidRecoveryEmail(value);
+            return recov?.isValid;
           },
-          message: 'Invalid email address.'
+          message: 'Recovery email already in use'
         }
       },
       password: {
@@ -103,9 +109,9 @@ const Registration = () => {
         },
         custom: {
           isValid: (value, data) => {
-            return value.length > 14;
+            return value.length >= 14 && data.passwordStrength.score > 3;
           },
-          message: 'Password must be at least 14 characters'
+          message: 'Password too weak. You need at least 14 characters.'
         }
       },
       confirmPassword: {
@@ -129,6 +135,23 @@ const Registration = () => {
     },
     onSubmit: async data => {
       const email = `${data.email.toLowerCase()}@${mailDomain}`;
+      try {
+        const account = await Login.createAccount({
+          password: data.password,
+          email,
+          recoveryEmail: data.recoveryEmail.toLowerCase()
+        });
+
+        console.log(account);
+        setAccount(account);
+        const store = new Store();
+        store.set('lastAccount', email);
+
+        navigate('../success', { state: { account } });
+      } catch (e) {
+        console.log('ERROR', e);
+        navigate('../failure', { state: { error: e } });
+      }
     }
   });
 
@@ -143,7 +166,9 @@ const Registration = () => {
         runValidations,
         data,
         errors,
-        mailDomain
+        bulkChange,
+        mailDomain,
+        Account
       }}
     />
   );

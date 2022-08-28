@@ -1,7 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import React, { Fragment, useState, useEffect } from 'react';
 import { Transition } from '@headlessui/react';
-import { CheckCircleIcon, ExclamationIcon } from '@heroicons/react/solid';
+import { CheckCircleIcon, ExclamationIcon } from '@heroicons/react/outline';
 import { XIcon } from '@heroicons/react/solid';
 
 type Props = {

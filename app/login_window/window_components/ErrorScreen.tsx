@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 
 // EXTERNAL COMPONENTS
 import { useNavigate, useLocation } from 'react-router';
-import { ExclamationIcon, DocumentSearchIcon } from '@heroicons/react/solid';
+import { ExclamationIcon, DocumentSearchIcon } from '@heroicons/react/outline';
 
 // INTERNAL COMPONENTS
-import { Button, BackButton, Close } from '../../../global_components/button';
+import { Button, BackButton, Close } from '../../global_components/button';
 
-const ResetFailure = () => {
+const ErrorScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -62,4 +62,4 @@ const ResetFailure = () => {
   );
 };
 
-export default ResetFailure;
+export default ErrorScreen;

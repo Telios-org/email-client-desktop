@@ -13,7 +13,7 @@ import {
   AtSymbolIcon,
   LightningBoltIcon,
   ChevronLeftIcon
-} from '@heroicons/react/solid';
+} from '@heroicons/react/outline';
 import {
   CheckIcon,
   SelectorIcon,
@@ -153,12 +153,10 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
   };
 
   useEffect(() => {
-    if (type === 'random') {
-      generateRandomAlias();
-      setSubmitError('');
-    } else {
+
+    const fn = async () => {
       if (namespaces.allIds.length > 0) {
-        bulkChange({
+        await bulkChange({
           namespace: namespaces.allIds[0],
           alias: ''
         });
@@ -166,6 +164,13 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
         manualChange('alias', '');
       }
       setSubmitError('');
+    };
+
+    if (type === 'random') {
+      generateRandomAlias();
+      setSubmitError('');
+    } else {
+      fn();
     }
   }, [type, step]);
 

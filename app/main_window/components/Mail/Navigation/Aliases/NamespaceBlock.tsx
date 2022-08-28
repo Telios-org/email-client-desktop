@@ -27,7 +27,7 @@ import {
   HashtagIcon,
   AtSymbolIcon
 } from '@heroicons/react/solid';
-import { LightningBoltIcon, DuplicateIcon } from '@heroicons/react/solid';
+import { LightningBoltIcon, DuplicateIcon } from '@heroicons/react/outline';
 
 // COMPONENTS
 import { Disclosure, Transition } from '@headlessui/react';

@@ -1,24 +1,62 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useOutletContext } from 'react-router';
 
 // INTERNAL COMPONENTS
 import { Button, BackButton, Close } from '../../../global_components/button';
-import IntroHeader from '../../window_compoments/IntroHeader';
-import { Textareas } from '../../../global_components/textareas';
-import { Input, Password } from '../../../global_components/input-groups';
+import IntroHeader from '../../window_components/IntroHeader';
+import { Input } from '../../../global_components/input-groups';
+
+type Form = {
+  handleChange: (
+    key: string,
+    validation?: boolean,
+    sanitize?: (val: any) => any,
+    validationCallback?: () => void
+  ) => (e) => void;
+  runValidations: (subset: string[]) => Promise<any>;
+  handleSubmit: (e) => void;
+  data: {
+    recoveryEmail: '';
+    password: '';
+    confirmPassword: '';
+    email: '';
+    terms: false;
+    marketing: false;
+  };
+  errors: any;
+  mailDomain: string;
+};
 
 const RecoveryEmail = () => {
+  const {
+    handleChange,
+    runValidations,
+    handleSubmit,
+    data,
+    errors
+  }: Form = useOutletContext();
+  const [validationLoader, setValidationLoader] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const onPressNext = async e => {
+  const onEmailChange = e => {
+    setValidationLoader(true);
+    handleChange(
+      'recoveryEmail',
+      true,
+      value => value.toLowerCase(),
+      () => {
+        setValidationLoader(false);
+      }
+    )(e);
+  };
+
+  const onSubmit = async e => {
     e.preventDefault();
     setLoading(true);
-
-    navigate('./...', {
-      state: {}
-    });
+    handleSubmit(e);
   };
+
   return (
     <div className="h-full">
       <div className="relative w-full">
@@ -28,19 +66,45 @@ const RecoveryEmail = () => {
         </div>
       </div>
       <div className="max-w-xs mx-auto h-full flex flex-col">
-        <IntroHeader title="Forgot Password.">
+        <IntroHeader title="Oops Moment Recovery.">
           <p className="text-sm pt-2 text-gray-500">
-            Reset your password using the recovery phrase assigned to you during
-            account registration.
+            So, you spilled your cup of coffee on your computer and it’s now
+            completely unusable. This is the email you would use to recover your
+            account.
           </p>
         </IntroHeader>
 
         <form
-          onSubmit={onPressNext}
+          onSubmit={onSubmit}
           className="mt-8 space-y-4 flex-1 flex flex-col justify-between pb-8"
         >
-          <Button type="submit" loading={loading}>
-            Next
+          <Input
+            id="recoveryEmail"
+            name="recoveryEmail"
+            label="recoveryEmail"
+            icon="email"
+            value={data.recoveryEmail}
+            error={errors.recoveryEmail}
+            onChange={onEmailChange}
+            activityPosition="right"
+            isValid={
+              errors.recoveryEmail === '' || errors.recoveryEmail === undefined
+            }
+            showLoader={validationLoader}
+          />
+          <Button
+            type="submit"
+            loading={loading}
+            loadingText="Connecting to peer network..."
+            disabled={
+              !(
+                (errors.recoveryEmail === '' ||
+                  errors.recoveryEmail === undefined) &&
+                data.recoveryEmail.length > 0
+              )
+            }
+          >
+            Create Account
           </Button>
         </form>
       </div>

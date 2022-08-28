@@ -1,5 +1,5 @@
 import React from 'react';
-import { HomeIcon} from '@heroicons/react/solid'
+import { HomeIcon } from '@heroicons/react/solid';
 import { Link } from 'react-router-dom'
 
 const BreadCrumbs = (props) => {

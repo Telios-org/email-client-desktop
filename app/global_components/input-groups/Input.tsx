@@ -24,6 +24,7 @@ type Props = {
   value?: any;
   defaultValue?: any;
   addonPosition?: 'left' | 'right' | undefined;
+  activityPosition?: 'left' | 'right' | undefined;
   addonLabel?: string;
   className?: string;
   isValid?: boolean | undefined;
@@ -47,6 +48,7 @@ const Input = (props: Props) => {
     defaultValue,
     addonPosition,
     addonLabel,
+    activityPosition,
     className,
     isValid,
     showLoader
@@ -94,14 +96,19 @@ const Input = (props: Props) => {
       <div className="relative mt-1">
         <div className="relative flex rounded-md shadow-sm">
           {icon === 'email' &&
-            (isValid === undefined || value.length === 0) &&
-            !showLoader && (
+            (((isValid === undefined || value.length === 0) && !showLoader) ||
+              activityPosition === 'right') && (
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <MailIcon className="h-5 w-5 text-gray-400" />
               </div>
             )}
           {!showLoader && isValid !== undefined && value.length > 0 && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div
+              className={clsx(
+                'absolute inset-y-0 flex items-center pointer-events-none',
+                activityPosition === 'left' ? 'left-0 pl-3' : 'right-0 pr-3'
+              )}
+            >
               {isValid && (
                 <CheckCircleIcon className="text-green-500 h-5 w-5" />
               )}
@@ -109,7 +116,12 @@ const Input = (props: Props) => {
             </div>
           )}
           {showLoader && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div
+              className={clsx(
+                'absolute inset-y-0 flex items-center pointer-events-none',
+                activityPosition === 'left' ? 'left-0 pl-3' : 'right-0 pr-3'
+              )}
+            >
               <svg
                 className="animate-spin h-4 w-4"
                 xmlns="http://www.w3.org/2000/svg"
@@ -152,8 +164,11 @@ const Input = (props: Props) => {
               addonPosition === 'left' && 'rounded-none rounded-r-md',
               addonPosition === 'right' && 'rounded-none rounded-l-md',
               !addonPosition && 'rounded',
-              (isValid !== undefined || showLoader || icon !== 'none') &&
-                'pl-9',
+              (isValid !== undefined ||
+                showLoader ||
+                icon !== 'none' ||
+                activityPosition === 'left') &&
+                'pl-10',
               `appearance-none block w-full px-3 py-2 border border-gray-300 
           placeholder-gray-400 
             focus:outline-none focus:ring-primary-blue-500 
@@ -191,7 +206,8 @@ Input.defaultProps = {
   className: '',
   isValid: undefined,
   showLoader: false,
-  required: false
+  required: false,
+  activityPosition: 'left'
 };
 
 export default Input;

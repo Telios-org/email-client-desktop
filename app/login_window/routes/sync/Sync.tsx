@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 
 // EXTERNAL LIBRAIRIES
 import { useNavigate } from 'react-router';
-import { ChevronRightIcon } from '@heroicons/react/solid';
+import { ChevronRightIcon } from '@heroicons/react/outline';
 // INTERNAL SERVICES
 import AccountService from '../../../services/account.service';
 // INTERNAL COMPONENTS
-import IntroHeader from '../../window_compoments/IntroHeader';
+import IntroHeader from '../../window_components/IntroHeader';
 import { Input } from '../../../global_components/input-groups';
 import { Button, BackButton, Close } from '../../../global_components/button';
 

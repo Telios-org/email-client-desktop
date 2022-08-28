@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
-import { ExternalLinkIcon } from '@heroicons/react/solid';
+import { ExternalLinkIcon } from '@heroicons/react/outline';
 
 type Props = {
   label: string;

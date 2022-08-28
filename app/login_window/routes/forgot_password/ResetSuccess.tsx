@@ -2,7 +2,7 @@ import React from 'react';
 
 // EXTERNAL COMPONENTS
 import { useNavigate, useLocation } from 'react-router';
-import { CheckIcon } from '@heroicons/react/solid';
+import { CheckIcon } from '@heroicons/react/outline';
 
 
 // INTERNAL COMPONENTS

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEventHandler } from 'react';
 
 // EXTERNAL LIBRARY
-import { EyeIcon, EyeOffIcon } from '@heroicons/react/solid';
+import { EyeIcon, EyeOffIcon } from '@heroicons/react/outline';
 import { ExclamationCircleIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
 

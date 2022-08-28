@@ -4,7 +4,7 @@ import Consent from './Consent';
 import EmailPick from './EmailPick';
 import RecoveryEmail from './RecoveryEmail';
 import Registration from './Registration';
-import RegistrationFailure from './RegistrationFailure';
+import { ErrorScreen } from '../../window_components';
 import RegistrationSuccess from './RegistrationSuccess';
 import SetPassword from './SetPassword';
 
@@ -17,7 +17,7 @@ const RegistrationRoutes = () => {
         <Route path="/password" element={<SetPassword />} />
         <Route path="/recovery" element={<RecoveryEmail />} />
         <Route path="/success" element={<RegistrationSuccess />} />
-        <Route path="/error" element={<RegistrationFailure />} />
+        <Route path="/error" element={<ErrorScreen />} />
       </Route>
     </Routes>
   );

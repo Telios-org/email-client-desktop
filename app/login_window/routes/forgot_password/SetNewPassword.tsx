@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 
 // EXTERNAL COMPONENTS
 import { useNavigate, useLocation } from 'react-router';
+import clsx from 'clsx';
+
 
 // INTERNAL HOOKS
-import clsx from 'clsx';
 import useForm from '../../../utils/hooks/useForm';
+
+// INTERNAL HELPERS
+import passwordStrengthClass from '../../../utils/helpers/security';
 
 // INTERNAL COMPONENTS
 import { Button, BackButton, Close } from '../../../global_components/button';
-import IntroHeader from '../../window_compoments/IntroHeader';
+import IntroHeader from '../../window_components/IntroHeader';
 import { Password } from '../../../global_components/input-groups';
 
 const zxcvbn = require('zxcvbn');
@@ -156,11 +160,7 @@ const SetNewPassword = () => {
               <div
                 className={clsx(
                   `mt-1 items-center justify-center appearance-none block w-full px-3 py-2 rounded-md shadow-sm font-medium sm:text-sm`,
-                  passwordStrength.score >= 1 && `bg-red-500 text-white`,
-                  passwordStrength.score === 2 && `bg-orange-500 text-white`,
-                  passwordStrength.score === 3 && `bg-yellow-500 text-white`,
-                  passwordStrength.score === 4 && `bg-green-500 text-white`,
-                  !passwordStrength.score && `bg-gray-200 text-gray-300`
+                  passwordStrengthClass(data.password, passwordStrength.score)
                 )}
               >
                 <span className="self-center justify-center flex capitalize tracking-wider">

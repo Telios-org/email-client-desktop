@@ -4,7 +4,7 @@ import Sync from './Sync';
 import MasterPassword from './MasterPassword';
 import SyncPending from './SyncPending';
 import SyncSuccess from './SyncSuccess';
-import SyncError from './SyncError';
+import { ErrorScreen } from '../../window_components';
 
 const SyncRoutes = () => {
   return (
@@ -13,7 +13,7 @@ const SyncRoutes = () => {
       <Route path="/masterpassword" element={<MasterPassword />} />
       <Route path="/syncpending" element={<SyncPending />} />
       <Route path="/syncsuccess" element={<SyncSuccess />} />
-      <Route path="/syncerror" element={<SyncError />} />
+      <Route path="/syncerror" element={<ErrorScreen />} />
     </Routes>
   );
 };

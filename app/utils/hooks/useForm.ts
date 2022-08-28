@@ -75,24 +75,31 @@ const useForm = options => {
       let valid = true;
       const newErrors = {};
 
-      array.forEach(async key => {
-        const value = data[key];
-        const result = await validationFn(value, key);
-        if (!result.valid) {
-          valid = false;
-        }
-        newErrors[key] = result.error;
-      });
+      await Promise.all(
+        array.map(async key => {
+          const value = data[key];
+          const result = await validationFn(value, key);
+          if (!result.valid) {
+            valid = false;
+          }
+          newErrors[key] = result.error;
+        })
+      );
 
-      if (!valid) {
-        setErrors(newErrors);
-        return false;
-      }
-
-      setErrors({});
-      return true;
+      const obj = { ...errors, ...newErrors };
+      setErrors(obj);
+      return valid;
     }
   };
+
+  const debouncedBulkValidation = useHandler(
+    (array: string[]) => {
+      runValidations(array);
+    },
+    {
+      debounce: options?.validationDebounce || 0
+    }
+  );
 
   // Needs to extend unknown so we can add a generic to an arrow function
   const handleChange = (
@@ -135,17 +142,30 @@ const useForm = options => {
     }
   };
 
+  const bulkChange = async (obj: any, validationArray?: string[]) => {
+    setData({
+      ...data,
+      ...obj
+    });
+
+    if (validationArray) {
+      debouncedBulkValidation(validationArray);
+    }
+  };
+
   const resetForm = () => {
     setData(initialData);
   };
 
   useEffect(() => {
-    if (JSON.stringify(data) !== JSON.stringify(initialData)) {
-      setIsDirty(true);
-    } else {
+    if (
+      JSON.stringify(options?.initialValues) !== JSON.stringify(initialData)
+    ) {
       setIsDirty(false);
+      setInitial(options?.initialValues);
+      setData(options?.initialValues);
     }
-  }, [data, initialData]);
+  }, [options?.initialValues]);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -166,6 +186,8 @@ const useForm = options => {
     runValidations,
     resetForm,
     isDirty,
+    setErrors,
+    bulkChange,
     errors
   };
 };
