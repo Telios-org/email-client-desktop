@@ -117,7 +117,7 @@ const SetPassword = () => {
       </div>
       <div className="max-w-xs mx-auto h-full flex flex-col">
         <IntroHeader title="Master Password.">
-          <p className="text-sm pt-2 text-gray-500">
+          <p className="text-base pt-2 text-gray-500">
             This is a critical part of your account security. Keep your password
             safe.
           </p>

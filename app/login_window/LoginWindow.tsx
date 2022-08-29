@@ -7,7 +7,7 @@ import { Routes, Route } from 'react-router-dom';
 import styles from './LoginWindow.css';
 
 // INTERNAL COMPONENTS
-import Login from './routes/Login';
+import Login from './routes/login/Login';
 import SyncRoutes from './routes/sync';
 import ForgotPasswordRoutes from './routes/forgot_password';
 import RegistrationRoutes from './routes/registration';

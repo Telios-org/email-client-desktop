@@ -67,7 +67,7 @@ const SyncPending = () => {
       </div>
       <div className="max-w-xs mx-auto h-full">
         <IntroHeader title="Sync.">
-          <p className="text-sm pt-2 text-gray-500">
+          <p className="text-base pt-2 text-gray-500">
             Your files are being downloaded and synced onto this device. This
             may take a minute.
           </p>

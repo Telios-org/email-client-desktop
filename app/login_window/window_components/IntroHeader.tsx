@@ -12,7 +12,7 @@ const IntroHeader = (props: Props) => {
   return (
     <div className="w-full flex flex-col items-center pt-8 max-w-md text-center mx-auto">
       <Logo className="h-10 w-10 mt-6 mb-4" />
-      <h3 className="font-bold text-black">{title}</h3>
+      <h2 className="font-bold text-black">{title}</h2>
       {children}
     </div>
   );

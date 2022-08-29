@@ -40,7 +40,7 @@ const MasterPassword = () => {
       </div>
       <div className="max-w-xs mx-auto h-full">
         <IntroHeader title="Verify Sync.">
-          <p className="text-sm pt-2 text-gray-500">
+          <p className="text-base pt-2 text-gray-500">
             Enter the Master Password for the email below.
           </p>
         </IntroHeader>

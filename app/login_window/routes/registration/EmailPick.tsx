@@ -74,10 +74,9 @@ const EmailPick = () => {
       </div>
       <div className="max-w-xs mx-auto h-full flex flex-col">
         <IntroHeader title="Create Account.">
-          <p className="text-sm pt-2 text-gray-500">
+          <p className="text-base pt-2 text-gray-500">
             Pick your email. It can be the name your mama gave you or the weird
-            nickname your best friend calls you. Choose wisely, you won't be
-            able to change it…
+            nickname your best friend calls you.
           </p>
         </IntroHeader>
 

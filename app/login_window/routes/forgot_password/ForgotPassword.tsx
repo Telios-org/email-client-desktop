@@ -45,7 +45,7 @@ const ForgotPassword = () => {
       </div>
       <div className="max-w-xs mx-auto h-full flex flex-col">
         <IntroHeader title="Forgot Password.">
-          <p className="text-sm pt-2 text-gray-500">
+          <p className="text-base pt-2 text-gray-500">
             Reset your password using the recovery phrase assigned to you during
             account registration.
           </p>

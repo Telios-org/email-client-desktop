@@ -115,7 +115,7 @@ const SetNewPassword = () => {
       </div>
       <div className="max-w-xs mx-auto h-full flex flex-col">
         <IntroHeader title="Reset Password.">
-          <p className="text-sm pt-2 text-gray-500">
+          <p className="text-base pt-2 text-gray-500">
             Set your new master password. This is used to access your data and
             encryption keys. Don't forget it.
           </p>

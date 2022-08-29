@@ -54,7 +54,7 @@ const Consent = () => {
       </div>
       <div className="max-w-xs mx-auto h-full flex flex-col">
         <IntroHeader title="Beta Access.">
-          <p className="text-sm pt-2 text-gray-500">
+          <p className="text-base pt-2 text-gray-500">
             Welcome to the Telios Beta. In order to create an account please
             read and accept the terms & conditions.
           </p>

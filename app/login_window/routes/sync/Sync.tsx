@@ -45,7 +45,7 @@ const Sync = () => {
       </div>
       <div className="max-w-xs mx-auto h-full">
         <IntroHeader title="Device Sync.">
-          <p className="text-sm pt-2 text-gray-500">
+          <p className="text-base pt-2 text-gray-500">
             Add your Telios account to another device. Sign into your other
             device and generate a sync code by navigating to:
           </p>
