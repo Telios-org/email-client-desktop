@@ -11,7 +11,7 @@ import Login from './routes/login/Login';
 import SyncRoutes from './routes/sync';
 import ForgotPasswordRoutes from './routes/forgot_password';
 import RegistrationRoutes from './routes/registration';
-import LoginPage from './containers/LoginPage';
+import RecoveryRoutes from './routes/recovery';
 
 const LoginWindow = () => {
   return (
@@ -25,6 +25,7 @@ const LoginWindow = () => {
           <Route path="/registration/*" element={<RegistrationRoutes />} />
           <Route path="/sync/*" element={<SyncRoutes />} />
           <Route path="/forgotpassword/*" element={<ForgotPasswordRoutes />} />
+          <Route path="/recovery/*" element={<RecoveryRoutes />} />
         </Routes>
       </div>
     </div>

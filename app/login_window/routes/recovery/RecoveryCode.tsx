@@ -10,27 +10,28 @@ import IntroHeader from '../../window_components/IntroHeader';
 import { Textareas } from '../../../global_components/textareas';
 import { Input, Password } from '../../../global_components/input-groups';
 
-const ForgotPassword = () => {
+const RecoveryCode = () => {
   const [loading, setLoading] = useState(false);
-  const [passphrase, setPassphrase] = useState('');
-  const [error, setError] = useState('');
+  const [recoveryCode, setRecoveryCode] = useState('');
+  const [codeError, setCodeError] = useState('');
+
   const navigate = useNavigate();
   const location = useLocation();
-  const { email } = location.state as { email: string };
+  const { accountEmail, recoveryEmail } = location.state as { accountEmail: string; recoveryEmail:string; };
 
-  const handleChange = e => {
+  const handleCodeChange = e => {
     const { value } = e.target;
-    setPassphrase(value);
+    setRecoveryCode(value);
   };
 
   const onPressNext = async e => {
     e.preventDefault();
     setLoading(true);
-    if (passphrase) {
-      navigate('./setnewpassword', {
+    if (recoveryCode) {
+      navigate('./success', {
         state: {
-          passphrase,
-          email
+          accountEmail,
+          recoveryEmail
         }
       });
     }
@@ -44,10 +45,9 @@ const ForgotPassword = () => {
         </div>
       </div>
       <div className="max-w-xs mx-auto h-full flex flex-col">
-        <IntroHeader title="Forgot Password.">
+        <IntroHeader title="Recovery Code.">
           <p className="text-base pt-2 text-gray-500">
-            Reset your password using the recovery phrase assigned to you during
-            account registration.
+            Enter the recovery code
           </p>
         </IntroHeader>
 
@@ -57,31 +57,13 @@ const ForgotPassword = () => {
         >
           <div className="space-y-5">
             <Input
-              label="Email"
-              id="sync-code"
-              name="sync-code"
-              type="text"
-              placeholder=""
-              disabled
-              value={email}
+              id="code"
+              name="code"
+              label="Code"
+              value={recoveryCode}
+              error={codeError}
+              onChange={handleCodeChange}
             />
-            <div>
-              <Textareas
-                id="passphrase"
-                name="passphrase"
-                value={passphrase}
-                onChange={handleChange}
-                required
-                error={error}
-                label="Recovery Phrase"
-              />
-              <Link
-                to="/recovery"
-                className="block w-full text-right mt-3 text-xs text-purple-500 hover:text-purple-600 font-medium"
-              >
-                I lost my recovery phrase?
-              </Link>
-            </div>
           </div>
           <Button type="submit" loading={loading}>
             Next
@@ -92,4 +74,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default RecoveryCode;
