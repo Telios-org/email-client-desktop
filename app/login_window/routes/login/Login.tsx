@@ -6,6 +6,7 @@ import Store from 'electron-store';
 // EXTERNAL LIBRAIRIES
 import { Link } from 'react-router-dom';
 import { ChevronRightIcon } from '@heroicons/react/solid';
+import { UserAddIcon, SwitchVerticalIcon, PlusIcon } from '@heroicons/react/outline';
 
 // INTERNATIONALIZATION
 import i18n from '../../../i18n/i18n';
@@ -139,7 +140,7 @@ const Login = () => {
   }
 
   return (
-    <div className="max-w-xs mx-auto">
+    <div className="max-w-sm mx-auto">
       <IntroHeader title="Login.">
         <p className="text-base pt-2 text-gray-500">
           Choose your account and enter your master password below
@@ -178,16 +179,26 @@ const Login = () => {
           loading={loading}
           className="bg-gradient-to-tr from-[#0284C7] to-[#0EA5E9] hover:to-[#0284C7]"
         >
-          Submit
+          Enter
         </Button>
       </form>
       <Divider label="or" className="mt-4" />
-      <div className="flex space-x-4 mt-4">
-        <NavButton variant="outline" to="/registration">
+      <div className="flex flex-row space-x-2 mt-2">
+        <NavButton
+          variant="outline"
+          to="/registration"
+          className="flex flex-row justify-center text-xs whitespace-nowrap items-center"
+        >
+          <PlusIcon className="h-4 w-4 mr-2" />
           New Account
         </NavButton>
-        <NavButton variant="outline" to="/sync">
-          Sync New Device
+        <NavButton
+          variant="outline"
+          className="flex flex-row justify-center text-xs whitespace-nowrap items-center"
+          to="/sync"
+        >
+          <SwitchVerticalIcon className="h-4 w-4 mr-2" />
+          Sync/Recover Account
         </NavButton>
       </div>
     </div>
