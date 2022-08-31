@@ -13,6 +13,7 @@ import SyncRoutes from './routes/sync';
 import ForgotPasswordRoutes from './routes/forgot_password';
 import RegistrationRoutes from './routes/registration';
 import RecoveryRoutes from './routes/recovery';
+import SyncOrRecovery from './routes/sync_or_recovery/SyncOrRecovery';
 // import ConstellationSVG from './images/ConstellationSVG';
 import ConstellationSVG from './images/NetworkGraph.svg';
 
@@ -58,6 +59,7 @@ const LoginWindow = () => {
           <Route path="/sync/*" element={<SyncRoutes />} />
           <Route path="/forgotpassword/*" element={<ForgotPasswordRoutes />} />
           <Route path="/recovery/*" element={<RecoveryRoutes />} />
+          <Route path="/syncorrecovery" element={<SyncOrRecovery />} />
         </Routes>
       </div>
     </div>

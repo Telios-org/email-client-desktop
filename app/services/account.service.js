@@ -247,6 +247,28 @@ class AccountService extends EventEmitter {
     });
   }
 
+  static recoverAccount(params) {
+    const { email, recoveryEmail } = params;
+    channel.send({
+      event: 'account:recover',
+      payload: {
+        email,
+        recoveryEmail
+      }
+    });
+
+    return new Promise((resolve, reject) => {
+      channel.once('account:recover:callback', m => {
+        const { error, data } = m;
+        const _data = { ...data };
+        console.log(m);
+        if (error) return reject(error);
+
+        return resolve(_data);
+      });
+    });
+  }
+
   static async retrieveStats() {
     channel.send({
       event: 'account:retrieveStats'

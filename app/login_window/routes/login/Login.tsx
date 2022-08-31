@@ -195,7 +195,7 @@ const Login = () => {
         <NavButton
           variant="outline"
           className="flex flex-row justify-center text-xs whitespace-nowrap items-center"
-          to="/sync"
+          to="/syncorrecovery"
         >
           <SwitchVerticalIcon className="h-4 w-4 mr-2" />
           Sync/Recover Account
