@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // EXTERNAL LIBRAIRIES
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { ChevronRightIcon } from '@heroicons/react/outline';
 // INTERNAL SERVICES
 import AccountService from '../../../services/account.service';
@@ -49,28 +49,29 @@ const Sync = () => {
       </div>
       <div className="max-w-xs mx-auto h-full">
         <IntroHeader title="Device Sync.">
-          {type === 'accountsettings' && (
-            <>
-              <p className="text-base pt-2 text-gray-500">
-                Add your Telios account to another device. Sign into your other
-                device and generate a sync code by navigating to:
-              </p>
-              <p className="text-xs my-6 text-center w-full space-x-1 flex flex-row justify-center items-center">
-                <span className="font-medium text-center bg-gray-100 rounded p-1 shadow-inner">
-                  Settings
-                </span>
-                <ChevronRightIcon className="h-4 w-4 " aria-hidden="true" />
-                <span className="font-medium text-center bg-gray-100 rounded p-1 shadow-inner">
-                  Devices
-                </span>
-                <ChevronRightIcon className="h-4 w-4 " aria-hidden="true" />
-                <span className="font-medium text-center bg-gray-100 rounded p-1 shadow-inner">
-                  Sync New Device
-                </span>
-              </p>
-            </>
-          )}
-          {type === 'recovery' && (
+          {type === null ||
+            (type === 'accountsettings' && (
+              <>
+                <p className="text-base pt-2 text-gray-500">
+                  Add your Telios account to another device. Sign into your
+                  other device and generate a sync code by navigating to:
+                </p>
+                <p className="text-xs my-6 text-center w-full space-x-1 flex flex-row justify-center items-center">
+                  <span className="font-medium text-center bg-gray-100 rounded p-1 shadow-inner">
+                    Settings
+                  </span>
+                  <ChevronRightIcon className="h-4 w-4 " aria-hidden="true" />
+                  <span className="font-medium text-center bg-gray-100 rounded p-1 shadow-inner">
+                    Devices
+                  </span>
+                  <ChevronRightIcon className="h-4 w-4 " aria-hidden="true" />
+                  <span className="font-medium text-center bg-gray-100 rounded p-1 shadow-inner">
+                    Sync New Device
+                  </span>
+                </p>
+              </>
+            ))}
+          {type && type === 'recovery' && (
             <>
               <p className="text-base pt-2 text-gray-500">
                 Add your Telios account to this device by using the sync code

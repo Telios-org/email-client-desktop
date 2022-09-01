@@ -1,30 +1,42 @@
 import React from 'react';
 
 // EXTERNAL LIBRAIRIES
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRightIcon } from '@heroicons/react/solid';
 
 // INTERNAL COMPONENT
 import IntroHeader from '../../window_components/IntroHeader';
+import { Button, BackButton, Close } from '../../../global_components/button';
+
 
 const SyncOrRecovery = () => {
+    const navigate = useNavigate();
   const actions = [
     {
       id: 'a1',
       label: 'Recovery Email',
       description: 'Use recovery email to gain back access.',
-      route: '/recovery'
+      route: '/recovery',
+      type: 'recovery'
     },
     {
       id: 'a2',
       label: 'Account Settings',
       description: 'I am logged in on another device.',
-      route: '/sync'
+      route: '/sync',
+      type: 'recovery'
     }
   ];
 
   return (
-    <div className="max-w-sm mx-auto">
+    <div className="h-full">
+      <div className="relative w-full">
+        <div className="absolute top-5 flex justify-between flex-row w-full px-5">
+          <BackButton className="" />
+          <Close handleClose={() => navigate('/')} />
+        </div>
+      </div>
+      <div className="max-w-xs mx-auto h-full">
       <IntroHeader title="Sync Options.">
         <p className="text-base pt-2 text-gray-500">
           To add your Telios account to this device, you need to use a sync
@@ -39,6 +51,7 @@ const SyncOrRecovery = () => {
           <Link
             key={act.id}
             to={act.route}
+            state={{ type: act.type }}
             className="relative justify-center group border-2 hover:border-violet-500 border-gray-200 flex flex-col no-underline text-gray-400 px-5 py-4 rounded-lg"
           >
             <span className="text-base text-gray-900 font-medium">
@@ -52,6 +65,8 @@ const SyncOrRecovery = () => {
         ))}
       </div>
     </div>
+    </div>
+
   );
 };
 
