@@ -315,30 +315,35 @@ class AccountService extends EventEmitter {
   }
 
   static async getSyncInfo(code) {
+    channel.send({ 
+      event: 'account:getSyncInfo', 
+      payload: { code } 
+    });
+
     return new Promise((resolve, reject) => {
-      ipcRenderer
-        .invoke('ACCOUNT_SERVICE::getSyncInfo', { code })
-        .then(data => {
-          console.log(data);
-          return resolve(data);
-        })
-        .catch(e => {
-          reject(e);
-        });
+      channel.once('account:getSyncInfo:callback', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve({ driveKey: data.drive_key, email: data.email });
+      });
     });
   }
 
   static async createSyncCode() {
+    channel.send({ 
+      event: 'account:createSyncCode' 
+    });
+
     return new Promise((resolve, reject) => {
-      ipcRenderer
-        .invoke('ACCOUNT_SERVICE::createSyncCode')
-        .then(data => {
-          console.log(data);
-          return resolve(data);
-        })
-        .catch(e => {
-          reject(e);
-        });
+      channel.once('account:createSyncCode:callback', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
     });
   }
 

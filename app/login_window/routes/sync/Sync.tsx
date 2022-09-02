@@ -19,24 +19,19 @@ const Sync = () => {
     type: string;
   };
 
-  const getSyncInfo = async e => {
+  const getSyncInfo = async (e) => {
     e.preventDefault();
     setLoading(true);
-    AccountService.getSyncInfo(code)
-      .then(data => {
-        const { driveKey, email } = data;
-        navigate('./masterpassword', {
-          state: {
-            driveKey,
-            email
-          }
-        });
-        return true;
-      })
-      .catch(error => {
-        setLoading(false);
-        console.log(error);
-      });
+    const {
+      drive_key: driveKey,
+      email
+    } = await AccountService.getSyncInfo(code);
+    navigate('./masterpassword', {
+      state: {
+        driveKey,
+        email
+      }
+    });
   };
 
   return (

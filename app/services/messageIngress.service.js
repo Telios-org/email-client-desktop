@@ -54,7 +54,11 @@ class MessageIngressService extends EventEmitter {
     channel.on('email:saveMessageToDB:callback', async m => {
       const { error, data } = m;
 
-      if (error) {
+      if(data.msgArr.length && data.msgArr[0].folderId === 2) {
+        return
+      }
+
+      if(error) {
         this.finished += 1;
         this.handleDone();
         return;

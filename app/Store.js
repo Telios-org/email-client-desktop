@@ -155,7 +155,6 @@ class Store {
   }
 
   refreshToken() {
-    console.log(this.account);
     const teliosSDK = new ClientSDK();
     const payload = {
       account_key: this.account.secretBoxPubKey,

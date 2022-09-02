@@ -61,42 +61,6 @@ module.exports = windowManager => {
     });
   });
 
-  ipcMain.handle('ACCOUNT_SERVICE::getSyncInfo', async (e, payload) => {
-    const account = store.getAccountApi();
-    console.log(account);
-    const { code } = payload;
-    console.log(code);
-    const {
-      drive_key: driveKey = undefined,
-      peer_pub_key: peerPubKey = undefined,
-      email = undefined
-    } = await account.getSyncInfo(code);
-    console.log('CODE::', code, 'RESULTS::', { driveKey, peerPubKey, email });
-    return { driveKey, peerPubKey, email };
-
-    // const loginWindow = windowManager.getWindow('loginWindow');
-    // loginWindow.webContents.send('ACCOUNT_IPC::getSyncInfo', results);
-
-    // return new Promise((resolve, reject) => {
-    //   loginWindow.webContents.on('ipc-message', (e, channel, data) => {
-    //     if (channel === 'ACCOUNT_SERVICE::getSyncInfoResponse') {
-    //       resolve(data);
-    //     }
-
-    //     if (channel === 'ACCOUNT_SERVICE::getSyncInfoResponseError') {
-    //       reject(data);
-    //     }
-    //   });
-    // });
-  });
-
-  ipcMain.handle('ACCOUNT_SERVICE::createSyncCode', async (e, payload) => {
-    const account = store.getAccountApi();
-    const { code = undefined } = await account.createSyncCode();
-    console.log('RESULTS::', { code });
-    return { code };
-  });
-
   ipcMain.handle('loadMailbox', async e => {
     const mainWindow = windowManager.getWindow('mainWindow');
     mainWindow.webContents.send('loadMbox');
