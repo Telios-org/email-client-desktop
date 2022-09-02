@@ -90,6 +90,13 @@ module.exports = windowManager => {
     // });
   });
 
+  ipcMain.handle('ACCOUNT_SERVICE::createSyncCode', async (e, payload) => {
+    const account = store.getAccountApi();
+    const { code = undefined } = await account.createSyncCode();
+    console.log('RESULTS::', { code });
+    return { code };
+  });
+
   ipcMain.handle('loadMailbox', async e => {
     const mainWindow = windowManager.getWindow('mainWindow');
     mainWindow.webContents.send('loadMbox');

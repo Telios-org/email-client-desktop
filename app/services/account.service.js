@@ -328,6 +328,20 @@ class AccountService extends EventEmitter {
     });
   }
 
+  static async createSyncCode() {
+    return new Promise((resolve, reject) => {
+      ipcRenderer
+        .invoke('ACCOUNT_SERVICE::createSyncCode')
+        .then(data => {
+          console.log(data);
+          return resolve(data);
+        })
+        .catch(e => {
+          reject(e);
+        });
+    });
+  }
+
   static logout() {
     channel.send({ event: 'account:logout', payload: {} });
 

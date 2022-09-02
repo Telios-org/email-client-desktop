@@ -10,7 +10,7 @@ import {
 import clsx from 'clsx';
 
 type Props = {
-  label: string;
+  label?: string;
   onChange?: (value: ChangeEventHandler<HTMLInputElement>) => void | undefined;
   id: string | number;
   name: string;
@@ -192,6 +192,7 @@ const Input = (props: Props) => {
 };
 
 Input.defaultProps = {
+  label:'',
   autoComplete: '',
   error: '',
   type: 'text',
@@ -207,7 +208,7 @@ Input.defaultProps = {
   isValid: undefined,
   showLoader: false,
   required: false,
-  activityPosition: 'left'
+  activityPosition: undefined
 };
 
 export default Input;
