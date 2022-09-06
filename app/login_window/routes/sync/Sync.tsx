@@ -23,9 +23,10 @@ const Sync = () => {
     e.preventDefault();
     setLoading(true);
     const {
-      drive_key: driveKey,
+      driveKey,
       email
     } = await AccountService.getSyncInfo(code);
+
     navigate('./masterpassword', {
       state: {
         driveKey,
