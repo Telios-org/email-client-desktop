@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import QRCode from 'react-qr-code';
@@ -35,6 +35,7 @@ const DevicesPanel = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notifMessage, setNotifMessage] = useState('');
   const [codeSucceeded, setCodeSucceeded] = useState(true);
+  const [time, setTime] = useState();
 
   const handleCopy = (value: string) => {
     clipboard.writeText(value ?? '');
@@ -55,6 +56,7 @@ const DevicesPanel = () => {
         const { code } = data;
         setSyncCode(code);
         setLoading(false);
+        setTime(Date.now() + 600000);
         setShowCountDown(true);
         return true;
       })
@@ -67,26 +69,32 @@ const DevicesPanel = () => {
       });
   };
 
-  const countdownRenderer = ({ hours, minutes, seconds, completed }) => {
-    if (completed) {
-      // Render a completed state
+  const countdownRenderer = useCallback(
+    ({ hours, minutes, seconds, completed }) => {
+      if (completed) {
+        // Render a completed state
+        return (
+          <span className="text-red-500 text-xs">
+            Code Expired! Generate new one.
+          </span>
+        );
+      }
+      // Render a countdown
       return (
-        <span className="text-red-500 text-xs">
-          Code Expired! Generate new one.
+        <span className="text-xs">
+          Expires in:
+{' '}
+          <span className="font-medium text-purple-500">
+            {zeroPad(minutes)}
+            :{zeroPad(seconds)}
+            {' '}
+            min
+</span>
         </span>
       );
-    }
-    // Render a countdown
-    return (
-      <span className="text-xs">
-        Expires in:
-{' '}
-        <span className="font-medium text-purple-500">
-          {zeroPad(minutes)}:{zeroPad(seconds)} min
-        </span>
-      </span>
-    );
-  };
+    },
+    [syncCode]
+  );
 
   // const onPressGenerateQrCode = () => {
   //   setShowCode(false);
@@ -245,7 +253,7 @@ const DevicesPanel = () => {
                 <div className="text-center h-10">
                   {showCountdown && (
                     <Countdown
-                      date={Date.now() + 600000}
+                      date={time}
                       renderer={countdownRenderer}
                     />
                   )}
