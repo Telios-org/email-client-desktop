@@ -66,7 +66,7 @@ const RecoveryEmail = () => {
         </div>
       </div>
       <div className="max-w-xs mx-auto h-full flex flex-col">
-        <IntroHeader title="Oops Moment Recovery.">
+        <IntroHeader title="Recovery Email.">
           <p className="text-base pt-2 text-gray-500">
             So, you spilled your cup of coffee on your computer and it’s now
             completely unusable. This is the email you would use to recover your
@@ -81,7 +81,7 @@ const RecoveryEmail = () => {
           <Input
             id="recoveryEmail"
             name="recoveryEmail"
-            label="recoveryEmail"
+            label="recovery Email"
             icon="email"
             value={data.recoveryEmail}
             error={errors.recoveryEmail}

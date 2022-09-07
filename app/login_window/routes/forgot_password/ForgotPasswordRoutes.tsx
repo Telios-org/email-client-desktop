@@ -8,7 +8,7 @@ import { ErrorScreen } from '../../window_components';
 const ForgotPasswordRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<ForgotPassword />} />
+      <Route index element={<ForgotPassword />} />
       <Route path="/setnewpassword" element={<SetNewPassword />} />
       <Route path="/resetsuccess" element={<ResetSuccess />} />
       <Route path="/resetfailure" element={<ErrorScreen />} />

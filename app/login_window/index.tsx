@@ -6,8 +6,7 @@ import { render } from 'react-dom';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 
 // INTERNAL LIBRAIRIES
-import LoginPage from './containers/LoginPage';
-import LoginWindow from './LoginWindow';
+import LoginWindow from './routes/root/LoginWindow';
 // import '../app.tailwind.css';
 import '../app.global.css';
 

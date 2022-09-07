@@ -8,7 +8,7 @@ import Recovery from './Recovery';
 const RegistrationRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Recovery />} />
+      <Route index element={<Recovery />} />
       {/* <Route path="/code" element={<RecoveryCode />} />
       <Route path="/success" element={<RecoverySuccess />} /> */}
       <Route path="/failure" element={<ErrorScreen />} />

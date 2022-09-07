@@ -11,7 +11,7 @@ import SetPassword from './SetPassword';
 const RegistrationRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Registration />}>
+      <Route element={<Registration />}>
         <Route path="/" element={<Consent />} />
         <Route path="/emailpick" element={<EmailPick />} />
         <Route path="/password" element={<SetPassword />} />
