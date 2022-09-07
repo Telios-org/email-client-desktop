@@ -135,7 +135,8 @@ module.exports = {
     './app/main_window/**/*.{html,js,tsx}',
     './app/login_window/**/*.{html,js,tsx}',
     './app/composer_window/**/*.{html,js,tsx}',
-    './app/global_components/**/*.{html,js,tsx}'
+    './app/global_components/**/*.{html,js,tsx}',
+    './app/utils/**/*.{html,js,tsx,ts}'
   ],
   important: true,
   theme,

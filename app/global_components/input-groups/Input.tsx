@@ -192,7 +192,7 @@ const Input = (props: Props) => {
 };
 
 Input.defaultProps = {
-  label:'',
+  label: '',
   autoComplete: '',
   error: '',
   type: 'text',
@@ -208,7 +208,7 @@ Input.defaultProps = {
   isValid: undefined,
   showLoader: false,
   required: false,
-  activityPosition: undefined
+  activityPosition: 'left'
 };
 
 export default Input;

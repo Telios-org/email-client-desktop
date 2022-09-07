@@ -24,7 +24,7 @@ const SyncOrRecovery = () => {
       label: 'Account Settings',
       description: 'I am logged in on another device.',
       route: '/sync',
-      type: 'recovery'
+      type: 'accountsettings'
     }
   ];
 
