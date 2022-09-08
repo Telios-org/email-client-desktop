@@ -23,7 +23,7 @@ const useAccountSync = (
   const initSync = (driveKey: string, email: string, password: string) => {
     setIsLoading(true);
     if (password && email && driveKey) {
-      console.log(password, email, driveKey);
+
       channel.send({
         event: 'account:sync',
         payload: {
@@ -44,7 +44,6 @@ const useAccountSync = (
 
   useEffect(() => {
     const syncEventCallback = async (msg: any) => {
-      console.log(msg);
       const { data, error } = msg;
       if (error) {
         setIsLoading(false);
@@ -58,17 +57,24 @@ const useAccountSync = (
       }
 
       if ('searchIndex' in data && data.searchIndex.emails) {
-        onSuccess?.();
-        setIsLoading(false);
+       // TODO: Should we notify users that indexing is taking place? 
       }
     };
     channel.on('debug', data => {
       console.log('DEBUG', data);
     });
     channel.on('account:sync:callback', syncEventCallback);
-    // return () => {
-    //   channel.removeListener('account:sync:callback', syncEventCallback);
-    // };
+
+    channel.once('account:login:callback', m => {
+      const { data } = m;
+
+      channel.send({ event: 'account:logout'})
+    });
+
+    channel.once('account:logout:callback', () => {
+      onSuccess?.();
+      setIsLoading(false);
+    })
   }, []);
 
   return {

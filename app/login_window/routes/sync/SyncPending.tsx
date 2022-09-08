@@ -24,9 +24,8 @@ const SyncPending = () => {
     password: string;
   };
 
-  console.log(syncData, 'SYNCDATA');
 
-  const onSyncSuccess = () => {
+  const onSyncSuccess = (account) => {
     navigate('../syncsuccess', {
       state: {
         email: syncData.email,
@@ -45,7 +44,7 @@ const SyncPending = () => {
     });
   };
 
-  const { isLoading, initSync, filesSynced } = useAccountSync(
+  const { isLoading, initSync, filesSynced, account } = useAccountSync(
     onSyncSuccess,
     onSyncError
   );

@@ -239,7 +239,7 @@ class AccountService extends EventEmitter {
       channel.once('account:resetPassword:callback', m => {
         const { error, data } = m;
         const _data = { ...data };
-        console.log(m);
+
         if (error) return reject(error);
 
         return resolve(_data);
@@ -261,7 +261,7 @@ class AccountService extends EventEmitter {
       channel.once('account:recover:callback', m => {
         const { error, data } = m;
         const _data = { ...data };
-        console.log(m);
+
         if (error) return reject(error);
 
         return resolve(_data);

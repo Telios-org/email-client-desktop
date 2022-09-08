@@ -26,6 +26,7 @@ const SyncSuccess = () => {
 
   const goToInbox = async () => {
     setLoading(true);
+
     const account = await LoginService.initAccount(
       syncData.password,
       syncData.email

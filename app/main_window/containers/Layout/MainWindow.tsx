@@ -44,7 +44,7 @@ export default function MainWindow() {
       dispatch(refreshToken(token));
     });
 
-    account.on('ACCOUNT_SERVICE::accountData', data => {
+    account.once('ACCOUNT_SERVICE::accountData', data => {
       // Storing the Account Data in the redux store from Login
       dispatch(loadAccountData(data));
     });
