@@ -25,7 +25,7 @@ const LoginWindow = () => {
         <div className="absolute z-0 top-0 bg-gradient-to-tr w-full h-full from-[#A996FF]/10 via-[#A996FF]/30 to-[#57C9F5]/30" />
         <Routes>
           <Route element={<SideLayout />}>
-            <Route index element={<NetworkCarousel />} />
+            <Route path="/*" element={<NetworkCarousel />} />
             <Route path="/registration/*" element={<StepByStep />} />
           </Route>
         </Routes>

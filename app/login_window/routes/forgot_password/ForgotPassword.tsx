@@ -63,6 +63,7 @@ const ForgotPassword = () => {
               type="text"
               placeholder=""
               disabled
+              icon="email"
               value={email}
             />
             <div>

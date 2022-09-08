@@ -51,6 +51,7 @@ const MasterPassword = () => {
             id="sync-code"
             name="sync-code"
             type="text"
+            icon="email"
             placeholder=""
             disabled
             value={syncData?.email}

@@ -17,7 +17,12 @@ const RegistrationRoutes = () => {
         <Route path="/password" element={<SetPassword />} />
         <Route path="/recovery" element={<RecoveryEmail />} />
         <Route path="/success" element={<RegistrationSuccess />} />
-        <Route path="/error" element={<ErrorScreen />} />
+        <Route
+          path="/error"
+          element={
+            <ErrorScreen message="We were unable to create your account." />
+          }
+        />
       </Route>
     </Routes>
   );

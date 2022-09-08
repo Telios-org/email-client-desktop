@@ -5,7 +5,8 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   ExclamationIcon,
-  MailIcon
+  MailIcon,
+  KeyIcon
 } from '@heroicons/react/outline';
 import clsx from 'clsx';
 
@@ -15,7 +16,7 @@ type Props = {
   id: string | number;
   name: string;
   type?: string;
-  icon?: 'none' | 'email';
+  icon?: 'none' | 'email' | 'key';
   autoComplete?: string;
   required?: boolean;
   error?: string;
@@ -100,6 +101,13 @@ const Input = (props: Props) => {
               activityPosition === 'right') && (
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <MailIcon className="h-5 w-5 text-gray-400" />
+              </div>
+            )}
+          {icon === 'key' &&
+            (((isValid === undefined || value.length === 0) && !showLoader) ||
+              activityPosition === 'right') && (
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <KeyIcon className="h-5 w-5 text-gray-400" />
               </div>
             )}
           {!showLoader && isValid !== undefined && value.length > 0 && (

@@ -326,6 +326,10 @@ class AccountService extends EventEmitter {
 
         if (error) return reject(error);
 
+        if (!data.drive_key) return reject('DriveKey missing')
+        if (!data.email) return reject('Email missing')
+
+
         return resolve({ driveKey: data.drive_key, email: data.email });
       });
     });

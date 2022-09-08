@@ -13,26 +13,39 @@ import { Button, BackButton, Close } from '../../../global_components/button';
 const Sync = () => {
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const { type = 'accountsettings' } = location.state as {
     type: string;
   };
 
-  const getSyncInfo = async (e) => {
+  const getSyncInfo = async e => {
     e.preventDefault();
     setLoading(true);
-    const {
-      driveKey,
-      email
-    } = await AccountService.getSyncInfo(code);
+    AccountService.getSyncInfo(code)
+      .then(data => {
+        const { driveKey, email } = data;
+        navigate('./masterpassword', {
+          state: {
+            driveKey,
+            email
+          }
+        });
+        return data;
+      })
+      .catch(error => {
+        console.log(error);
+        setLoading(false);
+        setError('Invalid Code');
+      });
+  };
 
-    navigate('./masterpassword', {
-      state: {
-        driveKey,
-        email
-      }
-    });
+  const onChange = (e: { target: { value: React.SetStateAction<string> } }) => {
+    if (error.length > 0) {
+      setError('');
+    }
+    setCode(e.target.value);
   };
 
   return (
@@ -76,7 +89,7 @@ const Sync = () => {
             </>
           )}
         </IntroHeader>
-        <form onSubmit={getSyncInfo} className="mt-4 space-y-4">
+        <form onSubmit={getSyncInfo} className="mt-4 space-y-8">
           <Input
             label="Temporary Sync Code"
             id="sync-code"
@@ -84,12 +97,12 @@ const Sync = () => {
             type="text"
             placeholder="Enter it here..."
             required
-            onChange={(e: {
-              target: { value: React.SetStateAction<string> };
-            }) => setCode(e.target.value)}
+            icon="key"
+            error={error}
+            onChange={onChange}
             value={code}
           />
-          <Button type="submit" loading={loading}>
+          <Button type="submit" loading={loading} disabled={code.length === 0}>
             Next
           </Button>
         </form>

@@ -52,9 +52,9 @@ const SyncPending = () => {
 
   const loadingComponent =
     filesSynced > 0 && filesSynced <= 100 ? (
-      <div>{`In progress. ${filesSynced}% complete.`}</div>
+      <div className="mt-10">{`In progress. ${filesSynced}% complete.`}</div>
     ) : (
-      <Loader className="h-8 w-8 text-gray-600" />
+      <Loader className="h-12 w-12 text-gray-600 mt-10" />
     );
 
   return (
@@ -68,11 +68,11 @@ const SyncPending = () => {
       <div className="max-w-xs mx-auto h-full">
         <IntroHeader title="Sync.">
           <p className="text-base pt-2 text-gray-500">
-            Your files are being downloaded and synced onto this device. This
+            Your files will be downloaded and synced onto this device. This
             may take a minute.
           </p>
         </IntroHeader>
-        <div>
+        <div className="flex justify-center">
           {isLoading ? (
             loadingComponent
           ) : (

@@ -13,7 +13,10 @@ const SyncRoutes = () => {
       <Route path="/masterpassword" element={<MasterPassword />} />
       <Route path="/syncpending" element={<SyncPending />} />
       <Route path="/syncsuccess" element={<SyncSuccess />} />
-      <Route path="/syncerror" element={<ErrorScreen />} />
+      <Route
+        path="/syncerror"
+        element={<ErrorScreen message="We were unable to sync your account." />}
+      />
     </Routes>
   );
 };

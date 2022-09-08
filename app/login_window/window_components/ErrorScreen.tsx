@@ -7,7 +7,12 @@ import { ExclamationIcon, DocumentSearchIcon } from '@heroicons/react/outline';
 // INTERNAL COMPONENTS
 import { Button, BackButton, Close } from '../../global_components/button';
 
-const ErrorScreen = () => {
+type Props = {
+  message: string;
+}
+
+const ErrorScreen = (props: Props) => {
+  const { message } = props;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -37,8 +42,10 @@ const ErrorScreen = () => {
             <h3 className="font-bold text-black">Something went wrong!</h3>
             <div className="mt-5">
               <p className="text-sm text-gray-500">
-                We were unable to reset your password, make sure the recovery
-                passphrase is accurate. Should this issue persist contact
+                {message}
+              </p>
+              <p className="text-sm text-gray-500 pt-2">
+                Should this issue persist contact
                 Support at <b>support@corp.telios.io</b> for further assistsance.
               </p>
             </div>

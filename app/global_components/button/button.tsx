@@ -22,7 +22,7 @@ const styles = {
 };
 
 type Props = {
-  variant?: string;
+  variant?: 'primary' | 'outline' | 'disabled';
   type?: 'button' | 'submit';
   className?: string;
   loading?: boolean;

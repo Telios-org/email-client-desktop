@@ -11,7 +11,12 @@ const RegistrationRoutes = () => {
       <Route index element={<Recovery />} />
       {/* <Route path="/code" element={<RecoveryCode />} />
       <Route path="/success" element={<RecoverySuccess />} /> */}
-      <Route path="/failure" element={<ErrorScreen />} />
+      <Route
+        path="/failure"
+        element={
+          <ErrorScreen message="We were unable to recover your account." />
+        }
+      />
     </Routes>
   );
 };

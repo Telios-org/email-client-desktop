@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEventHandler } from 'react';
 
 // EXTERNAL LIBRARY
-import { EyeIcon, EyeOffIcon } from '@heroicons/react/outline';
+import { EyeIcon, EyeOffIcon, LockClosedIcon } from '@heroicons/react/outline';
 import { ExclamationCircleIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
 
@@ -18,6 +18,7 @@ type Props = {
   value: string;
   defaultValue?: string;
   onVisibilityToggle?: () => void;
+  lockicon?: boolean;
 };
 
 const Password = (props: Props) => {
@@ -33,7 +34,8 @@ const Password = (props: Props) => {
     show = null, // Not required only if you want the state to be handled by parent
     onVisibilityToggle, // Not required only if you want the state to be handled by parent
     value: valueFromProps,
-    defaultValue
+    defaultValue,
+    lockicon
   } = props;
   // Functions below handle the Visibility state locally if not overwriten by parent.
   const [showPassword, setShowPassword] = useState(false);
@@ -90,6 +92,11 @@ const Password = (props: Props) => {
         </label>
       )}
       <div className="mt-1 relative">
+        {lockicon && (
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <LockClosedIcon className="h-5 w-5 text-gray-400" />
+          </div>
+        )}
         <input
           id={id}
           name={name}
@@ -103,7 +110,8 @@ const Password = (props: Props) => {
             'rounded-md shadow-sm placeholder-gray-400',
             error?.length > 0
               ? 'pr-10 border-red-300 text-red-900 focus:outline-none focus:ring-red-500 focus:border-red-500'
-              : 'border-gray-300 focus:outline-none focus:ring-primary-blue-500 focus:border-primary-blue-500'
+              : 'border-gray-300 focus:outline-none focus:ring-primary-blue-500 focus:border-primary-blue-500',
+              lockicon && 'pl-10'
           )}
           aria-invalid={error?.length > 0 ? 'true' : 'false'}
           aria-describedby="password"
@@ -119,7 +127,7 @@ const Password = (props: Props) => {
           </div>
           <div
             onClick={overwriteToggle}
-            className="flex items-center cursor-pointer text-gray-400 hover:text-gray-500"
+            className="flex items-center cursor-pointer text-gray-300 hover:text-gray-500"
             style={{ cursor: 'pointer' }}
           >
             {!showPassword && (
@@ -142,5 +150,6 @@ Password.defaultProps = {
   autoComplete: '',
   required: false,
   show: null,
-  defaultValue: ''
+  defaultValue: '',
+  lockicon: true
 };

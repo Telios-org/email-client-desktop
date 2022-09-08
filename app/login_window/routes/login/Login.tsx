@@ -63,7 +63,7 @@ const Login = () => {
     if (!lastAccount && accounts.length > 0) {
       setActiveAcct(accounts[0]);
     } else if (lastAccount && accounts.length > 0) {
-      setActiveAcct(accounts.filter(a => a.id === lastAccount)[0] || null);
+      setActiveAcct(accounts.filter(a => a.id === lastAccount)[0] || accounts[0]);
     }
   }, [accounts]);
 

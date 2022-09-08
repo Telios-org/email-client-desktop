@@ -11,7 +11,15 @@ const ForgotPasswordRoutes = () => {
       <Route index element={<ForgotPassword />} />
       <Route path="/setnewpassword" element={<SetNewPassword />} />
       <Route path="/resetsuccess" element={<ResetSuccess />} />
-      <Route path="/resetfailure" element={<ErrorScreen />} />
+      <Route
+        path="/resetfailure"
+        element={(
+          <ErrorScreen
+            message="We were unable to reset your password, make sure the recovery
+                passphrase and password is accurate."
+          />
+        )}
+      />
     </Routes>
   );
 };

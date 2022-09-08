@@ -86,22 +86,23 @@ const Recovery = () => {
       const email = `${data.accountEmail.toLowerCase()}@${mailDomain}`;
       console.log(email);
       setLoading(true);
+
       AccountService.recoverAccount({
         email,
         recoveryEmail: data.recoveryEmail
       })
         .then(data => {
-          navigate('../sync', {
-            state: {
-              type: 'recovery'
-            }
-          });
           return data;
         })
         .catch(error => {
-          navigate('./failure', { state: { error } });
+          console.log(error);
         });
-      setLoading(false);
+
+      navigate('/sync', {
+        state: {
+          type: 'recovery'
+        }
+      });
     }
   });
 
@@ -140,7 +141,8 @@ const Recovery = () => {
       <div className="max-w-xs mx-auto h-full flex flex-col">
         <IntroHeader title="Account Recovery.">
           <p className="text-base pt-2 text-gray-500">
-            Retrieve your account using your recovery email.
+            Retrieve your account using the recovery email you chose when
+            registering your account.
           </p>
         </IntroHeader>
 

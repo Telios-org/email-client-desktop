@@ -39,8 +39,7 @@ const RegistrationSuccess = () => {
       <div className="max-w-xs mx-auto h-full flex flex-col">
         <IntroHeader title="Recovery Passphrase">
           <p className="text-base pt-2 text-gray-500">
-            Download and keep somewhere safe. This is the only time this will be
-            displayed to you.
+            Download and keep somewhere safe.
           </p>
         </IntroHeader>
         <div className="mt-6 justify-between flex-1 flex flex-col pb-8">
