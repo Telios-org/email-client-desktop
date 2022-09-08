@@ -250,18 +250,18 @@ const Login = () => {
         <NavButton
           variant="outline"
           to="/registration"
-          className="flex flex-row justify-center text-xs whitespace-nowrap items-center"
+          className="flex flex-row justify-center text-sm whitespace-nowrap items-center"
         >
-          <PlusIcon className="h-4 w-4 mr-2" />
+          <PlusIcon className="h-5 w-5 mr-2" />
           New Account
         </NavButton>
         <NavButton
           variant="outline"
-          className="flex flex-row justify-center text-xs whitespace-nowrap items-center"
+          className="flex flex-row justify-center text-sm whitespace-nowrap items-center"
           to="/syncorrecovery"
         >
-          <SwitchVerticalIcon className="h-4 w-4 mr-2" />
-          Sync/Recover Account
+          <SwitchVerticalIcon className="h-5 w-5 mr-2" />
+          Sync/Recover
         </NavButton>
       </div>
       {/* MODAL FOR REMEMBER ME */}
