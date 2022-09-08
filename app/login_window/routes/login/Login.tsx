@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 
 // ELECTRON RESOURCES
 import Store from 'electron-store';
 
 // EXTERNAL LIBRAIRIES
+import { Dialog, Transition } from '@headlessui/react';
 import { Link } from 'react-router-dom';
 import { ChevronRightIcon } from '@heroicons/react/solid';
-import { UserAddIcon, SwitchVerticalIcon, PlusIcon } from '@heroicons/react/outline';
+import {
+  UserAddIcon,
+  SwitchVerticalIcon,
+  PlusIcon
+} from '@heroicons/react/outline';
 
 // INTERNATIONALIZATION
 import i18n from '../../../i18n/i18n';
@@ -16,7 +21,9 @@ import IntroHeader from '../../window_components/IntroHeader';
 import { Dropdown } from '../../../global_components/menu';
 import { Password } from '../../../global_components/input-groups';
 import { Button, NavButton } from '../../../global_components/button';
+import { Checkbox } from '../../../global_components/checkboxes';
 import { Divider } from '../../../global_components/layout';
+import RememberMeModal from './RememberMeModal';
 
 // INTERNAL SERVICES
 const { ipcRenderer, remote } = require('electron');
@@ -51,6 +58,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRemembered, setIsRemembered] = useState(false);
 
   useEffect(() => {
     const data = LoginService.getAccounts();
@@ -63,9 +72,24 @@ const Login = () => {
     if (!lastAccount && accounts.length > 0) {
       setActiveAcct(accounts[0]);
     } else if (lastAccount && accounts.length > 0) {
-      setActiveAcct(accounts.filter(a => a.id === lastAccount)[0] || accounts[0]);
+      setActiveAcct(
+        accounts.filter(a => a.id === lastAccount)[0] || accounts[0]
+      );
     }
   }, [accounts]);
+
+  useEffect(() => {
+    if (activeAcct) {
+      const storedPassword = store.get(`password::${activeAcct.id}`) as string;
+      if (storedPassword) {
+        setIsRemembered(true);
+        setPassword(storedPassword);
+      }else{
+        setIsRemembered(false);
+        setPassword('');
+      }
+    }
+  }, [activeAcct]);
 
   const handleLogin = async e => {
     e.preventDefault();
@@ -79,6 +103,9 @@ const Login = () => {
 
       if (accountMigrated) {
         const account = await initAccount(selection, password);
+        if (isRemembered) {
+          store.set(`password::${selection}`, password);
+        }
         goToMainWindow(account);
       } else {
         // ADD MIGRATION LOGIC
@@ -139,6 +166,32 @@ const Login = () => {
     );
   }
 
+  const onChangeAcct = (obj: any) => {
+    setIsRemembered(false);
+    setActiveAcct(obj);
+  };
+
+  const onRememberMe = e => {
+    const { checked } = e.target;
+
+    if (checked) {
+      setIsModalOpen(true);
+    } else {
+      setIsModalOpen(false);
+      setIsRemembered(false);
+      store.delete(`password::${activeAcct.id}`)
+    }
+  };
+
+  const handleCloseModal = (action: string) => {
+    if (action === 'cancel') {
+      setIsRemembered(false);
+    } else if (action === 'remember') {
+      setIsRemembered(true);
+    }
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="max-w-sm mx-auto">
       <IntroHeader title="Login.">
@@ -166,13 +219,23 @@ const Login = () => {
             error={error}
             className=""
           />
-          <Link
-            to="/forgotpassword"
-            state={{ email: activeAcct?.id }}
-            className="block w-full text-right mt-3 text-xs text-purple-500 hover:text-purple-600 font-medium"
-          >
-            Forgot Password?
-          </Link>
+          <div className="flex w-full justify-between mt-3 text-sm px-1">
+            <Checkbox
+              id="remember"
+              name="remember"
+              value={isRemembered}
+              onChange={onRememberMe}
+            >
+              <span className="-ml-1 text-gray-400 select-none">Remember me</span>
+            </Checkbox>
+            <Link
+              to="/forgotpassword"
+              state={{ email: activeAcct?.id }}
+              className=" text-purple-500 hover:text-purple-600"
+            >
+              Forgot Password?
+            </Link>
+          </div>
         </div>
         <Button
           type="submit"
@@ -201,6 +264,12 @@ const Login = () => {
           Sync/Recover Account
         </NavButton>
       </div>
+      {/* MODAL FOR REMEMBER ME */}
+      <RememberMeModal
+        open={isModalOpen}
+        handleClose={handleCloseModal}
+        email={activeAcct}
+      />
     </div>
   );
 };

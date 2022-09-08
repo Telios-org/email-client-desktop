@@ -95,7 +95,7 @@ const Input = (props: Props) => {
         </label>
       )}
       <div className="relative mt-1">
-        <div className="relative flex rounded-md shadow-sm">
+        <div className="relative flex rounded-md shadow-sm focus-within:ring-2 focus-within:ring-violet-500 focus-within:border-violet-500">
           {icon === 'email' &&
             (((isValid === undefined || value.length === 0) && !showLoader) ||
               activityPosition === 'right') && (
@@ -178,9 +178,8 @@ const Input = (props: Props) => {
                 activityPosition === 'left') &&
                 'pl-10',
               `appearance-none block w-full px-3 py-2 border border-gray-300 
-          placeholder-gray-400 
-            focus:outline-none focus:ring-primary-blue-500 
-            focus:border-primary-blue-500 sm:text-sm`,
+          placeholder-gray-400 focus:outline-none
+           sm:text-sm`,
               className
             )}
           />

@@ -72,7 +72,8 @@ const Checkbox = (props: Props) => {
           type="checkbox"
           value={value}
           checked={value}
-          className=" focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded form-checkbox"
+          className=" focus:ring-violet-500 h-4 w-4 text-violet-600 border-gray-300 rounded form-checkbox cursor-pointer"
+          style={{cursor: "pointer"}}
         />
       </div>
       <div className="relative ml-3 text-sm">

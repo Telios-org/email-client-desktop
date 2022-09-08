@@ -118,7 +118,10 @@ export default function Navigation(props: Props) {
 
       for (const id of aliases.allIds) {
         const alias = aliases.byId[id];
+        if(alias && alias.count){
           totalUnreadCount += alias.count;
+        }
+          
       }
 
 

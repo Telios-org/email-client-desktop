@@ -92,7 +92,7 @@ export default function NamespaceBlock(props: Props) {
       name: d.name,
       ns: d.namespaceKey,
       disabled: d.disabled,
-      count: d.count
+      count: d.count || 0
     };
   });
 

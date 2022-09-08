@@ -106,12 +106,13 @@ const Password = (props: Props) => {
           onChange={onChange}
           value={value}
           className={clsx(
+            'focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500',
             'appearance-none block w-full px-3 py-2 border sm:text-sm',
             'rounded-md shadow-sm placeholder-gray-400',
             error?.length > 0
               ? 'pr-10 border-red-300 text-red-900 focus:outline-none focus:ring-red-500 focus:border-red-500'
               : 'border-gray-300 focus:outline-none focus:ring-primary-blue-500 focus:border-primary-blue-500',
-              lockicon && 'pl-10'
+            lockicon && 'pl-10'
           )}
           aria-invalid={error?.length > 0 ? 'true' : 'false'}
           aria-describedby="password"

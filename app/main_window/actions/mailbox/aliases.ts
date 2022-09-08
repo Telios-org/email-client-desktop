@@ -18,7 +18,7 @@ export const updateAliasCount = (id: number, amount: number) => {
       mail: { aliases }
     } = getState();
 
-    const currCount = aliases?.byId[id].count;
+    const currCount = aliases?.byId[id]?.count;
 
     let change = amount;
 
