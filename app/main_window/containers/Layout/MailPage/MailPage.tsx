@@ -12,7 +12,12 @@ import { clearActiveMessage } from '../../../actions/mailbox/messages';
 import { toggleEditor } from '../../../actions/global';
 
 // Selectors
-import { activeFolderId, selectActiveMailbox, selectAllAliases, selectAllNamespaces } from '../../../selectors/mail';
+import {
+  activeFolderId,
+  selectActiveMailbox,
+  selectAllAliases,
+  selectAllNamespaces
+} from '../../../selectors/mail';
 
 // Components IMPORTS
 import MessageList from '../../../components/Mail/MessageList/MessageList';
@@ -46,11 +51,22 @@ export default function MailPage() {
 
       // We don't always want the full state of the app to be refreshed
       if (fullSync) {
-        dispatch(loadMailboxes(opts)).then(() => {
-          dispatch(fetchNewMessages()).then(() => {
-            setIsSyncInProgress(false)
+        dispatch(loadMailboxes(opts))
+          .then(() => {
+            dispatch(fetchNewMessages())
+              .then(() => {
+                setIsSyncInProgress(false);
+                return true;
+              })
+              .catch(error => {
+                console.log('ERROR ON FULLSYNC::', error);
+                setIsSyncInProgress(false);
+              });
+          })
+          .catch(error => {
+            console.log('ERROR ON LOADMAILBOX:', error);
+            setIsSyncInProgress(false);
           });
-        })
       }
     });
 
@@ -107,9 +123,18 @@ export default function MailPage() {
 
   // REFRESHING THE STATE OF THE MAIL PAGE
   const refresh = async (full: any) => {
+    console.log('HITTING REFRESH', isSyncInProgress);
     setLoading(true);
     if (!isSyncInProgress) {
-      dispatch(fetchNewMessages());
+      dispatch(fetchNewMessages())
+        .then(() => {
+          setIsSyncInProgress(false);
+          return true;
+        })
+        .catch(error => {
+          console.log('ERROR ON FULLSYNC::', error);
+          setIsSyncInProgress(false);
+        });
     }
     setTimeout(() => setLoading(false), 1000);
   };
@@ -119,7 +144,15 @@ export default function MailPage() {
     const interval = setInterval(() => {
       console.log('AUTO FETCHING EMAILS', isSyncInProgress);
       if (!isSyncInProgress) {
-        dispatch(fetchNewMessages());
+        dispatch(fetchNewMessages())
+          .then(() => {
+            setIsSyncInProgress(false);
+            return true;
+          })
+          .catch(error => {
+            console.log('ERROR ON FULLSYNC::', error);
+            setIsSyncInProgress(false);
+          });
       }
     }, 30000);
 
