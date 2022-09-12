@@ -9,10 +9,10 @@
   dependencies:
     hypercore "^9.0.0"
 
-"@hyperswarm/dht@5.0.25", "@hyperswarm/dht@next":
-  version "5.0.25"
-  resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-5.0.25.tgz#eb9f4c314715723ed7e7dcec2b3dbe2722fddda2"
-  integrity sha512-x8Fpvp96NSb3M/0Fap2rm70obpNd0fe8oJnwZxJfIvxQtItYFVCrD8URsI+0Fxt4tNINMxnE9h3MaKoaxePP2A==
+"@hyperswarm/dht@5.0.17", "@hyperswarm/dht@next":
+  version "5.0.17"
+  resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-5.0.17.tgz#5747ada03ff161b15eaed4bd1338087806053f34"
+  integrity sha512-/ZlUSBTLR9uvzBF1V3sMzgzt8vtJp9FWikddPYYE0z0RXxpeyPkPlj+p6mLKKv66Obc4U/mYiuCc2f90vHVxcA==
   dependencies:
     "@hyperswarm/secret-stream" "^5.1.0"
     b4a "^1.3.1"
@@ -20,7 +20,6 @@
     bogon "^1.0.0"
     compact-encoding "^2.4.1"
     compact-encoding-net "^1.0.1"
-    debugging-stream "^2.0.0"
     dht-rpc "^5.0.1"
     noise-curve-ed "^1.0.2"
     noise-handshake "^2.1.0"
@@ -117,11 +116,11 @@
     defer-to-connect "^2.0.0"
 
 "@telios/client-sdk@^6.2.5":
-  version "6.2.5"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.2.5.tgz#65b5d8b1bb66bedcca0ff0cba00ad656286cfdd6"
-  integrity sha512-Xsq9Bkn/ShyHMzuQ7jpW3X5mvZI7IS58JgVuAisBGVq+9pziZ6sRsp96ncT9jnBOUhPih+Jn1/bwEP7WNLga3g==
+  version "6.2.6"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.2.6.tgz#664c7864a4fa5aa37b0a94aafc238b0641e65ac0"
+  integrity sha512-OJ6KzxQ5d3537QSLf+BtjH520p+k0gX/HFFsCzs3b6bTt8nHDEtIOZxgNRNS/EETXOfNAD1aJJBEodh+/X0wmw==
   dependencies:
-    "@telios/nebula" "^3.1.3"
+    "@telios/nebula" "^3.4.9"
     async "^3.2.0"
     axios "^0.21.1"
     bip39 "^3.0.4"
@@ -199,10 +198,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@^3.1.3", "@telios/nebula@^3.4.5":
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.4.6.tgz#c28ffcc9b1e1ffc4e9ed579a72e9df566553b8bb"
-  integrity sha512-+YKxiEenMNLqw3s4jXPXIVyG85LSs6BW7MPFRMEKq1xjdPI0qYtuBUYON+tPxO/JXluUCgWUZHE2UjTRIS5Kdw==
+"@telios/nebula@^3.4.10", "@telios/nebula@^3.4.9":
+  version "3.4.10"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.4.10.tgz#4ebd24ae04d0cf0fc0201ab36e2f3c9c563a64e9"
+  integrity sha512-HTb7G30eBSsShBeCbjPpe0UxyM52WL46XqRLbQgJ4XW9n66nk0tOk7MziugUvozHTFc6fiWCHoKUoD69lLejJg==
   dependencies:
     autobase "1.0.0-alpha.6"
     blakejs "^1.1.0"
@@ -225,12 +224,14 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@git+https://github.com/Telios-org/telios-client-backend.git#sync_recover":
-  version "3.7.6"
-  resolved "git+https://github.com/Telios-org/telios-client-backend.git#fd84fdf6d7f767d51eccc335a15ae2f02600c6ae"
+"@telios/telios-client-backend@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-4.0.0.tgz#b1d66be9538813641ff04b634e51257ccc2caff7"
+  integrity sha512-XILpe0ZQaDB8bx9Ith0+WrkmMRTpn/PxlgRR9I8LypQfsAg/u+8Q3nYQxbMj57NORxs2VjQcNCwrg8CXomssCg==
   dependencies:
+    "@hyperswarm/dht" "5.0.17"
     "@telios/client-sdk" "^6.2.5"
-    "@telios/nebula" "^3.4.5"
+    "@telios/nebula" "^3.4.10"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     env-cmd "^10.1.0"
     file-type "^16.5.3"
@@ -268,9 +269,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "18.7.15"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.15.tgz#20ae1ec80c57ee844b469f968a1cd511d4088b29"
-  integrity sha512-XnjpaI8Bgc3eBag2Aw4t2Uj/49lLBSStHWfqKvIuXD7FIrZyMLWp8KuAFHAqxMZYTF9l08N1ctUn9YNybZJVmQ==
+  version "18.7.16"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.16.tgz#0eb3cce1e37c79619943d2fd903919fc30850601"
+  integrity sha512-EQHhixfu+mkqHMZl1R2Ovuvn47PUw18azMJOTwSZr9/fhzHNGXAJ0ma0dayRVchprpCj0Kc1K1xKoWaATWF1qg==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -282,14 +283,7 @@
   resolved "https://registry.yarnpkg.com/@types/prismjs/-/prismjs-1.26.0.tgz#a1c3809b0ad61c62cac6d4e0c56d610c910b7654"
   integrity sha512-ZTaqn/qSqUuAq1YwvOFQfVW1AR/oQJlLSZVustdjwI+GZ8kr0MSHBj0tsXPW1EqHubx50gtBEjbPGsdZwQwCjQ==
 
-"@types/responselike@*":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/responselike/-/responselike-3.0.0.tgz#5ecc1fc88552e5ac03de648a7796f9e125d002dc"
-  integrity sha512-zfgGLWx5IQOTJgQPD4UfGEhapTKUPC1ra/QCG02y3GUJWrhX05bBf/EfTh3aFj2DKi7cLo+cipXLNclD27tQXQ==
-  dependencies:
-    responselike "*"
-
-"@types/responselike@^1.0.0":
+"@types/responselike@*", "@types/responselike@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/responselike/-/responselike-1.0.0.tgz#251f4fe7d154d2bad125abe1b429b23afd262e29"
   integrity sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==
@@ -908,13 +902,6 @@ debug@^4.1.0, debug@^4.1.1:
   dependencies:
     ms "2.1.2"
 
-debugging-stream@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/debugging-stream/-/debugging-stream-2.0.0.tgz#515cad5a35299cf4b4bc0afcbd69d52c809c84ce"
-  integrity sha512-xwfl6wB/3xc553uwtGnSa94jFxnGOc02C0WU2Nmzwr80gzeqn1FX4VcbvoKIhe8L/lPq4BTQttAbrTN94uN8rA==
-  dependencies:
-    streamx "^2.12.4"
-
 decompress-response@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/decompress-response/-/decompress-response-3.3.0.tgz#80a4dd323748384bfa248083622aedec982adff3"
@@ -1170,9 +1157,9 @@ fast-fifo@^1.0.0:
   integrity sha512-Kl29QoNbNvn4nhDsLYjyIAaIqaJB6rBx5p3sL9VjaefJ+eMFBWVZiaoguaoZfzEKr5RhAti0UgM8703akGPJ6g==
 
 fast-glob@^3.2.9:
-  version "3.2.11"
-  resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.2.11.tgz#a1172ad95ceb8a16e20caa5c5e56480e5129c1d9"
-  integrity sha512-xrO3+1bxSo3ZVHAnqzyuewYT6aMFHRAd4Kcs92MAonjwQZLsK9d0SF1IyQ3k5PoirxTW0Oe/RqFgMQ6TcNE5Ew==
+  version "3.2.12"
+  resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.2.12.tgz#7f39ec99c2e6ab030337142da9e0c18f37afae80"
+  integrity sha512-DVj4CQIYYow0BlaelwK1pHl5n5cRSJfM60UA0zK891sVInoPri2Ekj7+e1CT3/3qxXenpI+nBBmQAcJPJgaj4w==
   dependencies:
     "@nodelib/fs.stat" "^2.0.2"
     "@nodelib/fs.walk" "^1.2.3"
@@ -2113,11 +2100,6 @@ lowercase-keys@^2.0.0:
   resolved "https://registry.yarnpkg.com/lowercase-keys/-/lowercase-keys-2.0.0.tgz#2603e78b7b4b0006cbca2fbcc8a3202558ac9479"
   integrity sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==
 
-lowercase-keys@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/lowercase-keys/-/lowercase-keys-3.0.0.tgz#c5e7d442e37ead247ae9db117a9d0a467c89d4f2"
-  integrity sha512-ozCC6gdQ+glXOQsveKD0YsDy8DSQFjDTz4zyzEHNV5+JP5D62LmfDZ6o1cycFx9ouG940M5dE8C8CTewdj2YWQ==
-
 lru-cache@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-6.0.0.tgz#6d6fe6570ebd96aaf90fcad1dafa3b2566db3a94"
@@ -2749,9 +2731,9 @@ random-access-storage@^1.1.1, random-access-storage@^1.4.0:
     queue-tick "^1.0.0"
 
 random-access-storage@^2.2.0:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/random-access-storage/-/random-access-storage-2.2.1.tgz#7d527fdff451866bee43a24bbbe518e5085187a0"
-  integrity sha512-vLq2dCwuxoJ+IXnHo/4bSlWg6CkACQOW6H50ckXf9+eRhYsk0NOcuhu2zfhQHflJ/7jjqEC2KuU3SJ39xWWkvw==
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/random-access-storage/-/random-access-storage-2.3.0.tgz#18bfd70407e2e8c42d941ecbe7016256b78912da"
+  integrity sha512-+sGRoANV5/g+JuHXNmML7F+fm7zM2MkXOOmBDCSM2C5ov35fSyQYCQ3My/hxe1jkmSp6pyAeGW3jA2iC0rfZ4g==
   dependencies:
     events "^3.3.0"
     queue-tick "^1.0.0"
@@ -2877,13 +2859,6 @@ resolve@^1.17.0:
     is-core-module "^2.9.0"
     path-parse "^1.0.7"
     supports-preserve-symlinks-flag "^1.0.0"
-
-responselike@*:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/responselike/-/responselike-3.0.0.tgz#20decb6c298aff0dbee1c355ca95461d42823626"
-  integrity sha512-40yHxbNcl2+rzXvZuVkrYohathsSJlMTXKryG5y8uciHv1+xDLHQpgjG64JUO9nrEq2jGLH6IZ8BcZyw3wrweg==
-  dependencies:
-    lowercase-keys "^3.0.0"
 
 responselike@^1.0.2:
   version "1.0.2"
