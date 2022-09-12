@@ -114,6 +114,18 @@ export default function MailPage() {
     setTimeout(() => setLoading(false), 1000);
   };
 
+  // TEMPORARY SOLUTION TO GO RETRIEVE EMAILS EVERY 30s
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('AUTO FETCHING EMAILS', isSyncInProgress);
+      if (!isSyncInProgress) {
+        dispatch(fetchNewMessages());
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <PanelGroup
