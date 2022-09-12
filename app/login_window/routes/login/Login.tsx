@@ -133,7 +133,7 @@ const Login = () => {
         id: 'a2',
         label: 'Sync New Device',
         description: 'You have an account. Add it to this device.',
-        route: '/sync'
+        route: '/syncorrecovery'
       }
     ];
 
@@ -150,6 +150,7 @@ const Login = () => {
             <Link
               key={act.id}
               to={act.route}
+
               className="relative justify-center group border-2 hover:border-violet-500 border-gray-200 flex flex-col no-underline text-gray-400 px-5 py-4 rounded-lg"
             >
               <span className="text-base text-gray-900 font-medium">
