@@ -44,7 +44,7 @@ const SyncSuccess = () => {
       </div>
       <div className="max-w-xs mx-auto h-full">
         <IntroHeader title="Sync Success.">
-          <p className="text-base pt-2 text-gray-500">bla bla bla</p>
+          <p className="text-base pt-2 text-gray-500">Your file have been successfully synced to this device. You can now use your Telios account.</p>
         </IntroHeader>
         <div className="mt-4">
           <Button type="button" onClick={goToInbox} loading={isLoading}>
