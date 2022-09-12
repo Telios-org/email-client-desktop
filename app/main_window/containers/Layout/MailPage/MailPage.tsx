@@ -121,51 +121,41 @@ export default function MailPage() {
     setIsSyncInProgress(bool);
   };
 
-  // REFRESHING THE STATE OF THE MAIL PAGE
-  const refresh = async (full: any) => {
-    console.log('HITTING REFRESH', isSyncInProgress);
-    setLoading(true);
+  const checkMessages = (callback = () => {}) => {
+    console.log('CHECKING MESSAGES', isSyncInProgress);
     if (!isSyncInProgress) {
       dispatch(fetchNewMessages())
         .then(() => {
           setIsSyncInProgress(false);
+          callback();
           return true;
         })
         .catch(error => {
-          console.log('ERROR ON FULLSYNC::', error);
           setIsSyncInProgress(false);
+          callback();
         });
     }
-    setTimeout(() => setLoading(false), 1000);
+  };
+
+  // REFRESHING THE STATE OF THE MAIL PAGE
+  const refresh = async (full: any) => {
+    console.log('HITTING REFRESH', isSyncInProgress);
+    setLoading(true);
+    checkMessages(() => setTimeout(() => setLoading(false), 3000));
   };
 
   // TEMPORARY SOLUTION TO GO RETRIEVE EMAILS EVERY 30s
   useEffect(() => {
-    const interval = setInterval(() => {
-      console.log('AUTO FETCHING EMAILS', isSyncInProgress);
-      if (!isSyncInProgress) {
-        dispatch(fetchNewMessages())
-          .then(() => {
-            setIsSyncInProgress(false);
-            return true;
-          })
-          .catch(error => {
-            console.log('ERROR ON FULLSYNC::', error);
-            setIsSyncInProgress(false);
-          });
-      }
-    }, 30000);
-
+    const interval = setInterval(checkMessages, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isSyncInProgress]);
 
   return (
     <DndProvider backend={HTML5Backend}>
       <PanelGroup
         spacing={0}
         onResizeEnd={(panels: [{ size: number }, { size: number }]) =>
-          handlePanelResizeEnd(panels, 'nav')
-        }
+          handlePanelResizeEnd(panels, 'nav')}
         panelWidths={[
           {
             size: panelWidths.nav,
