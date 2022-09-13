@@ -129,19 +129,19 @@ const DevicesPanel = () => {
 
   useEffect(() => {
     if (
-      mailbox?.address.length > 0 &&
-      account?.driveSyncingPublicKey.length > 0
+      mailbox?.address?.length > 0 &&
+      account?.driveSyncingPublicKey?.length > 0
     ) {
-      console.log(mailbox.address, account.driveSyncingPublicKey);
+      console.log(mailbox.address, account?.driveSyncingPublicKey);
       setQrCode(
         JSON.stringify({
-          email: mailbox.address,
-          drive_key: account.driveSyncingPublicKey
+          email: mailbox?.address,
+          drive_key: account?.driveSyncingPublicKey
         })
       );
       setShowQrCode(true);
     }
-  }, [mailbox.address, account.driveSyncingPublicKey]);
+  }, [mailbox?.address, account?.driveSyncingPublicKey]);
 
   return (
     <>

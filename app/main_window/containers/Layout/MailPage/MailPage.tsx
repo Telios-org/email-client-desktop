@@ -39,7 +39,7 @@ export default function MailPage() {
 
   const [loading, setLoading] = useState(false);
   const [panelWidths, setPanelWidths] = useState({ nav: 200, msgList: 445 });
-  const [isSyncInProgress, setIsSyncInProgress] = useState(true);
+  const [isSyncInProgress, setIsSyncInProgress] = useState(false);
 
   const toggleEditorState = (editorAction: string, forcedStatus?: boolean) => {
     dispatch(toggleEditor(editorAction, forcedStatus));
