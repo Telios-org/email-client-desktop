@@ -224,10 +224,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-4.0.0.tgz#b1d66be9538813641ff04b634e51257ccc2caff7"
-  integrity sha512-XILpe0ZQaDB8bx9Ith0+WrkmMRTpn/PxlgRR9I8LypQfsAg/u+8Q3nYQxbMj57NORxs2VjQcNCwrg8CXomssCg==
+"@telios/telios-client-backend@4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-4.0.2.tgz#338ac6c1f270fdb63e9325fc50867510aa67c7de"
+  integrity sha512-gZjqa3ghvtCf5cOo7GDr36z49YpUd8tb8BaalD6jD9sAb6z2+QS5shDH62dYUed72BCo6yudW/4Tg4k90lEA0g==
   dependencies:
     "@hyperswarm/dht" "5.0.17"
     "@telios/client-sdk" "^6.2.5"
