@@ -1,7 +1,12 @@
 // import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
-import LoginPage from './containers/LoginPage';
+
+// EXTERNAL LIBRAIRIES
+import { HashRouter, Routes, Route } from 'react-router-dom';
+
+// INTERNAL LIBRAIRIES
+import LoginWindow from './routes/root/LoginWindow';
 // import '../app.tailwind.css';
 import '../app.global.css';
 
@@ -12,11 +17,12 @@ const mode = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
 
 document.addEventListener('DOMContentLoaded', () =>
   render(
-    <>
-      <div id="theme-mode" className={mode}>
-        <LoginPage />
-      </div>
-    </>,
+    <HashRouter>
+      <Routes>
+        <Route path="/*" element={<LoginWindow />} />
+      </Routes>
+    </HashRouter>,
+    // <LoginWindow />
     document.getElementById('root')
   )
 );

@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 // EXTERNAL LIBRARIES
 import { Dialog, Combobox, Transition } from '@headlessui/react';
 import { AtSymbolIcon, LightningBoltIcon } from '@heroicons/react/outline';
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import { generateSlug } from 'random-word-slugs';
 
 // INTERNAL LIBRAIRIES

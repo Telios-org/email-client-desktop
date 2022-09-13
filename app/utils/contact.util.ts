@@ -51,6 +51,11 @@ const peopleHeaderParser = (
   }
 
   let previewHead;
+
+  if(from?.arr[0].length) {
+    from.arr[0] = from.arr[0][0]
+  }
+
   const sender = {
     name:
       from.arr[0]?.name && from.arr[0]?.name?.length

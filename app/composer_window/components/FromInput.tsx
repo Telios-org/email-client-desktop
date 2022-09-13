@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 
+
 // SELECTORS
 import { selectActiveMailbox } from '../../main_window/selectors/mail';
 

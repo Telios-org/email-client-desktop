@@ -14,7 +14,7 @@ const SecurityPanel = () => {
   const [copyText, setCopyText] = useState('Copy')
 
   const handleCopy = (value: string) => {
-    clipboard.writeText(value);
+    clipboard.writeText(value ?? '');
     setCopyText('Copied!')
   }
 
@@ -25,7 +25,7 @@ const SecurityPanel = () => {
   }
 
   const redactString = (str: string) => {
-    const lgth = str.length
+    const lgth = str?.length ?? 0
     return "x".repeat(lgth)
 
   }
@@ -37,10 +37,10 @@ const SecurityPanel = () => {
           <div>
             <span className="block text-sm font-medium text-gray-700">Device Id</span>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium justify-between">
-              <div className="break-words flex-1 min-w-[40%]">{account.deviceId}</div>
+              <div className="break-words flex-1 min-w-[40%]">{account?.deviceInfo?.deviceId}</div>
 
               {/* COPY BUTTON */}
-              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account.deviceId)} className="relative flex flex-col items-center group outline-none">
+              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.deviceInfo?.deviceId)} className="relative flex flex-col items-center group outline-none">
                 <Paper
                   size="small"
                   set="broken"
@@ -60,9 +60,9 @@ const SecurityPanel = () => {
           <div>
             <span className="block text-sm font-medium text-gray-700">Signing Public Key</span>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium justify-between">
-              <div className="break-words flex-1 min-w-[40%]">{account.deviceSigningPubKey}</div>
+              <div className="break-words flex-1 min-w-[40%]">{account?.deviceInfo?.keyPair?.publicKey}</div>
               {/* COPY BUTTON */}
-              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account.deviceSigningPubKey)} className="relative flex flex-col items-center group outline-none">
+              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.deviceInfo?.keyPair?.publicKey)} className="relative flex flex-col items-center group outline-none">
                 <Paper
                   size="small"
                   set="broken"
@@ -101,9 +101,9 @@ const SecurityPanel = () => {
               )}
             </div>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium justify-between">
-            <div className={`break-words flex-1 min-w-[40%] ${hideSigningKey? "text-gray-300" : ""}`}>{hideSigningKey ? redactString(account.deviceSigningPrivKey) : account.deviceSigningPrivKey }</div>
+            <div className={`break-words flex-1 min-w-[40%] ${hideSigningKey? "text-gray-300" : ""}`}>{hideSigningKey ? redactString(account?.deviceInfo?.keyPair?.secretKey) : account?.deviceInfo?.keyPair?.secretKey }</div>
               {/* COPY BUTTON */}
-              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account.deviceSigningPrivKey)} className="relative flex flex-col items-center group outline-none">
+              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.deviceInfo?.keyPair?.secretKey)} className="relative flex flex-col items-center group outline-none">
                 <Paper
                   size="small"
                   set="broken"
@@ -126,9 +126,9 @@ const SecurityPanel = () => {
           <div>
             <span className="block text-sm font-medium text-gray-700">Secret Box Public Key</span>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium">
-              <div className="break-words flex-1 min-w-[40%]">{account.secretBoxPubKey}</div>
+              <div className="break-words flex-1 min-w-[40%]">{account?.secretBoxPubKey}</div>
               {/* COPY BUTTON */}
-              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account.secretBoxPubKey)} className="relative flex flex-col items-center group outline-none">
+              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.secretBoxPubKey)} className="relative flex flex-col items-center group outline-none">
                 <Paper
                   size="small"
                   set="broken"
@@ -167,9 +167,9 @@ const SecurityPanel = () => {
               )}
             </div>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium">
-              <div className={`break-words flex-1 min-w-[40%] ${hideSecretKey? "text-gray-300" : ""}`}>{hideSecretKey ? redactString(account.secretBoxPrivKey) : account.secretBoxPrivKey }</div>
+              <div className={`break-words flex-1 min-w-[40%] ${hideSecretKey? "text-gray-300" : ""}`}>{hideSecretKey ? redactString(account?.secretBoxPrivKey) : account?.secretBoxPrivKey }</div>
               {/* COPY BUTTON */}
-              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account.secretBoxPrivKey)} className="relative flex flex-col items-center group outline-none">
+              <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.secretBoxPrivKey)} className="relative flex flex-col items-center group outline-none">
                 <Paper
                   size="small"
                   set="broken"

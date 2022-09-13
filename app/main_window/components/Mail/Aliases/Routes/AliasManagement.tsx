@@ -7,7 +7,7 @@ import {
   PlusIcon,
   LightningBoltIcon
 } from '@heroicons/react/outline';
-import { ChevronDownIcon, PlusSmIcon } from '@heroicons/react/solid';
+import { PlusSmIcon } from '@heroicons/react/solid';
 import { Switch, Menu, Transition } from '@headlessui/react';
 
 // SELECTORS

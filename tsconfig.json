@@ -35,5 +35,6 @@
     "dll",
     "app/main.js",
     "app/main.js.map"
-  ]
+  ],
+  "include": ["app", "custom.d.ts"]
 }
