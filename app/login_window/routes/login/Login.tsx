@@ -206,6 +206,7 @@ const Login = () => {
           data={accounts}
           selected={activeAcct}
           onChange={setActiveAcct}
+          icon="people"
           className=""
         />
         <div>
