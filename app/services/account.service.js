@@ -12,7 +12,6 @@ class AccountService extends EventEmitter {
     ipcRenderer.once('ACCOUNT_IPC::createAccount', async (evt, data) => {
       try {
         const account = await AccountService.createAccount(data);
-
         // Start incoming message listener
         MessageIngressService.initMessageListener();
         ipcRenderer.send('ACCOUNT_SERVICE::createAccountResponse', account);
@@ -29,70 +28,86 @@ class AccountService extends EventEmitter {
     });
 
     ipcRenderer.once('ACCOUNT_IPC::initAcct', (evt, data) => {
-      AccountService.initAccount(data).then(account => {
-        MessageIngressService.initMessageListener();
-        ipcRenderer.send('ACCOUNT_SERVICE::initAcctResponse', account);
-        // Emitting the account data so it can be ingested by the Redux Store
-        this.emit('ACCOUNT_SERVICE::accountData', account);
-      }).catch(e => {
-        ipcRenderer.send('ACCOUNT_SERVICE::initAcctError', e);
-      })
+      AccountService.initAccount(data)
+        .then(account => {
+          MessageIngressService.initMessageListener();
+          ipcRenderer.send('ACCOUNT_SERVICE::initAcctResponse', account);
+          // Emitting the account data so it can be ingested by the Redux Store
+          this.emit('ACCOUNT_SERVICE::accountData', account);
+        })
+        .catch(e => {
+          ipcRenderer.send('ACCOUNT_SERVICE::initAcctError', e);
+        });
     });
 
     ipcRenderer.once('authenticate', (evt, data) => {
-      AccountService.authenticate(data).then(account => {
-        ipcRenderer.send('authResponse', account);
-      }).catch(e => {
-        ipcRenderer.send('authError', e);
-      })
+      AccountService.authenticate(data)
+        .then(account => {
+          ipcRenderer.send('authResponse', account);
+        })
+        .catch(e => {
+          ipcRenderer.send('authError', e);
+        });
     });
 
     ipcRenderer.once('loadMbox', (evt, data) => {
-      MailService.loadMailbox().then(account => {
-        ipcRenderer.send('loadMboxResponse', account);
-      }).catch(e => {
-        ipcRenderer.send('loadMboxError', e);
-      })
+      MailService.loadMailbox()
+        .then(account => {
+          ipcRenderer.send('loadMboxResponse', account);
+        })
+        .catch(e => {
+          ipcRenderer.send('loadMboxError', e);
+        });
     });
 
     ipcRenderer.on('sendEmail', (evt, data) => {
-      MailService.send(data).then(result => {
-        ipcRenderer.send('sendEmailResponse', result);
-      }).catch(e => {
-        ipcRenderer.send('sendEmailError', e);
-      })
+      MailService.send(data)
+        .then(result => {
+          ipcRenderer.send('sendEmailResponse', result);
+        })
+        .catch(e => {
+          ipcRenderer.send('sendEmailError', e);
+        });
     });
 
     ipcRenderer.on('IPC::saveMessageToDB', (evt, data) => {
-      MailService.save(data).then(() => {
-        ipcRenderer.send('ACCOUNT SERVICE::saveMessageToDBResponse', null);
-      }).catch(e => {
-        ipcRenderer.send('ACCOUNT SERVICE::saveMessageToDBError', e);
-      })
+      MailService.save(data)
+        .then(() => {
+          ipcRenderer.send('ACCOUNT SERVICE::saveMessageToDBResponse', null);
+        })
+        .catch(e => {
+          ipcRenderer.send('ACCOUNT SERVICE::saveMessageToDBError', e);
+        });
     });
 
     ipcRenderer.on('saveFiles', (evt, attachments) => {
-      MailService.saveAttachmentsToDisk(attachments).then(res => {
-        ipcRenderer.send('saveFilesResponse', res);
-      }).catch(e => {
-        ipcRenderer.send('saveFilesError', e);
-      })
+      MailService.saveAttachmentsToDisk(attachments)
+        .then(res => {
+          ipcRenderer.send('saveFilesResponse', res);
+        })
+        .catch(e => {
+          ipcRenderer.send('saveFilesError', e);
+        });
     });
 
     ipcRenderer.on('createContacts', (evt, data) => {
-      ContactService.createContacts(data).then(() => {
-        ipcRenderer.send('createContactsResponse', null);
-      }).catch(e => {
-        ipcRenderer.send('createContactsError', e);
-      })
+      ContactService.createContacts(data)
+        .then(() => {
+          ipcRenderer.send('createContactsResponse', null);
+        })
+        .catch(e => {
+          ipcRenderer.send('createContactsError', e);
+        });
     });
 
     ipcRenderer.on('searchContact', (evt, searchQuery) => {
-        ContactService.searchContact(searchQuery).then(contacts => {
+      ContactService.searchContact(searchQuery)
+        .then(contacts => {
           ipcRenderer.send('searchContactResponse', contacts);
-        }).catch(e => {
-          ipcRenderer.send('searchContactError', e);
         })
+        .catch(e => {
+          ipcRenderer.send('searchContactError', e);
+        });
     });
 
     ipcRenderer.on('exitProcess', () => {
@@ -183,13 +198,13 @@ class AccountService extends EventEmitter {
     return new Promise((resolve, reject) => {
       channel.once('account:login:callback', m => {
         const { error, data } = m;
-        let _data = { ...data };
+        const _data = { ...data };
 
         if (error) return reject(error);
 
         ipcRenderer.invoke('MATOMO::init', { account: data, isNew: false });
 
-        return resolve(_data)
+        return resolve(_data);
       });
     });
   }
@@ -207,6 +222,48 @@ class AccountService extends EventEmitter {
         if (error) return reject(error);
 
         return resolve(data);
+      });
+    });
+  }
+
+  static resetAccountPassword(params) {
+    const { passphrase, email, newPass } = params;
+
+    channel.send({
+      event: 'account:resetPassword',
+      payload: { passphrase, email, newPass }
+    });
+
+    return new Promise((resolve, reject) => {
+      channel.once('account:resetPassword:callback', m => {
+        const { error, data } = m;
+        const _data = { ...data };
+
+        if (error) return reject(error);
+
+        return resolve(_data);
+      });
+    });
+  }
+
+  static recoverAccount(params) {
+    const { email, recoveryEmail } = params;
+    channel.send({
+      event: 'account:recover',
+      payload: {
+        email,
+        recoveryEmail
+      }
+    });
+
+    return new Promise((resolve, reject) => {
+      channel.once('account:recover:callback', m => {
+        const { error, data } = m;
+        const _data = { ...data };
+
+        if (error) return reject(error);
+
+        return resolve(_data);
       });
     });
   }
@@ -253,6 +310,43 @@ class AccountService extends EventEmitter {
         .catch(e => {
           reject(e);
         });
+    });
+  }
+
+  static async getSyncInfo(code) {
+    channel.send({ 
+      event: 'account:getSyncInfo', 
+      payload: { code } 
+    });
+
+    return new Promise((resolve, reject) => {
+      channel.once('account:getSyncInfo:callback', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        if (!data.drive_key) return reject('DriveKey missing')
+        if (!data.email) return reject('Email missing')
+
+
+        return resolve({ driveKey: data.drive_key, email: data.email });
+      });
+    });
+  }
+
+  static async createSyncCode() {
+    channel.send({ 
+      event: 'account:createSyncCode' 
+    });
+
+    return new Promise((resolve, reject) => {
+      channel.once('account:createSyncCode:callback', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
     });
   }
 

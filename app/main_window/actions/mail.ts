@@ -517,6 +517,7 @@ export function fetchNewMessages() {
         .catch(err => {
           console.log(err);
           dispatch(fetchNewMessageFailure(err));
+          reject(err);
         });
     });
   };

@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 const colors = require('tailwindcss/colors');
 
 const theme = {
@@ -28,7 +29,9 @@ const theme = {
     violet: colors.violet,
     pink: colors.pink,
     rose: colors.rose,
-    fuchsia: colors.fuchsia
+    fuchsia: colors.fuchsia,
+    stone: colors.stone,
+    slate: colors.slate
   },
   // Should switch all em units to pixel for a better system.
   fontSize: {
@@ -129,9 +132,11 @@ const plugins = [
 
 module.exports = {
   content: [
-    './app/main_window/**/*.tsx',
-    './app/login_window/**/*.tsx',
-    './app/composer_window/**/*.tsx'
+    './app/main_window/**/*.{html,js,tsx}',
+    './app/login_window/**/*.{html,js,tsx}',
+    './app/composer_window/**/*.{html,js,tsx}',
+    './app/global_components/**/*.{html,js,tsx}',
+    './app/utils/**/*.{html,js,tsx,ts}'
   ],
   important: true,
   theme,

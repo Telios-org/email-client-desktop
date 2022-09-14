@@ -17,7 +17,7 @@ import i18n from '../../../../../i18n/i18n';
 import { validateString } from '../../../../../utils/helpers/regex';
 
 type Props = {
-  close: (isSuccess: boolean, message: string) => void;
+  close: (isSuccess: boolean, message: string, show?: boolean) => void;
   domain: string;
 };
 
@@ -197,7 +197,7 @@ and upgrade
       <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-14">
         <button
           type="button"
-          onClick={() => close(false, '')}
+          onClick={() => close(false, '', false)}
           className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 mr-3"
         >
           Cancel

@@ -183,12 +183,14 @@ const Composer = (props: Props) => {
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
+    console.log('FIRING OFF 186')
     if (
       isInline &&
       folder?.name === 'Drafts' &&
       dispatch !== null &&
       message.emailId !== null
     ) {
+      // console.log('FIRING OFF 186 - IF STATEMENT')
       dispatch(fetchMsg(message.emailId))
         .then(email => {
           const draft = emailTransform(email, 'draftEdit', false);
@@ -231,6 +233,8 @@ const Composer = (props: Props) => {
   // We get the draft email from the IPC Draft storage that was initialized by 'RENDERER::ingestDraftForInlineComposer' or 'RENDERER::showComposerWindow'
   // In another electron window, the redux store is unavailable
   useEffect(() => {
+    // console.log('FIRING OFF 235')
+
     if (folder?.name !== 'Drafts' || (folder?.name === 'Drafts' && !isInline)) {
       ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
         console.log('IPC event handler', content, windowID);
