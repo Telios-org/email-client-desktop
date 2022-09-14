@@ -25,8 +25,9 @@ const RegistrationSuccess = () => {
       defaultPath: 'passphrase.txt',
       filters: [{ name: 'Text file', extensions: ['txt'] }]
     });
-
-  fs.writeFileSync(filePath, Account.mnemonic, 'utf-8'); // eslint-disable-line
+    if (Account) {
+      fs.writeFileSync(filePath, Account?.mnemonic, 'utf-8'); // eslint-disable-line
+    }
   };
 
   return (
@@ -44,7 +45,7 @@ const RegistrationSuccess = () => {
         </IntroHeader>
         <div className="mt-6 justify-between flex-1 flex flex-col pb-8">
           <div className=" grid grid-cols-3 gap-2 text-xs">
-            {Account.mnemonic.split(' ').map(word => (
+            {Account?.mnemonic.split(' ').map(word => (
               <span
                 key={word}
                 className="bg-coolGray-100 text-center text-gray-500 rounded py-1 px-2 border border-gray-300 shadow-sm"

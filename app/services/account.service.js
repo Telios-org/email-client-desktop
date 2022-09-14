@@ -12,7 +12,6 @@ class AccountService extends EventEmitter {
     ipcRenderer.once('ACCOUNT_IPC::createAccount', async (evt, data) => {
       try {
         const account = await AccountService.createAccount(data);
-
         // Start incoming message listener
         MessageIngressService.initMessageListener();
         ipcRenderer.send('ACCOUNT_SERVICE::createAccountResponse', account);

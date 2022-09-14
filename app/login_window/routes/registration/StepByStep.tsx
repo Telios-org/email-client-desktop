@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 // External Library
@@ -48,12 +48,15 @@ const StepByStep = () => {
     let activeIndex = null;
 
     const output = data.map((s, index) => {
-        console.log(index);
+      console.log(index);
       let status;
       if (location.pathname === s.href) {
         status = 'current';
         activeIndex = index;
-      } else if (activeIndex !== null && index > activeIndex ) {
+      } else if (
+        (activeIndex !== null && index > activeIndex) ||
+        location.pathname === '/registration/failure'
+      ) {
         status = 'upcoming';
       } else {
         status = 'complete';
@@ -64,7 +67,7 @@ const StepByStep = () => {
         status
       };
     });
-    console.log(activeIndex, location.pathname)
+    console.log(activeIndex, location.pathname);
     setSteps(output);
   }, [location.pathname]);
 
@@ -145,9 +148,7 @@ const StepByStep = () => {
                     aria-hidden="true"
                   />
                 ) : null}
-                <div
-                  className="group relative flex items-start no-underline"
-                >
+                <div className="group relative flex items-start no-underline">
                   <span className="flex h-9 items-center" aria-hidden="true">
                     <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#884AFC]">
                       <span className="h-2.5 w-2.5 rounded-full bg-transparent" />
