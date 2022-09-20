@@ -157,15 +157,22 @@ const useForm = options => {
     setData(initialData);
   };
 
+  // useEffect(() => {
+  //   if (
+  //     JSON.stringify(options?.initialValues) !== JSON.stringify(initialData)
+  //   ) {
+  //     setIsDirty(false);
+  //     setInitial(options?.initialValues);
+  //     setData(options?.initialValues);
+  //   }
+  // }, [options?.initialValues]);
   useEffect(() => {
-    if (
-      JSON.stringify(options?.initialValues) !== JSON.stringify(initialData)
-    ) {
+    if (JSON.stringify(data) !== JSON.stringify(initialData)) {
+      setIsDirty(true);
+    } else {
       setIsDirty(false);
-      setInitial(options?.initialValues);
-      setData(options?.initialValues);
     }
-  }, [options?.initialValues]);
+  }, [data]);
 
   const handleSubmit = async e => {
     e.preventDefault();
