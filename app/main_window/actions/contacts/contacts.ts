@@ -44,7 +44,7 @@ export const fetchRolladex = () => {
 
     try {
       const result = await Contact.getAllContacts();
-      
+
       contacts = result.map((c: any) => {
         // const address = c.address ? JSON.parse(c.address) : [];
         // const phone = c.phone ? JSON.parse(c.phone) : [];
@@ -98,22 +98,31 @@ export const contactSaveFailure = (error: Error) => {
   };
 };
 
-export const commitContactsUpdates = (contact: ContactType) => {
+export const commitContactsUpdates = (
+  contact: ContactType,
+  localOnly = false
+) => {
   return async (dispatch: Dispatch) => {
     dispatch(contactSaveRequest());
     let c;
-    try {
-      if ('contactId' in contact) {
-        await Contact.updateContact(contact);
-        c = contact;
-      } else {
-        const result = await Contact.createContacts([contact]);
-        c = result[0];
+
+    // We may want to skip updating the Drive Collection
+    // i.e. in case of a collection:update event
+    if (!localOnly) {
+      try {
+        if ('contactId' in contact) {
+          await Contact.updateContact(contact);
+          c = contact;
+        } else {
+          const result = await Contact.createContacts([contact]);
+          c = result[0];
+        }
+      } catch (error) {
+        dispatch(contactSaveFailure(error));
+        return error;
       }
-    } catch (error) {
-      dispatch(contactSaveFailure(error));
-      return error;
     }
+
     dispatch(contactSaveSuccess(c));
 
     return c;
@@ -136,7 +145,7 @@ export const CONTACT_DELETION_REQUEST_SUCCESS =
 export const contactDeletionSuccess = (contactId: any) => {
   return {
     type: CONTACT_DELETION_REQUEST_SUCCESS,
-    contactId: contactId
+    contactId
   };
 };
 
@@ -149,15 +158,20 @@ export const contactDeletionFailure = (error: Error) => {
   };
 };
 
-export const deleteContact = (contactId: number) => {
+export const deleteContact = (contactId: number, localOnly = false) => {
   return async (dispatch: Dispatch) => {
     dispatch(contactDeletionRequest());
-    try {
-      console.log('DELETE ', contactId)
-      await Contact.removeContact(contactId);
-    } catch (error) {
-      dispatch(contactDeletionFailure(error));
-      return error;
+
+    // We may want to skip updating the Drive Collection
+    // i.e. in case of a collection:update event
+    if (!localOnly) {
+      try {
+        console.log('DELETE ', contactId);
+        await Contact.removeContact(contactId);
+      } catch (error) {
+        dispatch(contactDeletionFailure(error));
+        return error;
+      }
     }
 
     dispatch(contactDeletionSuccess(contactId));
