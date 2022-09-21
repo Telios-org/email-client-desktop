@@ -1,7 +1,7 @@
 {
-  "prod": "https://devapiv1.telios.io",
+  "prod": "https://apiv1.telios.io",
   "dev": "https://devapiv1.telios.io",
   "test": "http://localhost:3000",
-  "prodMail": "dev.telios.io",
+  "prodMail": "telios.io",
   "devMail": "dev.telios.io"
 }
