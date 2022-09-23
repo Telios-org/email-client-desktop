@@ -154,7 +154,8 @@ const useForm = options => {
   };
 
   const resetForm = () => {
-    setData(initialData);
+    setInitial(options?.initialValues || {});
+    setData(options?.initialValues || {});
   };
 
   // useEffect(() => {

@@ -121,6 +121,8 @@ export const commitContactsUpdates = (
         dispatch(contactSaveFailure(error));
         return error;
       }
+    } else {
+      c = contact;
     }
 
     dispatch(contactSaveSuccess(c));

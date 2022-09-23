@@ -156,6 +156,10 @@ const ContactDetails = (props: Props) => {
     manualChange('name', `${profile.givenName} ${profile.familyName}`);
   }, [profile.familyName, profile.givenName]);
 
+  useEffect(() =>{
+    resetForm();
+  }, [contact]);
+
   const handleResetForm = () => {
     setEditMode(false);
     resetForm();
