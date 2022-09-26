@@ -2,7 +2,8 @@
 import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tab } from '@headlessui/react';
-import { Filter, Wallet, Password, Setting, ShieldDone } from 'react-iconly';
+import { Filter, Wallet, Password, Setting, ShieldDone, Scan } from 'react-iconly';
+import { DeviceMobileIcon } from '@heroicons/react/outline';
 import BrowserView, { removeViews } from 'react-electron-browser-view';
 import { setTimeout } from 'timers';
 import { retrieveStats } from '../../../actions/account/account';
@@ -10,7 +11,8 @@ import { retrieveStats } from '../../../actions/account/account';
 import {
   GeneralPanel,
   SecurityPanel,
-  BillingPayments
+  BillingPayments,
+  DevicesPanel
 } from '../../../components/Settings';
 
 const electron = require('electron');
@@ -18,7 +20,8 @@ const electron = require('electron');
 const tabs = [
   { name: 'General', component: GeneralPanel, icon: Setting }, // { name: 'Notifications', panel: GeneralPanel },
   { name: 'Plan & Billing', component: BillingPayments, icon: Wallet },
-  { name: 'Security', component: SecurityPanel, icon: ShieldDone }
+  { name: 'Security', component: SecurityPanel, icon: ShieldDone },
+  { name: 'Devices', component: DevicesPanel, icon: Scan }
   // { name: 'Billing', panel: GeneralPanel }
 ];
 

@@ -316,7 +316,7 @@ class MailService {
   static getMailboxAliases(namespaceKeys) {
     channel.send({
       event: 'alias:getMailboxAliases',
-      payload: { namespaceKeys }
+      payload: { namespaceKeys: null }
     });
 
     return new Promise((resolve, reject) => {

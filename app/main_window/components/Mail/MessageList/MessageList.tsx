@@ -290,9 +290,11 @@ export default function MessageList(props: Props) {
       isLoading = true;
 
       return new Promise((resolve, reject) => {
+        console.log(startIndex, stopIndex)
         if(searchFilter) return resolve();
         if (aliasId) {
-          dispatch(fetchMoreAliasMessages(aliasId, startIndex))
+          setLastStartIndex(messages.allIds.length)
+          dispatch(fetchMoreAliasMessages(aliasId, messages.allIds.length))
             .then(() => {
               isLoading = false;
               return resolve();
@@ -337,9 +339,9 @@ export default function MessageList(props: Props) {
   return (
     <div className="flex-1 flex w-full flex-col rounded-t-lg bg-white mr-2 border border-gray-200 shadow">
       <div className="w-full py-2 pl-4 pr-2 mb-2 flex flex-row justify-between">
-        <div className="flex-1 flex select-none flex-row text-gray-600">
-          <div className="flex flex-col text-lg font-semibold">
-            {currentAliasName || currentFolderName || ''}
+        <div className="flex-shrink flex select-none flex-row text-gray-600 overflow-hidden">
+          <div className="flex flex-col text-lg font-semibold w-full">
+            <span className="truncate block whitespace-nowrap overflow-hidden">{currentAliasName || currentFolderName || ''}</span>
             <div className="h-0.5 w-6 rounded-lg bg-gradient-to-r from-purple-700 to-purple-500 " />
           </div>
           {searchFilter && (

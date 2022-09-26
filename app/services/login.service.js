@@ -14,7 +14,7 @@ class LoginService {
           return resolve(data);
         })
         .catch(err => {
-          channel.send({ event: 'LOGIN_SERVICE::removeAccount', payload });
+          channel.send({ event: 'account:remove', payload });
           // The error is string is serialized coming back from the IPC
           // to get the actual error messsage we will need to extract the JSON obj
           // and parse it.

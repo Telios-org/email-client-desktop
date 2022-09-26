@@ -1,10 +1,22 @@
 import React, { useState, forwardRef, Ref } from 'react';
 import RecipientsInput from '../recipientsInputs/RecipientsInput';
-import { Recipients, Recipient } from '../../../main_window/reducers/types';
+import {
+  Recipients,
+  Recipient,
+  MailboxType,
+  MailType
+} from '../../../main_window/reducers/types';
+
+// INTERNAL COMPONENTS
+import FromInput from '../FromInput';
 
 type Props = {
+  fromDataSet: { address: string; name: string }[];
+  fromAddress: { address: string; name: string } | null;
+  onFromChange: (obj: { address: string; name: string }) => void;
   onUpdateRecipients: (recipients: Recipients) => void;
   setToRef: (node) => void;
+  onSenderChange: (obj) => void;
   defaultRecipients?: Recipients;
 };
 
@@ -12,8 +24,12 @@ const clone = require('rfdc')();
 
 const MessageInputs = (props: Props, ref) => {
   const {
+    fromDataSet,
+    fromAddress,
+    onFromChange,
     onUpdateRecipients,
     setToRef,
+    onSenderChange,
     defaultRecipients = {
       to: {
         arr: []
@@ -44,7 +60,6 @@ const MessageInputs = (props: Props, ref) => {
 
   const handleUpdate = (field: string, arr: Array<Recipient>) => {
     const newRecip = clone(recipients);
-
     newRecip[field].arr = arr;
     setRecipients(newRecip);
     onUpdateRecipients(newRecip);
@@ -64,6 +79,16 @@ const MessageInputs = (props: Props, ref) => {
 
   return (
     <div className="px-3 z-10">
+      <div className="border-b flex flex-row relative">
+        <div className="w-12 text-gray-600 p-2">From</div>
+        <div className="w-full">
+          <FromInput
+            fromDataSet={fromDataSet}
+            fromAddress={fromAddress}
+            onFromChange={onFromChange}
+          />
+        </div>
+      </div>
       <div className="border-b flex relative">
         <div className="w-8 text-gray-600 p-2">To</div>
         <div className="w-full">

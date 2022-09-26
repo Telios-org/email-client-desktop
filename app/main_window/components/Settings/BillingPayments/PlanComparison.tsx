@@ -183,7 +183,7 @@ const PlanComparison = (props: Props) => {
             </div>
             <div className="xl:w-full text-center bg-gray-50 flex-shrink-0 flex flex-col justify-center p-4 xl:self-center min-w-[240px] xl:min-h-[165px]">
               <div className="mt-4 flex items-center justify-center text-2xl font-extrabold text-gray-900">
-                {plan.price !== 0 && (
+                {plan.price && plan.price !== 0  && (
                   <>
                     <span>{`$${plan?.price?.monthly}`}</span>
                     <div className="ml-4 flex flex-col items-start">
@@ -196,7 +196,7 @@ const PlanComparison = (props: Props) => {
                     </div>
                   </>
                 )}
-                {plan.price === 0 && <span>FREE</span>}
+                {plan.price === 0 || !plan.price && <span>FREE</span>}
               </div>
               {plan.order > currentPricing?.order && plan.id !== 'free' && (
                 <div className="mt-6 relative">

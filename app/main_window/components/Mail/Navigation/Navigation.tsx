@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ipcRenderer } from 'electron';
 
@@ -35,7 +35,9 @@ import {
   selectAllFoldersById,
   selectActiveMailbox,
   activeFolderId,
-  activeAliasId
+  activeAliasId,
+  selectAllNamespaces,
+  selectAllAliases
 } from '../../../selectors/mail';
 
 // REDUX ACTION CREATORS
@@ -52,7 +54,8 @@ import { StateType, FolderType } from '../../../reducers/types';
 import CustomIcon from './NavIcons';
 
 const { app } = require('electron').remote
-const dock = app.dock
+
+const {dock} = app;
 
 type Props = {
   onRefreshData: () => void;
@@ -61,6 +64,8 @@ type Props = {
 
 export default function Navigation(props: Props) {
   const mailbox = useSelector(selectActiveMailbox);
+  const namespaces = useSelector(selectAllNamespaces);
+  const aliases = useSelector(selectAllAliases);
   const allFolders = useSelector(selectAllFoldersById);
   const folderId = useSelector(activeFolderId);
   // const history = useHistory();
@@ -71,6 +76,8 @@ export default function Navigation(props: Props) {
     dispatch(toggleEditor('brandNewComposer', true));
     await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
+      namespaces,
+      aliases,
       message: {},
       editorAction: 'new'
     });
@@ -89,25 +96,44 @@ export default function Navigation(props: Props) {
     (state: StateType) => state.mail.folders.allIds
   );
 
-  // Show total unread count as badge for Mac OS only
-  if(dock) {
-    let totalUnreadCount = 0
+  
 
-    for(const id of foldersArray) {
-      const folder = allFolders[id];
+  useEffect(() => {
+      // Show total unread count as badge for Mac OS only
+    if (dock) {
+      let totalUnreadCount = 0;
 
-      if(folder.name !== 'Trash' || folder.name !== 'Sent' || folder.name !== 'Drafts' && folder.count) {
-        totalUnreadCount += folder.count
+      for (const id of foldersArray) {
+        const folder = allFolders[id];
+
+        if (
+          (folder.name !== 'Trash' ||
+          folder.name !== 'Sent' ||
+          (folder.name !== 'Drafts' && folder.count)) && folder.type !== 'hidden'
+        ) {
+          console.log(folder.count, folder.name);
+          totalUnreadCount += folder.count;
+        }
+      }
+
+      for (const id of aliases.allIds) {
+        const alias = aliases.byId[id];
+        if(alias && alias.count){
+          totalUnreadCount += alias.count;
+        }
+          
+      }
+
+
+      if (totalUnreadCount > 0) {
+        dock.setBadge(`${totalUnreadCount}`);
+      } else {
+        dock.setBadge('');
       }
     }
 
+  }, [foldersArray, aliases.byId])
   
-    if(totalUnreadCount > 0) {
-      dock.setBadge('' + totalUnreadCount);
-    } else {
-      dock.setBadge('');
-    }
-  }
 
   const selectFolder = async (index: string, isAlias, e) => {
     if (
@@ -182,7 +208,7 @@ export default function Navigation(props: Props) {
 
   const MainFolders = ({ active, onSelect, folders, ...props }) => {
     return (
-      <ul className="select-none -mb-3">
+      <ul className="select-none">
         {folders.map((id, index) => {
           const folder = allFolders[id];
 
@@ -195,8 +221,12 @@ export default function Navigation(props: Props) {
             const [{ canDrop, isOver }, drop] = useDrop({
               accept: 'message',
               canDrop: (item, monitor) => {
-                if(folder.folderId === 4 || folder.folderId !== 4 && !item.aliasId) return true
-                return false
+                if (
+                  folder.folderId === 4 ||
+                  (folder.folderId !== 4 && !item.aliasId)
+                )
+                  return true;
+                return false;
               },
               drop: () => ({ id: folder.folderId, name: folder.name }),
               collect: monitor => ({
@@ -209,7 +239,7 @@ export default function Navigation(props: Props) {
 
             return (
               <li
-                className={`flex relative px-2 my-0.5 mb-0 p-0.5 text-gray-500 items-center
+                className={`flex relative ml-2 my-0.5 mb-0 p-0.5 text-gray-500 items-center
                 ${
                   active === index && !isDrop
                     ? 'text-gray-600 font-bold '
@@ -246,10 +276,10 @@ export default function Navigation(props: Props) {
                 <span className="flex-auto pl-3 leading-loose align-middle text-sm self-center">
                   {folder.name}
                 </span>
-                {folder.name !== 'Sent' && folder.name !== 'Trash' && (
+                {folder.name !== 'Sent' && folder.name !== 'Trash' && folder.count > 0 && (
                   <div
-                    className={`w-6 h-6 text-purple-700 font-semibold text-sm
-                    flex-initial text-right leading-loose self-center flex items-center justify-center`}
+                    className={` bg-purple-300/60 text-purple-600 font-semibold py-0.5 px-2 text-xs rounded mr-2
+                    flex-initial text-right self-center flex items-center justify-center`}
                   >
                     {folder.count ? folder.count : ''}
                   </div>
@@ -413,43 +443,45 @@ export default function Navigation(props: Props) {
   };
 
   return (
-    <div className="flex w-full h-full relative mb-16">
-      <div className="flex-1">
-        <div className="h-14 flex justify-center items-center">
-          <Button
-            appearance="primary"
-            onClick={newMessageAction}
-            block
-            className="bg-gradient-to-bl from-purple-600 to-purple-500 rounded text-sm flex flex-row w-40 justify-center shadow active:shadow-sm"
-          >
-            <span>New Message</span>
-            <EditSquare
-              set="broken"
-              className="text-white ml-4 mt-0.5"
-              size="small"
-            />
-          </Button>
-        </div>
-        <Scrollbars style={{ height: '100%' }} hideTracksWhenNotNeeded autoHide>
-          <div>
-            <MainFolders
-              appearance="subtle"
-              reversed
-              folders={foldersArray}
-              active={activeFolderIndex}
-              onSelect={selectFolder}
-            />
-            {/* <OtherFolders
+    <div className="flex flex-col w-full h-full relative overflow-x-hidden">
+      <div className="h-14 flex justify-center items-center mb-3">
+        <Button
+          appearance="primary"
+          onClick={newMessageAction}
+          block
+          className="bg-gradient-to-bl from-purple-600 to-purple-500 rounded text-sm flex flex-row w-40 justify-center shadow active:shadow-sm"
+        >
+          <span>New Message</span>
+          <EditSquare
+            set="broken"
+            className="text-white ml-4 mt-0.5"
+            size="small"
+          />
+        </Button>
+      </div>
+      <Scrollbars
+        hideTracksWhenNotNeeded
+        autoHide
+        renderView={props => <div {...props} className="overflow-x-hidden" />}
+      >
+        <div>
+          <MainFolders
+            appearance="subtle"
+            reversed
+            folders={foldersArray}
+            active={activeFolderIndex}
+            onSelect={selectFolder}
+          />
+          {/* <OtherFolders
               appearance="subtle"
               reversed
               folders={foldersArray}
               active={activeFolderIndex}
               onSelect={selectFolder}
             /> */}
-            <AliasSection handleSelectAction={selectFolder} />
-          </div>
-        </Scrollbars>
-      </div>
+          <AliasSection handleSelectAction={selectFolder} />
+        </div>
+      </Scrollbars>
       {/* <NewFolderModal
         show={showFolderModal}
         showDelete={showDeleteFolderModal}

@@ -119,8 +119,8 @@ const createLoginWindow = async () => {
     url: `file://${__dirname}/login_window/index.html?env=${process.env.NODE_ENV}`,
     window: {
       show: false,
-      width: 400,
-      height: 575,
+      width: 1024,
+      height: 650,
       resizable: false, // Disable resizing of the window
       backgroundColor: '#FFF',
       titleBarStyle: 'hiddenInset',

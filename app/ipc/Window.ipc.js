@@ -1,7 +1,8 @@
 const { ipcMain, nativeTheme, dialog, BrowserView } = require('electron');
 const path = require('path');
-const { emailTransform } = require('../utils/draft.utils');
+const { emailTransform, assembleFromDataSet } = require('../utils/draft.utils');
 const store = require('../Store');
+const { Console } = require('console');
 
 module.exports = (windowManager, createMainWindow, createLoginWindow) => {
   const saveDraft = payload => {
@@ -196,10 +197,33 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
   ipcMain.handle(
     'RENDERER::ingestDraftForInlineComposer',
     async (event, content) => {
-      const { message, mailbox, editorAction } = content;
+      const { message, mailbox, namespaces, aliases, editorAction } = content;
+
+      // console.log(content);
 
       const newDraft = emailTransform(message, editorAction, true);
 
+      // console.log(newDraft);
+
+
+      const data = assembleFromDataSet(mailbox, namespaces, aliases);
+
+      // console.log(data);
+
+      let filteredArray = [];
+      if (message['toJSON']) {
+        filteredArray = data.filter(value =>
+          JSON.parse(message['toJSON'])
+            .map(m => m.address.replace(/[-+#]/gm, ''))
+            .includes(value.address.replace(/[-+#]/gm, ''))
+        );
+      }
+
+      if (filteredArray.length === 1) {
+        newDraft.from = filteredArray;
+      } else {
+        newDraft.from = data[0]; // which should be the main account
+      }
       // console.log('WINDOWSIPC::DRAFT', newDraft);
 
       store.setInitialDraft(newDraft);
@@ -210,6 +234,8 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
       const newContent = {
         mailbox,
+        namespaces,
+        aliases,
         editorAction,
         message: {
           ...newDraft

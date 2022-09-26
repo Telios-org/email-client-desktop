@@ -38,6 +38,14 @@ export const setMsgListFilter = (
   };
 };
 
+export const SET_ACTIVE_PAGE = 'GLOBAL::SET_ACTIVE_PAGE';
+export const setActivePage = (page: string) => {
+  return {
+    type: SET_ACTIVE_PAGE,
+    activePage: page
+  };
+};
+
 export const REFRESH_TOKEN = 'GLOBAL::REFRESH_TOKEN';
 export const refreshToken = (token: string) => {
   return {

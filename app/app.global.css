@@ -80,7 +80,8 @@ body {
     scrollbar-color: var(--scrollbar-thumb-color) transparent;
 }
 *::-webkit-scrollbar {
-    width: 0.625rem; /* 10px */
+   /* width: 0.625rem; /* 10px */
+    width: 0rem;
     height: 0.625rem;
 }
 *::-webkit-scrollbar-thumb {
@@ -92,6 +93,7 @@ body {
 }
 *::-webkit-scrollbar-track {
     background-color: transparent;
+    width: 0px;
 }
 *::-webkit-scrollbar-thumb:horizontal:hover,
 *::-webkit-scrollbar-thumb:vertical:hover {
@@ -129,16 +131,11 @@ li {
 }
 
 a {
-  color: #1675e0;
-  /* opacity: 0.75; */
-  text-decoration: none;
+  @apply text-sky-500 hover:text-sky-600 font-medium hover:underline
+
 }
 
-a:hover {
-  opacity: 1;
-  text-decoration: underline;
-  cursor: pointer;
-}
+
 
 .loading-indicator {
   animation: spin 1s linear infinite;

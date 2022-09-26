@@ -67,7 +67,7 @@ export default class WindowManager {
         setTimeout(() => {
           win.show();
           win.focus();
-        }, 300);
+        }, 1500);
       }
     });
 

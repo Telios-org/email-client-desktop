@@ -47,36 +47,40 @@ class MessageIngressService extends EventEmitter {
           messages: [email],
           type: 'Incoming',
           async: false
-        })
+        });
       }
     });
 
     channel.on('email:saveMessageToDB:callback', async m => {
       const { error, data } = m;
 
-      if(error) {
+      if(error || !data.msgArr) {
         this.finished += 1;
         this.handleDone();
         return;
       }
 
+      if(data.msgArr.length && data.msgArr[0].folderId === 2) {
+        return;
+      }
+
       data.msgArr.forEach(msg => {
-        if(!this.incomingMsgBatch.some(item => item.emailId === msg.emailId)) {
+        if (!this.incomingMsgBatch.some(item => item.emailId === msg.emailId)) {
           this.incomingMsgBatch.push(msg);
         }
-      })
+      });
 
       if (data.newAliases.length > 0) {
         data.newAliases.forEach(alias => {
-          if(!this.newAliases.some(a => a.name === alias.name))  {
-            this.newAliases.push(alias)
+          if (!this.newAliases.some(a => a.name === alias.name)) {
+            this.newAliases.push(alias);
           }
-        })
+        });
       }
 
       this.finished += 1;
       this.handleDone();
-    })
+    });
 
     channel.on('messageHandler:fetchError', async m => {
       const { data } = m;
@@ -88,7 +92,7 @@ class MessageIngressService extends EventEmitter {
         this.handleDone();
       }
 
-      if (data.file && data.file.failed === this.MAX_RETRY) {
+      if (data.file && data.file.failed >= this.MAX_RETRY) {
         console.log(`File ${data.file.hash} failed all attempts!`);
 
         // Goes into drive's dead letter queue

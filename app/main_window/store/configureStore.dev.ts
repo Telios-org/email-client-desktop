@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
-import { routerMiddleware, routerActions } from 'connected-react-router';
+import { createReduxHistoryContext } from 'redux-first-history';
 import { createLogger } from 'redux-logger';
 import createRootReducer from '../reducers';
 
@@ -19,9 +19,16 @@ declare global {
   }
 }
 
-const history = createHashHistory();
+const {
+  createReduxHistory,
+  routerMiddleware,
+  routerReducer
+} = createReduxHistoryContext({
+  history: createHashHistory()
+  // other options if needed
+});
 
-const rootReducer = createRootReducer(history);
+const rootReducer = createRootReducer(routerReducer);
 
 const configureStore = initialState => {
   // Redux Configuration
@@ -43,19 +50,20 @@ const configureStore = initialState => {
   }
 
   // Router Middleware
-  const router = routerMiddleware(history);
+  const router = routerMiddleware;
   middleware.push(router);
 
-  // Redux DevTools Configuration
-  const actionCreators = {
-    ...routerActions
-  };
+  // // Redux DevTools Configuration
+  // const routerActions = composeWithDevTools(applyMiddleware(routerMiddleware));
+  // const actionCreators = {
+  //   ...routerActions
+  // };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose
   /* eslint-disable no-underscore-dangle */
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
         // Options: http://extension.remotedev.io/docs/API/Arguments.html
-        actionCreators
+        // actionCreators
       })
     : compose;
   /* eslint-enable no-underscore-dangle */
@@ -78,4 +86,8 @@ const configureStore = initialState => {
   return store;
 };
 
-export default { configureStore, history };
+function createHistory(store: Store) {
+  return createReduxHistory(store);
+}
+
+export default { configureStore, createHistory };

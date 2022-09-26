@@ -8,7 +8,11 @@ import { topicReference } from '@babel/types';
 import { useHandler } from '../utils/hooks/useHandler';
 import { Editor, MessageInputs, TopBar, Attachments } from './components';
 
-import { recipientTransform, emailTransform } from '../utils/draft.utils';
+import {
+  recipientTransform,
+  emailTransform,
+  assembleFromDataSet
+} from '../utils/draft.utils';
 
 import { UTCtimestamp } from '../utils/helpers/date';
 // import editorHTMLexport from './utils/messageEditor/htmlExportOptions';
@@ -24,7 +28,8 @@ import {
   Recipients,
   FolderType,
   MailboxType,
-  MailMessageType
+  MailMessageType,
+  MailType
 } from '../main_window/reducers/types';
 
 import { EditorIframeRef } from './components/editor/types';
@@ -77,6 +82,8 @@ type Props = {
   isInline: boolean;
   folder: FolderType;
   mailbox: MailboxType;
+  namespaces: MailType;
+  aliases: MailType;
   message: MailMessageType;
 };
 
@@ -87,7 +94,9 @@ const Composer = (props: Props) => {
     onMaximmize,
     folder,
     message,
-    mailbox: mb
+    mailbox: mb,
+    namespaces,
+    aliases
   } = props;
 
   const editorRef = useRef<EditorIframeRef>(null);
@@ -102,6 +111,17 @@ const Composer = (props: Props) => {
   const [prefillRecipients, setPrefillRecipients] = useState(
     prefillRecipientsTemplate
   );
+  const [fromAddress, setFromAddress] = useState<
+    | {
+        address: string;
+        name: string;
+      }[]
+    | null
+  >(null);
+  const [fromDataSet, setFromDataSet] = useState<
+    { address: string; name: string }[]
+  >([]);
+
   const [editorReady, setEditorReady] = useState(false);
   const [composerReady, setComposerReady] = useState(false);
   const [editorState, setEditorState] = useState<string | undefined>();
@@ -130,15 +150,19 @@ const Composer = (props: Props) => {
     // Getting the plain text off the htmlBody
     const plaintext = htmlToText.fromString(htmlBody);
 
+    console.log(draft);
+
+    const from = draft?.from ?? [
+      {
+        address: owner.address,
+        name: owner.name ? owner.name : owner.address
+      }
+    ];
+
     const eml = {
       ...clone(draft),
       date: time,
-      from: [
-        {
-          address: owner.address,
-          name: owner.name ? owner.name : owner.address
-        }
-      ],
+      from,
       fromJSON: JSON.stringify(draft?.from),
       toJSON: JSON.stringify(draft?.to),
       ccJSON: JSON.stringify(draft?.cc),
@@ -146,6 +170,9 @@ const Composer = (props: Props) => {
       bodyAsText: plaintext,
       bodyAsHtml: htmlBody
     };
+
+    console.log('FROM EMAIL', from);
+    console.log(eml);
 
     if (htmlBody !== editorState) {
       setEditorState(htmlBody);
@@ -156,12 +183,14 @@ const Composer = (props: Props) => {
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
+    console.log('FIRING OFF 186')
     if (
       isInline &&
       folder?.name === 'Drafts' &&
       dispatch !== null &&
       message.emailId !== null
     ) {
+      // console.log('FIRING OFF 186 - IF STATEMENT')
       dispatch(fetchMsg(message.emailId))
         .then(email => {
           const draft = emailTransform(email, 'draftEdit', false);
@@ -169,9 +198,17 @@ const Composer = (props: Props) => {
           draft.to = rcp.data.to;
           draft.cc = rcp.data.cc;
           draft.bcc = rcp.data.bcc;
-          draft.from = rcp.data.from;
+          draft.from = JSON.parse(email.fromJSON);
           handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
           setMailbox(mb);
+          const data = assembleFromDataSet(mb, namespaces, aliases);
+          setFromDataSet(data);
+          if (draft.from.length === 1) {
+            setFromAddress(draft.from);
+          } else {
+            setFromAddress([draft.from[0]]);
+          }
+
           setPrefillRecipients(rcp.ui);
           if (draft.to.length > 0) {
             setActiveSendButton(true);
@@ -196,6 +233,8 @@ const Composer = (props: Props) => {
   // We get the draft email from the IPC Draft storage that was initialized by 'RENDERER::ingestDraftForInlineComposer' or 'RENDERER::showComposerWindow'
   // In another electron window, the redux store is unavailable
   useEffect(() => {
+    // console.log('FIRING OFF 235')
+
     if (folder?.name !== 'Drafts' || (folder?.name === 'Drafts' && !isInline)) {
       ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
         console.log('IPC event handler', content, windowID);
@@ -210,7 +249,24 @@ const Composer = (props: Props) => {
         draft.to = rcp.data.to;
         draft.cc = rcp.data.cc;
         draft.bcc = rcp.data.bcc;
-        draft.from = rcp.data.from;
+        draft.from =
+          windowID === 'mainWindow'
+            ? rcp.data.from
+            : JSON.parse(draft.fromJSON);
+
+        console.log(draft);
+
+        const data = assembleFromDataSet(
+          content.mailbox,
+          content.namespaces,
+          content.aliases
+        );
+        setFromDataSet(data);
+        if (draft.from.length === 1) {
+          setFromAddress(draft.from);
+        } else {
+          setFromAddress([data[0]]);
+        }
 
         handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
         setMailbox(content.mailbox);
@@ -322,12 +378,7 @@ const Composer = (props: Props) => {
         to: toArr,
         cc: ccArr,
         bcc: bccArr,
-        from: [
-          {
-            address: mailbox.address,
-            name: mailbox.name ? mailbox.name : mailbox.address
-          }
-        ]
+        from: Array.isArray(fromAddress) ? fromAddress : [fromAddress]
       };
 
       console.log('DRAFT', draft);
@@ -341,6 +392,14 @@ const Composer = (props: Props) => {
 
     const newEmail = clone(email);
     newEmail.subject = value;
+
+    handleEmailUpdate(newEmail);
+  };
+
+  const onFromChange = (obj: { address: string; name: string }) => {
+    const newEmail = clone(email);
+    newEmail.from = [obj];
+    setFromAddress(obj);
 
     handleEmailUpdate(newEmail);
   };
@@ -430,6 +489,9 @@ const Composer = (props: Props) => {
         </div>
       )}
       <MessageInputs
+        fromDataSet={fromDataSet}
+        fromAddress={Array.isArray(fromAddress) ? fromAddress[0] : fromAddress}
+        onFromChange={onFromChange}
         onUpdateRecipients={onUpdateRecipients}
         defaultRecipients={prefillRecipients}
         setToRef={node => {

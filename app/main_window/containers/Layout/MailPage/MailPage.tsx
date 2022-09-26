@@ -12,7 +12,12 @@ import { clearActiveMessage } from '../../../actions/mailbox/messages';
 import { toggleEditor } from '../../../actions/global';
 
 // Selectors
-import { activeFolderId, selectActiveMailbox } from '../../../selectors/mail';
+import {
+  activeFolderId,
+  selectActiveMailbox,
+  selectAllAliases,
+  selectAllNamespaces
+} from '../../../selectors/mail';
 
 // Components IMPORTS
 import MessageList from '../../../components/Mail/MessageList/MessageList';
@@ -29,10 +34,12 @@ export default function MailPage() {
 
   const folderId = useSelector(activeFolderId);
   const mailbox = useSelector(selectActiveMailbox);
+  const namespaces = useSelector(selectAllNamespaces);
+  const aliases = useSelector(selectAllAliases);
 
   const [loading, setLoading] = useState(false);
   const [panelWidths, setPanelWidths] = useState({ nav: 200, msgList: 445 });
-  const [isSyncInProgress, setIsSyncInProgress] = useState(true);
+  const [isSyncInProgress, setIsSyncInProgress] = useState(false);
 
   const toggleEditorState = (editorAction: string, forcedStatus?: boolean) => {
     dispatch(toggleEditor(editorAction, forcedStatus));
@@ -44,11 +51,22 @@ export default function MailPage() {
 
       // We don't always want the full state of the app to be refreshed
       if (fullSync) {
-        dispatch(loadMailboxes(opts)).then(() => {
-          dispatch(fetchNewMessages()).then(() => {
-            setIsSyncInProgress(false)
+        dispatch(loadMailboxes(opts))
+          .then(() => {
+            dispatch(fetchNewMessages())
+              .then(() => {
+                setIsSyncInProgress(false);
+                return true;
+              })
+              .catch(error => {
+                console.log('ERROR ON FULLSYNC::', error);
+                setIsSyncInProgress(false);
+              });
+          })
+          .catch(error => {
+            console.log('ERROR ON LOADMAILBOX:', error);
+            setIsSyncInProgress(false);
           });
-        })
       }
     });
 
@@ -92,6 +110,8 @@ export default function MailPage() {
     toggleEditorState('composerMaximize', false);
     await ipcRenderer.invoke('RENDERER::showComposerWindow', {
       mailbox,
+      namespaces,
+      aliases,
       editorAction: 'maximize'
     });
   };
@@ -101,22 +121,41 @@ export default function MailPage() {
     setIsSyncInProgress(bool);
   };
 
+  const checkMessages = (callback = () => {}) => {
+    console.log('CHECKING MESSAGES', isSyncInProgress);
+    if (!isSyncInProgress) {
+      dispatch(fetchNewMessages())
+        .then(() => {
+          setIsSyncInProgress(false);
+          callback();
+          return true;
+        })
+        .catch(error => {
+          setIsSyncInProgress(false);
+          callback();
+        });
+    }
+  };
+
   // REFRESHING THE STATE OF THE MAIL PAGE
   const refresh = async (full: any) => {
+    console.log('HITTING REFRESH', isSyncInProgress);
     setLoading(true);
-    if (!isSyncInProgress) {
-      dispatch(fetchNewMessages());
-    }
-    setTimeout(() => setLoading(false), 1000);
+    checkMessages(() => setTimeout(() => setLoading(false), 3000));
   };
+
+  // TEMPORARY SOLUTION TO GO RETRIEVE EMAILS EVERY 30s
+  // useEffect(() => {
+  //   const interval = setInterval(checkMessages, 30000);
+  //   return () => clearInterval(interval);
+  // }, [isSyncInProgress]);
 
   return (
     <DndProvider backend={HTML5Backend}>
       <PanelGroup
         spacing={0}
         onResizeEnd={(panels: [{ size: number }, { size: number }]) =>
-          handlePanelResizeEnd(panels, 'nav')
-        }
+          handlePanelResizeEnd(panels, 'nav')}
         panelWidths={[
           {
             size: panelWidths.nav,

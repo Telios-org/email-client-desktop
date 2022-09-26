@@ -37,11 +37,20 @@ module.exports = windowManager => {
         }
 
         if (channel === 'ACCOUNT_SERVICE::initAcctError') {
-          resolve({ error: { message: data.message }});
+          resolve({ error: { message: data.message } });
         }
       });
     });
   });
+
+  ipcMain.handle('ACCOUNT_SERVICE::SetSecrets', async (e, account) => {
+    store.setAccountSecrets(account);
+  })
+
+  ipcMain.handle('ACCOUNT_SYNC::syncDone', async (e, account) => {
+    const mainWindow = windowManager.getWindow('mainWindow');
+    mainWindow.webContents.send('ACCOUNT_IPC::syncDone', account);
+  })
 
   ipcMain.handle('ACCOUNT_SERVICE::getAccount', async (e, payload) => {
     const account = store.getAccount();
