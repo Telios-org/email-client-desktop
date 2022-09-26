@@ -145,10 +145,10 @@ export default function MailPage() {
   };
 
   // TEMPORARY SOLUTION TO GO RETRIEVE EMAILS EVERY 30s
-  useEffect(() => {
-    const interval = setInterval(checkMessages, 30000);
-    return () => clearInterval(interval);
-  }, [isSyncInProgress]);
+  // useEffect(() => {
+  //   const interval = setInterval(checkMessages, 30000);
+  //   return () => clearInterval(interval);
+  // }, [isSyncInProgress]);
 
   return (
     <DndProvider backend={HTML5Backend}>
