@@ -1,6 +1,7 @@
 import {
   FETCH_MAIL_DATA_SUCCESS,
   SAVE_INCOMING_MESSAGES_SUCCESS,
+  SAVE_SYNCED_MESSAGES,
   MSG_SELECTION_FLOW_SUCCESS,
   FOLDER_SELECTION_FLOW_SUCCESS,
   FETCH_MORE_FOLDER_MESSAGES_SUCCESS,
@@ -59,6 +60,7 @@ export default function messages(
       }
       return { ...state };
     case SAVE_INCOMING_MESSAGES_SUCCESS:
+    case SAVE_SYNCED_MESSAGES:
     case SAVE_SENT_MESSAGE_SUCCESS:
       // checking for undefined to satisfy TS requirement.
       if (action.messages !== undefined && action.messages.length > 0) {

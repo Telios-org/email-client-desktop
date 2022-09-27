@@ -14,6 +14,7 @@ import {
   BillingPayments,
   DevicesPanel
 } from '../../../components/Settings';
+import useCollectionListeners from '../../../../utils/hooks/useCollectionListeners';
 
 const electron = require('electron');
 
@@ -30,6 +31,7 @@ function classNames(...classes) {
 }
 
 const SettingsPage = () => {
+  useCollectionListeners(['Account']);
   const dispatch = useDispatch();
   const [showOverlay, setShowOverlay] = useState(false);
   const [browserURL, setBrowserURL] = useState('');

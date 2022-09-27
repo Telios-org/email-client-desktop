@@ -470,6 +470,44 @@ export const saveIncomingMessages = (messages: any, newAliases: string[]) => {
   };
 };
 
+export const SAVE_SYNCED_MESSAGES = 'MAILPAGE::SAVE_SYNCED_MESSAGES';
+export const saveSyncedMessage = function(
+  messages: MailMessageType[],
+  activeFolderId: number,
+  activeAliasId: string
+) {
+  return {
+    type: SAVE_SYNCED_MESSAGES,
+    messages,
+    activeFolderId,
+    activeAliasId
+  };
+};
+
+export const syncMessages = (messages: any) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      globalState: { activeFolderIndex, activeAliasIndex },
+      mail: {
+        folders: { allIds: foldersArray },
+        aliases: { allIds: aliasesArray }
+      }
+    } = getState();
+
+
+    dispatch(
+      saveSyncedMessage(
+        messages,
+        foldersArray[activeFolderIndex],
+        aliasesArray[activeAliasIndex]
+      )
+    );
+
+    return Promise.resolve('done');
+  };
+};
+
+
 /*
  *  Fetching the Email reference ids from S3 of the message needing downloading
  */

@@ -6,6 +6,12 @@ import {
   commitContactsUpdates,
   deleteContact
 } from '../../main_window/actions/contacts/contacts';
+import { updateProfile } from '../../main_window/actions/account/account';
+import {namespaceRegistrationSuccess, aliasRegistrationSuccess, aliasRemoveSuccess} from '../../main_window/actions/mailbox/aliases';
+import {updateFolder,removeFolder} from '../../main_window/actions/mailbox/folders'
+import {removeMessageSuccess} from '../../main_window/actions/mailbox/messages'
+import {syncMessages} from '../../main_window/actions/mail'
+
 
 // HELPERS
 const channel = require('../../services/main.channel');
@@ -26,11 +32,58 @@ const useCollectionListeners = (collections: string[]) => {
       switch (data.collection) {
         case 'Contact':
           if (data.type === 'del') {
-            await dispatch(deleteContact(data?.value?.contactId, true));
-          } else if (data.type === 'update') {
-            await dispatch(commitContactsUpdates(data?.value, true));
+            dispatch(deleteContact(data?.value?.contactId, true));
+          } else if (data.type === 'update' || data.type === 'create') {
+            dispatch(commitContactsUpdates(data?.value, true));
           }
           break;
+
+        case 'Alias':
+          if (data.type === 'del') {
+            dispatch(aliasRemoveSuccess({aliasId:data?.value?.aliasId}))
+          } else if (data.type === 'update' || data.type === 'create') {
+            // Using registration dispatch because it replaces the whole state for that alias
+            dispatch(aliasRegistrationSuccess(data?.value));
+          }
+        break;
+
+        case 'AliasNamespace':
+          if (data.type === 'del') {
+            // WE DON'T CURRENTLY SUPPORT NS REMOVAL
+          } else if (data.type === 'update' || data.type === 'create') {
+            dispatch(namespaceRegistrationSuccess(data?.value));
+          }
+        break;
+
+        case 'Email':
+          if (data.type === 'del') {
+            dispatch(removeMessageSuccess(data?.value?.emailId,data?.value?.folderId))
+          } else if (data.type === 'update' || data.type === 'create') {
+            dispatch(syncMessages([data?.value]));
+          }
+        break;
+
+        case 'Folder':
+          if (data.type === 'del') {
+            dispatch(removeFolder(data?.value?.folderId))
+          } else if (data.type === 'update' || data.type === 'create') {
+            dispatch(updateFolder(data?.value));
+          }
+        break;
+
+        case 'Mailbox':
+          //CURRENTLY ONLY ONE MAILBOX SUPPORTED
+        break;
+
+        case 'Account':
+          if(data.type === 'update'){
+            dispatch(updateProfile({ avatar: data?.value?.avatar, displayName: data?.value?.displayName }, true))
+          }
+        break;
+
+        // Currently not used in redux but here in case that's needed in the future
+        case 'Files':
+        break;
 
         default:
           console.log(

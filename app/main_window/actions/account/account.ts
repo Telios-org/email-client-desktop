@@ -42,10 +42,13 @@ export const updateProfileFailure = (error: Error) => {
   };
 };
 
-export const updateProfile = (data: {
-  displayName: string;
-  avatar: string;
-}) => {
+export const updateProfile = (
+  data: {
+    displayName: string;
+    avatar: string;
+  },
+  localOnly = false
+) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch(updateProfileRequest());
 
@@ -56,19 +59,21 @@ export const updateProfile = (data: {
       }
     } = getState();
 
-    try {
-      console.log('PROFILE DATA', data, allIds[0]);
-      // We purposefully only let this method update two parameters
-      await AccountService.updateAccount({
-        accountId,
-        ...data
-      });
+    if (!localOnly) {
+      try {
+        console.log('PROFILE DATA', data, allIds[0]);
+        // We purposefully only let this method update two parameters
+        await AccountService.updateAccount({
+          accountId,
+          ...data
+        });
 
-      // We want to change the Display Name of the primary mailbox at the same time.
-      await MailboxService.updateMailboxName(allIds[0], data.displayName);
-    } catch (error) {
-      dispatch(updateProfileFailure(error));
-      return error;
+        // We want to change the Display Name of the primary mailbox at the same time.
+        await MailboxService.updateMailboxName(allIds[0], data.displayName);
+      } catch (error) {
+        dispatch(updateProfileFailure(error));
+        return error;
+      }
     }
 
     dispatch(updateProfileSuccess(data, allIds[0]));
