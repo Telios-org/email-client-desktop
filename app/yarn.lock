@@ -198,7 +198,33 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@^3.4.10", "@telios/nebula@^3.4.9":
+"@telios/nebula@^3.4.11":
+  version "3.4.11"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.4.11.tgz#cc242d30a892b418896f73ca7b60b5ebdd349bc5"
+  integrity sha512-V/brwEykt/3aLDwCxZDq1aijZ7n83OU6RIV/4LLIcmPJ42jCt/Ja+kvkHYAy2kGU8iXiwdCSu5/3z/ndtotc/Q==
+  dependencies:
+    autobase "1.0.0-alpha.6"
+    blakejs "^1.1.0"
+    codecs "^2.2.0"
+    concat-stream "^2.0.0"
+    corestore "6.0.1-alpha.9"
+    dat-encoding "^5.0.1"
+    data-store "^4.0.3"
+    graceful-fs "^4.2.9"
+    hyperbee "1.7.0"
+    hyperbeedeebee "git+https://github.com/hexadecible/hyperbeedeebee.git"
+    hypercore "10.0.0-alpha.23"
+    hyperswarm "3.0.2"
+    is-online "^9.0.1"
+    memorystream "^0.3.1"
+    natural "^5.1.11"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    sodium-javascript "^0.8.0"
+    stopwords "^0.0.9"
+    uuid "^8.2.0"
+
+"@telios/nebula@^3.4.9":
   version "3.4.10"
   resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.4.10.tgz#4ebd24ae04d0cf0fc0201ab36e2f3c9c563a64e9"
   integrity sha512-HTb7G30eBSsShBeCbjPpe0UxyM52WL46XqRLbQgJ4XW9n66nk0tOk7MziugUvozHTFc6fiWCHoKUoD69lLejJg==
@@ -224,14 +250,14 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^4.0.4":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-4.0.4.tgz#64d2f6c91d50fb87df946c86e930e9deb38383c9"
-  integrity sha512-UlUfGif83r8QkS9slhGGw116x/r1678jq1roA629szMkxZ7E6xSKRxTTGbYH72RAXHDi9tYYDNUHGhPxPwnYFQ==
+"@telios/telios-client-backend@^4.1.3":
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-4.1.3.tgz#2bd67cb37934ed57b4002f93cd22883d5a30a845"
+  integrity sha512-WVYeOK/Ih4w62sE8ivdv6h1h/1qHT3FxSSboDZp3x83R0T8vhUi06IBsdByjY8A/1At0Ay1Icz0Je42X5swNsA==
   dependencies:
     "@hyperswarm/dht" "5.0.17"
     "@telios/client-sdk" "^6.2.5"
-    "@telios/nebula" "^3.4.10"
+    "@telios/nebula" "^3.4.11"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     env-cmd "^10.1.0"
     file-type "^16.5.3"
