@@ -198,10 +198,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@^3.4.11":
-  version "3.4.11"
-  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.4.11.tgz#cc242d30a892b418896f73ca7b60b5ebdd349bc5"
-  integrity sha512-V/brwEykt/3aLDwCxZDq1aijZ7n83OU6RIV/4LLIcmPJ42jCt/Ja+kvkHYAy2kGU8iXiwdCSu5/3z/ndtotc/Q==
+"@telios/nebula@^3.4.13", "@telios/nebula@^3.4.9":
+  version "3.4.13"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.4.13.tgz#e379892b4bf7a203c71346e3efaccb475d6fa1af"
+  integrity sha512-9hpEMKrAWgNH7GbtZP7VjJy8ghYCgsU6GbGv7/LXUtge43UjW9VNzGxl/UFFtXovntNuy3ijeF/MGYIscwYthw==
   dependencies:
     autobase "1.0.0-alpha.6"
     blakejs "^1.1.0"
@@ -224,40 +224,14 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@^3.4.9":
-  version "3.4.10"
-  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.4.10.tgz#4ebd24ae04d0cf0fc0201ab36e2f3c9c563a64e9"
-  integrity sha512-HTb7G30eBSsShBeCbjPpe0UxyM52WL46XqRLbQgJ4XW9n66nk0tOk7MziugUvozHTFc6fiWCHoKUoD69lLejJg==
-  dependencies:
-    autobase "1.0.0-alpha.6"
-    blakejs "^1.1.0"
-    codecs "^2.2.0"
-    concat-stream "^2.0.0"
-    corestore "6.0.1-alpha.9"
-    dat-encoding "^5.0.1"
-    data-store "^4.0.3"
-    graceful-fs "^4.2.9"
-    hyperbee "1.7.0"
-    hyperbeedeebee "git+https://github.com/hexadecible/hyperbeedeebee.git"
-    hypercore "10.0.0-alpha.23"
-    hyperswarm "3.0.2"
-    is-online "^9.0.1"
-    memorystream "^0.3.1"
-    natural "^5.1.11"
-    pump "^3.0.0"
-    random-access-memory "^3.1.1"
-    sodium-javascript "^0.8.0"
-    stopwords "^0.0.9"
-    uuid "^8.2.0"
-
-"@telios/telios-client-backend@^4.1.3":
-  version "4.1.3"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-4.1.3.tgz#2bd67cb37934ed57b4002f93cd22883d5a30a845"
-  integrity sha512-WVYeOK/Ih4w62sE8ivdv6h1h/1qHT3FxSSboDZp3x83R0T8vhUi06IBsdByjY8A/1At0Ay1Icz0Je42X5swNsA==
+"@telios/telios-client-backend@^4.1.10":
+  version "4.1.10"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-4.1.10.tgz#cd9672423e2d2c84a3f6a1bd1ea656d3cce204d2"
+  integrity sha512-vfKZoBtM9Sg+Ro/qz6MdQGToIsRDJ3MwhArsWcxrDTo3U0NJ+bZZ7ba8fvskcahPJqVPyTO7CoVmW9bkKxGn5g==
   dependencies:
     "@hyperswarm/dht" "5.0.17"
     "@telios/client-sdk" "^6.2.5"
-    "@telios/nebula" "^3.4.11"
+    "@telios/nebula" "^3.4.13"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     env-cmd "^10.1.0"
     file-type "^16.5.3"
@@ -295,9 +269,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "18.7.18"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.18.tgz#633184f55c322e4fb08612307c274ee6d5ed3154"
-  integrity sha512-m+6nTEOadJZuTPkKR/SYK3A2d7FZrgElol9UP1Kae90VVU4a6mxnPuLiIW1m4Cq4gZ/nWb9GrdVXJCoCazDAbg==
+  version "18.8.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.8.3.tgz#ce750ab4017effa51aed6a7230651778d54e327c"
+  integrity sha512-0os9vz6BpGwxGe9LOhgP/ncvYN5Tx1fNcd2TM3rD/aCGBkysb+ZWpXEocG24h6ZzOi13+VB8HndAQFezsSOw1w==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -2712,9 +2686,9 @@ queue-microtask@^1.2.2:
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
 queue-tick@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/queue-tick/-/queue-tick-1.0.0.tgz#011104793a3309ae86bfeddd54e251dc94a36725"
-  integrity sha512-ULWhjjE8BmiICGn3G8+1L9wFpERNxkf8ysxkAer4+TFdRefDaXOCV5m92aMB9FtBVmn/8sETXLXY6BfW7hyaWQ==
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/queue-tick/-/queue-tick-1.0.1.tgz#f6f07ac82c1fd60f82e098b417a80e52f1f4c142"
+  integrity sha512-kJt5qhMxoszgU/62PLP1CJytzd2NKetjSRnyuj31fDd3Rlcz3fzlFdFLD1SItunPwyqEOkca6GbV612BWfaBag==
 
 quick-lru@^5.1.1:
   version "5.1.1"
@@ -2945,9 +2919,9 @@ safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   integrity sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
 
 safe-stable-stringify@^2.2.0:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-2.3.1.tgz#ab67cbe1fe7d40603ca641c5e765cb942d04fc73"
-  integrity sha512-kYBSfT+troD9cDA85VDnHZ1rpHC50O0g1e6WlGHVCz/g+JS+9WKLj+XwFYyR8UbrZN8ll9HUpDAAddY58MGisg==
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-2.4.0.tgz#95fadb1bcf8057a1363e11052122f5da36a69215"
+  integrity sha512-eehKHKpab6E741ud7ZIMcXhKcP6TSIezPkNZhy5U8xC6+VvrRdUA2tMgxGxaGl4cz7c2Ew5+mg5+wNB16KQqrA==
 
 "safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0", safer-buffer@^2.0.2, safer-buffer@^2.1.0, safer-buffer@~2.1.0:
   version "2.1.2"
@@ -2970,9 +2944,9 @@ semver@^5.3.0:
   integrity sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==
 
 semver@^7.3.2:
-  version "7.3.7"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-7.3.7.tgz#12c5b649afdbf9049707796e22a4028814ce523f"
-  integrity sha512-QlYTucUYOews+WeEujDoEGziz4K6c47V/Bd+LjSSYcA94p+DmINdf7ncaUinThfvZyu13lN9OY1XDxt8C0Tw0g==
+  version "7.3.8"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.3.8.tgz#07a78feafb3f7b32347d725e33de7e2a2df67798"
+  integrity sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A==
   dependencies:
     lru-cache "^6.0.0"
 
@@ -3378,9 +3352,9 @@ uint64be@^3.0.0:
   integrity sha512-mliiCSrsE29aNBI7O9W5gGv6WmA9kBR8PtTt6Apaxns076IRdYrrtFhXHEWMj5CSum3U7cv7/pi4xmi4XsIOqg==
 
 underscore@^1.9.1:
-  version "1.13.4"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.4.tgz#7886b46bbdf07f768e0052f1828e1dcab40c0dee"
-  integrity sha512-BQFnUDuAQ4Yf/cYY5LNrK9NCJFKriaRbD9uR1fTeXnBeoa97W0i41qkZfGO9pSo8I5KzjAcSY2XYtdf0oKd7KQ==
+  version "1.13.6"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.6.tgz#04786a1f589dc6c09f761fc5f45b89e935136441"
+  integrity sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==
 
 unordered-array-remove@^1.0.2:
   version "1.0.2"
