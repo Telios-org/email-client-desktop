@@ -22,7 +22,7 @@ export const updateFolderCount = (id: number, amount: number) => {
 
     let currCount = folders?.byId[id]?.count;
 
-    if(!currCount) currCount = 0
+    if (!currCount) currCount = 0;
 
     let change = amount;
 
@@ -97,5 +97,21 @@ export const createFolder = (
     } catch (error) {
       dispatch(createNewFolderFailure(error));
     }
+  };
+};
+
+export const UPDATE_FOLDER = 'FOLDER::UPDATE_FOLDER';
+export const updateFolder = (folder: FolderType) => {
+  return {
+    type: UPDATE_FOLDER,
+    folder
+  };
+};
+
+export const REMOVE_FOLDER = 'FOLDER::REMOVE_FOLDER';
+export const removeFolder = (folderId: string) => {
+  return {
+    type: REMOVE_FOLDER,
+    payload: { folderId }
   };
 };
