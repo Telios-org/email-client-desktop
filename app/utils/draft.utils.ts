@@ -240,8 +240,8 @@ export const assembleFromDataSet = (
       .map(id => {
         const ns = aliases.byId[id].namespaceKey;
         let nsDomain = null;
-        console.log('MAP', ns, nsDomain, mainDomain);
-        if (ns !== null) {
+
+        if (ns !== null && ns !== '') {
           nsDomain = namespaces.byId[ns].domain;
         }
 
