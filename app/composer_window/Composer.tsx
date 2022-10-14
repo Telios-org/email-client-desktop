@@ -171,9 +171,6 @@ const Composer = (props: Props) => {
       bodyAsHtml: htmlBody
     };
 
-    console.log('FROM EMAIL', from);
-    console.log(eml);
-
     if (htmlBody !== editorState) {
       setEditorState(htmlBody);
     }
@@ -183,7 +180,6 @@ const Composer = (props: Props) => {
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
-    console.log('FIRING OFF 186')
     if (
       isInline &&
       folder?.name === 'Drafts' &&
@@ -201,13 +197,22 @@ const Composer = (props: Props) => {
           draft.from = JSON.parse(email.fromJSON);
           handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
           setMailbox(mb);
+          
           const data = assembleFromDataSet(mb, namespaces, aliases);
-          setFromDataSet(data);
+
           if (draft.from.length === 1) {
             setFromAddress(draft.from);
+            const isInSet =
+              data.filter(d => d.address === draft.from[0].address).length > 0;
+
+            if (!isInSet) {
+              data.push(draft.from[0]);
+            }
           } else {
-            setFromAddress([draft.from[0]]);
+            setFromAddress([data[0]]);
           }
+
+          setFromDataSet(data);
 
           setPrefillRecipients(rcp.ui);
           if (draft.to.length > 0) {
@@ -215,7 +220,6 @@ const Composer = (props: Props) => {
           }
 
           if (prevMsgIdRef.current !== draft.emailId) {
-            // console.log('PREV EMAIL GUARD', message);
             prevMsgIdRef.current = draft.emailId;
           }
         })
@@ -233,8 +237,6 @@ const Composer = (props: Props) => {
   // We get the draft email from the IPC Draft storage that was initialized by 'RENDERER::ingestDraftForInlineComposer' or 'RENDERER::showComposerWindow'
   // In another electron window, the redux store is unavailable
   useEffect(() => {
-    // console.log('FIRING OFF 235')
-
     if (folder?.name !== 'Drafts' || (folder?.name === 'Drafts' && !isInline)) {
       ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
         console.log('IPC event handler', content, windowID);
@@ -254,20 +256,25 @@ const Composer = (props: Props) => {
             ? rcp.data.from
             : JSON.parse(draft.fromJSON);
 
-        console.log(draft);
-
         const data = assembleFromDataSet(
           content.mailbox,
           content.namespaces,
           content.aliases
         );
-        setFromDataSet(data);
+        
         if (draft.from.length === 1) {
           setFromAddress(draft.from);
+          const isInSet =
+          data.filter(d => d.address === draft.from[0].address).length > 0;
+
+          if (!isInSet) {
+            data.push(draft.from[0]);
+          }
         } else {
           setFromAddress([data[0]]);
         }
 
+        setFromDataSet(data);
         handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
         setMailbox(content.mailbox);
         setPrefillRecipients(rcp.ui);
@@ -304,7 +311,6 @@ const Composer = (props: Props) => {
   }, [editorState, email]);
 
   useEffect(() => {
-    // console.log('ALL READY?', composerReady, editorReady, prevMsgIdRef.current);
     if (
       editorReady &&
       composerReady &&

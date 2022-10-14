@@ -46,7 +46,8 @@ import {
   selectActiveMailbox,
   selectActiveFolderName,
   selectAllNamespaces,
-  selectAllAliases
+  selectAllAliases,
+  activeAddress
 } from '../../../selectors/mail';
 
 // TYPESCRIPT TYPES
@@ -80,6 +81,7 @@ function MessageDisplay(props: Props) {
   const namespaces = useSelector(selectAllNamespaces);
   const aliases = useSelector(selectAllAliases);
   const currentFolderName = useSelector(selectActiveFolderName);
+  const currentEmailAddress = useSelector(activeAddress);
   const [loaded, setLoaded] = useState(false);
   const [iframeReady, setIframeReady] = useState(false);
   const [bodyAsHtml, setBodyAsHtml] = useState(null);
@@ -212,7 +214,8 @@ function MessageDisplay(props: Props) {
       namespaces,
       aliases,
       message,
-      editorAction: 'reply'
+      editorAction: 'reply',
+      currentEmailAddress
     });
   };
 
@@ -223,7 +226,8 @@ function MessageDisplay(props: Props) {
       namespaces,
       aliases,
       message,
-      editorAction: 'replyAll'
+      editorAction: 'replyAll',
+      currentEmailAddress
     });
   };
 
@@ -234,7 +238,8 @@ function MessageDisplay(props: Props) {
       namespaces,
       aliases,
       message,
-      editorAction: 'forward'
+      editorAction: 'forward',
+      currentEmailAddress
     });
   };
 
