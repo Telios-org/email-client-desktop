@@ -1,8 +1,8 @@
+// ITS ME
 const { ipcMain, nativeTheme, dialog, BrowserView } = require('electron');
 const path = require('path');
 const { emailTransform, assembleFromDataSet } = require('../utils/draft.utils');
 const store = require('../Store');
-const { Console } = require('console');
 
 module.exports = (windowManager, createMainWindow, createLoginWindow) => {
   const saveDraft = payload => {
@@ -197,34 +197,75 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
   ipcMain.handle(
     'RENDERER::ingestDraftForInlineComposer',
     async (event, content) => {
-      const { message, mailbox, namespaces, aliases, editorAction } = content;
-
-      // console.log(content);
+      const {
+        message,
+        mailbox,
+        namespaces,
+        aliases,
+        editorAction,
+        currentEmailAddress
+      } = content;
 
       const newDraft = emailTransform(message, editorAction, true);
 
-      // console.log(newDraft);
-
-
       const data = assembleFromDataSet(mailbox, namespaces, aliases);
 
-      // console.log(data);
+      // Original Message
+      const OrigFromArr = message.fromJSON ? JSON.parse(message.fromJSON) : [];
+      let OrigToArr = message.toJSON ? JSON.parse(message.toJSON) : [];
+      let OrigCcArr = message.ccJSON ? JSON.parse(message.ccJSON) : [];
+      let OrigBccArr = message.bccJSON ? JSON.parse(message.bccJSON) : [];
+      let fromArr = [];
+      let toArr = [];
+      let ccArr = [];
+      let bccArr = [];
 
-      let filteredArray = [];
-      if (message['toJSON']) {
-        filteredArray = data.filter(value =>
-          JSON.parse(message['toJSON'])
-            .map(m => m.address.replace(/[-+#]/gm, ''))
-            .includes(value.address.replace(/[-+#]/gm, ''))
-        );
+      switch (editorAction) {
+        case 'replyAll': 
+          toArr = OrigFromArr;
+          const arr = OrigToArr.filter(
+            recip =>
+              recip.address.replace(/[-+#]/gm, '') !==
+              currentEmailAddress.replace(/[-+#]/gm, '')
+          );
+          toArr = [...toArr, ...arr];
+          break;
+        case 'reply':
+          toArr = OrigFromArr;
+          ccArr = [];
+          bccArr = [];
+          break;
+        case 'forward':
+          toArr = [];
+          ccArr = [];
+          bccArr = [];
+          break;
+        default:
+          break;
       }
 
-      if (filteredArray.length === 1) {
-        newDraft.from = filteredArray;
-      } else {
-        newDraft.from = data[0]; // which should be the main account
-      }
-      // console.log('WINDOWSIPC::DRAFT', newDraft);
+      fromArr = OrigToArr.filter(
+        recip =>
+          recip.address.replace(/[-+#]/gm, '') ===
+          currentEmailAddress.replace(/[-+#]/gm, '')
+      ).map(f => {
+        return {
+          name: f.name.length === 0 ? f.address : f.name,
+          address: f.address
+        }
+      });
+
+      // New Message recipients
+      newDraft.to = toArr;
+      newDraft.toJSON = JSON.stringify(toArr);
+      newDraft.cc = toArr;
+      newDraft.ccJSON = JSON.stringify(ccArr);
+      newDraft.cc = toArr;
+      newDraft.ccJSON = JSON.stringify(ccArr);
+      newDraft.from = fromArr;
+      newDraft.fromJSON = JSON.stringify(fromArr);
+      newDraft.bcc = toArr;
+      newDraft.bccJSON = JSON.stringify(bccArr);
 
       store.setInitialDraft(newDraft);
       store.setNewDraft(null);

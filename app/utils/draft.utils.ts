@@ -16,36 +16,10 @@ export const recipientTransform = (
   action: string
 ) => {
   const fromArr = email.fromJSON ? JSON.parse(email.fromJSON) : [];
-  let toArr = email.toJSON ? JSON.parse(email.toJSON) : [];
-  let toCC = email.ccJSON ? JSON.parse(email.ccJSON) : [];
-  let toBCC = email.bccJSON ? JSON.parse(email.bccJSON) : [];
-
-  switch (action) {
-    case 'replyAll': {
-      toArr = fromArr;
-      const toJSON = email.toJSON ? JSON.parse(email.toJSON) : [];
-      const arr = toJSON.filter(
-        recip => recip.address !== ownerMailbox?.address
-      );
-      toArr = [...toArr, ...arr];
-      break;
-    }
-
-    case 'reply':
-      toArr = fromArr;
-      toCC = [];
-      toBCC = [];
-      break;
-
-    case 'forward':
-      toArr = [];
-      toCC = [];
-      toBCC = [];
-      break;
-
-    default:
-      break;
-  }
+  
+  const toArr = email.toJSON ? JSON.parse(email.toJSON) : [];
+  const toCC = email.ccJSON ? JSON.parse(email.ccJSON) : [];
+  const toBCC = email.bccJSON ? JSON.parse(email.bccJSON) : [];
 
   const to: { address: string; name: string }[] = [];
   const cc: { address: string; name: string }[] = [];
@@ -105,12 +79,7 @@ export const recipientTransform = (
       to,
       cc,
       bcc,
-      from: [
-        {
-          address: ownerMailbox.address,
-          name: ownerMailbox.name ? ownerMailbox.name : ownerMailbox.address
-        }
-      ]
+      from: fromArr
     }
   };
 };

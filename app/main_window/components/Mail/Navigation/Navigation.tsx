@@ -37,7 +37,8 @@ import {
   activeFolderId,
   activeAliasId,
   selectAllNamespaces,
-  selectAllAliases
+  selectAllAliases,
+  activeAddress,
 } from '../../../selectors/mail';
 
 // REDUX ACTION CREATORS
@@ -68,7 +69,8 @@ export default function Navigation(props: Props) {
   const aliases = useSelector(selectAllAliases);
   const allFolders = useSelector(selectAllFoldersById);
   const folderId = useSelector(activeFolderId);
-  // const history = useHistory();
+  const currentEmailAddress = useSelector(activeAddress);
+  
   const dispatch = useDispatch();
 
   const newMessageAction = async () => {
@@ -79,7 +81,8 @@ export default function Navigation(props: Props) {
       namespaces,
       aliases,
       message: {},
-      editorAction: 'new'
+      editorAction: 'new',
+      currentEmailAddress
     });
   };
 

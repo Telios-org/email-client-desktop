@@ -67,12 +67,12 @@ const peopleHeaderParser = (
     avatarInitials: ''
   };
 
-  const senderArr = sender.name.split(' ');
-  if (senderArr.length > 1) {
+  const senderArr = sender?.name?.split(' ');
+  if (senderArr?.length > 1) {
     sender.avatarInitials = `${senderArr[0][0]}${senderArr[1][0]}`.toUpperCase();
   } else {
     // eslint-disable-next-line prefer-destructuring
-    sender.avatarInitials = senderArr[0][0].toUpperCase();
+    sender.avatarInitials = senderArr && senderArr[0][0].toUpperCase();
   }
 
   if (direction === 'incoming') {
