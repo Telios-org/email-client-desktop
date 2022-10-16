@@ -113,7 +113,7 @@ export default function MessagePreview(props: Props) {
     direction
   );
 
-  const parsedSender = sender.name;
+  const parsedSender = sender.name ?? '';
   // Checking if Sender is in the Telios Network
   const senderInNetwork = sender.inNetwork;
 

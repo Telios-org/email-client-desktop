@@ -225,3 +225,15 @@ export const selectMessageByIndex = createSelector(
     return messages.byId[msgId];
   }
 );
+
+export const activeAddress = createSelector(
+  [activeAliasId, selectActiveMailbox],
+  (activeId, mailbox) => {
+    console.log(mailbox);
+    if (activeId) {
+      const domain = mailbox?.address.split('@')[1];
+      return `${activeId}@${domain}`;
+    }
+    return mailbox?.address;
+  }
+);

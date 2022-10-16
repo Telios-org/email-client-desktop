@@ -24,6 +24,7 @@ import { StateType, Dispatch, ContactType } from '../../../reducers/types';
 
 // HOOKS
 import { useHandler } from '../../../../utils/hooks/useHandler';
+import useCollectionListeners from '../../../../utils/hooks/useCollectionListeners';
 
 const contactTemplate = {
   name: '',
@@ -62,6 +63,9 @@ const contactTemplate = {
 };
 
 const ContactPage = () => {
+  // setting collection listener for device sync
+  useCollectionListeners(['Contact']);
+  
   const dispatch = useDispatch();
   const [contactFilter, setContactFilter] = useState('');
   const [contactCount, setContactCount] = useState(0);

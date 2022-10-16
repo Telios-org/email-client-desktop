@@ -25,11 +25,14 @@ import MessageDisplayRouter from '../../../components/Mail/MessageDisplay/Messag
 import Navigation from '../../../components/Mail/Navigation/Navigation';
 
 import MessageToolbar from '../../../components/Mail/MessageToolbar/MessageToolbar';
+import useCollectionListeners from '../../../../utils/hooks/useCollectionListeners';
 
 // ELECTRON IPC IMPORT
 const { ipcRenderer } = require('electron');
 
 export default function MailPage() {
+  useCollectionListeners(['Email', 'Folder', 'AliasNamespace', 'Alias']);
+
   const dispatch = useDispatch();
 
   const folderId = useSelector(activeFolderId);

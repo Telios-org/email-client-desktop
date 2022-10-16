@@ -56,7 +56,7 @@ export default function aliases(
             ...action.payload
           }
         },
-        allIds: [action.payload.aliasId, ...state.allIds],
+        allIds: [...new Set([action.payload.aliasId, ...state.allIds])],
         fwdAddresses: [
           ...new Set([...state.fwdAddresses, ...action.payload.fwdAddresses])
         ]

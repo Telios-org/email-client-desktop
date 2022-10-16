@@ -90,6 +90,7 @@ class AccountService extends EventEmitter {
         });
     });
 
+    // Why is a contact event being handle in the Account Service file?
     ipcRenderer.on('createContacts', (evt, data) => {
       ContactService.createContacts(data)
         .then(() => {
@@ -100,6 +101,7 @@ class AccountService extends EventEmitter {
         });
     });
 
+    // Why is a contact event being handle in the Account Service file?
     ipcRenderer.on('searchContact', (evt, searchQuery) => {
       ContactService.searchContact(searchQuery)
         .then(contacts => {
@@ -118,7 +120,10 @@ class AccountService extends EventEmitter {
       ipcRenderer.send('syncMail');
     });
 
-    channel.on('ACCOUNT_WORKER::refreshToken', m => {
+
+    // Not sure if the below works anymore, I think it should be acount:refreshToken or maybe acount:refreshToke:callback
+    // something that needs verifying and tested but there's also a chance that the code below is obsolete.
+    channel.on('ACCOUNT_WORKER::refreshToken', m => { 
       const { data, error } = m;
       this.emit('ACCOUNT_SERVICE::refreshToken', data.token);
     });

@@ -168,7 +168,7 @@ const Login = () => {
   }
 
   const onChangeAcct = (obj: any) => {
-    setIsRemembered(false);
+    setLoading(false);
     setActiveAcct(obj);
   };
 
@@ -205,7 +205,7 @@ const Login = () => {
           label="Account"
           data={accounts}
           selected={activeAcct}
-          onChange={setActiveAcct}
+          onChange={onChangeAcct}
           icon="people"
           className=""
         />
