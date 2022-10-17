@@ -43,14 +43,14 @@
     timeout-refresh "^2.0.0"
 
 "@hyperswarm/secret-stream@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@hyperswarm/secret-stream/-/secret-stream-6.0.0.tgz#67db820308cc9fed899cb8f5e9f47ae819d5a4e3"
-  integrity sha512-0xuyJIJDe8JYk4uWUx25qJvWqybdjKU2ZIfP1GTqd7dQxwdR0bpYrQKdLkrn5txWSK4a28ySC2AjH0G3I0gXTA==
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@hyperswarm/secret-stream/-/secret-stream-6.1.0.tgz#e99e6d449a0b1a571c42730841642da3356ea4da"
+  integrity sha512-6GjmdrYxZgJYGi8Ji7AZoqmmwQXSR9ByERkMPatcC5FMYgx9n5lDkwgKRK7faPQHpgtwjg2oLCrFveyGRLHV5g==
   dependencies:
     b4a "^1.1.0"
     hypercore-crypto "^3.3.0"
-    noise-curve-ed "^1.0.2"
-    noise-handshake "^2.1.0"
+    noise-curve-ed "^2.0.0"
+    noise-handshake "^3.0.0"
     sodium-secretstream "^1.0.0"
     sodium-universal "^3.0.4"
     streamx "^2.10.2"
@@ -229,10 +229,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@^5.0.3":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-5.0.3.tgz#7fb30f9cadd32e2fb5f2b4c6ee1bc2d5cc2f6691"
-  integrity sha512-pOmMFuA998zOPlOqp1HFIV0J2vc6pKIFbsfurE1P7KgYzTa9H8jpHbcjiC2zzcE4GHbJdst26HJLZW5EGZZ4dg==
+"@telios/telios-client-backend@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-5.0.4.tgz#437b9f37c9231f36c90f2b3baa027ce8b3f78d7f"
+  integrity sha512-wqA4M7AyJwewO4HWfnGNBHRB6m9pfFQMLSouYRyi5z2vbwMFNNIRJsmiQwuUYlcAJKE773p3mwVIhLsikonj8g==
   dependencies:
     "@hyperswarm/dht" "5.0.17"
     "@telios/client-sdk" "^6.2.5"
@@ -276,9 +276,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "18.8.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.8.5.tgz#6a31f820c1077c3f8ce44f9e203e68a176e8f59e"
-  integrity sha512-Bq7G3AErwe5A/Zki5fdD3O6+0zDChhg671NfPjtIcbtzDNZTv4NPKMRFr7gtYPG7y+B8uTiNK4Ngd9T0FTar6Q==
+  version "18.11.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.0.tgz#f38c7139247a1d619f6cc6f27b072606af7c289d"
+  integrity sha512-IOXCvVRToe7e0ny7HpT/X9Rb2RYtElG1a+VshjwT00HxrM2dWBApHQoqsI6WiY7Q03vdf2bCrIGzVrkF/5t10w==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -1101,10 +1101,10 @@ end-of-stream@^1.1.0:
   dependencies:
     once "^1.4.0"
 
-engine.io-client@~6.2.1:
-  version "6.2.2"
-  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-6.2.2.tgz#c6c5243167f5943dcd9c4abee1bfc634aa2cbdd0"
-  integrity sha512-8ZQmx0LQGRTYkHuogVZuGSpDqYZtCM/nv8zQ68VZ+JkOpazJ7ICdsSpaO6iXwvaU30oFg5QJOJWj8zWqhbKjkQ==
+engine.io-client@~6.2.3:
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-6.2.3.tgz#a8cbdab003162529db85e9de31575097f6d29458"
+  integrity sha512-aXPtgF1JS3RuuKcpSrBtimSjYvrbhKW9froICH4s0F3XQWLxsKNxqzG39nnvQZQnva4CMvUK63T7shevxRyYHw==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.1"
@@ -2427,10 +2427,29 @@ noise-curve-ed@^1.0.2:
     nanoassert "^2.0.0"
     sodium-universal "^3.0.4"
 
+noise-curve-ed@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/noise-curve-ed/-/noise-curve-ed-2.0.0.tgz#d5fb33b80ab87c78e0297010ea3e068035163415"
+  integrity sha512-DRMv6ciwQVDpDMMcNWyt20kLuAmXVYVJoPUhmvmIZkgSALA6a+OeNTrX35gt5vQ6LgE36DSOFMpGfdmWpBmjDg==
+  dependencies:
+    b4a "^1.1.0"
+    nanoassert "^2.0.0"
+    sodium-universal "^3.0.4"
+
 noise-handshake@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/noise-handshake/-/noise-handshake-2.2.0.tgz#24c98f502d49118770e1ec2af2894b8789f0ac7c"
   integrity sha512-+0mFUc5YSnOPI+4K/7nr6XDGduITaUasPVurzrH03sk6yW+udKxP/qjEwEekRwIpnvcCKYnjiZ9HJenJv9ljZg==
+  dependencies:
+    b4a "^1.1.0"
+    hmac-blake2b "^2.0.0"
+    nanoassert "^2.0.0"
+    sodium-universal "^3.0.4"
+
+noise-handshake@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/noise-handshake/-/noise-handshake-3.0.0.tgz#cce40781a4da7c650d62e02d0164f5fb4fd71844"
+  integrity sha512-/EQq+TbCZpOFDg0bD3jtxKYqwgSBCFU1tfGxUzHHy94kBKMwVY8GHNxtWR+gekwkhXCu7TyBXqNPY3qdaxe+fQ==
   dependencies:
     b4a "^1.1.0"
     hmac-blake2b "^2.0.0"
@@ -3109,13 +3128,13 @@ slash@^3.0.0:
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
 
 socket.io-client@^4.5.2:
-  version "4.5.2"
-  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.5.2.tgz#9481518c560388c980c88b01e3cf62f367f04c96"
-  integrity sha512-naqYfFu7CLDiQ1B7AlLhRXKX3gdeaIMfgigwavDzgJoIUYulc1qHH5+2XflTsXTPY7BlPH5rppJyUjhjrKQKLg==
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.5.3.tgz#bed69209d001465b2fea650d2e95c1e82768ab5e"
+  integrity sha512-I/hqDYpQ6JKwtJOf5ikM+Qz+YujZPMEl6qBLhxiP0nX+TfXKhW4KZZG8lamrD6Y5ngjmYHreESVasVCgi5Kl3A==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
     debug "~4.3.2"
-    engine.io-client "~6.2.1"
+    engine.io-client "~6.2.3"
     socket.io-parser "~4.2.0"
 
 socket.io-parser@~4.2.0:
