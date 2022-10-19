@@ -212,16 +212,27 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
 
       // Original Message
       const OrigFromArr = message.fromJSON ? JSON.parse(message.fromJSON) : [];
-      let OrigToArr = message.toJSON ? JSON.parse(message.toJSON) : [];
-      let OrigCcArr = message.ccJSON ? JSON.parse(message.ccJSON) : [];
-      let OrigBccArr = message.bccJSON ? JSON.parse(message.bccJSON) : [];
+      const OrigToArr = message.toJSON ? JSON.parse(message.toJSON) : [];
+      const OrigCcArr = message.ccJSON ? JSON.parse(message.ccJSON) : [];
+      const OrigBccArr = message.bccJSON ? JSON.parse(message.bccJSON) : [];
       let fromArr = [];
       let toArr = [];
       let ccArr = [];
       let bccArr = [];
 
+      fromArr = OrigToArr.filter(
+        recip =>
+          recip.address.replace(/[-+#]/gm, '') ===
+          currentEmailAddress.replace(/[-+#]/gm, '')
+      ).map(f => {
+        return {
+          name: f.name.length === 0 ? f.address : f.name,
+          address: f.address
+        };
+      });
+
       switch (editorAction) {
-        case 'replyAll': 
+        case 'replyAll':
           toArr = OrigFromArr;
           const arr = OrigToArr.filter(
             recip =>
@@ -241,6 +252,9 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
           bccArr = [];
           break;
         default:
+          fromArr = [
+            { name: currentEmailAddress, address: currentEmailAddress }
+          ];
           break;
       }
 
@@ -252,7 +266,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
         return {
           name: f.name.length === 0 ? f.address : f.name,
           address: f.address
-        }
+        };
       });
 
       // New Message recipients

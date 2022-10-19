@@ -197,13 +197,15 @@ const Composer = (props: Props) => {
           draft.from = JSON.parse(email.fromJSON);
           handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
           setMailbox(mb);
-          
+
           const data = assembleFromDataSet(mb, namespaces, aliases);
+
+          console.log(data);
 
           if (draft.from.length === 1) {
             setFromAddress(draft.from);
             const isInSet =
-              data.filter(d => d.address === draft.from[0].address).length > 0;
+              data.filter(d => d.address === draft.from[0]?.address).length > 0;
 
             if (!isInSet) {
               data.push(draft.from[0]);
@@ -230,6 +232,15 @@ const Composer = (props: Props) => {
             placement: 'bottomEnd'
           });
         });
+    } else if (
+      isInline &&
+      folder?.name === 'Drafts' &&
+      dispatch !== null &&
+      message.emailId === null
+    ) {
+      const data = assembleFromDataSet(mb, namespaces, aliases);
+      setFromAddress([data[0]]);
+      setFromDataSet(data);
     }
   }, [isInline, folder, message?.bodyAsHtml, message?.emailId]);
 
@@ -261,11 +272,11 @@ const Composer = (props: Props) => {
           content.namespaces,
           content.aliases
         );
-        
+
         if (draft.from.length === 1) {
           setFromAddress(draft.from);
           const isInSet =
-          data.filter(d => d.address === draft.from[0].address).length > 0;
+            data.filter(d => d.address === draft.from[0].address).length > 0;
 
           if (!isInSet) {
             data.push(draft.from[0]);
@@ -397,7 +408,7 @@ const Composer = (props: Props) => {
     const { value } = e.target;
 
     const newEmail = clone(email);
-    newEmail.subject = value;
+    newEmail.subject = value || '';
 
     handleEmailUpdate(newEmail);
   };

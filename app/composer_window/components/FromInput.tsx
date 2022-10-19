@@ -54,7 +54,7 @@ const FromInput = (props: Props) => {
               <Listbox.Options className="absolute z-10 mt-2 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                 {fromDataSet.map(email => (
                   <Listbox.Option
-                    key={email.address}
+                    key={email?.address}
                     className={({ active }) =>
                       classNames(
                         active ? 'bg-blue-200 text-gray-900' : 'text-gray-900',
@@ -72,7 +72,7 @@ const FromInput = (props: Props) => {
                             'block truncate'
                           )}
                         >
-                          {email.address}
+                          {email?.address}
                         </span>
 
                         {selected ? (

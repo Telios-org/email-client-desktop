@@ -76,6 +76,7 @@ export default function Navigation(props: Props) {
   const newMessageAction = async () => {
     await dispatch(clearActiveMessage(folderId));
     dispatch(toggleEditor('brandNewComposer', true));
+    console.log(currentEmailAddress);
     await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
       namespaces,
