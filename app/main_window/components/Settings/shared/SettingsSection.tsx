@@ -1,17 +1,34 @@
 import React from 'react';
 
+import clsx from 'clsx';
+
 type Props = {
   children: JSX.Element;
   header: string;
   description: string;
+  border?: boolean;
+  className?: string;
+  gridClassName?: string;
 };
 
 const SettingsSection = (props: Props) => {
-  const { children, header, description } = props;
+  const {
+    children,
+    header,
+    description,
+    border = true,
+    className,
+    gridClassName
+  } = props;
 
   return (
-    <section aria-labelledby="account-details-heading">
-      <div className="xl:grid xl:grid-cols-3 xl:gap-6">
+    <section aria-labelledby="account-details-heading" className={className}>
+      <div
+        className={clsx(
+          'flex flex-col xl:grid xl:grid-cols-3 xl:gap-6',
+          gridClassName
+        )}
+      >
         <div className="xl:col-span-1">
           <h3
             id="payment-details-heading"
@@ -19,9 +36,16 @@ const SettingsSection = (props: Props) => {
           >
             {header}
           </h3>
-          <p className="mt-1 text-sm text-gray-500 select-none">{description}</p>
+          <p className="mt-1 text-sm text-gray-500 select-none">
+            {description}
+          </p>
         </div>
-        <div className="mt-5 xl:mt-0 border border-gray-300 rounded-md overflow-hidden xl:col-span-2">
+        <div
+          className={clsx(
+            border ? 'border border-gray-300' : '',
+            'mt-5 xl:mt-0 rounded-md overflow-hidden xl:col-span-2 flex-grow'
+          )}
+        >
           {children}
         </div>
       </div>
@@ -30,3 +54,9 @@ const SettingsSection = (props: Props) => {
 };
 
 export default SettingsSection;
+
+SettingsSection.defaultProps = {
+  border: true,
+  className: '',
+  gridClassName: ''
+};

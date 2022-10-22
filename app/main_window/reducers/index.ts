@@ -4,6 +4,7 @@ import mail from './mail/index';
 import contacts from './contacts';
 import globalState from './globalState';
 import account from './account';
+import domains from './domains';
 
 export default function createRootReducer(
   routerReducer: Reducer<RouterState, AnyAction>
@@ -13,6 +14,7 @@ export default function createRootReducer(
     globalState,
     account,
     mail,
-    contacts
+    contacts,
+    domains
   });
 }

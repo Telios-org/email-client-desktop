@@ -234,7 +234,7 @@ export type GlobalType = {
   activeAliasIndex: number;
   activeAccountIndex: number;
   searchFilteredMsg: boolean;
-  msgListFilters:{
+  msgListFilters: {
     [index: number | string]: any;
   };
   activeMsgId: {
@@ -271,6 +271,28 @@ export type MailType = {
   fwdAddresses?: Array<string>;
   selected?: MailMessageType;
   loading: boolean;
+};
+
+export type DomainType = {
+  name: string;
+  cNameRecord: string;
+  description: string;
+  status: 'pending' | 'verified' | 'error';
+  createdDate: string;
+  lastUpdated: string;
+};
+
+export type DomainsType = {
+  byId: {
+    [index: number | string]: DomainType;
+  };
+  allIds: Array<number | string>;
+};
+
+export type DomainAction = {
+  type: string;
+  payload?: any;
+  error?: string | Error;
 };
 
 export type StateType = {
@@ -359,8 +381,8 @@ export type Email = {
   fromJSON: string;
   ccJSON: string;
   bccJSON: string;
-  text_body?: string; //this needs to be cleaned up it's confusing having this and bodyAsText.
-  html_body?: string; //this needs to be cleaned up it's confusing having this and bodyAsHtml.
+  text_body?: string; // this needs to be cleaned up it's confusing having this and bodyAsText.
+  html_body?: string; // this needs to be cleaned up it's confusing having this and bodyAsHtml.
   bodyAsText?: string;
   bodyAsHtml?: string;
   path: string;

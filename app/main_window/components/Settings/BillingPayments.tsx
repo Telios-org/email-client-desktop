@@ -251,7 +251,7 @@ const BillingPayments = (props: Props) => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mb-10">
       <section
         aria-labelledby="account-user-plan"
         className="xl:grid xl:grid-cols-3 xl:gap-6"

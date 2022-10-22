@@ -2,7 +2,7 @@
 import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tab } from '@headlessui/react';
-import { Filter, Wallet, Password, Setting, ShieldDone, Scan } from 'react-iconly';
+import { Filter, Wallet, Password, Setting, ShieldDone, Scan, Work } from 'react-iconly';
 import { DeviceMobileIcon } from '@heroicons/react/outline';
 import BrowserView, { removeViews } from 'react-electron-browser-view';
 import { setTimeout } from 'timers';
@@ -12,7 +12,8 @@ import {
   GeneralPanel,
   SecurityPanel,
   BillingPayments,
-  DevicesPanel
+  DevicesPanel,
+  CustomDomains
 } from '../../../components/Settings';
 import useCollectionListeners from '../../../../utils/hooks/useCollectionListeners';
 
@@ -22,7 +23,8 @@ const tabs = [
   { name: 'General', component: GeneralPanel, icon: Setting }, // { name: 'Notifications', panel: GeneralPanel },
   { name: 'Plan & Billing', component: BillingPayments, icon: Wallet },
   { name: 'Security', component: SecurityPanel, icon: ShieldDone },
-  { name: 'Devices', component: DevicesPanel, icon: Scan }
+  { name: 'Devices', component: DevicesPanel, icon: Scan },
+  { name: 'Custom Domains', component: CustomDomains, icon: Work }
   // { name: 'Billing', panel: GeneralPanel }
 ];
 
@@ -166,8 +168,8 @@ const SettingsPage = () => {
             </nav>
           </div>
           <main className="ml-8 pr-8 py-8 flex-1 relative overflow-y-scroll h-full">
-            <div className="px-4 sm:px-0">
-              <Tab.Panels>
+            <div className="px-4 sm:px-0 h-full">
+              <Tab.Panels className="h-full">
                 {tabs.map(tab => {
                   const tabProps = {};
 
@@ -177,7 +179,7 @@ const SettingsPage = () => {
                   return (
                     <Tab.Panel
                       key={`panel_${tab.name}`}
-                      className="outline-none"
+                      className="outline-none h-full"
                     >
                       <tab.component {...tabProps} />
                     </Tab.Panel>
