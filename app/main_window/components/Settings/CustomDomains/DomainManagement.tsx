@@ -83,8 +83,8 @@ const domains = [
 
 type Props = {
   openModalRoute: (route: string) => void;
-  domainSelection: (aliasId: string) => void;
-  mailboxSelection: (aliasId: string) => void;
+  domainSelection: (domainId: string) => void;
+  mailboxSelection: (mailboxId: string) => void;
   callToaster: (isSuccess: boolean, message: string) => void;
 };
 
@@ -106,6 +106,12 @@ const DomainManagement = (props: Props) => {
     mailboxSelection,
     callToaster
   } = props;
+
+
+  const deleteDomain = (domain:string) => {
+    domainSelection(domain);
+    openModalRoute('domainDelete')
+  }
 
   const MailboxRow = (innerProps: MailboxProps) => {
     const { mailbox, mailboxIdx } = innerProps;
@@ -356,7 +362,7 @@ const DomainManagement = (props: Props) => {
                                   size="small"
                                   className="hover:text-red-500"
                                   style={{ cursor: 'pointer' }}
-                                  onClick={() => {}}
+                                  onClick={() => deleteDomain(dm.name)}
                                 />
                               </div>
                             </th>

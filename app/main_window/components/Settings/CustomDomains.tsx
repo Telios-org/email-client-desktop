@@ -16,6 +16,7 @@ import DomainManagement from './CustomDomains/DomainManagement';
 import Notification from '../../../global_components/Notification';
 import DomainRegistration from './CustomDomains/ModalRoutes/DomainRegistration';
 import MailboxRegistration from './CustomDomains/ModalRoutes/MailboxRegistration';
+import DomainDelete from './CustomDomains/ModalRoutes/DomainDelete';
 import { Button } from '../../../global_components/button';
 import { Input } from '../../../global_components/input-groups';
 
@@ -123,6 +124,22 @@ const CustomDomains = () => {
                       >
                         <MailboxRegistration
                           close={closeModal}
+                        />
+                      </Transition.Child>
+                    )}
+                    {modal === 'domainDelete' && (
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 scale-95"
+                        enterTo="opacity-100 scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 scale-100"
+                        leaveTo="opacity-0 scale-95"
+                      >
+                        <DomainDelete
+                          close={closeModal}
+                          domain={domainSelection}
                         />
                       </Transition.Child>
                     )}
