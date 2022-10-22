@@ -10,7 +10,7 @@ import PhoneField from './PhoneField';
 import AddressField from './AddressField';
 import NotesField from './NotesField';
 import DeleteModal from './DeleteModal';
-import Notification from '../../Global/Notification';
+import Notification from '../../../../global_components/Notification';
 
 // Action Creators
 import {

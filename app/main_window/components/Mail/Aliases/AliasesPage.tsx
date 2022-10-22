@@ -6,12 +6,12 @@ import { XIcon } from '@heroicons/react/outline';
 import { Dialog, Transition } from '@headlessui/react';
 
 // INTERNAL LIBRARIES
-import Notification from '../../Global/Notification';
-import NamespaceRegistration from './Routes/NamespaceRegistration';
-import AliasManagement from './Routes/AliasManagement';
-import AliasRegistration from './Routes/AliasRegistration';
-import AliasEdit from './Routes/AliasEdit';
-import AliasDelete from './Routes/AliasDelete';
+import Notification from '../../../../global_components/Notification';
+import NamespaceRegistration from './ModalRoutes/NamespaceRegistration';
+import AliasManagement from './ModalRoutes/AliasManagement';
+import AliasRegistration from './ModalRoutes/AliasRegistration';
+import AliasEdit from './ModalRoutes/AliasEdit';
+import AliasDelete from './ModalRoutes/AliasDelete';
 
 // ACTION CREATORS
 import { setActivePage } from '../../../actions/global';
@@ -98,7 +98,7 @@ const AliasesPage = () => {
             <Dialog
               as="div"
               className="relative z-10"
-              onClose={() => closeModal(false, '')}
+              onClose={() => closeModal(false, '', false)}
             >
               <Transition.Child
                 as={Fragment}

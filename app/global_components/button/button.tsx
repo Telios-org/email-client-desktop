@@ -8,10 +8,15 @@ const styles = {
     btn:
       'w-full flex justify-center px-6 py-3 rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-blue-600 border border-gray-300 bg-gradient-to-tr from-[#0284C7] to-[#0EA5E9] hover:to-[#0284C7] ',
     spinner: 'text-white'
-  }, // For some reason the blue gradient doesn't always work and needs to be added in classname on the component declaration.
+  },
+  secondary: {
+    btn:
+      'w-full flex justify-center px-6 py-3 rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-600 border border-gray-300 bg-gradient-to-tr from-purple-600 to-purple-500 hover:to-purple-700 ',
+    spinner: 'text-white'
+  },
   outline: {
     btn:
-      'w-full px-4 py-3 flex justify-center rounded-md shadow-sm text-sm text-gray-400 hover:text-gray-500 font-medium  border border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-gray-300',
+      'w-full px-4 py-3 flex justify-center rounded-md shadow-sm text-sm text-gray-400 hover:text-gray-500 font-medium  border border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300',
     spinner: ''
   },
   disabled: {
@@ -22,7 +27,7 @@ const styles = {
 };
 
 type Props = {
-  variant?: 'primary' | 'outline' | 'disabled';
+  variant?: 'primary' | 'outline' | 'disabled' | 'secondary';
   type?: 'button' | 'submit';
   className?: string;
   loading?: boolean;

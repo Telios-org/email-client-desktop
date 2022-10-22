@@ -85,7 +85,7 @@ const Input = (props: Props) => {
   };
 
   return (
-    <div>
+    <div className="flex-1">
       {label.length > 0 && (
         <label
           htmlFor={id}
@@ -95,7 +95,7 @@ const Input = (props: Props) => {
         </label>
       )}
       <div className="relative mt-1">
-        <div className="relative flex rounded-md shadow-sm focus-within:ring-2 focus-within:ring-violet-500 focus-within:border-violet-500">
+        <div className="relative flex rounded-md shadow-sm focus-within:ring-1 focus-within:ring-violet-500 focus-within:border-violet-500">
           {icon === 'email' &&
             (((isValid === undefined || value.length === 0) && !showLoader) ||
               activityPosition === 'right') && (
@@ -171,11 +171,10 @@ const Input = (props: Props) => {
               disabled && 'bg-gray-200 font-medium text-gray-500',
               addonPosition === 'left' && 'rounded-none rounded-r-md',
               addonPosition === 'right' && 'rounded-none rounded-l-md',
-              !addonPosition && 'rounded',
+              !addonPosition && 'rounded-md',
               (isValid !== undefined ||
-                showLoader ||
                 icon !== 'none' ||
-                activityPosition === 'left') &&
+                (showLoader && activityPosition === 'left')) &&
                 'pl-10',
               `appearance-none block w-full px-3 py-2 border border-gray-300 
           placeholder-gray-400 focus:outline-none

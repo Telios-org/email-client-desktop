@@ -9,9 +9,14 @@ import {
   GlobeIcon
 } from '@heroicons/react/outline';
 import { Edit, Delete, Paper } from 'react-iconly';
+// ICONSET ICONS
+import { BsArrowRepeat } from 'react-icons/bs';
+
+// INTERNAL COMPONENTS
+import clsx from 'clsx';
+import { Button } from '../../../../global_components/button';
 
 // INTERNAL HELPER FUNCTIONS
-import clsx from 'clsx';
 import sortingHat from '../../../../utils/helpers/sort';
 import { formatDateDisplay } from '../../../../utils/helpers/date';
 
@@ -22,7 +27,7 @@ const mailboxes = [
     address: 'rollitup@lightitup.com',
     domain: 'lightitup.com',
     description: 'When you know you know',
-    displayName: 'Fun Times',
+    displayName: '',
     createdDate: '2022-01-27T01:57:27.605Z'
   },
   {
@@ -46,7 +51,7 @@ const domains = [
     name: 'lightitup.com',
     cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
     description: '',
-    status: 'pending',
+    status: 'verified',
     createdDate: '2022-01-27T01:57:27.605Z',
     lastUpdated: '2022-01-27T01:57:27.605Z'
   },
@@ -57,8 +62,31 @@ const domains = [
     status: 'verified',
     createdDate: '2022-01-27T01:57:27.605Z',
     lastUpdated: '2022-01-27T01:57:27.605Z'
+  },
+  {
+    name: 'madeup.com',
+    cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
+    description: '',
+    status: 'error',
+    createdDate: '2022-01-27T01:57:27.605Z',
+    lastUpdated: '2022-01-27T01:57:27.605Z'
+  },
+  {
+    name: 'example.com',
+    cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
+    description: '',
+    status: 'pending',
+    createdDate: '2022-01-27T01:57:27.605Z',
+    lastUpdated: '2022-01-27T01:57:27.605Z'
   }
 ];
+
+type Props = {
+  openModalRoute: (route: string) => void;
+  domainSelection: (aliasId: string) => void;
+  mailboxSelection: (aliasId: string) => void;
+  callToaster: (isSuccess: boolean, message: string) => void;
+};
 
 type MailboxProps = {
   mailbox: {
@@ -71,7 +99,14 @@ type MailboxProps = {
   mailboxIdx: number;
 };
 
-const DomainManagement = () => {
+const DomainManagement = (props: Props) => {
+  const {
+    openModalRoute,
+    domainSelection,
+    mailboxSelection,
+    callToaster
+  } = props;
+
   const MailboxRow = (innerProps: MailboxProps) => {
     const { mailbox, mailboxIdx } = innerProps;
 
@@ -86,7 +121,14 @@ const DomainManagement = () => {
           {formatDateDisplay(mailbox.createdDate)}
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-          <div className="text-xs font-semibold">{mailbox.displayName}</div>
+          <div className="text-xs font-semibold">
+            <div className="text-2xs text-coolGray-400">Display Name:</div>
+            <div>
+              {mailbox.displayName.length > 0
+                ? mailbox.displayName
+                : mailbox.address}
+            </div>
+          </div>
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-sm text-gray-700">
           <div className="text-xs font-semibold">
@@ -142,26 +184,41 @@ const DomainManagement = () => {
 
   return (
     <>
-      <div className="flex justify-end">
-        <div>
-          <button
+      <div className="flex justify-between w-full">
+        <div className="flex flex-row">
+          <Button
             type="button"
             onClick={() => {}}
-            className="mr-4 inline-flex justify-center px-4 py-2 border 
-          border-gray-300 shadow-sm text-sm font-medium rounded-md 
-          text-gray-500 bg-white hover:bg-gray-50 focus:outline-none
-           focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+            variant="outline"
+            className="pt-2 pb-2 text-sm font-medium bg-white"
+          >
+            <div className="flex flex-row">
+              <div className="self-center text-base pr-1">
+                <BsArrowRepeat />
+              </div>
+              <div>Refresh Status</div>
+            </div>
+          </Button>
+        </div>
+
+        <div className="flex flex-row space-x-2">
+          <Button
+            type="button"
+            onClick={() => openModalRoute('domainRegistration')}
+            variant="primary"
+            className="pt-2 pb-2 text-sm font-medium bg-white"
           >
             {/* <Delete set="broken" className="-ml-1 mr-2 h-5 w-5 text-gray-400" /> */}
-            <span>Add Custom Domain</span>
-          </button>
-          <button
+            <span className="whitespace-nowrap">Add Custom Domain</span>
+          </Button>
+          <Button
             type="button"
-            onClick={() => {}}
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-gradient-to-bl from-purple-600 to-purple-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:w-auto"
+            onClick={() => openModalRoute('mailboxRegistration')}
+            variant="secondary"
+            className="pt-2 pb-2 text-sm font-medium"
           >
             Add Mailbox
-          </button>
+          </Button>
         </div>
       </div>
       <div className="mt-6 flex flex-col grow">
@@ -176,20 +233,16 @@ const DomainManagement = () => {
                         scope="col"
                         className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 py-3.5 px-3 pl-6 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
                       >
-                        Created
+                        Domain
                       </th>
                       <th
                         scope="col"
                         className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
-                      >
-                        Display Name
-                      </th>
+                      />
                       <th
                         scope="col"
                         className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
-                      >
-                        Mailboxes
-                      </th>
+                      />
                       <th
                         scope="col"
                         className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
@@ -245,24 +298,44 @@ const DomainManagement = () => {
                             <th
                               colSpan={3}
                               scope="colgroup"
-                              className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-left text-sm font-semibold text-gray-900"
+                              className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-left text-sm font-semibold text-gray-500"
                             >
-                              <span className="text-sm text-gray-400">
+                              {/* <span className="text-sm text-gray-400">
                                 Domain:
-                              </span>
+                              </span> */}
 
                               {` ${dm.name}`}
                             </th>
                             <th
                               colSpan={1}
-                              className="border-b border-gray-200 bg-gray-50 py-2 text-sm font-medium text-gray-400 text-center"
+                              className="border-b border-gray-200 bg-gray-50 py-2 px-3 text-xs font-medium text-gray-400 text-left"
                             >
                               <div className="flex flex-row items-center">
                                 <span className="flex h-2 w-2 relative">
-                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75" />
-                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500" />
+                                  <span
+                                    className={clsx(
+                                      dm.status === 'pending' &&
+                                        'bg-yellow-400',
+                                      dm.status === 'verified' &&
+                                        'bg-green-400',
+                                      dm.status === 'error' && 'bg-red-400',
+                                      'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75'
+                                    )}
+                                  />
+                                  <span
+                                    className={clsx(
+                                      dm.status === 'pending' &&
+                                        'bg-yellow-500',
+                                      dm.status === 'verified' &&
+                                        'bg-green-500',
+                                      dm.status === 'error' && 'bg-red-500',
+                                      'relative inline-flex rounded-full h-2 w-2 border border-purple-300'
+                                    )}
+                                  />
                                 </span>
-                                <span className="ml-2">{dm.status}</span>
+                                <span className="ml-2 capitalize">
+                                  {dm.status}
+                                </span>
                               </div>
                             </th>
                             <th

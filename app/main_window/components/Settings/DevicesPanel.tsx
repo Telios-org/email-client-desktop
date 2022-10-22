@@ -10,7 +10,7 @@ import Countdown, { zeroPad } from 'react-countdown';
 // INTERNAL COMPONENTS
 import SettingsSection from './shared/SettingsSection';
 import { Button } from '../../../global_components/button';
-import Notification from '../Global/Notification';
+import Notification from '../../../global_components/Notification';
 
 // SELECTOR
 import { selectActiveMailbox } from '../../selectors/mail';
