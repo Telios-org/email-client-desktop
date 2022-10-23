@@ -174,7 +174,7 @@ const Input = (props: Props) => {
               !addonPosition && 'rounded-md',
               (isValid !== undefined ||
                 icon !== 'none' ||
-                (showLoader && activityPosition === 'left')) &&
+                (showLoader && activityPosition === 'left')) && activityPosition !== 'right' &&
                 'pl-10',
               `appearance-none block w-full px-3 py-2 border border-gray-300 
           placeholder-gray-400 focus:outline-none

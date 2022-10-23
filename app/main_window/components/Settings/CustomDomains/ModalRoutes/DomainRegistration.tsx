@@ -18,7 +18,7 @@ import { Input } from '../../../../../global_components/input-groups';
 import useForm from '../../../../../utils/hooks/useForm';
 
 // REDUX ACTION
-import { registerNamespace } from '../../../../actions/mailbox/aliases';
+import { addCustomDomain } from '../../../../actions/domains/domains';
 
 import i18n from '../../../../../i18n/i18n';
 
@@ -35,14 +35,40 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
   const dispatch = useDispatch();
   const [loading, setLoader] = useState(false);
   const [copyText, setCopyText] = useState('Copy');
+  const [validationLoader, setValidationLoader] = useState(false);
+  const [cnameLoader, setcnameLoader] = useState(false);
 
-  const { handleChange, handleSubmit, data: form, errors } = useForm({
+  const {
+    handleChange,
+    manualChange,
+    handleSubmit,
+    data: form,
+    errors
+  } = useForm({
     initialValues: {
       domain: '',
       status: 'unverified',
       cnameRecord: ''
     },
-    onSubmit: async data => {}
+    validationDebounce: 500,
+    validations: {
+      domain: {
+        required: {
+          value: true,
+          message: 'Required field.'
+        },
+        custom: {
+          isValid: async (value, data) => {
+            // INSERT CALL HERE TO CHECK THAT DOMAIN IS AVAILABLE
+            return true;
+          },
+          message: 'Domain already in use'
+        }
+      }
+    },
+    onSubmit: async data => {
+      dispatch(addCustomDomain(data.domain, data.cnameRecord));
+    }
   });
 
   const handleCopy = (value: string) => {
@@ -54,6 +80,25 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
     if (copyText === 'Copied!') {
       setCopyText('Copy');
     }
+  };
+
+  const onDomainChange = e => {
+    setValidationLoader(true);
+    handleChange(
+      'domain',
+      true,
+      value => value.toLowerCase(),
+      () => {
+        setValidationLoader(false);
+      }
+    )(e);
+  };
+
+  const fetchCNAME = () => {
+    setcnameLoader(true);
+    // FUNCTION TO FETCH CNAME HERE
+    manualChange('cnameRecord', 'VALUE HERE');
+    setcnameLoader(false);
   };
 
   return (
@@ -127,16 +172,22 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
           <div className="flex flex-row w-full space-x-2 flex-1">
             <Input
               label="Domain"
-              onChange={handleChange('domain')}
+              onChange={onDomainChange}
               id="domain"
               name="domain"
+              activityPosition="right"
               value={form.domain}
+              error={errors?.domain}
+              isValid={errors?.domain === '' || errors?.domain === undefined}
+              showLoader={validationLoader}
             />
             <div className="self-end">
               <Button
                 type="button"
                 variant="outline"
                 className="pt-2 pb-2 w-[118px]"
+                onClick={fetchCNAME}
+                loading={cnameLoader}
               >
                 GET CNAME
               </Button>
@@ -192,7 +243,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
             type="button"
             variant="outline"
             className="pt-2 pb-2"
-            onClick={() => close()}
+            onClick={() => close(false, '', false)}
           >
             Cancel
           </Button>
