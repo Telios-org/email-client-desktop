@@ -2,15 +2,20 @@ import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // EXTERNAL LIBRARIES
-import { Dialog } from '@headlessui/react';
+import { Dialog, Tab } from '@headlessui/react';
 import { GlobeIcon, LightningBoltIcon } from '@heroicons/react/outline';
 import { InformationCircleIcon } from '@heroicons/react/solid';
 import { Paper } from 'react-iconly';
 import clsx from 'clsx';
 
 // INTERNAL COMPONENT
+import { domain } from 'process';
 import { Button } from '../../../../../global_components/button';
 import { Input } from '../../../../../global_components/input-groups';
+import { VerificationStatus } from '../../../../../global_components/status';
+
+// SERVICE
+import Domain from '../../../../../services/domain.service';
 
 // SELECTORS
 
@@ -30,6 +35,8 @@ type Props = {
   close: (isSuccess: boolean, message: string, show?: boolean) => void;
 };
 
+const tabs = ['Add Domain', 'Ownership Verification', 'DNS Verification'];
+
 const DomainRegistration = forwardRef((props: Props, ref) => {
   const { close } = props;
   const dispatch = useDispatch();
@@ -37,6 +44,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
   const [copyText, setCopyText] = useState('Copy');
   const [validationLoader, setValidationLoader] = useState(false);
   const [cnameLoader, setcnameLoader] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0)
 
   const {
     handleChange,
@@ -48,7 +56,8 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
     initialValues: {
       domain: '',
       status: 'unverified',
-      cnameRecord: ''
+      ownershipRecord: '',
+      domainAdded: false
     },
     validationDebounce: 500,
     validations: {
@@ -59,15 +68,17 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
         },
         custom: {
           isValid: async (value, data) => {
-            // INSERT CALL HERE TO CHECK THAT DOMAIN IS AVAILABLE
-            return true;
+            const res = await Domain.isAvailable(value);
+            console.log(res);
+            return res;
           },
           message: 'Domain already in use'
         }
       }
     },
     onSubmit: async data => {
-      dispatch(addCustomDomain(data.domain, data.cnameRecord));
+        console.log(data.domain)
+        dispatch(addCustomDomain(data.domain));
     }
   });
 
@@ -111,133 +122,99 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
         className="text-base font-medium leading-6 text-gray-900 flex flex-row mb-4 pt-6 px-6 items-center"
       >
         <GlobeIcon className="w-5 h-5 text-sky-500 mr-2" aria-hidden="true" />
-        Add Custom Domain
+        Custom Domain
       </Dialog.Title>
-      <div className="px-6">
-        <div>
-          <p className="text-sm pl-7 pb-2">
-            Before you can use a custom domain with Telios, you must verify that
-            you own your domain. This is to prevent unauthorized use. To verify
-            your ownership, add the verification record (CNAME) listed to your
-            domain's DNS record.
-          </p>
-          <div className="ml-7 my-2 border-l-4 border-sky-400 bg-sky-50 p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <InformationCircleIcon
-                  className="h-5 w-5 text-sky-400"
-                  aria-hidden="true"
-                />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-sky-700">
-                  It may take 
-{' '}
-<b>up to a day</b> for changes to DNS records to
-                  take effect.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-sm m-auto w-full mt-4 space-y-2">
-          <div className="flex flex-col">
-            <div className="text-sm font-medium text-slate-700 capitalize pb-1">
-              Status
-            </div>
-            <div className="flex flex-row items-center pl-1">
-              <span className="flex h-2 w-2 relative">
-                <span
-                  className={clsx(
-                    form.status === 'pending' && 'bg-yellow-400',
-                    form.status === 'verified' && 'bg-green-400',
-                    form.status === 'error' && 'bg-red-400',
-                    form.status === 'unverified' && 'bg-gray-300',
-                    'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75'
-                  )}
-                />
-                <span
-                  className={clsx(
-                    form.status === 'pending' && 'bg-yellow-500',
-                    form.status === 'verified' && 'bg-green-500',
-                    form.status === 'error' && 'bg-red-500',
-                    form.status === 'unverified' && 'bg-gray-400',
-                    'relative inline-flex rounded-full h-2 w-2'
-                  )}
-                />
-              </span>
-              <span className="ml-2 text-sm pb-0.5 text-gray-400">{`${form.status}`}</span>
-            </div>
-          </div>
-          <div className="flex flex-row w-full space-x-2 flex-1">
-            <Input
-              label="Domain"
-              onChange={onDomainChange}
-              id="domain"
-              name="domain"
-              activityPosition="right"
-              value={form.domain}
-              error={errors?.domain}
-              isValid={errors?.domain === '' || errors?.domain === undefined}
-              showLoader={validationLoader}
-            />
-            <div className="self-end">
-              <Button
-                type="button"
-                variant="outline"
-                className="pt-2 pb-2 w-[118px]"
-                onClick={fetchCNAME}
-                loading={cnameLoader}
+      <div className="px-12">
+        <p className="text-sm pl-1 pb-2">
+          To use your own domain on Telios you need to perform a few
+          verification steps and setup your DNS records on your domain
+          provider's web portal.
+        </p>
+        <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+          <Tab.List className="border-b border-gray-200 flex space-x-8 text-sm">
+            {tabs.map(tab => (
+              <Tab
+                key={tab}
+                className={({ selected }) =>
+                  clsx(
+                    selected
+                      ? 'border-sky-500 text-sky-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                    'whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm outline-none'
+                  )
+                }
               >
-                GET CNAME
-              </Button>
-            </div>
-          </div>
-          <div className="flex flex-row w-full space-x-2 flex-1">
-            <div className="flex flex-col w-full">
-              <div className="text-sm font-medium text-slate-700 capitalize">
-                CNAME Content
-              </div>
-              <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium h-[38px]">
-                <div className="break-words flex-1">{form.cnameRecord}</div>
-                {/* COPY BUTTON */}
-                <button
-                  type="button"
-                  onMouseLeave={resetCopy}
-                  onClick={() => handleCopy(form.cnameRecord)}
-                  className="relative flex flex-col items-center group outline-none"
-                >
-                  <Paper
-                    size="small"
-                    set="broken"
-                    className="text-gray-400 hover:text-purple-600 mt-0.5 ml-1"
-                    style={{ cursor: 'pointer' }}
+                {tab}
+              </Tab>
+            ))}
+          </Tab.List>
+          <Tab.Panels className="py-4 px-2 text-sm">
+            <Tab.Panel className="outline-none">
+              <div className="flex flex-col space-y-6">
+                <div className="flex flex-row w-full space-x-2 flex-1">
+                  <Input
+                    label="Domain Name"
+                    onChange={onDomainChange}
+                    id="domain"
+                    name="domain"
+                    activityPosition="right"
+                    value={form.domain}
+                    error={errors?.domain}
+                    disabled={form.domainAdded}
+                    isValid={
+                      errors?.domain === '' || errors?.domain === undefined
+                    }
+                    showLoader={validationLoader}
                   />
-                  <div className="absolute top-0 flex-col items-center hidden group-hover:flex -mt-9">
-                    <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-gray-700 shadow-lg rounded">
-                      {copyText}
-                    </span>
-                    <div className="w-3 h-3 -mt-2 rotate-45 bg-gray-700" />
+                  <div className="self-end">
+                    <Button
+                      type="button"
+                      onClick={handleSubmit}
+                      variant="secondary"
+                      className="pt-2 pb-2"
+                      loading={cnameLoader}
+                      disabled={
+                        errors.domain ||
+                        form.domain.length === 0 ||
+                        form.domainAdded
+                      }
+                    >
+                      ADD DOMAIN
+                    </Button>
                   </div>
-                </button>
-                {/* END */}
+                </div>
+                <p className="text-sm pl-1 pb-2">
+                  The statuses below indicate whether or not your domain is
+                  ready for use. To fully configure your domain click next and
+                  follow the rest of the setup.
+                </p>
+                <div className="grid grid-cols-5">
+                  <VerificationStatus status={form.status} label="Ownership" />
+                  <VerificationStatus status={form.status} label="DKIM" />
+                  <VerificationStatus status={form.status} label="SPF" />
+                  <VerificationStatus status={form.status} label="MX" />
+                  <VerificationStatus status={form.status} label="DMARC" />
+                </div>
               </div>
-            </div>
-
-            <div className="self-end">
-              <Button
-                type="button"
-                variant="outline"
-                className="pt-2 pb-2 w-[118px]"
-              >
-                VERIFY
-              </Button>
-            </div>
-          </div>
-        </div>
+            </Tab.Panel>
+            <Tab.Panel className="outline-none">Content 2</Tab.Panel>
+            <Tab.Panel className="outline-none">Content 3</Tab.Panel>
+          </Tab.Panels>
+        </Tab.Group>
       </div>
+      <div className="flex justify-between py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-7">
+        <div className="flex flex-row">
+          {/* <Button
+            type="button"
+            variant="dangerous"
+            className="pt-2 pb-2"
+            disabled={!form.domainAdded}
+            onClick={() => close(false, '', false)}
+          >
+            Delete Domain
+          </Button> */}
+        </div>
 
-      <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-14">
         <div className="flex flex-row space-x-2">
           <Button
             type="button"
@@ -245,14 +222,14 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
             className="pt-2 pb-2"
             onClick={() => close(false, '', false)}
           >
-            Cancel
+            Close
           </Button>
           <Button
             type="button"
             variant="primary"
             className="pt-2 pb-2 whitespace-nowrap"
           >
-            Add Domain
+            Next
           </Button>
         </div>
       </div>

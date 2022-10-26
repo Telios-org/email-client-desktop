@@ -305,6 +305,7 @@ export type StateType = {
     aliases: MailType;
     namespaces: MailType;
   };
+  domains: DomainsType;
   globalState: GlobalType;
   contacts: ContactsType;
 };

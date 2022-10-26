@@ -52,6 +52,7 @@ const domains = [
     cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
     description: '',
     status: 'verified',
+    active: true,
     createdDate: '2022-01-27T01:57:27.605Z',
     lastUpdated: '2022-01-27T01:57:27.605Z'
   },
@@ -60,6 +61,7 @@ const domains = [
     cNameRecord: 'cnamerecord.hjwe2u32832uoi3u32oiu32.tothemoon.io',
     description: 'To infinity and beyond',
     status: 'verified',
+    active: true,
     createdDate: '2022-01-27T01:57:27.605Z',
     lastUpdated: '2022-01-27T01:57:27.605Z'
   },
@@ -68,6 +70,7 @@ const domains = [
     cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
     description: '',
     status: 'error',
+    active: false,
     createdDate: '2022-01-27T01:57:27.605Z',
     lastUpdated: '2022-01-27T01:57:27.605Z'
   },
@@ -76,6 +79,7 @@ const domains = [
     cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
     description: '',
     status: 'pending',
+    active: false,
     createdDate: '2022-01-27T01:57:27.605Z',
     lastUpdated: '2022-01-27T01:57:27.605Z'
   }
@@ -107,11 +111,10 @@ const DomainManagement = (props: Props) => {
     callToaster
   } = props;
 
-
-  const deleteDomain = (domain:string) => {
+  const deleteDomain = (domain: string) => {
     domainSelection(domain);
-    openModalRoute('domainDelete')
-  }
+    openModalRoute('domainDelete');
+  };
 
   const MailboxRow = (innerProps: MailboxProps) => {
     const { mailbox, mailboxIdx } = innerProps;
@@ -149,6 +152,8 @@ const DomainManagement = (props: Props) => {
             </div>
           )}
         </td>
+        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
+        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
         <td className="border-b border-gray-200 relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium w-[70px]">
           <div className="flex flex-row justify-end">
@@ -252,8 +257,18 @@ const DomainManagement = (props: Props) => {
                       <th
                         scope="col"
                         className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
+                      />
+                      <th
+                        scope="col"
+                        className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
                       >
                         Status
+                      </th>
+                      <th
+                        scope="col"
+                        className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
+                      >
+                        Active
                       </th>
                       <th
                         scope="col"
@@ -302,7 +317,7 @@ const DomainManagement = (props: Props) => {
                         <Fragment key={dm}>
                           <tr className="border-t  border-gray-200">
                             <th
-                              colSpan={3}
+                              colSpan={4}
                               scope="colgroup"
                               className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-left text-sm font-semibold text-gray-500"
                             >
@@ -335,12 +350,39 @@ const DomainManagement = (props: Props) => {
                                       dm.status === 'verified' &&
                                         'bg-green-500',
                                       dm.status === 'error' && 'bg-red-500',
-                                      'relative inline-flex rounded-full h-2 w-2 border border-purple-300'
+                                      'relative inline-flex rounded-full h-2 w-2 border'
                                     )}
                                   />
                                 </span>
                                 <span className="ml-2 capitalize">
                                   {dm.status}
+                                </span>
+                              </div>
+                            </th>
+                            <th
+                              colSpan={1}
+                              className="border-b border-gray-200 bg-gray-50 py-2 px-3 text-xs font-medium text-gray-400 text-left"
+                            >
+                              <div className="flex flex-row items-center">
+                                <span className="flex h-2 w-2 relative">
+                                  <span
+                                    className={clsx(
+                                      dm.active && 'bg-green-400',
+                                      'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75'
+                                    )}
+                                  />
+                                  <span
+                                    className={clsx(
+                                      dm.active && 'bg-green-500',
+                                      dm.active === false && 'bg-gray-300',
+                                      'relative inline-flex rounded-full h-2 w-2 border'
+                                    )}
+                                  />
+                                </span>
+                                <span className={clsx("ml-2 capitalize", dm.active === false && 'text-gray-300')}>
+                                  {dm.active && "Yes"}
+                                  {dm.active === false && "No"}
+
                                 </span>
                               </div>
                             </th>
