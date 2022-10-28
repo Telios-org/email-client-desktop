@@ -188,7 +188,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                   ready for use. To fully configure your domain click next and
                   follow the rest of the setup.
                 </p>
-                <div className="grid grid-cols-5">
+                <div className="grid grid-cols-5 pl-1">
                   <VerificationStatus status={form.status} label="Ownership" />
                   <VerificationStatus status={form.status} label="DKIM" />
                   <VerificationStatus status={form.status} label="SPF" />

@@ -11,15 +11,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dialog } from '@headlessui/react';
 import { ExclamationIcon, LightningBoltIcon } from '@heroicons/react/outline';
 
-// INTERNAL LIBRAIRIES
-import useForm from '../../../../../utils/hooks/useForm';
-import { validateString } from '../../../../../utils/helpers/regex';
-
-// SELECTORS
-import { selectAllNamespaces } from '../../../../selectors/mail';
-
 // REDUX ACTION
-import { removeAlias } from '../../../../actions/mailbox/aliases';
+import { deleteDomain } from '../../../../actions/domains/domains';
 
 type Props = {
   close: (isSuccess: boolean, message: string) => void;
@@ -34,6 +27,7 @@ const DomainDelete = forwardRef((props: Props, ref) => {
 
   const handleDeleteDomain = async () => {
     setLoader(true);
+    await dispatch(deleteDomain(domain));
     setLoader(false);
     close(true, 'Domain Deleted!');
   };
@@ -59,11 +53,14 @@ const DomainDelete = forwardRef((props: Props, ref) => {
           </Dialog.Title>
           <div className="mt-2 text-sm text-gray-500">
             <p className="leading-relaxed">
-              Your domain{' '}
-              <span className="text-purple-600 font-medium">{domain}</span>{' '}
-              and all depending mailboxes will be removed from your account. All
+              Your domain
+{' '}
+              <span className="text-purple-600 font-medium">{domain}</span>
+{' '}
+and
+              all depending mailboxes will be removed from your account. All
               data will be erased and cannot be recovered.
-            </p>
+</p>
             {/* <p className="text-xs">
                 You can recreate this alias only through the app (as opposed to
                 "on the fly creation").

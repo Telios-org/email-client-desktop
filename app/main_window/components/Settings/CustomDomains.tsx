@@ -7,6 +7,8 @@ import { Dialog, Transition } from '@headlessui/react';
 // SELECTORS
 import { selectActiveMailbox } from '../../selectors/mail';
 
+// ACTION CREATORS
+
 // HELPER HOOKS
 import useForm from '../../../utils/hooks/useForm';
 

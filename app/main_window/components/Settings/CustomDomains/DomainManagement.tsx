@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 // EXTERNAL LIBRARY
+import clsx from 'clsx';
 import {
   AtSymbolIcon,
   PlusIcon,
@@ -12,8 +13,13 @@ import { Edit, Delete, Paper } from 'react-iconly';
 // ICONSET ICONS
 import { BsArrowRepeat } from 'react-icons/bs';
 
+// SELECTORS
+import { selectAllDomains } from '../../../selectors/domains';
+
+// ACTION CREATORS
+import { fetchAllDomains } from '../../../actions/domains/domains';
+
 // INTERNAL COMPONENTS
-import clsx from 'clsx';
 import { Button } from '../../../../global_components/button';
 
 // INTERNAL HELPER FUNCTIONS
@@ -46,44 +52,44 @@ const mailboxes = [
   }
 ];
 
-const domains = [
-  {
-    name: 'lightitup.com',
-    cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
-    description: '',
-    status: 'verified',
-    active: true,
-    createdDate: '2022-01-27T01:57:27.605Z',
-    lastUpdated: '2022-01-27T01:57:27.605Z'
-  },
-  {
-    name: 'tothemoon.io',
-    cNameRecord: 'cnamerecord.hjwe2u32832uoi3u32oiu32.tothemoon.io',
-    description: 'To infinity and beyond',
-    status: 'verified',
-    active: true,
-    createdDate: '2022-01-27T01:57:27.605Z',
-    lastUpdated: '2022-01-27T01:57:27.605Z'
-  },
-  {
-    name: 'madeup.com',
-    cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
-    description: '',
-    status: 'error',
-    active: false,
-    createdDate: '2022-01-27T01:57:27.605Z',
-    lastUpdated: '2022-01-27T01:57:27.605Z'
-  },
-  {
-    name: 'example.com',
-    cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
-    description: '',
-    status: 'pending',
-    active: false,
-    createdDate: '2022-01-27T01:57:27.605Z',
-    lastUpdated: '2022-01-27T01:57:27.605Z'
-  }
-];
+// const domains = [
+//   {
+//     name: 'lightitup.com',
+//     cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
+//     description: '',
+//     status: 'verified',
+//     active: true,
+//     createdDate: '2022-01-27T01:57:27.605Z',
+//     lastUpdated: '2022-01-27T01:57:27.605Z'
+//   },
+//   {
+//     name: 'tothemoon.io',
+//     cNameRecord: 'cnamerecord.hjwe2u32832uoi3u32oiu32.tothemoon.io',
+//     description: 'To infinity and beyond',
+//     status: 'verified',
+//     active: true,
+//     createdDate: '2022-01-27T01:57:27.605Z',
+//     lastUpdated: '2022-01-27T01:57:27.605Z'
+//   },
+//   {
+//     name: 'madeup.com',
+//     cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
+//     description: '',
+//     status: 'error',
+//     active: false,
+//     createdDate: '2022-01-27T01:57:27.605Z',
+//     lastUpdated: '2022-01-27T01:57:27.605Z'
+//   },
+//   {
+//     name: 'example.com',
+//     cNameRecord: 'cnamerecord.39873823098329083298.lightitup.com',
+//     description: '',
+//     status: 'pending',
+//     active: false,
+//     createdDate: '2022-01-27T01:57:27.605Z',
+//     lastUpdated: '2022-01-27T01:57:27.605Z'
+//   }
+// ];
 
 type Props = {
   openModalRoute: (route: string) => void;
@@ -110,17 +116,25 @@ const DomainManagement = (props: Props) => {
     mailboxSelection,
     callToaster
   } = props;
+  const dispatch = useDispatch();
+  const domains = useSelector(selectAllDomains);
 
   const deleteDomain = (domain: string) => {
     domainSelection(domain);
     openModalRoute('domainDelete');
   };
 
+  useEffect(() => {
+    dispatch(fetchAllDomains());
+    console.log(domains);
+  }, []);
+
   const MailboxRow = (innerProps: MailboxProps) => {
     const { mailbox, mailboxIdx } = innerProps;
 
     return (
       <tr
+        key={mailbox.address}
         className={clsx(
           mailboxIdx === 0 ? 'border-gray-300' : 'border-gray-200',
           'border-t'
@@ -312,115 +326,124 @@ const DomainManagement = (props: Props) => {
                         </th>
                       </tr>
                     )}
-                    {domains.length > 0 &&
-                      domains.map(dm => (
-                        <Fragment key={dm}>
-                          <tr className="border-t  border-gray-200">
-                            <th
-                              colSpan={4}
-                              scope="colgroup"
-                              className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-left text-sm font-semibold text-gray-500"
+                    {domains.allIds.length > 0 &&
+                      domains.allIds
+                        .map(id => domains.byId[id])
+                        .map(dm => (
+                          <>
+                            <tr
+                              key={dm.name}
+                              className="border-t  border-gray-200"
                             >
-                              {/* <span className="text-sm text-gray-400">
+                              <th
+                                colSpan={4}
+                                scope="colgroup"
+                                className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-left text-sm font-semibold text-gray-500"
+                              >
+                                {/* <span className="text-sm text-gray-400">
                                 Domain:
                               </span> */}
 
-                              {` ${dm.name}`}
-                            </th>
-                            <th
-                              colSpan={1}
-                              className="border-b border-gray-200 bg-gray-50 py-2 px-3 text-xs font-medium text-gray-400 text-left"
-                            >
-                              <div className="flex flex-row items-center">
-                                <span className="flex h-2 w-2 relative">
+                                {` ${dm.name}`}
+                              </th>
+                              <th
+                                colSpan={1}
+                                className="border-b border-gray-200 bg-gray-50 py-2 px-3 text-xs font-medium text-gray-400 text-left"
+                              >
+                                <div className="flex flex-row items-center">
+                                  <span className="flex h-2 w-2 relative">
+                                    <span
+                                      className={clsx(
+                                        dm.status === 'pending' &&
+                                          'bg-yellow-400',
+                                        dm.status === 'verified' &&
+                                          'bg-green-400',
+                                        dm.status === 'error' && 'bg-red-400',
+                                        'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75'
+                                      )}
+                                    />
+                                    <span
+                                      className={clsx(
+                                        dm.status === 'pending' &&
+                                          'bg-yellow-500',
+                                        dm.status === 'verified' &&
+                                          'bg-green-500',
+                                        dm.status === 'error' && 'bg-red-500',
+                                        'relative inline-flex rounded-full h-2 w-2 border'
+                                      )}
+                                    />
+                                  </span>
+                                  <span className="ml-2 capitalize">
+                                    {dm.status}
+                                  </span>
+                                </div>
+                              </th>
+                              <th
+                                colSpan={1}
+                                className="border-b border-gray-200 bg-gray-50 py-2 px-3 text-xs font-medium text-gray-400 text-left"
+                              >
+                                <div className="flex flex-row items-center">
+                                  <span className="flex h-2 w-2 relative">
+                                    <span
+                                      className={clsx(
+                                        dm.active && 'bg-green-400',
+                                        'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75'
+                                      )}
+                                    />
+                                    <span
+                                      className={clsx(
+                                        dm.active && 'bg-green-500',
+                                        dm.active === false && 'bg-gray-300',
+                                        'relative inline-flex rounded-full h-2 w-2 border'
+                                      )}
+                                    />
+                                  </span>
                                   <span
                                     className={clsx(
-                                      dm.status === 'pending' &&
-                                        'bg-yellow-400',
-                                      dm.status === 'verified' &&
-                                        'bg-green-400',
-                                      dm.status === 'error' && 'bg-red-400',
-                                      'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75'
+                                      'ml-2 capitalize',
+                                      dm.active === false && 'text-gray-300'
                                     )}
+                                  >
+                                    {dm.active && 'Yes'}
+                                    {dm.active === false && 'No'}
+                                  </span>
+                                </div>
+                              </th>
+                              <th
+                                colSpan={1}
+                                className="border-b border-gray-200 bg-gray-50 relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium w-[70px]"
+                              >
+                                <div className="flex flex-row justify-end">
+                                  <Edit
+                                    set="broken"
+                                    size="small"
+                                    className="hover:text-blue-500"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => {}}
                                   />
-                                  <span
-                                    className={clsx(
-                                      dm.status === 'pending' &&
-                                        'bg-yellow-500',
-                                      dm.status === 'verified' &&
-                                        'bg-green-500',
-                                      dm.status === 'error' && 'bg-red-500',
-                                      'relative inline-flex rounded-full h-2 w-2 border'
-                                    )}
+                                  <span className="mx-1" />
+                                  <Delete
+                                    set="broken"
+                                    size="small"
+                                    className="hover:text-red-500"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => deleteDomain(dm.name)}
                                   />
-                                </span>
-                                <span className="ml-2 capitalize">
-                                  {dm.status}
-                                </span>
-                              </div>
-                            </th>
-                            <th
-                              colSpan={1}
-                              className="border-b border-gray-200 bg-gray-50 py-2 px-3 text-xs font-medium text-gray-400 text-left"
-                            >
-                              <div className="flex flex-row items-center">
-                                <span className="flex h-2 w-2 relative">
-                                  <span
-                                    className={clsx(
-                                      dm.active && 'bg-green-400',
-                                      'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75'
-                                    )}
-                                  />
-                                  <span
-                                    className={clsx(
-                                      dm.active && 'bg-green-500',
-                                      dm.active === false && 'bg-gray-300',
-                                      'relative inline-flex rounded-full h-2 w-2 border'
-                                    )}
-                                  />
-                                </span>
-                                <span className={clsx("ml-2 capitalize", dm.active === false && 'text-gray-300')}>
-                                  {dm.active && "Yes"}
-                                  {dm.active === false && "No"}
-
-                                </span>
-                              </div>
-                            </th>
-                            <th
-                              colSpan={1}
-                              className="border-b border-gray-200 bg-gray-50 relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium w-[70px]"
-                            >
-                              <div className="flex flex-row justify-end">
-                                <Edit
-                                  set="broken"
-                                  size="small"
-                                  className="hover:text-blue-500"
-                                  style={{ cursor: 'pointer' }}
-                                  onClick={() => {}}
+                                </div>
+                              </th>
+                            </tr>
+                            {mailboxes
+                              .filter(f => f.domain === dm.name)
+                              .sort(sortingHat('en', 'alias'))
+                              .map((mailbox, mailboxIdx) => (
+                                <MailboxRow
+                                  mailbox={mailbox}
+                                  mailboxIdx={mailboxIdx}
+                                  key={mailbox.address}
                                 />
-                                <span className="mx-1" />
-                                <Delete
-                                  set="broken"
-                                  size="small"
-                                  className="hover:text-red-500"
-                                  style={{ cursor: 'pointer' }}
-                                  onClick={() => deleteDomain(dm.name)}
-                                />
-                              </div>
-                            </th>
-                          </tr>
-                          {mailboxes
-                            .filter(f => f.domain === dm.name)
-                            .sort(sortingHat('en', 'alias'))
-                            .map((mailbox, mailboxIdx) => (
-                              <MailboxRow
-                                mailbox={mailbox}
-                                mailboxIdx={mailboxIdx}
-                                key={mailbox.address}
-                              />
-                            ))}
-                        </Fragment>
-                      ))}
+                              ))}
+                          </>
+                        ))}
                   </tbody>
                 </table>
               </div>
