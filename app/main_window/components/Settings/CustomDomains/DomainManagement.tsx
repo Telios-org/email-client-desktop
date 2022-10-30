@@ -14,6 +14,7 @@ import { Edit, Delete, Paper } from 'react-iconly';
 import { BsArrowRepeat } from 'react-icons/bs';
 
 // SELECTORS
+import { useTheme } from '@bigheads/core/dist/themeContext';
 import { selectAllDomains } from '../../../selectors/domains';
 
 // ACTION CREATORS
@@ -21,6 +22,7 @@ import { fetchAllDomains } from '../../../actions/domains/domains';
 
 // INTERNAL COMPONENTS
 import { Button } from '../../../../global_components/button';
+import { VerificationStatus } from '../../../../global_components/status';
 
 // INTERNAL HELPER FUNCTIONS
 import sortingHat from '../../../../utils/helpers/sort';
@@ -118,10 +120,33 @@ const DomainManagement = (props: Props) => {
   } = props;
   const dispatch = useDispatch();
   const domains = useSelector(selectAllDomains);
+  const [loading, setLoader] = useState(false);
 
   const deleteDomain = (domain: string) => {
     domainSelection(domain);
     openModalRoute('domainDelete');
+  };
+
+  const getDomainLabel = (active, status) => {
+    if (active && status) {
+      return 'verified';
+    }
+
+    if (!active && status) {
+      return 'pending';
+    }
+
+    if (!active && !status) {
+      return 'unverified';
+    }
+  };
+
+  const getAllDomains = async () => {
+    setLoader(true);
+    await dispatch(fetchAllDomains());
+    setTimeout(() => {
+      setLoader(false);
+    }, 3000);
   };
 
   useEffect(() => {
@@ -213,7 +238,9 @@ const DomainManagement = (props: Props) => {
         <div className="flex flex-row">
           <Button
             type="button"
-            onClick={() => {}}
+            onClick={getAllDomains}
+            loading={loading}
+            loadingText="Checking Status"
             variant="outline"
             className="pt-2 pb-2 text-sm font-medium bg-white"
           >
@@ -329,6 +356,12 @@ const DomainManagement = (props: Props) => {
                     {domains.allIds.length > 0 &&
                       domains.allIds
                         .map(id => domains.byId[id])
+                        .map(dom => {
+                          return {
+                            ...dom,
+                            label: getDomainLabel(dom.active, dom.status)
+                          };
+                        })
                         .map(dm => (
                           <>
                             <tr
@@ -350,33 +383,10 @@ const DomainManagement = (props: Props) => {
                                 colSpan={1}
                                 className="border-b border-gray-200 bg-gray-50 py-2 px-3 text-xs font-medium text-gray-400 text-left"
                               >
-                                <div className="flex flex-row items-center">
-                                  <span className="flex h-2 w-2 relative">
-                                    <span
-                                      className={clsx(
-                                        dm.status === 'pending' &&
-                                          'bg-yellow-400',
-                                        dm.status === 'verified' &&
-                                          'bg-green-400',
-                                        dm.status === 'error' && 'bg-red-400',
-                                        'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75'
-                                      )}
-                                    />
-                                    <span
-                                      className={clsx(
-                                        dm.status === 'pending' &&
-                                          'bg-yellow-500',
-                                        dm.status === 'verified' &&
-                                          'bg-green-500',
-                                        dm.status === 'error' && 'bg-red-500',
-                                        'relative inline-flex rounded-full h-2 w-2 border'
-                                      )}
-                                    />
-                                  </span>
-                                  <span className="ml-2 capitalize">
-                                    {dm.status}
-                                  </span>
-                                </div>
+                                <VerificationStatus
+                                  status={dm.label}
+                                  className="text-xs"
+                                />
                               </th>
                               <th
                                 colSpan={1}

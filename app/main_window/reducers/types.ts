@@ -275,9 +275,8 @@ export type MailType = {
 
 export type DomainType = {
   name: string;
-  cNameRecord: string;
-  description: string;
-  status: 'pending' | 'verified' | 'error';
+  status: boolean;
+  active: boolean;
   createdDate: string;
   lastUpdated: string;
 };

@@ -36,13 +36,22 @@ export const addCustomDomain = (domain: string) => {
     try {
       console.log(domain);
       result = await DomainService.register(domain);
+
       console.log(result);
     } catch (error) {
       dispatch(addDomainFailure(error));
       return error;
     }
 
-    // dispatch(addDomainSuccess(result));
+    const created = {
+      active: false,
+      createdAt: new Date().toISOString(),
+      name: domain,
+      updatedAt: new Date().toISOString(),
+      verified: false
+    };
+
+    dispatch(addDomainSuccess(created));
 
     return result;
   };

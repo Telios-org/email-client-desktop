@@ -13,6 +13,7 @@ import { ExclamationIcon, LightningBoltIcon } from '@heroicons/react/outline';
 
 // REDUX ACTION
 import { deleteDomain } from '../../../../actions/domains/domains';
+import { IFRAME_CLASS } from '../../../../../composer_window/components/editor/editor.config';
 
 type Props = {
   close: (isSuccess: boolean, message: string) => void;
@@ -27,9 +28,14 @@ const DomainDelete = forwardRef((props: Props, ref) => {
 
   const handleDeleteDomain = async () => {
     setLoader(true);
-    await dispatch(deleteDomain(domain));
+    const res = await dispatch(deleteDomain(domain));
     setLoader(false);
-    close(true, 'Domain Deleted!');
+
+    if (res.error) {
+      close(true, res?.error?.message);
+    } else {
+      close(true, 'Domain Deleted!');
+    }
   };
 
   return (
@@ -55,12 +61,10 @@ const DomainDelete = forwardRef((props: Props, ref) => {
             <p className="leading-relaxed">
               Your domain
 {' '}
-              <span className="text-purple-600 font-medium">{domain}</span>
-{' '}
-and
+              <span className="text-purple-600 font-medium">{domain}</span> and
               all depending mailboxes will be removed from your account. All
               data will be erased and cannot be recovered.
-</p>
+            </p>
             {/* <p className="text-xs">
                 You can recreate this alias only through the app (as opposed to
                 "on the fly creation").

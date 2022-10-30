@@ -145,7 +145,6 @@ const CustomDomains = () => {
                         />
                       </Transition.Child>
                     )}
-                    )}
                   </div>
                 </div>
               </Dialog>

@@ -5,13 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dialog, Tab } from '@headlessui/react';
 import { GlobeIcon, LightningBoltIcon } from '@heroicons/react/outline';
 import { InformationCircleIcon } from '@heroicons/react/solid';
-import { Paper } from 'react-iconly';
 import clsx from 'clsx';
 
 // INTERNAL COMPONENT
 import { domain } from 'process';
 import { Button } from '../../../../../global_components/button';
-import { Input } from '../../../../../global_components/input-groups';
+import {
+  Input,
+  ReadOnlyWithCopy
+} from '../../../../../global_components/input-groups';
 import { VerificationStatus } from '../../../../../global_components/status';
 
 // SERVICE
@@ -29,8 +31,6 @@ import i18n from '../../../../../i18n/i18n';
 
 import { validateString } from '../../../../../utils/helpers/regex';
 
-const { clipboard } = require('electron');
-
 type Props = {
   close: (isSuccess: boolean, message: string, show?: boolean) => void;
 };
@@ -41,22 +41,24 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
   const { close } = props;
   const dispatch = useDispatch();
   const [loading, setLoader] = useState(false);
-  const [copyText, setCopyText] = useState('Copy');
   const [validationLoader, setValidationLoader] = useState(false);
-  const [cnameLoader, setcnameLoader] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const {
     handleChange,
     manualChange,
     handleSubmit,
+    bulkChange,
+    setErrors,
     data: form,
     errors
   } = useForm({
     initialValues: {
       domain: '',
       status: 'unverified',
-      ownershipRecord: '',
+      verificationRecords: [],
+      ownership: false,
+      dns: {},
       domainAdded: false
     },
     validationDebounce: 500,
@@ -70,27 +72,39 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
           isValid: async (value, data) => {
             const res = await Domain.isAvailable(value);
             console.log(res);
-            return res;
+            if (res === true) {
+              return true;
+            }
+
+            if (res.status === 409) {
+              return false;
+            }
           },
           message: 'Domain already in use'
         }
       }
     },
     onSubmit: async data => {
-        console.log(data.domain)
-        dispatch(addCustomDomain(data.domain));
+      setLoader(true);
+      const res = await dispatch(addCustomDomain(data.domain));
+      console.log(res);
+      setLoader(false);
+      if (res.verification) {
+        bulkChange({
+          verification: res.verification,
+          domainAdded: true
+        });
+      } else {
+        setErrors({
+          domain: 'Something went wrong!'
+        });
+      }
     }
   });
 
-  const handleCopy = (value: string) => {
-    clipboard.writeText(value ?? '');
-    setCopyText('Copied!');
-  };
-
-  const resetCopy = () => {
-    if (copyText === 'Copied!') {
-      setCopyText('Copy');
-    }
+  const handleNext = () => {
+    console.log('clicking next');
+    setSelectedIndex((selectedIndex + 1) % 3);
   };
 
   const onDomainChange = e => {
@@ -105,17 +119,32 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
     )(e);
   };
 
-  const fetchCNAME = () => {
-    setcnameLoader(true);
-    // FUNCTION TO FETCH CNAME HERE
-    manualChange('cnameRecord', 'VALUE HERE');
-    setcnameLoader(false);
+  const verifyOwnership = async () => {
+    setLoader(true);
+    const res = await Domain.verifyOwnership(form.domain);
+    console.log(res);
+    if (res) {
+      manualChange('ownership', true);
+      const dns = await Domain.verifyDNS(form.domain);
+      setLoader(false);
+    } else {
+      setErrors({
+        ownership: 'Ownership Not verified. It may take some time.'
+      });
+    }
+  };
+
+  const verifyDNS = async () => {
+    setLoader(true);
+    const dns = await Domain.verifyDNS(form.domain);
+    manualChange('verificationRecords', dns);
+    setLoader(false);
   };
 
   return (
     <Dialog.Panel
       ref={ref}
-      className="w-full max-w-2xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all"
+      className="w-full max-w-4xl transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all"
     >
       <Dialog.Title
         as="h3"
@@ -132,7 +161,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
         </p>
         <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
           <Tab.List className="border-b border-gray-200 flex space-x-8 text-sm">
-            {tabs.map(tab => (
+            {tabs.map((tab, idx) => (
               <Tab
                 key={tab}
                 className={({ selected }) =>
@@ -141,8 +170,8 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                       ? 'border-sky-500 text-sky-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                     'whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm outline-none'
-                  )
-                }
+                  )}
+                disabled={idx !== 0 && !form.domainAdded}
               >
                 {tab}
               </Tab>
@@ -166,39 +195,203 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                     }
                     showLoader={validationLoader}
                   />
-                  <div className="self-end">
-                    <Button
-                      type="button"
-                      onClick={handleSubmit}
-                      variant="secondary"
-                      className="pt-2 pb-2"
-                      loading={cnameLoader}
-                      disabled={
-                        errors.domain ||
-                        form.domain.length === 0 ||
-                        form.domainAdded
-                      }
-                    >
-                      ADD DOMAIN
-                    </Button>
+                  {!form.domainAdded && (
+                    <div className="self-end">
+                      <Button
+                        type="button"
+                        onClick={handleSubmit}
+                        variant="secondary"
+                        className="pt-2 pb-2"
+                        loading={loading}
+                        disabled={form.domain.length === 0 || form.domainAdded}
+                      >
+                        Add Domain
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                {form.domainAdded && (
+                  <div>
+                    <p className="text-sm pl-1 pb-2">
+                      The statuses below indicate whether or not your domain is
+                      ready for use. To fully configure your domain click
+{' '}
+                      <b>Next</b> and follow the rest of the setup.
+                    </p>
+                    <div className="grid grid-cols-5 pl-1 pt-2">
+                      <VerificationStatus
+                        status={form.ownership ? 'verified' : 'unverified'}
+                        label="Ownership"
+                        className="text-sm"
+                      />
+                      <VerificationStatus
+                        status={
+                          form.verificationRecords[0]?.verified
+                            ? 'verified'
+                            : 'unverified'
+                        }
+                        label="MX"
+                        className="text-sm"
+                      />
+                      <VerificationStatus
+                        status={
+                          form.verificationRecords[1]?.verified
+                            ? 'verified'
+                            : 'unverified'
+                        }
+                        label="SPF"
+                        className="text-sm"
+                      />
+                      <VerificationStatus
+                        status={
+                          form.verificationRecords[2]?.verified
+                            ? 'verified'
+                            : 'unverified'
+                        }
+                        label="DKIM"
+                        className="text-sm"
+                      />
+                      <VerificationStatus
+                        status={
+                          form.verificationRecords[3]?.verified
+                            ? 'verified'
+                            : 'unverified'
+                        }
+                        label="DMARC"
+                        className="text-sm"
+                      />
+                    </div>
                   </div>
-                </div>
-                <p className="text-sm pl-1 pb-2">
-                  The statuses below indicate whether or not your domain is
-                  ready for use. To fully configure your domain click next and
-                  follow the rest of the setup.
-                </p>
-                <div className="grid grid-cols-5 pl-1">
-                  <VerificationStatus status={form.status} label="Ownership" />
-                  <VerificationStatus status={form.status} label="DKIM" />
-                  <VerificationStatus status={form.status} label="SPF" />
-                  <VerificationStatus status={form.status} label="MX" />
-                  <VerificationStatus status={form.status} label="DMARC" />
-                </div>
+                )}
               </div>
             </Tab.Panel>
-            <Tab.Panel className="outline-none">Content 2</Tab.Panel>
-            <Tab.Panel className="outline-none">Content 3</Tab.Panel>
+            <Tab.Panel className="outline-none">
+              <>
+                <div className="my-1 border-l-4 border-sky-400 bg-sky-50 p-4">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <InformationCircleIcon
+                        className="h-5 w-5 text-sky-400"
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-sky-700">
+                        It may take 
+{' '}
+<b>up to a day</b> for changes to DNS
+                        records to take effect.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <p className="py-2">
+                  Log into your domain provider and add the following record to
+                  your DNS settings.
+                </p>
+                <div className="flex flex-row space-x-2  mb-2">
+                  <VerificationStatus
+                    status={form.ownership ? 'verified' : 'unverified'}
+                    label="Status"
+                    className="text-sm"
+                  />
+                  <ReadOnlyWithCopy
+                    label="Type"
+                    value={form.verification?.type}
+                    valueClassName="h-full"
+                    className="h-auto"
+                  />
+                  <ReadOnlyWithCopy
+                    label="Name"
+                    value={form.verification?.name}
+                    valueClassName="h-full"
+                    className="h-auto"
+                  />
+                  <ReadOnlyWithCopy
+                    label="Value"
+                    value={form.verification?.value}
+                  />
+                  <Button
+                    className="pt-1 pb-1 whitespace-nowrap mt-7"
+                    variant="outline"
+                    loading={loading}
+                    onClick={verifyOwnership}
+                  >
+                    Check
+                  </Button>
+                </div>
+
+                <div className="relative">
+                  <p className="pt-4">
+                    Once you have entered the DNS record in your domain
+                    provider, you can verify your ownership.
+                  </p>
+                  <div className="absolute -bottom-6 flex items-center justify-start text-xs">
+                    <div className="text-red-600">{errors?.ownership}</div>
+                  </div>
+                </div>
+              </>
+            </Tab.Panel>
+            <Tab.Panel className="outline-none">
+              <p>
+                Once you have verified your ownership, you must enter 4 more DNS
+                Records in your domain provider's portal.
+              </p>
+              {form.verificationRecords.length === 0 && (
+                <div className="text-red-500 w-full text-center mt-4">
+                  Ownership not yet verified!
+                </div>
+              )}
+              <div className="grid grid-cols-8 gap-2 mt-4">
+                {form.verificationRecords.map((vr, idx) => (
+                  <>
+                    <div className="col-span-1">
+                      <VerificationStatus
+                        status={vr.verified ? 'verified' : 'unverified'}
+                        label={idx === 0 ? 'Status' : null}
+                        className="text-sm h-full"
+                      />
+                    </div>
+                    <div className="col-span-1">
+                      <ReadOnlyWithCopy
+                        label={idx === 0 ? 'Type' : null}
+                        value={vr.type}
+                        className="max-w-none"
+                        valueClassName="h-full"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <ReadOnlyWithCopy
+                        label={idx === 0 ? 'Name' : null}
+                        value={vr.name}
+                        className="max-w-none"
+                        valueClassName="h-full"
+                      />
+                    </div>
+                    <div className="col-span-3">
+                      <ReadOnlyWithCopy
+                        label={idx === 0 ? 'Value' : null}
+                        className="max-w-none"
+                        value={vr.value}
+                      />
+                    </div>
+                    <div className="col-span-1">
+                      <Button
+                        className={clsx(
+                          idx === 0 ? 'mt-7' : 'mt-2',
+                          'pt-2 pb-2 whitespace-nowrap'
+                        )}
+                        variant="outline"
+                        loading={loading}
+                        onClick={verifyDNS}
+                      >
+                        Check
+                      </Button>
+                    </div>
+                  </>
+                ))}
+              </div>
+            </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
       </div>
@@ -224,13 +417,27 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
           >
             Close
           </Button>
-          <Button
-            type="button"
-            variant="primary"
-            className="pt-2 pb-2 whitespace-nowrap"
-          >
-            Next
-          </Button>
+          {selectedIndex === 2 && (
+            <Button
+              type="button"
+              variant="primary"
+              className="pt-2 pb-2 whitespace-nowrap"
+              onClick={() => close(false, '', false)}
+            >
+              Done
+            </Button>
+          )}
+          {selectedIndex !== 2 && (
+            <Button
+              type="button"
+              variant="primary"
+              className="pt-2 pb-2 whitespace-nowrap"
+              disabled={!form.domainAdded}
+              onClick={() => handleNext()}
+            >
+              Next
+            </Button>
+          )}
         </div>
       </div>
     </Dialog.Panel>
