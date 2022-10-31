@@ -135,18 +135,42 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
 
   const verifyOwnership = async () => {
     setLoader(true);
-    const res = await Domain.verifyOwnership(form.domain);
-    if (res) {
-      manualChange('vcode', {
-        ...form.vcode,
-        verified: true
+    let res;
+    try {
+      res = await Domain.verifyOwnership(form.domain);
+    } catch (error) {
+      console.log(error);
+      setErrors({
+        vcode: `domain:verifyOwnership -- ${error.message}`
       });
+      setLoader(false);
+      return;
+    }
+
+    if (res) {
+      let dns;
       try {
-        const dns = await Domain.verifyDNS(form.domain);
+        dns = await Domain.verifyDNS(form.domain);
         console.log(dns);
       } catch (error) {
         console.log(error);
+        setErrors({
+          vcode: `domain:verifyDNS -- ${error.message}`
+        });
+        setLoader(false);
+        return;
       }
+
+      bulkChange({
+        dns: {
+          ...form.dns,
+          ...dns
+        },
+        vcode: {
+          ...form.vcode,
+          verified: true
+        }
+      });
     } else {
       setErrors({
         vcode: 'Ownership Not verified. It may take some time.'
@@ -225,8 +249,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                       ? 'border-sky-500 text-sky-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                     'whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm outline-none'
-                  )
-                }
+                  )}
                 disabled={
                   idx !== 0 &&
                   (!form.domainAdded || (idx === 2 && !form?.vcode?.verified))
@@ -275,10 +298,8 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                       The statuses below indicate whether or not your domain is
                       ready for use. To fully configure your domain click
 {' '}
-                      <b>Next</b>
-{' '}
-and follow the rest of the setup.
-</p>
+                      <b>Next</b> and follow the rest of the setup.
+                    </p>
                     <div className="grid grid-cols-5 pl-1 pt-2">
                       <VerificationStatus
                         status={form.vcode.verified ? 'verified' : 'unverified'}
