@@ -282,7 +282,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                       <Button
                         type="button"
                         onClick={handleSubmit}
-                        variant="secondary"
+                        variant="primary"
                         className="pt-2 pb-2"
                         loading={loading}
                         disabled={form.domain.length === 0 || form.domainAdded}
@@ -493,7 +493,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
           {selectedIndex === 2 && (
             <Button
               type="button"
-              variant="primary"
+              variant="secondary"
               className="pt-2 pb-2 whitespace-nowrap"
               onClick={() => close(false, '', false)}
             >
@@ -503,7 +503,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
           {selectedIndex !== 2 && (
             <Button
               type="button"
-              variant="primary"
+              variant="secondary"
               className="pt-2 pb-2 whitespace-nowrap"
               disabled={
                 !form.domainAdded ||

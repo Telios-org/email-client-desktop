@@ -34,6 +34,9 @@ import { registerAlias } from '../../../../actions/mailbox/aliases';
 import classNames from '../../../../../utils/helpers/css';
 import generateRandomString from '../../../../../utils/helpers/generators';
 
+// INTERNAL COMPONENTS
+import { Button } from '../../../../../global_components/button';
+
 type Props = {
   close: (isSuccess: boolean, message: string, show?: boolean) => void;
   domain: string;
@@ -153,7 +156,6 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
   };
 
   useEffect(() => {
-
     const fn = async () => {
       if (namespaces.allIds.length > 0) {
         await bulkChange({
@@ -274,43 +276,25 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
             </div>
           </div>
           <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-4">
-            <button
-              type="button"
-              onClick={() => close(false, '', false)}
-              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 mr-3"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep('setup')}
-              className="relative bg-gradient-to-bl from-sky-600 to-sky-500 disabled:from-gray-300 disabled:to-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-700"
-            >
-              <span className={`${loading ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="flex flex-row space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="pt-2 pb-2"
+                onClick={() => close(false, '', false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                className="pt-2 pb-2 whitespace-nowrap"
+                onClick={() => setStep('setup')}
+                loading={loading}
+              >
                 Next
-              </span>
-              <span className={`${loading ? 'visible' : 'invisible'} absolute`}>
-                <svg
-                  className="animate-spin h-5 w-5 text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-              </span>
-            </button>
+              </Button>
+            </div>
           </div>
         </>
       )}
@@ -784,46 +768,25 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                 Select Type
               </button>
             </div>
-            <div>
-              <button
+
+            <div className="flex flex-row space-x-2">
+              <Button
                 type="button"
+                variant="outline"
+                className="pt-2 pb-2"
                 onClick={() => close(false, '', false)}
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 mr-3"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="secondary"
+                className="pt-2 pb-2 whitespace-nowrap"
                 onClick={handleSubmit}
-                className="relative bg-gradient-to-bl from-purple-600 to-purple-500 disabled:from-gray-300 disabled:to-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-700"
+                loading={loading}
               >
-                <span className={`${loading ? 'opacity-0' : 'opacity-100'}`}>
-                  Register
-                </span>
-                <span
-                  className={`${loading ? 'visible' : 'invisible'} absolute`}
-                >
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                </span>
-              </button>
+                Register
+              </Button>
             </div>
           </div>
         </>

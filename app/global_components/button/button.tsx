@@ -26,7 +26,7 @@ const styles = {
   },
   dangerous: {
     btn:
-      'w-full flex justify-center px-6 py-3 rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-600 border border-gray-300 bg-gradient-to-tr bg-red-600 hover:bg-red-700 ',
+      'w-full flex justify-center px-6 py-3 rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 border border-gray-300 bg-gradient-to-tr bg-red-600 hover:bg-red-700 ',
     spinner: 'text-white'
   }
 };
