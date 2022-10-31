@@ -172,9 +172,9 @@ const Input = (props: Props) => {
               addonPosition === 'left' && 'rounded-none rounded-r-md',
               addonPosition === 'right' && 'rounded-none rounded-l-md',
               !addonPosition && 'rounded-md',
-              (isValid !== undefined ||
+              ((isValid !== undefined && activityPosition === 'left') ||
                 icon !== 'none' ||
-                (showLoader && activityPosition === 'left')) && activityPosition !== 'right' &&
+                (showLoader && activityPosition === 'left')) &&
                 'pl-10',
               `appearance-none block w-full px-3 py-2 border border-gray-300 
           placeholder-gray-400 focus:outline-none

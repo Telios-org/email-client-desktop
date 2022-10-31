@@ -114,6 +114,22 @@ const CustomDomains = () => {
                         />
                       </Transition.Child>
                     )}
+                    {modal === 'editDomainRegistration' && (
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0 scale-95"
+                        enterTo="opacity-100 scale-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100 scale-100"
+                        leaveTo="opacity-0 scale-95"
+                      >
+                        <DomainRegistration
+                          domain={domainSelection}
+                          close={closeModal}
+                        />
+                      </Transition.Child>
+                    )}
                     {modal === 'mailboxRegistration' && (
                       <Transition.Child
                         as={Fragment}

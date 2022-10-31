@@ -120,10 +120,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^6.2.5", "@telios/client-sdk@^6.3.7":
-  version "6.3.7"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.3.7.tgz#c9840d7702debd974c3a1e87648cb6377081de3c"
-  integrity sha512-Ft6S5ka5D3HPlwjar1iiZAwceik7q1I8Tj74vN192js5RyT/INO1+ZRhpaBcIbGM6M1jn/2gQtGQLQ5qM/HsKg==
+"@telios/client-sdk@^6.3.8":
+  version "6.3.8"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.3.8.tgz#c9ba4b1fe45409bbef69e70c3110a2604c261d10"
+  integrity sha512-ahaCyhabduhCvJDIqUMjdJaT6Cb0LgjxQHtb4GX6cBEGilqujcsKgGbrHW/jgul+5e4EfvxvQYfpgfrDHhcJ/g==
   dependencies:
     "@telios/nebula" "^3.4.9"
     async "^3.2.0"
@@ -231,10 +231,10 @@
 
 "@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#custom-domains":
   version "5.1.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#d92c4266f8c4aa64dfb7d0eba9f623f89b146a2e"
+  resolved "https://github.com/Telios-org/telios-client-backend.git#89a81589faebc42c905b9241bcf7c287c98eabde"
   dependencies:
     "@hyperswarm/dht" "5.0.17"
-    "@telios/client-sdk" "^6.3.7"
+    "@telios/client-sdk" "^6.3.8"
     "@telios/nebula" "^3.4.13"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate.git"
     blakejs "^1.2.1"

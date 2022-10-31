@@ -9,6 +9,7 @@ import clsx from 'clsx';
 
 // INTERNAL COMPONENT
 import { domain } from 'process';
+import { fromBuffer } from 'file-type';
 import { Button } from '../../../../../global_components/button';
 import {
   Input,
@@ -32,13 +33,14 @@ import i18n from '../../../../../i18n/i18n';
 import { validateString } from '../../../../../utils/helpers/regex';
 
 type Props = {
+  domain?: string;
   close: (isSuccess: boolean, message: string, show?: boolean) => void;
 };
 
 const tabs = ['Add Domain', 'Ownership Verification', 'DNS Verification'];
 
 const DomainRegistration = forwardRef((props: Props, ref) => {
-  const { close } = props;
+  const { close, domain = null } = props;
   const dispatch = useDispatch();
   const [loading, setLoader] = useState(false);
   const [validationLoader, setValidationLoader] = useState(false);
@@ -55,10 +57,23 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
   } = useForm({
     initialValues: {
       domain: '',
-      status: 'unverified',
-      verificationRecords: [],
-      ownership: false,
-      dns: {},
+      vcode: {
+        verified: false
+      },
+      dns: {
+        mx: {
+          verified: false
+        },
+        spf: {
+          verified: false
+        },
+        dkim: {
+          verified: false
+        },
+        dmarc: {
+          verified: false
+        }
+      },
       domainAdded: false
     },
     validationDebounce: 500,
@@ -89,9 +104,9 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
       const res = await dispatch(addCustomDomain(data.domain));
       console.log(res);
       setLoader(false);
-      if (res.verification) {
+      if (res?.dns?.vcode) {
         bulkChange({
-          verification: res.verification,
+          vcode: res?.dns?.vcode,
           domainAdded: true
         });
       } else {
@@ -103,7 +118,6 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
   });
 
   const handleNext = () => {
-    console.log('clicking next');
     setSelectedIndex((selectedIndex + 1) % 3);
   };
 
@@ -122,24 +136,65 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
   const verifyOwnership = async () => {
     setLoader(true);
     const res = await Domain.verifyOwnership(form.domain);
-    console.log(res);
     if (res) {
-      manualChange('ownership', true);
-      const dns = await Domain.verifyDNS(form.domain);
-      setLoader(false);
+      manualChange('vcode', {
+        ...form.vcode,
+        verified: true
+      });
+      try {
+        const dns = await Domain.verifyDNS(form.domain);
+        console.log(dns);
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       setErrors({
-        ownership: 'Ownership Not verified. It may take some time.'
+        vcode: 'Ownership Not verified. It may take some time.'
       });
     }
+    setLoader(false);
   };
 
   const verifyDNS = async () => {
     setLoader(true);
     const dns = await Domain.verifyDNS(form.domain);
-    manualChange('verificationRecords', dns);
+    manualChange('dns', dns);
     setLoader(false);
   };
+
+  useEffect(() => {
+    if (domain && domain.length > 0) {
+      const getData = async () => {
+        console.log(domain);
+        const res = await Domain.getByName(domain);
+        console.log('GET DATA', domain);
+        bulkChange({
+          domain,
+          vcode: res.dns?.vcode,
+          dns: {
+            mx: {
+              ...form.dns.mx,
+              ...res.dns?.mx
+            },
+            spf: {
+              ...form.dns.spf,
+              ...res.dns?.spf
+            },
+            dkim: {
+              ...form.dns.dkim,
+              ...res.dns?.dkim
+            },
+            dmarc: {
+              ...form.dns.dmarc,
+              ...res.dns?.dmarc
+            }
+          },
+          domainAdded: true
+        });
+      };
+      getData();
+    }
+  }, [domain]);
 
   return (
     <Dialog.Panel
@@ -170,8 +225,12 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                       ? 'border-sky-500 text-sky-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                     'whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm outline-none'
-                  )}
-                disabled={idx !== 0 && !form.domainAdded}
+                  )
+                }
+                disabled={
+                  idx !== 0 &&
+                  (!form.domainAdded || (idx === 2 && !form?.vcode?.verified))
+                }
               >
                 {tab}
               </Tab>
@@ -216,46 +275,40 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                       The statuses below indicate whether or not your domain is
                       ready for use. To fully configure your domain click
 {' '}
-                      <b>Next</b> and follow the rest of the setup.
-                    </p>
+                      <b>Next</b>
+{' '}
+and follow the rest of the setup.
+</p>
                     <div className="grid grid-cols-5 pl-1 pt-2">
                       <VerificationStatus
-                        status={form.ownership ? 'verified' : 'unverified'}
+                        status={form.vcode.verified ? 'verified' : 'unverified'}
                         label="Ownership"
                         className="text-sm"
                       />
                       <VerificationStatus
                         status={
-                          form.verificationRecords[0]?.verified
-                            ? 'verified'
-                            : 'unverified'
+                          form.dns?.mx?.verified ? 'verified' : 'unverified'
                         }
                         label="MX"
                         className="text-sm"
                       />
                       <VerificationStatus
                         status={
-                          form.verificationRecords[1]?.verified
-                            ? 'verified'
-                            : 'unverified'
+                          form.dns?.spf?.verified ? 'verified' : 'unverified'
                         }
                         label="SPF"
                         className="text-sm"
                       />
                       <VerificationStatus
                         status={
-                          form.verificationRecords[2]?.verified
-                            ? 'verified'
-                            : 'unverified'
+                          form.dns?.dkim?.verified ? 'verified' : 'unverified'
                         }
                         label="DKIM"
                         className="text-sm"
                       />
                       <VerificationStatus
                         status={
-                          form.verificationRecords[3]?.verified
-                            ? 'verified'
-                            : 'unverified'
+                          form.dns?.dmarc?.verified ? 'verified' : 'unverified'
                         }
                         label="DMARC"
                         className="text-sm"
@@ -291,33 +344,30 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                 </p>
                 <div className="flex flex-row space-x-2  mb-2">
                   <VerificationStatus
-                    status={form.ownership ? 'verified' : 'unverified'}
+                    status={form.vcode.verified ? 'verified' : 'unverified'}
                     label="Status"
                     className="text-sm"
                   />
                   <ReadOnlyWithCopy
                     label="Type"
-                    value={form.verification?.type}
+                    value={form.vcode?.type}
                     valueClassName="h-full"
                     className="h-auto"
                   />
                   <ReadOnlyWithCopy
                     label="Name"
-                    value={form.verification?.name}
+                    value={form.vcode?.name}
                     valueClassName="h-full"
                     className="h-auto"
                   />
-                  <ReadOnlyWithCopy
-                    label="Value"
-                    value={form.verification?.value}
-                  />
+                  <ReadOnlyWithCopy label="Value" value={form.vcode?.value} />
                   <Button
                     className="pt-1 pb-1 whitespace-nowrap mt-7"
                     variant="outline"
                     loading={loading}
                     onClick={verifyOwnership}
                   >
-                    Check
+                    Verify
                   </Button>
                 </div>
 
@@ -327,7 +377,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                     provider, you can verify your ownership.
                   </p>
                   <div className="absolute -bottom-6 flex items-center justify-start text-xs">
-                    <div className="text-red-600">{errors?.ownership}</div>
+                    <div className="text-red-600">{errors?.vcode}</div>
                   </div>
                 </div>
               </>
@@ -337,59 +387,61 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
                 Once you have verified your ownership, you must enter 4 more DNS
                 Records in your domain provider's portal.
               </p>
-              {form.verificationRecords.length === 0 && (
+              {form.dns.length === 0 && (
                 <div className="text-red-500 w-full text-center mt-4">
                   Ownership not yet verified!
                 </div>
               )}
               <div className="grid grid-cols-8 gap-2 mt-4">
-                {form.verificationRecords.map((vr, idx) => (
-                  <>
-                    <div className="col-span-1">
-                      <VerificationStatus
-                        status={vr.verified ? 'verified' : 'unverified'}
-                        label={idx === 0 ? 'Status' : null}
-                        className="text-sm h-full"
-                      />
-                    </div>
-                    <div className="col-span-1">
-                      <ReadOnlyWithCopy
-                        label={idx === 0 ? 'Type' : null}
-                        value={vr.type}
-                        className="max-w-none"
-                        valueClassName="h-full"
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <ReadOnlyWithCopy
-                        label={idx === 0 ? 'Name' : null}
-                        value={vr.name}
-                        className="max-w-none"
-                        valueClassName="h-full"
-                      />
-                    </div>
-                    <div className="col-span-3">
-                      <ReadOnlyWithCopy
-                        label={idx === 0 ? 'Value' : null}
-                        className="max-w-none"
-                        value={vr.value}
-                      />
-                    </div>
-                    <div className="col-span-1">
-                      <Button
-                        className={clsx(
-                          idx === 0 ? 'mt-7' : 'mt-2',
-                          'pt-2 pb-2 whitespace-nowrap'
-                        )}
-                        variant="outline"
-                        loading={loading}
-                        onClick={verifyDNS}
-                      >
-                        Check
-                      </Button>
-                    </div>
-                  </>
-                ))}
+                {Object.keys(form.dns)
+                  .map(record => form.dns[record])
+                  .map((vr, idx) => (
+                    <>
+                      <div className="col-span-1">
+                        <VerificationStatus
+                          status={vr.verified ? 'verified' : 'unverified'}
+                          label={idx === 0 ? 'Status' : null}
+                          className="text-sm h-full"
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <ReadOnlyWithCopy
+                          label={idx === 0 ? 'Type' : null}
+                          value={vr.type}
+                          className="max-w-none"
+                          valueClassName="h-full"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <ReadOnlyWithCopy
+                          label={idx === 0 ? 'Name' : null}
+                          value={vr.name}
+                          className="max-w-none"
+                          valueClassName="h-full"
+                        />
+                      </div>
+                      <div className="col-span-3">
+                        <ReadOnlyWithCopy
+                          label={idx === 0 ? 'Value' : null}
+                          className="max-w-none"
+                          value={vr.value}
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <Button
+                          className={clsx(
+                            idx === 0 ? 'mt-7' : 'mt-2',
+                            'pt-2 pb-2 whitespace-nowrap'
+                          )}
+                          variant="outline"
+                          loading={loading}
+                          onClick={verifyDNS}
+                        >
+                          Verify
+                        </Button>
+                      </div>
+                    </>
+                  ))}
               </div>
             </Tab.Panel>
           </Tab.Panels>
@@ -432,7 +484,10 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
               type="button"
               variant="primary"
               className="pt-2 pb-2 whitespace-nowrap"
-              disabled={!form.domainAdded}
+              disabled={
+                !form.domainAdded ||
+                (selectedIndex === 1 && !form.vcode.verified)
+              }
               onClick={() => handleNext()}
             >
               Next

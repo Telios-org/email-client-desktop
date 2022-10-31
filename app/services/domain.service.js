@@ -51,7 +51,10 @@ class DomainService {
   }
 
   static async getByName(domain) {
-    channel.send({ event: 'domain:getDomainByName', payload: { domain } });
+    channel.send({
+      event: 'domain:getDomainByName',
+      payload: { name: domain }
+    });
     return new Promise((resolve, reject) => {
       channel.once('domain:getDomainByName:callback', m => {
         const { error, data } = m;

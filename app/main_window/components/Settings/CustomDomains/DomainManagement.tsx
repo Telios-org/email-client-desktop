@@ -127,6 +127,11 @@ const DomainManagement = (props: Props) => {
     openModalRoute('domainDelete');
   };
 
+  const editDomain = (domain: string) => {
+    domainSelection(domain);
+    openModalRoute('editDomainRegistration');
+  };
+
   const getDomainLabel = (active, status) => {
     if (active && status) {
       return 'verified';
@@ -359,7 +364,10 @@ const DomainManagement = (props: Props) => {
                         .map(dom => {
                           return {
                             ...dom,
-                            label: getDomainLabel(dom.active, dom.status)
+                            label: getDomainLabel(
+                              dom.active,
+                              dom.dns?.vcode?.verified ?? false
+                            )
                           };
                         })
                         .map(dm => (
@@ -429,7 +437,7 @@ const DomainManagement = (props: Props) => {
                                     size="small"
                                     className="hover:text-blue-500"
                                     style={{ cursor: 'pointer' }}
-                                    onClick={() => {}}
+                                    onClick={() => editDomain(dm.name)}
                                   />
                                   <span className="mx-1" />
                                   <Delete
