@@ -11,7 +11,7 @@ const VerificationStatus = (props: Props) => {
   const { status, label, className = '' } = props;
   return (
     <div className={clsx(className, 'flex flex-col')}>
-      <div className="font-medium text-slate-700 capitalize pb-1">{label}</div>
+      <div className="font-medium text-slate-700 capitalize">{label}</div>
       <div className="flex flex-row items-center pl-1 h-full">
         <span className="flex h-2 w-2 relative">
           <span
@@ -29,14 +29,14 @@ const VerificationStatus = (props: Props) => {
               status === 'verified' && 'bg-green-500',
               status === 'error' && 'bg-red-500',
               status === 'unverified' && 'bg-gray-300',
-              'relative inline-flex rounded-full h-2 w-2'
+              'relative inline-flex rounded-full h-2 w-2 border-gray-200 border'
             )}
           />
         </span>
         <span
           className={clsx(
             status === 'unverified' ? 'text-gray-300' : 'text-gray-400',
-            'ml-2 pb-0.5  capitalize'
+            'ml-2  capitalize'
           )}
         >
           {`${status}`}

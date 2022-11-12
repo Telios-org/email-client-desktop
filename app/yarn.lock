@@ -231,7 +231,7 @@
 
 "@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#custom-domains":
   version "5.1.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#89a81589faebc42c905b9241bcf7c287c98eabde"
+  resolved "https://github.com/Telios-org/telios-client-backend.git#0781cf957128acff22305a88cace03ed0c4bd089"
   dependencies:
     "@hyperswarm/dht" "5.0.17"
     "@telios/client-sdk" "^6.3.8"
@@ -275,9 +275,9 @@
     keyv "*"
 
 "@types/node@*":
-  version "18.11.7"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.7.tgz#8ccef136f240770c1379d50100796a6952f01f94"
-  integrity sha512-LhFTglglr63mNXUSRYD8A+ZAIu5sFqNJ4Y2fPuY7UlrySJH87rRRlhtVmMHplmfk5WkoJGmDjE9oiTfyX94CpQ==
+  version "18.11.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.8.tgz#16d222a58d4363a2a359656dd20b28414de5d265"
+  integrity sha512-uGwPWlE0Hj972KkHtCDVwZ8O39GmyjfMane1Z3GUBGGnkZ2USDq7SxLpVIiIHpweY9DS0QTDH0Nw7RNBsAAZ5A==
 
 "@types/node@11.11.6":
   version "11.11.6"

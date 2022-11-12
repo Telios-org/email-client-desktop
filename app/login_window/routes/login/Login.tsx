@@ -18,7 +18,7 @@ import i18n from '../../../i18n/i18n';
 
 // INTERNAL COMPONENT
 import IntroHeader from '../../window_components/IntroHeader';
-import { Dropdown } from '../../../global_components/menu';
+import { Dropdown } from '../../../global_components/dropdowns';
 import { Password } from '../../../global_components/input-groups';
 import { Button, NavButton } from '../../../global_components/button';
 import { Checkbox } from '../../../global_components/checkboxes';

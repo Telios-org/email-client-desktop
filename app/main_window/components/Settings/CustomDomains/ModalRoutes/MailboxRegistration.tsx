@@ -48,7 +48,18 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
         Add New Mailbox
       </Dialog.Title>
       <div className="px-6">
-       
+        <div className="text-sm">
+          <p className="text-sm text-center font-bold bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded max-w-md mx-auto">
+            <span className="text-purple-600">
+              mailbox1
+            </span>
+            @
+            <span className="text-sky-600">
+              mydomain.com
+            </span>
+            
+          </p>
+        </div>
       </div>
       <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-14">
         <div className="flex flex-row space-x-2">
