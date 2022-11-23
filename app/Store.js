@@ -1,5 +1,4 @@
 const ClientSDK = require('@telios/client-sdk');
-const Drive = require('@telios/nebula-drive');
 const fs = require('fs');
 const envAPI = require('./env_api.json');
 
@@ -33,26 +32,6 @@ class Store {
     this.matomo = null;
     // TODO: Retrieve this from remotely from server
     this.teliosPubKey = 'fa8932f0256a4233dde93195d24a6ae4d93cc133d966f3c9f223e555953c70c1';
-  }
-
-  setDrive({ name, keyPair, encryptionKey, acl = [] }) {
-    this.encryptionKey = encryptionKey
-    if(!Buffer.isBuffer(encryptionKey)) this.encryptionKey = Buffer.from(encryptionKey, 'hex')
-    
-    this.drive = new Drive(name, null, {
-      keyPair,
-      encryptionKey: this.encryptionKey,
-      swarmOpts: {
-        server: true,
-        client: true,
-        acl: [this.teliosPubKey, ...acl]
-      }
-    });
-    return this.drive;
-  }
-
-  getDrive() {
-    return this.drive;
   }
 
   setNewDraft(draft) {
