@@ -25,6 +25,7 @@ class LoginService {
   }
 
   static initAccount(password, email) {
+    console.log(password,email);
     return new Promise((resolve, reject) => {
       ipcRenderer
         .invoke('LOGIN_SERVICE::initAccount', { password, email })

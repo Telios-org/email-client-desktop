@@ -55,12 +55,13 @@ export default function MailPage() {
       // We don't always want the full state of the app to be refreshed
       if (fullSync) {
         dispatch(loadMailboxes(opts))
-          .then(() => {
+          .then(_data => {
             dispatch(fetchNewMessages())
               .then(() => {
                 setIsSyncInProgress(false);
                 return true;
               })
+
               .catch(error => {
                 console.log('ERROR ON FULLSYNC::', error);
                 setIsSyncInProgress(false);

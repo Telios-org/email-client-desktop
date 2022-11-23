@@ -6,25 +6,21 @@ import { usePopper } from 'react-popper';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import { Portal } from 'react-portal';
 import { Logout, Setting, User } from 'react-iconly';
+import { BigHead } from '@bigheads/core';
 
 // INTERNAL COMPONENTS
 import UserBubble from './CustomSVG/UserBubble';
+import stringToHslColor from '../../../../utils/avatar.util';
 
 // STATE SELECTORS
 import { selectActiveMailbox } from '../../../selectors/mail';
+import mail from '../../../reducers/mail';
 
 const { ipcRenderer } = require('electron');
 const pkg = require('../../../../package.json');
 
-const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' }
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+const AccountService = require('../../../../services/account.service');
+const LoginService = require('../../../../services/login.service');
 
 type Props = {
   onSelect: (eventKey: string) => void;
@@ -32,43 +28,107 @@ type Props = {
 
 const UserMenu = (props: Props) => {
   const { onSelect } = props;
+  // Current Account State
   const mailbox = useSelector(selectActiveMailbox);
   const account = useSelector(state => state.account);
   const [displayAddress, setDisplayAddress] = useState('');
   const [hasAvatar, setHasAvatar] = useState(false);
+
+  // Popup States
   const popperElRef = React.useRef(null);
   const [targetElement, setTargetElement] = React.useState(null);
   const [popperElement, setPopperElement] = React.useState(null);
   const { styles, attributes } = usePopper(targetElement, popperElement, {
-    placement: 'right-end',
+    placement: 'bottom-start',
     modifiers: [
       {
         name: 'offset',
         options: {
-          offset: [0, 20]
+          offset: [0, 5]
         }
       }
     ]
   });
 
+  // Account Switcher States
+  const mailboxes = useSelector(state => state.mail.mailboxes);
+  const [switcherData, setSwitcherData] = useState([]);
+
   useEffect(() => {
-    if (mailbox?.address?.length > 0) {
-      setDisplayAddress(mailbox.address);
-    } else if (mailbox?.name?.length > 0) {
+    if (mailbox?.name?.length > 0) {
       setDisplayAddress(mailbox.name);
+    } else if (mailbox?.address?.length > 0) {
+      setDisplayAddress(mailbox.address);
     }
   }, [mailbox]);
 
   useEffect(() => {
+    let acctType = account.type || 'PRIMARY';
+    if (account?.accountId === '63728e6e3bdeae38fabe6889') {
+      acctType = 'SUB';
+    }
+    let switcher = [];
+    if (acctType.toUpperCase() === 'PRIMARY' && mailboxes && mailbox?.address) {
+      const onDrive = AccountService.getSub(mailbox.address);
+      switcher = mailboxes.allIds
+        .map(m => {
+          const {
+            address,
+            password = account.password,
+            name,
+            avatar = account.avatar,
+            type = 'PRIMARY'
+          } = mailboxes.byId[m];
+          return {
+            address,
+            password,
+            name,
+            avatar,
+            type
+          };
+        })
+        .filter(
+          m =>
+            (onDrive.includes(m.address) && m.type === 'SUB') ||
+            m.type === 'PRIMARY'
+        );
+      // TEMP ADDIN
+      switcher.push({
+        address: 'theotheraccount@dev.telios.io',
+        password: 'let me in 123456',
+        name: 'The Other Account',
+        type: 'SUB'
+      });
+      // END
+      setSwitcherData(switcher);
+      console.log('SETTING DRIVE', switcher);
+      sessionStorage.setItem('AccountSwitcherData', JSON.stringify(switcher));
+    } else {
+      const rawData = sessionStorage.getItem('AccountSwitcherData') || '[]';
+      console.log('Pulling Session data', rawData);
+      setSwitcherData(JSON.parse(rawData));
+    }
+  }, [account, mailboxes, mailbox?.address]);
+
+  useEffect(() => {
     if (account?.avatar?.length > 0) {
       setHasAvatar(true);
-    }else{
+    } else {
       setHasAvatar(false);
     }
   }, [account]);
 
   const onSignout = async () => {
-    ipcRenderer.send('logout');
+    AccountService.logout();
+  };
+
+  const onSwitch = async mbox => {
+    console.log('SWITCHING', mbox);
+    // const res = await AccountService.logout(false);
+    // console.log(res);
+    const acct = await LoginService.initAccount(mbox.password, mbox.address);
+    console.log('New Account', acct);
+    ipcRenderer.send('accountSwitch');
   };
 
   return (
@@ -77,23 +137,33 @@ const UserMenu = (props: Props) => {
         <>
           <div
             ref={setTargetElement}
-            className="rounded-full shadow border border-gray-400/70"
+            className="rounded-full shadow border border-gray-400/70 z-50 relative"
+            style={{ cursor: 'pointer' }}
           >
             <Menu.Button
-              className={`max-w-xs flex items-center rounded-full text-sm focus:outline-none ${
+              className={`max-w-xs flex items-center rounded-full text-sm focus:outline-none relative${
                 open ? 'ring-2 ring-offset-2 ring-blue-300' : ''
               } `}
             >
               <span className="sr-only">Open user menu</span>
               {hasAvatar && (
                 <img
-                  className="h-8 w-8 rounded-full"
+                  className="h-7 w-7 rounded-full"
                   src={account.avatar}
                   alt=""
                 />
               )}
               {!hasAvatar && (
-                <UserBubble className="hover:text-purple-500 text-gray-400" />
+                <span
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full"
+                  style={{
+                    backgroundColor: stringToHslColor(displayAddress, 50, 50)
+                  }}
+                >
+                  <span className="text-sm font-medium leading-none text-white uppercase">
+                    {displayAddress.substring(0, 1)}
+                  </span>
+                </span>
               )}
             </Menu.Button>
           </div>
@@ -112,37 +182,118 @@ const UserMenu = (props: Props) => {
               >
                 <Menu.Items
                   static
-                  className="w-56 bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none"
+                  className="w-64 bg-white border border-gray-200 divide-y divide-gray-200 rounded-md shadow-lg outline-none"
                 >
-                  <div className="px-4 py-3">
-                    <p className="text-sm leading-5 flex justify-between">
-                      Signed in as
-                    </p>
-                    <p className="text-sm font-semibold leading-5 text-gray-900 truncate">
-                      {displayAddress}
-                    </p>
+                  <div className="px-4 py-4 flex flex-col">
+                    <div className="flex flex-row items-center">
+                      <div className="border border-gray-300 rounded-full">
+                        {hasAvatar && (
+                          <img
+                            className="h-9 w-9 rounded-full"
+                            src={account.avatar}
+                            alt=""
+                          />
+                        )}
+                        {!hasAvatar && (
+                          <div
+                            className="inline-flex h-9 w-9 rounded-full items-center justify-center"
+                            style={{
+                              backgroundColor: stringToHslColor(
+                                displayAddress,
+                                50,
+                                50
+                              )
+                            }}
+                          >
+                            <span className="text-md font-medium leading-none text-white uppercase">
+                              {displayAddress.substring(0, 1)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="pl-3 flex flex-col overflow-hidden max-w-[175px]">
+                        <div className="text-sm leading-5 font-semibold break-all">
+                          {mailbox?.name?.length > 0
+                            ? mailbox?.name
+                            : mailbox?.address}
+                        </div>
+                        {mailbox?.name?.length > 0 && (
+                          <div className="text-xs leading-5 font-normal text-gray-500 break-all">
+                            {mailbox?.address}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div
+                      className="w-full pt-3 text-center"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => onSelect('settings')}
+                    >
+                      <div className="text-xs rounded border border-gray-300 py-1 text-gray-500 hover:bg-gray-100">
+                        Manage Account
+                      </div>
+                    </div>
                   </div>
+                  {switcherData.length > 0 && (
+                    <div className="py-1 max-h-[300px] overflow-y-scroll">
+                      {switcherData
+                        .filter(m => m.address !== mailbox?.address)
+                        .map(m => (
+                          <Menu.Item
+                            key={m.address}
+                            onClick={() => onSwitch(m)}
+                          >
+                            {({ active }) => (
+                              <div
+                                style={{ cursor: 'pointer' }}
+                                className={`${
+                                  active
+                                    ? 'bg-gray-100 text-gray-900'
+                                    : 'text-gray-700'
+                                } flex flex-row items-center w-full px-4 py-2 text-sm leading-5 text-left`}
+                              >
+                                <div className="border border-gray-300 rounded-full">
+                                  {m.avatar && (
+                                    <img
+                                      className="h-7 w-7 rounded-full"
+                                      src={m.avatar}
+                                      alt=""
+                                    />
+                                  )}
+                                  {!m.avatar && (
+                                    <div
+                                      className="inline-flex h-7 w-7 items-center justify-center rounded-full"
+                                      style={{
+                                        backgroundColor: stringToHslColor(
+                                          m.address,
+                                          50,
+                                          50
+                                        )
+                                      }}
+                                    >
+                                      <span className="text-sm font-medium leading-none text-white uppercase">
+                                        {m?.name.substring(0, 1)}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="pl-3 flex flex-col overflow-hidden max-w-[200px]">
+                                  <div className="text-xs leading-4 flex justify-between font-semibold text-ellipsis whitespace-nowrap">
+                                    {m?.name || m?.address}
+                                  </div>
+                                  <div className="text-xs leading-4 flex justify-between font-normal text-gray-500 text-ellipsis whitespace-nowrap">
+                                    {m?.address}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </Menu.Item>
+                        ))}
+                    </div>
+                  )}
 
                   <div className="py-1">
-                    <Menu.Item onClick={() => onSelect('settings')}>
-                      {({ active }) => (
-                        <div
-                          style={{ cursor: 'pointer' }}
-                          className={`${
-                            active
-                              ? 'bg-gray-100 text-gray-900'
-                              : 'text-gray-700'
-                          } flex items-center w-full px-4 py-2 text-sm leading-5 text-left`}
-                        >
-                          {/* <Setting
-                            set="broken"
-                            size="small"
-                            className="hover:text-purple-500 mr-2"
-                          /> */}
-                          Account Settings
-                        </div>
-                      )}
-                    </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
                         <a
@@ -154,7 +305,7 @@ const UserMenu = (props: Props) => {
                             active
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-700'
-                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline`}
+                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline font-normal`}
                         >
                           <span>Release Notes</span>
                         </a>
@@ -171,36 +322,12 @@ const UserMenu = (props: Props) => {
                             active
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-700'
-                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline`}
+                          } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline font-normal`}
                         >
                           <span>Support</span>
-                          <span className="text-xs rounded px-2 font-semibold bg-gray-200 text-gray-400">
-                            {`V-${pkg.version}`}
-                          </span>
                         </a>
                       )}
                     </Menu.Item>
-                    {/* <Menu.Item
-                      as="span"
-                      disabled
-                      className="flex justify-between w-full px-4 py-2 text-sm leading-5 text-left text-gray-700 cursor-not-allowed opacity-50"
-                    >
-                      New feature (soon)
-                    </Menu.Item> */}
-                    {/* <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#license"
-                          className={`${
-                            active
-                              ? 'bg-gray-100 text-gray-900'
-                              : 'text-gray-700'
-                          } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
-                        >
-                          License
-                        </a>
-                      )}
-                    </Menu.Item> */}
                   </div>
 
                   <div className="py-1">
@@ -210,13 +337,27 @@ const UserMenu = (props: Props) => {
                           style={{ cursor: 'pointer' }}
                           className={`${
                             active ? 'text-red-500' : 'text-gray-700'
-                          } flex w-full px-4 py-2 text-sm leading-5 text-left items-center`}
+                          } flex w-full px-4 py-2 text-sm leading-5 text-left items-center font-medium`}
                         >
                           <Logout set="broken" size="small" className="mr-2" />
                           Sign out
                         </div>
                       )}
                     </Menu.Item>
+                    <div className="text-xs px-4 text-gray-400 pb-2 pt-1 w-full flex flex-row justify-center items-center font-medium">
+                      {`v${pkg.version}`}
+{' '}
+                      <span className="h-1 w-1 rounded-full bg-gray-400 mx-2" />
+                      <a
+                        href="https://docs.google.com/document/u/1/d/e/2PACX-1vQXqRRpBkB-7HqwLd2XtsWVDLjCUnBUIeNQADb56FuKHdj_IF9wbmsl4G7RLxR2_yKYMhnSO1M-X39H/pub"
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ cursor: 'pointer' }}
+                        className="text-gray-400 hover:text-gray-500 no-underline"
+                      >
+                        Terms & Conditions
+                      </a>
+                    </div>
                   </div>
                 </Menu.Items>
               </Transition>

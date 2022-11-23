@@ -52,6 +52,12 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     });
   });
 
+  ipcMain.on('accountSwitch', async () => {
+    const mainWindow = windowManager.getWindow('mainWindow');
+    mainWindow.webContents.send('IPC::initMailbox', { fullSync: true });
+    mainWindow.focus();
+  });
+
   ipcMain.on('restartMainWindow', async () => {
     const mainWindow = windowManager.getWindow('mainWindow');
     mainWindow.systemClose = true;

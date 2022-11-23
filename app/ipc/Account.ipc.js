@@ -28,7 +28,6 @@ module.exports = windowManager => {
 
     const mainWindow = windowManager.getWindow('mainWindow');
     mainWindow.webContents.send('ACCOUNT_IPC::initAcct', account);
-
     return new Promise((resolve, reject) => {
       mainWindow.webContents.on('ipc-message', (e, channel, data) => {
         if (channel === 'ACCOUNT_SERVICE::initAcctResponse') {

@@ -44,10 +44,13 @@ export default function MainWindow() {
       dispatch(refreshToken(token));
     });
 
-    account.once('ACCOUNT_SERVICE::accountData', data => {
-      // Storing the Account Data in the redux store from Login
-      dispatch(loadAccountData(data));
-    });
+    account.on(
+      'ACCOUNT_SERVICE::accountData',
+      ({ account: accountData, email, password }) => {
+        // Storing the Account Data in the redux store from Login
+        dispatch(loadAccountData({ ...accountData, email, password }));
+      }
+    );
 
     return () => {
       if (dock) {
@@ -65,8 +68,8 @@ export default function MainWindow() {
 
   return (
     <div className="h-screen overflow-hidden w-full flex flex-col">
-      <div className="w-full h-10 bg-darkPurple flex">
-        <GlobalTopBar />
+      <div className="w-full h-12 bg-darkPurple flex">
+        <GlobalTopBar onSelect={handleSelect} />
       </div>
       <div className="w-full bg-gradient-to-r from-blue-400 to-purple-700 h-1" />
       <div className="min-h-0 flex-1 flex overflow-hidden">

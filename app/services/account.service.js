@@ -1,9 +1,12 @@
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, remote } = require('electron');
 const EventEmitter = require('events');
+const fs = require('fs');
 const channel = require('./main.channel');
 const MailService = require('./mail.service');
 const ContactService = require('./contact.service');
 const MessageIngressService = require('./messageIngress.service');
+
+const { app } = remote;
 
 class AccountService extends EventEmitter {
   constructor() {
@@ -15,7 +18,11 @@ class AccountService extends EventEmitter {
         // Start incoming message listener
         MessageIngressService.initMessageListener();
         ipcRenderer.send('ACCOUNT_SERVICE::createAccountResponse', account);
-        this.emit('ACCOUNT_SERVICE::accountData', account);
+        this.emit('ACCOUNT_SERVICE::accountData', {
+          account,
+          email: data.email,
+          password: data.password
+        });
       } catch (e) {
         ipcRenderer.send('ACCOUNT_SERVICE::createAccountError', {
           error: {
@@ -27,13 +34,19 @@ class AccountService extends EventEmitter {
       }
     });
 
-    ipcRenderer.once('ACCOUNT_IPC::initAcct', (evt, data) => {
+    ipcRenderer.on('ACCOUNT_IPC::initAcct', (evt, data) => {
+      console.log('RECEIVED DATA', data);
       AccountService.initAccount(data)
         .then(account => {
           MessageIngressService.initMessageListener();
           ipcRenderer.send('ACCOUNT_SERVICE::initAcctResponse', account);
           // Emitting the account data so it can be ingested by the Redux Store
-          this.emit('ACCOUNT_SERVICE::accountData', account);
+          this.emit('ACCOUNT_SERVICE::accountData', {
+            account,
+            email: data.email,
+            password: data.password
+          });
+          return 'done';
         })
         .catch(e => {
           ipcRenderer.send('ACCOUNT_SERVICE::initAcctError', e);
@@ -120,10 +133,9 @@ class AccountService extends EventEmitter {
       ipcRenderer.send('syncMail');
     });
 
-
     // Not sure if the below works anymore, I think it should be acount:refreshToken or maybe acount:refreshToke:callback
     // something that needs verifying and tested but there's also a chance that the code below is obsolete.
-    channel.on('ACCOUNT_WORKER::refreshToken', m => { 
+    channel.on('ACCOUNT_WORKER::refreshToken', m => {
       const { data, error } = m;
       this.emit('ACCOUNT_SERVICE::refreshToken', data.token);
     });
@@ -319,9 +331,9 @@ class AccountService extends EventEmitter {
   }
 
   static async getSyncInfo(code) {
-    channel.send({ 
-      event: 'account:getSyncInfo', 
-      payload: { code } 
+    channel.send({
+      event: 'account:getSyncInfo',
+      payload: { code }
     });
 
     return new Promise((resolve, reject) => {
@@ -330,9 +342,8 @@ class AccountService extends EventEmitter {
 
         if (error) return reject(error);
 
-        if (!data.drive_key) return reject('DriveKey missing')
-        if (!data.email) return reject('Email missing')
-
+        if (!data.drive_key) return reject('DriveKey missing');
+        if (!data.email) return reject('Email missing');
 
         return resolve({ driveKey: data.drive_key, email: data.email });
       });
@@ -340,8 +351,8 @@ class AccountService extends EventEmitter {
   }
 
   static async createSyncCode() {
-    channel.send({ 
-      event: 'account:createSyncCode' 
+    channel.send({
+      event: 'account:createSyncCode'
     });
 
     return new Promise((resolve, reject) => {
@@ -355,17 +366,38 @@ class AccountService extends EventEmitter {
     });
   }
 
-  static logout() {
+  static getSub(primary) {
+    // Fetch any accounts under the tutelage/administration of this captain account
+    try {
+      const getDirectories = source =>
+        fs
+          .readdirSync(source, { withFileTypes: true })
+          .filter(dirent => dirent.isDirectory())
+          .map(dirent => dirent.name);
+
+      return getDirectories(
+        `${app.getPath('userData')}/Accounts/${primary}/Subs`
+      );
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  static logout(returnToLogin = true) {
     channel.send({ event: 'account:logout', payload: {} });
 
     return new Promise((resolve, reject) => {
       channel.once('account:logout:callback', m => {
+        console.log('LOGOUT CALLBACK');
         const { error } = m;
 
         if (error) return reject(error);
 
-        ipcRenderer.send('logout');
-        return resolve();
+        if (returnToLogin) {
+          ipcRenderer.send('logout');
+        }
+        return resolve('done');
       });
     });
   }

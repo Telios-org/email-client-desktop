@@ -346,7 +346,7 @@ export default function MessageList(props: Props) {
           </div>
           {searchFilter && (
             <div className="flex items-center ml-2 ">
-              <span className="text-xs text-coolGray-400">( search )</span>
+              <span className="text-xs text-coolGray-400 whitespace-nowrap italic">Search Results</span>
             </div>
           )}
         </div>

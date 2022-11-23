@@ -371,7 +371,7 @@ const Search = () => {
 
   return (
     <div
-      className={`outline-none w-full transition-colors rounded relative inline-block mt-0.5 ${
+      className={`outline-none w-full transition-colors rounded relative flex ${
         isFocused || searchQuery !== ''
           ? 'bg-white'
           : 'bg-coolGray-800 cursor-pointer'
@@ -386,7 +386,7 @@ const Search = () => {
         handleKeys={['esc']}
         onKeyEvent={handleGlobalKeyDown}
       />
-      <div className="flex flex-row text-coolGray-500 items-center">
+      <div className="flex flex-row text-coolGray-500 items-center w-full">
         <div
           className={`${
             isFocused || searchQuery !== ''
@@ -402,7 +402,7 @@ const Search = () => {
           />
         </div>
         <DebounceInput
-          className="placeholder-coolGray-400 h-7 w-full rounded outline-none bg-transparent pl-1 text-xs"
+          className="placeholder-coolGray-400 h-8 w-full rounded outline-none bg-transparent pl-1 text-sm"
           style={{ cursor: 'text' }}
           placeholder="Search"
           value={searchQuery}
@@ -423,7 +423,7 @@ const Search = () => {
       </div>
       {isOpen && (
         <div
-          className="bg-white rounded w-full absolute 
+          className="bg-white rounded w-full absolute top-[30px]
       right-0 mt-2 origin-top-right z-50 shadow-lg outline-none border border-gray-200"
         >
           <ul className="mb-0 text-coolGray-600 py-0.5">
