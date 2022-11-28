@@ -260,7 +260,7 @@
 
 "@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#core_upgrades":
   version "5.2.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#a11ff53196231f229bbb71fdec86d7ed206ab75c"
+  resolved "https://github.com/Telios-org/telios-client-backend.git#647ba9868ec6de0e02fccdf111e016c027c2ed6e"
   dependencies:
     "@hyperswarm/dht" "5.0.17"
     "@telios/client-sdk" "^6.2.5"
@@ -412,6 +412,19 @@ autobase@1.0.0-alpha.6:
     compact-encoding "^2.0.0"
     debounceify "^1.0.0"
     mutexify "^1.3.1"
+    safety-catch "^1.0.1"
+    streamx "^2.10.0"
+
+"autobase@git+https://github.com/hypercore-protocol/autobase.git":
+  version "1.0.0-alpha.8"
+  uid cbd34c3de97eb140b64186714b209471d3e39ba0
+  resolved "git+https://github.com/hypercore-protocol/autobase.git#cbd34c3de97eb140b64186714b209471d3e39ba0"
+  dependencies:
+    b4a "^1.3.1"
+    codecs "^3.0.0"
+    compact-encoding "^2.0.0"
+    debounceify "^1.0.0"
+    mutexify "^1.4.0"
     safety-catch "^1.0.1"
     streamx "^2.10.0"
 
