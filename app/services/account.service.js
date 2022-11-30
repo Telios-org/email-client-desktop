@@ -384,8 +384,8 @@ class AccountService extends EventEmitter {
     }
   }
 
-  static logout(returnToLogin = true) {
-    channel.send({ event: 'account:logout', payload: {} });
+  static logout(returnToLogin = true, killChannel = true) {
+    channel.send({ event: 'account:logout', payload: { kill: killChannel } });
 
     return new Promise((resolve, reject) => {
       channel.once('account:logout:callback', m => {

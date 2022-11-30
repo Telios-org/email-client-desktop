@@ -52,7 +52,7 @@ module.exports = (windowManager, createMainWindow, createLoginWindow) => {
     });
   });
 
-  ipcMain.on('accountSwitch', async () => {
+  ipcMain.on('RENDERER::accountSwitch', async () => {
     const mainWindow = windowManager.getWindow('mainWindow');
     mainWindow.webContents.send('IPC::initMailbox', { fullSync: true });
     mainWindow.focus();

@@ -23,7 +23,6 @@ const useAccountSync = (
   const initSync = (driveKey: string, email: string, password: string) => {
     setIsLoading(true);
     if (password && email && driveKey) {
-
       channel.send({
         event: 'account:sync',
         payload: {
@@ -57,7 +56,7 @@ const useAccountSync = (
       }
 
       if ('searchIndex' in data && data.searchIndex.emails) {
-       // TODO: Should we notify users that indexing is taking place? 
+        // TODO: Should we notify users that indexing is taking place?
       }
     };
     channel.on('debug', data => {
@@ -68,13 +67,13 @@ const useAccountSync = (
     channel.once('account:login:callback', m => {
       const { data } = m;
 
-      channel.send({ event: 'account:logout'})
+      channel.send({ event: 'account:logout', payload: {} });
     });
 
     channel.once('account:logout:callback', () => {
       onSuccess?.();
       setIsLoading(false);
-    })
+    });
   }, []);
 
   return {
