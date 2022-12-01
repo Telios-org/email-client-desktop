@@ -158,18 +158,6 @@ class AccountService extends EventEmitter {
           await MailService.registerMailbox(registerPayload);
           await MailService.saveMailbox({ address: payload.email });
 
-          ipcRenderer.invoke('MATOMO::init', {
-            account: {
-              uid,
-              secretBoxPubKey: secretBoxKeypair.publicKey,
-              deviceSigningPrivKey: signingKeypair.privateKey,
-              deviceSigningPubKey: signingKeypair.publicKey,
-              deviceId,
-              serverSig: sig
-            },
-            isNew: true
-          });
-
           resolve({
             accountId,
             uid,
@@ -206,8 +194,6 @@ class AccountService extends EventEmitter {
         const _data = { ...data };
 
         if (error) return reject(error);
-
-        ipcRenderer.invoke('MATOMO::init', { account: data, isNew: false });
 
         return resolve(_data);
       });
