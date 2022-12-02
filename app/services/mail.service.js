@@ -188,14 +188,6 @@ class MailService {
     });
   }
 
-  static updateFolderCount(opts) {
-    channel.send({ event: 'folder:updateFolderCount', payload: opts });
-  }
-
-  static updateAliasCount(opts) {
-    channel.send({ event: 'alias:updateAliasCount', payload: opts });
-  }
-
   static deleteFolder(opts) {
     channel.send({ event: 'folder:deleteFolder', payload: opts });
 

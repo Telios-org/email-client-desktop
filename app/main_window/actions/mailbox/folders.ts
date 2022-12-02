@@ -41,7 +41,6 @@ export const updateFolderCount = (id: number, amount: number) => {
     }
 
     if (exceptions.indexOf(id) === -1) {
-      Mail.updateFolderCount({ id, amount: change });
       dispatch(updateCount(id, change));
     }
   };

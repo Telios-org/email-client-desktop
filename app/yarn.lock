@@ -210,7 +210,7 @@
 
 "@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#core_upgrades":
   version "5.2.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#31c661693c72d6d7028755dbaf196bf59fdf60e6"
+  resolved "https://github.com/Telios-org/telios-client-backend.git#247da7e67e842264603f172d01274b3d4a8e63c9"
   dependencies:
     "@telios/client-sdk" "^7.0.3"
     "@telios/nebula" "^4.0.4"
@@ -671,12 +671,12 @@ corestore@6.0.1-alpha.9:
     sodium-universal "^3.0.4"
 
 corestore@^6.2.0:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/corestore/-/corestore-6.2.1.tgz#e07f937004c320296aee0ec909fec1c0c9237d5a"
-  integrity sha512-Pd2/oIL1zIhlveK6Rd5UEfIwuI289Fg4L5Xk7HC5/MNnY+KnRMW98Bgu1GMbib6hsVGP8El7XAiShop+ui/hKw==
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/corestore/-/corestore-6.3.0.tgz#24fd33c98c06a10d40fec4cc8a07aca749e2601e"
+  integrity sha512-xyXMUIbgyyTCMhxI/iui8W3P1sCptaPo4tkwjaGgVmEU7qPRVetN6Qs8KWl3MEGoUDzmPE5yKyH4KkaKSZ8mjQ==
   dependencies:
     b4a "^1.3.1"
-    hypercore "^10.3.1"
+    hypercore "^10.5.3"
     hypercore-crypto "^3.2.1"
     safety-catch "^1.0.1"
     sodium-universal "^3.0.4"
@@ -1352,7 +1352,7 @@ hypercore@10.0.0-alpha.23:
   optionalDependencies:
     fsctl "^1.0.0"
 
-hypercore@^10.3.1, hypercore@^10.4.1:
+hypercore@^10.4.1, hypercore@^10.5.3:
   version "10.5.3"
   resolved "https://registry.yarnpkg.com/hypercore/-/hypercore-10.5.3.tgz#220414f85f21ccae49b5e3cb22a34938f64ae52f"
   integrity sha512-dplwIl0GD3bVbjffyYTeqI1tjB5auBH9MC9+mb3aG7vBq38rqKtZj5h0SlJVFfJ05B2f6HmtcbVVV9qZyVf74w==

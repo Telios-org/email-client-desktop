@@ -258,10 +258,14 @@ export const moveMessagesToFolder = (messages: any) => {
       dispatch(clearActiveMessage(currentFolderId));
       dispatch(updateMessageList(msgArr, 'remove'));
 
-      if(currentFolderId === 5) {
-        await dispatch(updateAliasCount(msgArr[0].aliasId, -Math.abs(msgArr.length)));
-      } else {
-        await dispatch(updateFolderCount(currentFolderId, -Math.abs(msgArr.length)));
+      for(const msg of msgArr) {
+        if(msg.unread) {
+          if(currentFolderId === 5) {
+            dispatch(updateAliasCount(msgArr[0].aliasId, -1));
+          } else {
+            dispatch(updateFolderCount(currentFolderId, -1));
+          }
+        }
       }
       
       await Mail.moveMessages(msgArr);
