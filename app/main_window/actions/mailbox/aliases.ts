@@ -15,17 +15,10 @@ const updateCount = (id: string, amount: number) => {
 export const updateAliasCount = (id: string, amount: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      mail: { aliases },
-      globalState
+      mail: { aliases }
     } = getState();
 
-    let aliasId = '';
-
-    for(const _id in globalState.activeMsgId) {
-      aliasId = _id;
-    }
-
-    const currCount = aliases?.byId[aliasId]?.count;
+    const currCount = aliases?.byId[id]?.count;
 
     let change = amount;
 
@@ -43,7 +36,7 @@ export const updateAliasCount = (id: string, amount: number) => {
       }
     }
 
-    dispatch(updateCount(aliasId, change));
+    dispatch(updateCount(id, change));
   };
 };
 

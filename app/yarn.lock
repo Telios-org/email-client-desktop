@@ -127,10 +127,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^7.0.3":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-7.0.3.tgz#7f9d3da99d46e318998e9980c0f03a2297d4a99c"
-  integrity sha512-FqGalAxSynu/uuLQ9QJhRXkvp9todwe0hEb4I53NTpvX00PeKH8wvMM02SSwe02wMiR8l2GirlVdtlsbepk0cw==
+"@telios/client-sdk@^7.0.6", "@telios/client-sdk@^7.0.7":
+  version "7.0.7"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-7.0.7.tgz#2c1e1ee2e905fa3cb42e929d1a4cc318943cdaf6"
+  integrity sha512-Obak+6ZprPC/oJRQbcYW3NTGyi6sOtOBFWFSY9VUItZqrX1LDY9O247S5Z0k7q+yjhYw9iSJpy3GDhe6y46Svg==
   dependencies:
     "@telios/nebula" "^4.0.4"
     async "^3.2.0"
@@ -210,9 +210,9 @@
 
 "@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#core_upgrades":
   version "5.2.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#247da7e67e842264603f172d01274b3d4a8e63c9"
+  resolved "https://github.com/Telios-org/telios-client-backend.git#7243bc981cb90577658b3ed7d5e7b0aaf9daf4ff"
   dependencies:
-    "@telios/client-sdk" "^7.0.3"
+    "@telios/client-sdk" "^7.0.6"
     "@telios/nebula" "^4.0.4"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate"
     blakejs "^1.2.1"
@@ -1009,9 +1009,9 @@ fast-glob@^3.2.9:
     micromatch "^4.0.4"
 
 fastq@^1.6.0:
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.13.0.tgz#616760f88a7526bdfc596b7cab8c18938c36b98c"
-  integrity sha512-YpkpUnK8od0o1hmeSc7UUs/eB/vIPWJYjKck2QKIzAf71Vm1AAQ3EbuZB3g2JIy+pg+ERD0vqI79KyZiB2e2Nw==
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.14.0.tgz#107f69d7295b11e0fccc264e1fc6389f623731ce"
+  integrity sha512-eR2D+V9/ExcbF9ls441yIuN6TI2ED1Y2ZcA5BmMtJsOkWOFRJQ0Jt0g1UwqXJJVAb+V+umH5Dfr8oh4EVP7VVg==
   dependencies:
     reusify "^1.0.4"
 

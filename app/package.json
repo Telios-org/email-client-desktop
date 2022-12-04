@@ -15,7 +15,7 @@
   },
   "license": "CC-BY-NC-4.0",
   "dependencies": {
-    "@telios/client-sdk": "^7.0.3",
+    "@telios/client-sdk": "^7.0.7",
     "@telios/telios-client-backend": "https://github.com/Telios-org/telios-client-backend.git#core_upgrades",
     "@types/prismjs": "^1.16.1",
     "del": "^6.0.0",
