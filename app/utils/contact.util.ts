@@ -3,35 +3,44 @@ const stringThemUp = (
   complex = true,
   onlyFirstPart = false
 ) => {
-  return objArr.reduce(
-    (
-      previous: string,
-      current: { name: string; address: string },
-      currentIndex: number
-    ) => {
-      const name =
-        current.name && current.name.trim() !== current.address.trim()
-          ? `${current.name} ${complex ? `<${current.address}>` : ''}`
-          : `${current.address}`;
+  console.log(objArr);
+  if (objArr.length > 0) {
+    return objArr.reduce(
+      (
+        previous: string,
+        current: { name: string; address: string },
+        currentIndex: number
+      ) => {
+        if (current) {
+          const name =
+            current.name && current.name.trim() !== current.address.trim()
+              ? `${current.name} ${complex ? `<${current.address}>` : ''}`
+              : `${current.address}`;
 
-      let val = name;
+          let val = name;
 
-      if (onlyFirstPart) {
-        const part =
-          val.trim().split(' ').length > 1
-            ? val.trim().split(' ')[0]
-            : val.trim().split('@')[0];
-        val = part.charAt(0).toUpperCase() + part.slice(1);
-      }
+          if (onlyFirstPart) {
+            const part =
+              val.trim().split(' ').length > 1
+                ? val.trim().split(' ')[0]
+                : val.trim().split('@')[0];
+            val = part.charAt(0).toUpperCase() + part.slice(1);
+          }
 
-      if (currentIndex !== objArr.length - 1) {
-        val += ',';
-      }
+          if (currentIndex !== objArr.length - 1) {
+            val += ',';
+          }
 
-      return `${previous}${val.trim()} `;
-    },
-    ''
-  );
+          return `${previous}${val.trim()} `;
+        }
+
+        return '';
+      },
+      ''
+    );
+  }
+
+  return '';
 };
 
 const peopleHeaderParser = (
@@ -52,8 +61,8 @@ const peopleHeaderParser = (
 
   let previewHead;
 
-  if(from?.arr[0].length) {
-    from.arr[0] = from.arr[0][0]
+  if (from?.arr[0] && from?.arr[0].length) {
+    from.arr[0] = from.arr[0][0];
   }
 
   const sender = {

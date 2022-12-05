@@ -75,7 +75,9 @@ const useCollectionListeners = (collections: string[]) => {
           if (data.type === 'del') {
             dispatch(removeFolder(data?.value?.folderId));
           } else if (data.type === 'update' || data.type === 'create') {
-            dispatch(updateFolder(data?.value));
+            if (!['Drafts', 'Trash', 'Sent'].includes(data.value.name)) {
+              dispatch(updateFolder(data?.value));
+            }
           }
           break;
 
