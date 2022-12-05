@@ -48,7 +48,6 @@ const StepByStep = () => {
     let activeIndex = null;
 
     const output = data.map((s, index) => {
-      console.log(index);
       let status;
       if (location.pathname === s.href) {
         status = 'current';
@@ -67,7 +66,6 @@ const StepByStep = () => {
         status
       };
     });
-    console.log(activeIndex, location.pathname);
     setSteps(output);
   }, [location.pathname]);
 

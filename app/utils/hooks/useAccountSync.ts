@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 
+const { ipcRenderer } = require('electron');
 const channel = require('../../services/main.channel');
 
 interface AccountSyncProps {
@@ -11,6 +12,7 @@ interface AccountSyncOpts {
   initSync: (driveKey: string, email: string, password: string) => void;
   isLoading: boolean;
   filesSynced: number;
+  statusText: string;
 }
 
 const useAccountSync = (
@@ -19,11 +21,11 @@ const useAccountSync = (
 ): AccountSyncOpts => {
   const [percentage, setPercentage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [statusText, setStatusText] = useState('');
 
   const initSync = (driveKey: string, email: string, password: string) => {
     setIsLoading(true);
     if (password && email && driveKey) {
-
       channel.send({
         event: 'account:sync',
         payload: {
@@ -44,11 +46,16 @@ const useAccountSync = (
 
   useEffect(() => {
     const syncEventCallback = async (msg: any) => {
+      console.log('FIRING', msg);
       const { data, error } = msg;
       if (error) {
         setIsLoading(false);
         onError?.(error);
         return;
+      }
+
+      if ('status' in data) {
+        setStatusText(data.status);
       }
 
       if ('files' in data) {
@@ -57,7 +64,7 @@ const useAccountSync = (
       }
 
       if ('searchIndex' in data && data.searchIndex.emails) {
-       // TODO: Should we notify users that indexing is taking place? 
+        // TODO: Should we notify users that indexing is taking place?
       }
     };
     channel.on('debug', data => {
@@ -68,19 +75,20 @@ const useAccountSync = (
     channel.once('account:login:callback', m => {
       const { data } = m;
 
-      channel.send({ event: 'account:logout'})
+      channel.send({ event: 'account:logout' });
     });
 
     channel.once('account:logout:callback', () => {
       onSuccess?.();
       setIsLoading(false);
-    })
+    });
   }, []);
 
   return {
     initSync,
     isLoading,
-    filesSynced: percentage
+    filesSynced: percentage,
+    statusText
   };
 };
 

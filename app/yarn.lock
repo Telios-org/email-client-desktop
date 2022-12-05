@@ -358,9 +358,9 @@ autobase@1.0.0-alpha.6:
     safety-catch "^1.0.1"
     streamx "^2.10.0"
 
-"autobase@git+https://github.com/hypercore-protocol/autobase.git":
+"autobase@https://github.com/hypercore-protocol/autobase":
   version "1.0.0-alpha.8"
-  resolved "git+https://github.com/hypercore-protocol/autobase.git#cbd34c3de97eb140b64186714b209471d3e39ba0"
+  resolved "https://github.com/hypercore-protocol/autobase#cbd34c3de97eb140b64186714b209471d3e39ba0"
   dependencies:
     b4a "^1.3.1"
     codecs "^3.0.0"

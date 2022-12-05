@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // EXTERNAL COMPONENTS
 import { useNavigate, useLocation } from 'react-router';
@@ -15,6 +15,7 @@ const SyncSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
 
   const syncData: {
     email: string;
@@ -34,6 +35,16 @@ const SyncSuccess = () => {
     ipcRenderer.send('showMainWindow', account);
   };
 
+  useEffect(() => {
+    ipcRenderer.on('ACCOUNT_IPC::account:login:status', (event, payload) => {
+      setLoadingText(payload);
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('ACCOUNT_IPC::account:login:status');
+    };
+  }, []);
+
   return (
     <div className="h-full">
       <div className="relative w-full">
@@ -50,7 +61,12 @@ const SyncSuccess = () => {
           </p>
         </IntroHeader>
         <div className="mt-4">
-          <Button type="button" onClick={goToInbox} loading={isLoading}>
+          <Button
+            type="button"
+            onClick={goToInbox}
+            loading={isLoading}
+            loadingText={loadingText}
+          >
             Go to mailbox
           </Button>
         </div>
