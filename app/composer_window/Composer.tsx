@@ -145,6 +145,8 @@ const Composer = (props: Props) => {
     const htmlBody = content ?? editorState;
     const owner = mbox ?? mailbox;
 
+    console.log(draft)
+
     // Getting timestamp for email
     const time = UTCtimestamp().toString();
     // Getting the plain text off the htmlBody
@@ -180,13 +182,14 @@ const Composer = (props: Props) => {
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
+    console.log(isInline, folder, message?.bodyAsHtml, message?.emailId);
     if (
       isInline &&
       folder?.name === 'Drafts' &&
       dispatch !== null &&
       message.emailId !== null
     ) {
-      // console.log('FIRING OFF 186 - IF STATEMENT')
+      console.log('FIRING OFF 186 - IF STATEMENT');
       dispatch(fetchMsg(message.emailId))
         .then(email => {
           const draft = emailTransform(email, 'draftEdit', false);
@@ -197,7 +200,7 @@ const Composer = (props: Props) => {
           draft.from = JSON.parse(email.fromJSON);
           handleEmailUpdate(draft, draft.bodyAsHtml || '', mb);
           setMailbox(mb);
-          
+
           const data = assembleFromDataSet(mb, namespaces, aliases);
 
           if (draft.from.length === 1) {
@@ -230,6 +233,10 @@ const Composer = (props: Props) => {
             placement: 'bottomEnd'
           });
         });
+    } else if (isInline && folder?.name === 'Drafts') {
+      const data = assembleFromDataSet(mb, namespaces, aliases);
+      setFromDataSet(data);
+      setFromAddress([data[0]]);
     }
   }, [isInline, folder, message?.bodyAsHtml, message?.emailId]);
 
@@ -239,7 +246,6 @@ const Composer = (props: Props) => {
   useEffect(() => {
     if (folder?.name !== 'Drafts' || (folder?.name === 'Drafts' && !isInline)) {
       ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
-        console.log('IPC event handler', content, windowID);
         // The email has already been formatted according to the editorAction
         // it happened in the Window IPC.
         const draft = clone(content.message);
@@ -261,11 +267,11 @@ const Composer = (props: Props) => {
           content.namespaces,
           content.aliases
         );
-        
+
         if (draft.from.length === 1) {
           setFromAddress(draft.from);
           const isInSet =
-          data.filter(d => d.address === draft.from[0].address).length > 0;
+            data.filter(d => d.address === draft.from[0].address).length > 0;
 
           if (!isInSet) {
             data.push(draft.from[0]);
