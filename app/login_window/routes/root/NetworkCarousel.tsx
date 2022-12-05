@@ -18,11 +18,11 @@ const NetworkCarousel = () => {
       </div>
       <div className="flex flex-1 flex-col ml-10 mr-3 mt-10">
         <div className="text-gray-300 text-base font-semibold pb-3">
-          Peer-to-Peer
+          Decentralized Email
         </div>
         <div className="text-white text-base font-semibold">
           Communicate with your friends, colleagues and more via our
-          peer-to-peer, encrypted and private network.
+          decentralized, encrypted and private network.
         </div>
       </div>
     </>

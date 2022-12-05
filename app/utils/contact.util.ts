@@ -3,7 +3,6 @@ const stringThemUp = (
   complex = true,
   onlyFirstPart = false
 ) => {
-  console.log(objArr);
   if (objArr.length > 0) {
     return objArr.reduce(
       (
