@@ -58,7 +58,10 @@ export default function aliases(
         },
         allIds: [...new Set([action.payload.aliasId, ...state.allIds])],
         fwdAddresses: [
-          ...new Set([...state.fwdAddresses, ...action.payload.fwdAddresses])
+          ...new Set([
+            ...state.fwdAddresses,
+            ...(action.payload?.fwdAddresses || [])
+          ])
         ]
       };
     case UPDATE_ALIAS_SUCCESS:
@@ -80,7 +83,10 @@ export default function aliases(
         },
         allIds: [...state.allIds],
         fwdAddresses: [
-          ...new Set([...state.fwdAddresses, ...action.payload.fwdAddresses])
+          ...new Set([
+            ...state.fwdAddresses,
+            ...(action.payload?.fwdAddresses || [])
+          ])
         ]
       };
     case REMOVE_ALIAS_SUCCESS:
