@@ -125,7 +125,7 @@ export default function MailPage() {
   };
 
   const checkMessages = (callback = () => {}) => {
-    console.log('CHECKING MESSAGES', isSyncInProgress);
+    // console.log('CHECKING MESSAGES', isSyncInProgress);
     if (!isSyncInProgress) {
       dispatch(fetchNewMessages())
         .then(() => {
@@ -142,7 +142,7 @@ export default function MailPage() {
 
   // REFRESHING THE STATE OF THE MAIL PAGE
   const refresh = async (full: any) => {
-    console.log('HITTING REFRESH', isSyncInProgress);
+    // console.log('HITTING REFRESH', isSyncInProgress);
     setLoading(true);
     checkMessages(() => setTimeout(() => setLoading(false), 3000));
   };

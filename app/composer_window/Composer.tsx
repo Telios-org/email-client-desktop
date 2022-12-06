@@ -145,14 +145,12 @@ const Composer = (props: Props) => {
     const htmlBody = content ?? editorState;
     const owner = mbox ?? mailbox;
 
-    console.log(draft)
 
     // Getting timestamp for email
     const time = UTCtimestamp().toString();
     // Getting the plain text off the htmlBody
     const plaintext = htmlToText.fromString(htmlBody);
 
-    console.log(draft);
 
     const from = draft?.from ?? [
       {
@@ -182,14 +180,12 @@ const Composer = (props: Props) => {
 
   // When in the Draft folder and Inline, message is set through the Selector
   useEffect(() => {
-    console.log(isInline, folder, message?.bodyAsHtml, message?.emailId);
     if (
       isInline &&
       folder?.name === 'Drafts' &&
       dispatch !== null &&
       message.emailId !== null
     ) {
-      console.log('FIRING OFF 186 - IF STATEMENT');
       dispatch(fetchMsg(message.emailId))
         .then(email => {
           const draft = emailTransform(email, 'draftEdit', false);
@@ -203,10 +199,12 @@ const Composer = (props: Props) => {
 
           const data = assembleFromDataSet(mb, namespaces, aliases);
 
+          // console.log(data);
+
           if (draft.from.length === 1) {
             setFromAddress(draft.from);
             const isInSet =
-              data.filter(d => d.address === draft.from[0].address).length > 0;
+              data.filter(d => d.address === draft.from[0]?.address).length > 0;
 
             if (!isInSet) {
               data.push(draft.from[0]);
@@ -233,10 +231,14 @@ const Composer = (props: Props) => {
             placement: 'bottomEnd'
           });
         });
-    } else if (isInline && folder?.name === 'Drafts') {
+    } else if (
+      isInline &&
+      folder?.name === 'Drafts' &&
+      message.emailId === null
+    ) {
       const data = assembleFromDataSet(mb, namespaces, aliases);
-      setFromDataSet(data);
       setFromAddress([data[0]]);
+      setFromDataSet(data);
     }
   }, [isInline, folder, message?.bodyAsHtml, message?.emailId]);
 
@@ -393,7 +395,6 @@ const Composer = (props: Props) => {
         from: Array.isArray(fromAddress) ? fromAddress : [fromAddress]
       };
 
-      console.log('DRAFT', draft);
       handleEmailUpdate(draft, undefined, undefined);
     },
     { debounce: 250 }
@@ -403,7 +404,7 @@ const Composer = (props: Props) => {
     const { value } = e.target;
 
     const newEmail = clone(email);
-    newEmail.subject = value;
+    newEmail.subject = value || '';
 
     handleEmailUpdate(newEmail);
   };

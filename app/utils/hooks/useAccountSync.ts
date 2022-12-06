@@ -46,7 +46,6 @@ const useAccountSync = (
 
   useEffect(() => {
     const syncEventCallback = async (msg: any) => {
-      console.log('FIRING', msg);
       const { data, error } = msg;
       if (error) {
         setIsLoading(false);

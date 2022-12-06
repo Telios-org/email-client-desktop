@@ -12,9 +12,9 @@ const stringThemUp = (
       ) => {
         if (current) {
           const name =
-            current.name && current.name.trim() !== current.address.trim()
-              ? `${current.name} ${complex ? `<${current.address}>` : ''}`
-              : `${current.address}`;
+          current?.name && current?.name.trim() !== current?.address.trim()
+          ? `${current?.name} ${complex ? `<${current?.address}>` : ''}`
+          : `${current?.address}`;
 
           let val = name;
 
@@ -60,8 +60,8 @@ const peopleHeaderParser = (
 
   let previewHead;
 
-  if (from?.arr[0] && from?.arr[0].length) {
-    from.arr[0] = from.arr[0][0];
+  if(Array.isArray(from?.arr[0])) {
+    from.arr[0] = from.arr[0][0]
   }
 
   const sender = {

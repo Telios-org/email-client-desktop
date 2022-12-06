@@ -129,7 +129,6 @@ const Login = () => {
       }
       setError(r);
       setLoading(false);
-      console.log(r);
     }
   };
 

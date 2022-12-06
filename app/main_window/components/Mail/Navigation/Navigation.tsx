@@ -76,6 +76,7 @@ export default function Navigation(props: Props) {
   const newMessageAction = async () => {
     await dispatch(clearActiveMessage(folderId));
     dispatch(toggleEditor('brandNewComposer', true));
+    
     await ipcRenderer.invoke('RENDERER::ingestDraftForInlineComposer', {
       mailbox,
       namespaces,
@@ -114,7 +115,7 @@ export default function Navigation(props: Props) {
           folder.name !== 'Sent' ||
           (folder.name !== 'Drafts' && folder.count)) && folder.type !== 'hidden'
         ) {
-          console.log(folder.count, folder.name);
+          // console.log(folder.count, folder.name);
           totalUnreadCount += folder.count;
         }
       }

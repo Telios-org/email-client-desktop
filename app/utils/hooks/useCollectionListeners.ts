@@ -29,7 +29,7 @@ const useCollectionListeners = (collections: string[]) => {
       const { data } = payload;
       // the below is to prevent unnecessary processing of updates
       // for part of the REDUX STORE currently not on display.
-      console.log('CALLBACK FIRED', data);
+      // console.log('CALLBACK FIRED', data);
       if (!collections.includes(data.collection)) {
         return false;
       }
