@@ -113,17 +113,17 @@ export default function Navigation(props: Props) {
         if (
           (folder.name !== 'Trash' ||
           folder.name !== 'Sent' ||
-          (folder.name !== 'Drafts' && folder.count)) && folder.type !== 'hidden'
+          (folder.name !== 'Drafts' && folder?.count)) && folder.type !== 'hidden'
         ) {
           // console.log(folder.count, folder.name);
-          totalUnreadCount += folder.count;
+          totalUnreadCount += folder?.count;
         }
       }
 
       for (const id of aliases.allIds) {
         const alias = aliases.byId[id];
         if(alias && alias.count){
-          totalUnreadCount += alias.count;
+          totalUnreadCount += alias?.count;
         }
           
       }
@@ -285,7 +285,7 @@ export default function Navigation(props: Props) {
                     className={` bg-purple-300/60 text-purple-600 font-semibold py-0.5 px-2 text-xs rounded mr-2
                     flex-initial text-right self-center flex items-center justify-center`}
                   >
-                    {folder.count ? folder.count : ''}
+                    {folder.count ? folder?.count : ''}
                   </div>
                 )}
               </li>

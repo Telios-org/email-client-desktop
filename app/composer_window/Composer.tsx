@@ -171,6 +171,8 @@ const Composer = (props: Props) => {
       bodyAsHtml: htmlBody
     };
 
+    console.log(eml);
+
     if (htmlBody !== editorState) {
       setEditorState(htmlBody);
     }
@@ -199,7 +201,7 @@ const Composer = (props: Props) => {
 
           const data = assembleFromDataSet(mb, namespaces, aliases);
 
-          // console.log(data);
+          console.log(data);
 
           if (draft.from.length === 1) {
             setFromAddress(draft.from);
@@ -281,6 +283,8 @@ const Composer = (props: Props) => {
         } else {
           setFromAddress([data[0]]);
         }
+
+        console.log(draft);
 
         setFromDataSet(data);
         handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);

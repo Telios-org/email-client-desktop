@@ -115,7 +115,9 @@ export default function aliases(
           ...state.byId,
           [action.id]: {
             ...state.byId[action.id],
-            count: state.byId[action.id].count += action.amount
+            count: state.byId[action.id]?.count
+              ? state.byId[action.id].count + action.amount
+              : action.amount
           }
         },
         allIds: [...state.allIds],

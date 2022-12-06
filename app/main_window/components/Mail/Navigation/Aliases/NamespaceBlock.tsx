@@ -115,7 +115,7 @@ export default function NamespaceBlock(props: Props) {
     const nsActive = AliasData.filter(a => a.id === active)[0]?.ns ?? undefined;
 
     const unread = AliasData.filter(f => f.ns === ns).reduce(
-      (prev, curr) => prev + curr.count,
+      (prev, curr) => prev + (curr?.count || 0),
       0
     );
 
