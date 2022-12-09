@@ -61,7 +61,7 @@ export const updateProfile = (
 
     if (!localOnly) {
       try {
-        console.log('PROFILE DATA', data, allIds[0]);
+        // console.log('PROFILE DATA', data, allIds[0]);
         // We purposefully only let this method update two parameters
         await AccountService.updateAccount({
           accountId,

@@ -29,6 +29,7 @@ import RememberMeModal from './RememberMeModal';
 const { ipcRenderer, remote } = require('electron');
 const fs = require('fs');
 const LoginService = require('../../../services/login.service');
+const channel = require('../../../services/main.channel');
 
 // THE FUNCTIONS BELOW SHOULD BE MOVED TO A SEPARATE UTILITY FILE PROBABLY
 const initAccount = async (name, password) => {
@@ -60,6 +61,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRemembered, setIsRemembered] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
 
   useEffect(() => {
     const data = LoginService.getAccounts();
@@ -84,12 +86,22 @@ const Login = () => {
       if (storedPassword) {
         setIsRemembered(true);
         setPassword(storedPassword);
-      }else{
+      } else {
         setIsRemembered(false);
         setPassword('');
       }
     }
   }, [activeAcct]);
+
+  useEffect(() => {
+    ipcRenderer.on('ACCOUNT_IPC::account:login:status', (event, payload) => {
+      setLoadingText(payload);
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('ACCOUNT_IPC::account:login:status');
+    };
+  }, []);
 
   const handleLogin = async e => {
     e.preventDefault();
@@ -117,7 +129,6 @@ const Login = () => {
       }
       setError(r);
       setLoading(false);
-      console.log(r);
     }
   };
 
@@ -150,7 +161,6 @@ const Login = () => {
             <Link
               key={act.id}
               to={act.route}
-
               className="relative justify-center group border-2 hover:border-violet-500 border-gray-200 flex flex-col no-underline text-gray-400 px-5 py-4 rounded-lg"
             >
               <span className="text-base text-gray-900 font-medium">
@@ -180,7 +190,7 @@ const Login = () => {
     } else {
       setIsModalOpen(false);
       setIsRemembered(false);
-      store.delete(`password::${activeAcct.id}`)
+      store.delete(`password::${activeAcct.id}`);
     }
   };
 
@@ -228,7 +238,9 @@ const Login = () => {
               value={isRemembered}
               onChange={onRememberMe}
             >
-              <span className="-ml-1 text-gray-400 select-none">Remember me</span>
+              <span className="-ml-1 text-gray-400 select-none">
+                Remember me
+              </span>
             </Checkbox>
             <Link
               to="/forgotpassword"
@@ -241,6 +253,7 @@ const Login = () => {
         </div>
         <Button
           type="submit"
+          loadingText={loadingText}
           loading={loading}
           className="bg-gradient-to-tr from-[#0284C7] to-[#0EA5E9] hover:to-[#0284C7]"
         >

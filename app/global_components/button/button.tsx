@@ -65,7 +65,7 @@ const Button = ({
     <button
       type={type}
       className={cls}
-      onClick={onClick}
+      onClick={!loading ? onClick : () => {}}
       disabled={disabled}
       {...props}
     >

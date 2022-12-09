@@ -81,7 +81,7 @@ const AliasManagement = (props: Props) => {
   });
 
   const handleToggleAction = async (rowData: any, value: boolean) => {
-    console.log(rowData);
+    // console.log(rowData);
     const payload = {
       namespaceName: rowData.ns,
       domain: mailDomain,

@@ -133,6 +133,11 @@ class AccountService extends EventEmitter {
       ipcRenderer.send('syncMail');
     });
 
+    channel.on('account:login:status', cb => {
+      const { data } = cb;
+      ipcRenderer.invoke('ACCOUNT_SERVICE::account:login:status', data);
+    });
+
     // Not sure if the below works anymore, I think it should be acount:refreshToken or maybe acount:refreshToke:callback
     // something that needs verifying and tested but there's also a chance that the code below is obsolete.
     channel.on('ACCOUNT_WORKER::refreshToken', m => {
@@ -170,18 +175,6 @@ class AccountService extends EventEmitter {
           await MailService.registerMailbox(registerPayload);
           await MailService.saveMailbox({ address: payload.email });
 
-          ipcRenderer.invoke('MATOMO::init', {
-            account: {
-              uid,
-              secretBoxPubKey: secretBoxKeypair.publicKey,
-              deviceSigningPrivKey: signingKeypair.privateKey,
-              deviceSigningPubKey: signingKeypair.publicKey,
-              deviceId,
-              serverSig: sig
-            },
-            isNew: true
-          });
-
           resolve({
             accountId,
             uid,
@@ -218,8 +211,6 @@ class AccountService extends EventEmitter {
         const _data = { ...data };
 
         if (error) return reject(error);
-
-        ipcRenderer.invoke('MATOMO::init', { account: data, isNew: false });
 
         return resolve(_data);
       });

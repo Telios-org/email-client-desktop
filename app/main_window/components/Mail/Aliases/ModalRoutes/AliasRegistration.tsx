@@ -143,7 +143,6 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
 
   useEffect(() => {
     if (namespaces.allIds.length > 0) {
-      console.log('CHANGING NS from 143');
       manualChange('namespace', namespaces.allIds[0]);
     }
   }, [namespaces]);

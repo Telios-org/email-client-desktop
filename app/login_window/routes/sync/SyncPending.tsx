@@ -24,8 +24,7 @@ const SyncPending = () => {
     password: string;
   };
 
-
-  const onSyncSuccess = (account) => {
+  const onSyncSuccess = () => {
     navigate('../syncsuccess', {
       state: {
         email: syncData.email,
@@ -44,7 +43,7 @@ const SyncPending = () => {
     });
   };
 
-  const { isLoading, initSync, filesSynced, account } = useAccountSync(
+  const { isLoading, initSync, filesSynced, statusText } = useAccountSync(
     onSyncSuccess,
     onSyncError
   );
@@ -67,26 +66,21 @@ const SyncPending = () => {
       <div className="max-w-xs mx-auto h-full">
         <IntroHeader title="Sync.">
           <p className="text-base pt-2 text-gray-500">
-            Your files will be downloaded and synced onto this device. This
-            may take a minute.
+            Your files will be downloaded and synced onto this device. This may
+            take a minute.
           </p>
         </IntroHeader>
         <div className="flex justify-center">
-          {isLoading ? (
-            loadingComponent
-          ) : (
-            <Button
-              className="mt-4"
-              onClick={() =>
-                initSync(
-                  syncData?.driveKey,
-                  syncData?.email,
-                  syncData?.password
-                )}
-            >
-              Initiate Sync
-            </Button>
-          )}
+          <Button
+            className="mt-4"
+            loading={isLoading}
+            loadingText={statusText}
+            onClick={() =>
+              initSync(syncData?.driveKey, syncData?.email, syncData?.password)
+            }
+          >
+            Initiate Sync
+          </Button>
         </div>
       </div>
     </div>

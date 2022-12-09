@@ -4,7 +4,7 @@ import { moveMessagesToFolder } from './messages';
 import { MailMessageType, Dispatch, GetState } from '../../reducers/types';
 
 export const UPDATE_ALIAS_COUNT = 'GLOBAL::UPDATE_ALIAS_COUNT';
-const updateCount = (id: number, amount: number) => {
+const updateCount = (id: string, amount: number) => {
   return {
     type: UPDATE_ALIAS_COUNT,
     id,
@@ -12,7 +12,7 @@ const updateCount = (id: number, amount: number) => {
   };
 };
 
-export const updateAliasCount = (id: number, amount: number) => {
+export const updateAliasCount = (id: string, amount: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       mail: { aliases }
@@ -35,8 +35,6 @@ export const updateAliasCount = (id: number, amount: number) => {
         change = Math.abs(currCount);
       }
     }
-
-    Mail.updateAliasCount({ id, amount: change });
 
     dispatch(updateCount(id, change));
   };

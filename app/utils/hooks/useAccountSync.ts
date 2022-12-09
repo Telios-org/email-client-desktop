@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 
+const { ipcRenderer } = require('electron');
 const channel = require('../../services/main.channel');
 
 interface AccountSyncProps {
@@ -11,6 +12,7 @@ interface AccountSyncOpts {
   initSync: (driveKey: string, email: string, password: string) => void;
   isLoading: boolean;
   filesSynced: number;
+  statusText: string;
 }
 
 const useAccountSync = (
@@ -19,6 +21,7 @@ const useAccountSync = (
 ): AccountSyncOpts => {
   const [percentage, setPercentage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [statusText, setStatusText] = useState('');
 
   const initSync = (driveKey: string, email: string, password: string) => {
     setIsLoading(true);
@@ -50,6 +53,10 @@ const useAccountSync = (
         return;
       }
 
+      if ('status' in data) {
+        setStatusText(data.status);
+      }
+
       if ('files' in data) {
         const p = data.files.index / data.files.total;
         setPercentage(Math.floor((Number.isFinite(p) ? p : 0) * 100));
@@ -79,7 +86,8 @@ const useAccountSync = (
   return {
     initSync,
     isLoading,
-    filesSynced: percentage
+    filesSynced: percentage,
+    statusText
   };
 };
 

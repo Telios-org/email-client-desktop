@@ -28,7 +28,7 @@ class Channel extends EventEmitter {
       pids = [];
     }
 
-    this.process = fork(channelPath, [userDataPath + '/Accounts', process.env.NODE_ENV], {
+    this.process = fork(channelPath, [userDataPath + '/Accounts', process.env.NODE_ENV, navigator.userAgent], {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       cwd
     });

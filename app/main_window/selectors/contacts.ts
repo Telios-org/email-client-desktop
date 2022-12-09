@@ -90,7 +90,7 @@ export const contactDirectory = createSelector(
       .sort()
       .reduce((r, k) => ((r[k] = directory[k]), r), {});
 
-    console.log('DIRECTORY SORTED', sorted);
+    // console.log('DIRECTORY SORTED', sorted);
 
     return sorted;
   }

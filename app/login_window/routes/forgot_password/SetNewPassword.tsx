@@ -75,7 +75,6 @@ const SetNewPassword = () => {
       }
     },
     onSubmit: async data => {
-      console.log(data);
       setLoading(true);
       AccountService.resetAccountPassword({
         passphrase,

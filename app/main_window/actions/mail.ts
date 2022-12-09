@@ -804,15 +804,15 @@ export const loadMailboxes = () => async (
 
   // try {
   dispatch(fetchMailboxes()).then(mailboxes => {
-    console.log('MAILBOXES', mailboxes);
-    console.log('activeMailboxIndex', activeMailboxIndex);
+    // console.log('MAILBOXES', mailboxes);
+    // console.log('activeMailboxIndex', activeMailboxIndex);
 
     activeMailboxId = mailboxes[activeMailboxIndex].mailboxId;
 
-    console.log('activeMailboxId', activeMailboxId);
+    // console.log('activeMailboxId', activeMailboxId);
 
     dispatch(fetchMailboxFolders(activeMailboxId)).then(_folders => {
-      console.log('folders', _folders);
+      // console.log('folders', _folders);
       folders = _folders;
 
       dispatch(fetchMailboxNamespaces(activeMailboxId)).then(
@@ -834,7 +834,7 @@ export const loadMailboxes = () => async (
             messages = await dispatch(fetchFolderMessages(activeFolderId));
           }
 
-          console.log('MESSAGES', messages);
+          // console.log('MESSAGES', messages);
 
           dispatch(
             fetchDataSuccess(

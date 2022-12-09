@@ -142,7 +142,7 @@ const Registration = () => {
           recoveryEmail: data.recoveryEmail.toLowerCase()
         });
 
-        console.log(account);
+        // console.log(account);
         setAccount(account);
         const store = new Store();
         store.set('lastAccount', email);

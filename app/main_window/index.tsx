@@ -9,7 +9,6 @@ import '../app.global.css';
 const store = configureStore();
 const history = createHistory(store);
 
-console.log(store, history);
 
 // const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 

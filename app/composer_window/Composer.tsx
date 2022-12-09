@@ -145,12 +145,12 @@ const Composer = (props: Props) => {
     const htmlBody = content ?? editorState;
     const owner = mbox ?? mailbox;
 
+
     // Getting timestamp for email
     const time = UTCtimestamp().toString();
     // Getting the plain text off the htmlBody
     const plaintext = htmlToText.fromString(htmlBody);
 
-    console.log(draft);
 
     const from = draft?.from ?? [
       {
@@ -171,6 +171,8 @@ const Composer = (props: Props) => {
       bodyAsHtml: htmlBody
     };
 
+    console.log(eml);
+
     if (htmlBody !== editorState) {
       setEditorState(htmlBody);
     }
@@ -186,7 +188,6 @@ const Composer = (props: Props) => {
       dispatch !== null &&
       message.emailId !== null
     ) {
-      // console.log('FIRING OFF 186 - IF STATEMENT')
       dispatch(fetchMsg(message.emailId))
         .then(email => {
           const draft = emailTransform(email, 'draftEdit', false);
@@ -235,7 +236,6 @@ const Composer = (props: Props) => {
     } else if (
       isInline &&
       folder?.name === 'Drafts' &&
-      dispatch !== null &&
       message.emailId === null
     ) {
       const data = assembleFromDataSet(mb, namespaces, aliases);
@@ -250,7 +250,6 @@ const Composer = (props: Props) => {
   useEffect(() => {
     if (folder?.name !== 'Drafts' || (folder?.name === 'Drafts' && !isInline)) {
       ipcRenderer.on('WINDOW_IPC::contentReady', (event, content, windowID) => {
-        console.log('IPC event handler', content, windowID);
         // The email has already been formatted according to the editorAction
         // it happened in the Window IPC.
         const draft = clone(content.message);
@@ -284,6 +283,8 @@ const Composer = (props: Props) => {
         } else {
           setFromAddress([data[0]]);
         }
+
+        console.log(draft);
 
         setFromDataSet(data);
         handleEmailUpdate(draft, draft.bodyAsHtml, content.mailbox);
@@ -398,7 +399,6 @@ const Composer = (props: Props) => {
         from: Array.isArray(fromAddress) ? fromAddress : [fromAddress]
       };
 
-      console.log('DRAFT', draft);
       handleEmailUpdate(draft, undefined, undefined);
     },
     { debounce: 250 }

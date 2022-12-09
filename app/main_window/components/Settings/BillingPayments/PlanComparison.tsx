@@ -25,12 +25,12 @@ const PlanComparison = (props: Props) => {
     setCurrentPricing(
       pricingData.filter(p => p.id === currentPlan.toLowerCase())[0]
     );
-    console.log(
-      'CURRENT PRICING',
-      currentPlan.toLowerCase(),
-      currentPricing,
-      pricingData
-    );
+    // console.log(
+    //   'CURRENT PRICING',
+    //   currentPlan.toLowerCase(),
+    //   currentPricing,
+    //   pricingData
+    // );
   }, [currentPlan, pricingData]);
 
   useEffect(() => {

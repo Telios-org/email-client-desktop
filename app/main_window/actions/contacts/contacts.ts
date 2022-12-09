@@ -168,7 +168,7 @@ export const deleteContact = (contactId: number, localOnly = false) => {
     // i.e. in case of a collection:update event
     if (!localOnly) {
       try {
-        console.log('DELETE ', contactId);
+        // console.log('DELETE ', contactId);
         await Contact.removeContact(contactId);
       } catch (error) {
         dispatch(contactDeletionFailure(error));

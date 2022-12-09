@@ -1,6 +1,6 @@
 import {
   FETCH_MAIL_DATA_SUCCESS,
-  CREATE_LOCAL_MAILBOX_SUCCESS  
+  CREATE_LOCAL_MAILBOX_SUCCESS
 } from '../../actions/mail';
 
 import {
@@ -50,7 +50,9 @@ export default function folders(
             ...state.byId,
             [action.id]: {
               ...state.byId[action.id],
-              count: state.byId[action.id]?.count ? state.byId[action.id].count + action.amount : action.amount
+              count: state.byId[action.id]?.count
+                ? state.byId[action.id].count + action.amount
+                : action.amount
             }
           },
           allIds: [...state.allIds]

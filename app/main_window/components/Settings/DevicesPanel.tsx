@@ -132,7 +132,7 @@ const DevicesPanel = () => {
       mailbox?.address?.length > 0 &&
       account?.driveSyncingPublicKey?.length > 0
     ) {
-      console.log(mailbox.address, account?.driveSyncingPublicKey);
+      // console.log(mailbox.address, account?.driveSyncingPublicKey);
       setQrCode(
         JSON.stringify({
           email: mailbox?.address,
