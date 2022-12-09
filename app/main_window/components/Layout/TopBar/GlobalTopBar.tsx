@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { MailboxType } from '../../../reducers/types';
 import Search from './Search';
 import WindowControls from '../../../../global_components/WindowControls/WindowControls';
-import UserMenu from '../Navigation/UserMenu';
+import UserMenu from './UserMenu';
 import styles from './GlobalTopBar.css';
 
-type Props = {
+type Props = {  
   onSelect: (eventKey: string) => void;
 };
 

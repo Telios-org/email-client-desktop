@@ -2,14 +2,14 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 
 // EXTERNAL LIBRAIRIES
-import { usePopper } from 'react-popper';
+import { usePopper } from 'react-popper';  
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import { Portal } from 'react-portal';
 import { Logout, Setting, User } from 'react-iconly';
 import { BigHead } from '@bigheads/core';
 
 // INTERNAL COMPONENTS
-import UserBubble from './CustomSVG/UserBubble';
+import UserBubble from '../Navigation/CustomSVG/UserBubble';
 import stringToHslColor from '../../../../utils/avatar.util';
 import Loader from '../../../../global_components/Loader';
 
@@ -247,7 +247,7 @@ const UserMenu = (props: Props) => {
                         onClick={() => onSelect('settings')}
                       >
                         <div className="text-xs rounded border border-gray-300 py-1 text-gray-500 hover:bg-gray-100">
-                          Manage Account
+                          Account Settings
                         </div>
                       </div>
                     </div>
