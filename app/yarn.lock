@@ -2,6 +2,26 @@
 # yarn lockfile v1
 
 
+"@hyperswarm/dht@5.0.17":
+  version "5.0.17"
+  resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-5.0.17.tgz#5747ada03ff161b15eaed4bd1338087806053f34"
+  integrity sha512-/ZlUSBTLR9uvzBF1V3sMzgzt8vtJp9FWikddPYYE0z0RXxpeyPkPlj+p6mLKKv66Obc4U/mYiuCc2f90vHVxcA==
+  dependencies:
+    "@hyperswarm/secret-stream" "^5.1.0"
+    b4a "^1.3.1"
+    bind-easy "^1.0.1"
+    bogon "^1.0.0"
+    compact-encoding "^2.4.1"
+    compact-encoding-net "^1.0.1"
+    dht-rpc "^5.0.1"
+    noise-curve-ed "^1.0.2"
+    noise-handshake "^2.1.0"
+    record-cache "^1.1.1"
+    safety-catch "^1.0.1"
+    sodium-universal "^3.0.4"
+    utp-native "^2.5.3"
+    xache "^1.0.0"
+
 "@hyperswarm/dht@^6.0.1":
   version "6.3.3"
   resolved "https://registry.yarnpkg.com/@hyperswarm/dht/-/dht-6.3.3.tgz#a9266cb56549f74e2d5dea587aad00c483799ad6"
@@ -127,7 +147,33 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^7.0.6", "@telios/client-sdk@^7.0.7":
+"@telios/client-sdk@^6.3.8":
+  version "6.3.8"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-6.3.8.tgz#c9ba4b1fe45409bbef69e70c3110a2604c261d10"
+  integrity sha512-ahaCyhabduhCvJDIqUMjdJaT6Cb0LgjxQHtb4GX6cBEGilqujcsKgGbrHW/jgul+5e4EfvxvQYfpgfrDHhcJ/g==
+  dependencies:
+    "@telios/nebula" "^3.4.9"
+    async "^3.2.0"
+    axios "^0.21.1"
+    bip39 "^3.0.4"
+    blakejs "^1.1.0"
+    chokidar "^3.5.1"
+    corestore "^5.8.2"
+    dat-encoding "^5.0.1"
+    jwt-decode "^2.2.0"
+    level "^6.0.1"
+    mailparser "^2.8.1"
+    memorystream "^0.3.1"
+    moment "^2.27.0"
+    multifeed "^6.0.0"
+    node-fetch "^2.6.1"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    rimraf "^3.0.2"
+    sodium-native "^3.2.0"
+    uuid "^8.2.0"
+
+"@telios/client-sdk@^7.0.7":
   version "7.0.7"
   resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-7.0.7.tgz#2c1e1ee2e905fa3cb42e929d1a4cc318943cdaf6"
   integrity sha512-Obak+6ZprPC/oJRQbcYW3NTGyi6sOtOBFWFSY9VUItZqrX1LDY9O247S5Z0k7q+yjhYw9iSJpy3GDhe6y46Svg==
@@ -149,15 +195,41 @@
     rimraf "^3.0.2"
     uuid "^8.2.0"
 
-"@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate":
+"@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate.git":
   version "3.0.5"
-  resolved "git+https://github.com/Telios-org/nebula-migrate#7304d19a9ed43bb23208d65dd85a3f1af15a1f09"
+  resolved "git+https://github.com/Telios-org/nebula-migrate.git#b82ac7a4cb0c79d6e6817debeee1ad552bd912a3"
   dependencies:
     "@telios/nebula-old" "git+https://github.com/Telios-org/nebula#v3.4.14"
 
 "@telios/nebula-old@git+https://github.com/Telios-org/nebula#v3.4.14":
   version "3.4.14"
   resolved "git+https://github.com/Telios-org/nebula#10894c584734025a6afcb2dc3cf93eaedfd25e39"
+  dependencies:
+    autobase "1.0.0-alpha.6"
+    blakejs "^1.1.0"
+    codecs "^2.2.0"
+    concat-stream "^2.0.0"
+    corestore "6.0.1-alpha.9"
+    dat-encoding "^5.0.1"
+    data-store "^4.0.3"
+    graceful-fs "^4.2.9"
+    hyperbee "1.7.0"
+    hyperbeedeebee "git+https://github.com/hexadecible/hyperbeedeebee.git"
+    hypercore "10.0.0-alpha.23"
+    hyperswarm "3.0.2"
+    is-online "^9.0.1"
+    memorystream "^0.3.1"
+    natural "^5.1.11"
+    pump "^3.0.0"
+    random-access-memory "^3.1.1"
+    sodium-javascript "^0.8.0"
+    stopwords "^0.0.9"
+    uuid "^8.2.0"
+
+"@telios/nebula@^3.4.13", "@telios/nebula@^3.4.9":
+  version "3.4.14"
+  resolved "https://registry.yarnpkg.com/@telios/nebula/-/nebula-3.4.14.tgz#3a764768fd6a873d677f02e6edc43a249495461c"
+  integrity sha512-1FuA7XnFbWoM8yCphRIgorS4LOVqmNjjlkDH3udIggEn9oNtDCA3UGI9kvk5KWSNdb3cTJv4vfz2cpatGjmr3A==
   dependencies:
     autobase "1.0.0-alpha.6"
     blakejs "^1.1.0"
@@ -246,12 +318,12 @@
   resolved "https://registry.yarnpkg.com/@types/http-cache-semantics/-/http-cache-semantics-4.0.1.tgz#0ea7b61496902b95890dc4c3a116b60cb8dae812"
   integrity sha512-SZs7ekbP8CN0txVG2xVRH6EgKmEm31BOxA07vkFaETzZz1xh+cbt8BcI0slpymvwhx5dlFnQG2rTlPVQn+iRPQ==
 
-"@types/keyv@*":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@types/keyv/-/keyv-4.2.0.tgz#65b97868ab757906f2dbb653590d7167ad023fa0"
-  integrity sha512-xoBtGl5R9jeKUhc8ZqeYaRDx04qqJ10yhhXYGmJ4Jr8qKpvMsDQQrNUvF/wUJ4klOtmJeJM+p2Xo3zp9uaC3tw==
+"@types/keyv@^3.1.4":
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/@types/keyv/-/keyv-3.1.4.tgz#3ccdb1c6751b0c7e52300bcdacd5bcbf8faa75b6"
+  integrity sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==
   dependencies:
-    keyv "*"
+    "@types/node" "*"
 
 "@types/node@*":
   version "18.11.11"
@@ -359,9 +431,9 @@ autobase@1.0.0-alpha.6:
     safety-catch "^1.0.1"
     streamx "^2.10.0"
 
-"autobase@git+https://github.com/hypercore-protocol/autobase.git":
+"autobase@https://github.com/hypercore-protocol/autobase":
   version "1.0.0-alpha.8"
-  resolved "git+https://github.com/hypercore-protocol/autobase.git#91637d9b41c15e4b799bc491d0694135cb56ef31"
+  resolved "https://github.com/hypercore-protocol/autobase#91637d9b41c15e4b799bc491d0694135cb56ef31"
   dependencies:
     b4a "^1.3.1"
     codecs "^3.0.0"
@@ -671,6 +743,22 @@ corestore@6.0.1-alpha.9:
     safety-catch "^1.0.1"
     sodium-universal "^3.0.4"
 
+corestore@^5.8.2:
+  version "5.8.2"
+  resolved "https://registry.yarnpkg.com/corestore/-/corestore-5.8.2.tgz#bae8f7228db4fb0bf7417d57af60b6ac08a440af"
+  integrity sha512-8OJyqGo1m3PyVvQtUoVcKYz4m4QoBAJE/2rNMJ8SD/U03NGD1z1cYep/n/32I0f3IbujYP5+4lIfBMIDkasB2w==
+  dependencies:
+    call-me-maybe "^1.0.1"
+    dat-encoding "^5.0.1"
+    derive-key "^1.0.0"
+    derived-key-storage "^2.1.0"
+    fd-lock "^1.0.2"
+    hypercore "^9.0.0"
+    hypercore-crypto "^2.0.0"
+    hypercore-protocol "^8.0.0"
+    nanoresource "^1.3.0"
+    refpool "^1.2.0"
+
 corestore@^6.2.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/corestore/-/corestore-6.3.0.tgz#24fd33c98c06a10d40fec4cc8a07aca749e2601e"
@@ -819,12 +907,21 @@ del@^6.0.0:
     rimraf "^3.0.2"
     slash "^3.0.0"
 
-derive-key@^1.0.1:
+derive-key@^1.0.0, derive-key@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/derive-key/-/derive-key-1.0.1.tgz#3f1f5bdac062f8cffc95a81dfcc175f3512b4127"
   integrity sha512-7DHGLGvxFF8umw8NEGH3n9KKgEN8duk4Fiy4WmN3QgNKEogDhaNIsTDd5JVN7ilB8xw4ike1Q08z8UJSJ7hebA==
   dependencies:
     blake2b-universal "^1.0.0"
+
+derived-key-storage@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/derived-key-storage/-/derived-key-storage-2.1.0.tgz#b6ee6cdead00c95130276ad511ac183175b6b556"
+  integrity sha512-4RKKrpf2YouCASaRHqUvyxtHABGLH7UJWNXPjsJxMvzCj4tettUvuyGsmP2/mpGYhSda7caZkS2oP4rqWjgkZg==
+  dependencies:
+    random-access-storage "^1.4.0"
+    thunky "^1.0.3"
+    varint "^5.0.0"
 
 dht-rpc@^5.0.1:
   version "5.0.6"
@@ -1015,6 +1112,14 @@ fastq@^1.6.0:
   integrity sha512-eR2D+V9/ExcbF9ls441yIuN6TI2ED1Y2ZcA5BmMtJsOkWOFRJQ0Jt0g1UwqXJJVAb+V+umH5Dfr8oh4EVP7VVg==
   dependencies:
     reusify "^1.0.4"
+
+fd-lock@^1.0.2:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/fd-lock/-/fd-lock-1.2.0.tgz#a3d9cf2fdf37fc7dbe51a1f8fe600ba30892b94a"
+  integrity sha512-Lk/pKH2DldLpG4Yh/sOOY84k5VqNzxHPffGwf1+yYI+/qMXzTPp9KJMX+Wh6n4xqGSA1Mu7JPmaDArfJGw2O/A==
+  dependencies:
+    napi-macros "^2.0.0"
+    node-gyp-build "^4.2.2"
 
 file-type@^16.1.0, file-type@^16.5.3:
   version "16.5.4"
@@ -1308,7 +1413,7 @@ hypercore-promisifier@^1.0.1:
     call-me-maybe "^1.0.1"
     inspect-custom-symbol "^1.1.1"
 
-hypercore-protocol@^8.0.5, hypercore-protocol@^8.0.7:
+hypercore-protocol@^8.0.0, hypercore-protocol@^8.0.5, hypercore-protocol@^8.0.7:
   version "8.0.7"
   resolved "https://registry.yarnpkg.com/hypercore-protocol/-/hypercore-protocol-8.0.7.tgz#74ed279710b095858d60905477d5bb6a69765aba"
   integrity sha512-b5TXhqXUZ+Z7M/5/PlCTgElfufDRa3EzACd7y7BA7owLkxQreaUQ58wUO7nzJppDP1bnC2Hz6Hg7nlRPc75bKw==
@@ -1377,7 +1482,7 @@ hypercore@^10.4.1, hypercore@^10.5.3:
     xache "^1.1.0"
     z32 "^1.0.0"
 
-hypercore@^9.6.0:
+hypercore@^9.0.0, hypercore@^9.6.0:
   version "9.12.0"
   resolved "https://registry.yarnpkg.com/hypercore/-/hypercore-9.12.0.tgz#f95ec2aea66abfb740aaeb211a12196721120e5c"
   integrity sha512-wIlM4Iwl618NcmsY+1O/X08Cx/bY6ti3LXmQhRnPZFGQPqAeX0x53hASckW082IIAVWzXD3zcmREw5yEINzb4w==
@@ -1620,13 +1725,6 @@ kademlia-routing-table@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/kademlia-routing-table/-/kademlia-routing-table-1.0.1.tgz#6f18416f612e885a8d4df128f04c490a90d772f6"
   integrity sha512-dKk19sC3/+kWhBIvOKCthxVV+JH0NrswSBq4sA4eOkkPMqQM1rRuOWte1WSKXeP8r9Nx4NuiH2gny3lMddJTpw==
-
-keyv@*, keyv@^4.0.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/keyv/-/keyv-4.5.0.tgz#dbce9ade79610b6e641a9a65f2f6499ba06b9bc6"
-  integrity sha512-2YvuMsA+jnFGtBareKqgANOEKe1mk3HKiXu2fRmAfyxG0MJAywNhi5ttWA3PMjl4NmpyjZNbFifR2vNjW1znfA==
-  dependencies:
-    json-buffer "3.0.1"
 
 keyv@^3.0.0:
   version "3.1.0"
@@ -1989,7 +2087,7 @@ node-fetch@^2.6.1, node-fetch@^2.6.7:
   dependencies:
     whatwg-url "^5.0.0"
 
-node-gyp-build@^4.2.0, node-gyp-build@^4.2.3, node-gyp-build@^4.3.0, node-gyp-build@^4.4.0, node-gyp-build@^4.5.0:
+node-gyp-build@^4.2.0, node-gyp-build@^4.2.2, node-gyp-build@^4.2.3, node-gyp-build@^4.3.0, node-gyp-build@^4.4.0, node-gyp-build@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.5.0.tgz#7a64eefa0b21112f89f58379da128ac177f20e40"
   integrity sha512-2iGbaQBV+ITgCz76ZEjmhUKAKVf7xfY1sRl4UiKQspfZMH2h06SyhNsnSVy50cwkFQDGLyif6m/6uFXHkOZ6rg==
@@ -2296,7 +2394,7 @@ random-access-memory@^6.0.0:
     is-options "^1.0.2"
     random-access-storage "^3.0.0"
 
-random-access-storage@^1.1.1:
+random-access-storage@^1.1.1, random-access-storage@^1.4.0:
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/random-access-storage/-/random-access-storage-1.4.3.tgz#277d07005107562dfea84798eb9a6acd47d64b7f"
   integrity sha512-D5e2iIC5dNENWyBxsjhEnNOMCwZZ64TARK6dyMN+3g4OTC4MJxyjh9hKLjTGoNhDOPrgjI+YlFEHFnrp/cSnzQ==
@@ -2367,6 +2465,13 @@ record-cache@^1.1.1:
   integrity sha512-kyy3HWCez2WrotaL3O4fTn0rsIdfRKOdQQcEJ9KpvmKmbffKVvwsloX063EgRUlpJIXHiDQFhJcTbZequ2uTZw==
   dependencies:
     b4a "^1.3.1"
+
+refpool@^1.2.0:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/refpool/-/refpool-1.2.2.tgz#cf363b109bb8483355172e42937b714ed46e6115"
+  integrity sha512-uxnVlknIezgMMYQu2RDU/OCkyHntFHnC68PqghdKun2z3W3t5CmAt4uDr28TcPP2GQNsTAjvX1+vpHVrjvcolg==
+  dependencies:
+    time-ordered-set "^1.0.2"
 
 remove-markdown@^0.3.0:
   version "0.3.0"
@@ -2700,6 +2805,11 @@ through2@^3.0.0:
   dependencies:
     inherits "^2.0.4"
     readable-stream "2 || 3"
+
+thunky@^1.0.3:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.1.0.tgz#5abaf714a9405db0504732bbccd2cedd9ef9537d"
+  integrity sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==
 
 time-ordered-set@^1.0.2:
   version "1.0.2"
