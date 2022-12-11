@@ -88,6 +88,19 @@ class DomainService {
       });
     });
   }
+
+  static async registerMailbox(payload) {
+    console.log('REGISTERING MAILBOX', payload);
+    channel.send({ event: 'domain:registerMailbox', payload });
+    return new Promise((resolve, reject) => {
+      channel.once('domain:registerMailbox:callback', m => {
+        const { error, data } = m;
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
 }
 
 module.exports = DomainService;

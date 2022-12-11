@@ -143,3 +143,55 @@ export const deleteDomain = domain => {
     return result;
   };
 };
+
+/*
+ * Register Mailboxes under domain
+ */
+export const REGISTER_MAILBOX_REQUEST = 'DOMAIN::REGISTER_MAILBOX_REQUEST';
+export const registerMailboxRequest = () => {
+  return {
+    type: REGISTER_MAILBOX_REQUEST
+  };
+};
+
+export const REGISTER_MAILBOX_SUCCESS = 'DOMAIN::REGISTER_MAILBOX_SUCCESS';
+export const registerMailboxSuccess = payload => {
+  return {
+    type: REGISTER_MAILBOX_SUCCESS,
+    payload
+  };
+};
+
+export const REGISTER_MAILBOX_FAILURE = 'DOMAIN::REGISTER_MAILBOX_FAILURE';
+export const registerMailboxFailure = (error: Error) => {
+  return {
+    type: REGISTER_MAILBOX_FAILURE,
+    error
+  };
+};
+
+export const registerMailbox = (payload: {
+  type: 'SUB' | 'CLAIMED';
+  email: string;
+  displayName: string;
+  domain: string;
+  recoveryEmail: string;
+  deviceType: 'DESKTOP' | 'MOBILE';
+}) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(registerMailboxRequest());
+    let result;
+
+    try {
+      result = await DomainService.registerMailbox(payload);
+      console.log(result);
+    } catch (error) {
+      dispatch(registerMailboxFailure(error));
+      return error;
+    }
+
+    dispatch(registerMailboxSuccess(result));
+
+    return result;
+  };
+};

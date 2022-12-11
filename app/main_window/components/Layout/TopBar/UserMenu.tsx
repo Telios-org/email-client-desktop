@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 
 // EXTERNAL LIBRAIRIES
-import { usePopper } from 'react-popper';  
+import { usePopper } from 'react-popper';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import { Portal } from 'react-portal';
 import { Logout, Setting, User } from 'react-iconly';
@@ -144,7 +144,7 @@ const UserMenu = (props: Props) => {
 
   return (
     <>
-      <Menu as="div" className="relative ">
+      <Menu as="div" className="relative">
         {({ open }) => (
           <>
             <div
@@ -183,6 +183,7 @@ const UserMenu = (props: Props) => {
               <div
                 ref={popperElRef}
                 style={styles.popper}
+                className="z-50"
                 {...attributes.popper}
               >
                 <Transition
@@ -229,27 +230,29 @@ const UserMenu = (props: Props) => {
                         </div>
 
                         <div className="pl-3 flex flex-col overflow-hidden max-w-[175px]">
-                          <div className="text-sm leading-5 font-semibold break-all">
+                          <div className="text-sm leading-5 font-semibold overflow-ellipsis overflow-x-hidden">
                             {mailbox?.name?.length > 0
                               ? mailbox?.name
                               : mailbox?.address}
                           </div>
                           {mailbox?.name?.length > 0 && (
-                            <div className="text-xs leading-5 font-normal text-gray-500 break-all">
+                            <div className="text-xs leading-5 font-normal text-gray-500 overflow-ellipsis overflow-x-hidden">
                               {mailbox?.address}
                             </div>
                           )}
                         </div>
                       </div>
-                      <div
-                        className="w-full pt-3 text-center"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => onSelect('settings')}
-                      >
-                        <div className="text-xs rounded border border-gray-300 py-1 text-gray-500 hover:bg-gray-100">
-                          Account Settings
+                      <Menu.Item>
+                        <div
+                          className="w-full pt-3 text-center"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => onSelect('settings')}
+                        >
+                          <div className="text-xs rounded border border-gray-300 py-1 text-gray-500 hover:bg-gray-100">
+                            Account Settings
+                          </div>
                         </div>
-                      </div>
+                      </Menu.Item>
                     </div>
                     {switcherData.length > 0 && (
                       <div className="py-1 max-h-[300px] overflow-y-scroll">
@@ -295,10 +298,10 @@ const UserMenu = (props: Props) => {
                                     )}
                                   </div>
                                   <div className="pl-3 flex flex-col overflow-hidden max-w-[200px]">
-                                    <div className="text-xs leading-4 flex justify-between font-semibold text-ellipsis whitespace-nowrap">
+                                    <div className="text-xs leading-4 flex justify-between font-semibold overflow-ellipsis overflow-x-hidden whitespace-nowrap">
                                       {m?.name || m?.address}
                                     </div>
-                                    <div className="text-xs leading-4 flex justify-between font-normal text-gray-500 text-ellipsis whitespace-nowrap">
+                                    <div className="text-xs leading-4 flex justify-between font-normal text-gray-500 overflow-ellipsis overflow-x-hidden whitespace-nowrap">
                                       {m?.address}
                                     </div>
                                   </div>

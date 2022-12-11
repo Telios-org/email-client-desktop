@@ -28,7 +28,8 @@ import { Input } from '../../../../../global_components/input-groups';
 // INTERNAL COMPONENT
 import { Button } from '../../../../../global_components/button';
 
-// SELECTORS
+// ACTION CREATORS
+import { registerMailbox } from '../../../../actions/domains/domains';
 
 // HELPER
 import generateRandomString from '../../../../../utils/helpers/generators';
@@ -77,16 +78,42 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
         pattern: {
           value: /^\w+([\.-]?\w+)*$/g, // empty ^$ or string
           message: 'No special characters allowed except for . allowed.'
-        },
-        displayName: {
-          pattern: {
-            value: /^$|^([A-Za-zÀ-ÖØ-öø-ÿ0-9\.\-\/]+\s)*[A-Za-zÀ-ÖØ-öø-ÿ0-9\.\-\/]+$/, // empty ^$ or string
-            message: 'No special characters allowed except for . - / allowed.'
-          }
+        }
+      },
+      displayName: {
+        pattern: {
+          value: /^$|^([A-Za-zÀ-ÖØ-öø-ÿ0-9\.\-\/]+\s)*[A-Za-zÀ-ÖØ-öø-ÿ0-9\.\-\/]+$/, // empty ^$ or string
+          message: 'No special characters allowed except for . - / allowed.'
         }
       }
     },
-    onSubmit: async data => {}
+    onSubmit: async data => {
+      const email = `${data.address}@${data.domain}`;
+      const payload = {
+        type: 'SUB',
+        email,
+        displayName: data.displayName.length > 0 ? data.displayName : email,
+        domain: data.domain,
+        recoveryEmail: 'submailbox@poopooland.com',
+        deviceType: 'DESKTOP'
+      };
+      setError({
+        showError: false,
+        msg: ''
+      });
+      setLoader(true);
+      console.log(payload);
+      const res = await dispatch(registerMailbox({ ...payload }));
+      if (res.success) {
+        close(true, 'Mailbox created!');
+      } else {
+        setError({
+          showError: true,
+          msg: res.message
+        });
+      }
+      setLoader(false);
+    }
   });
 
   const filteredDomains =
@@ -146,7 +173,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
           </span> */}
         </div>
       </div>
-      <form className="max-w-md m-auto">
+      <form className="max-w-md m-auto relative">
         <Combobox
           value={form.domain}
           onChange={val => manualChange('domain', val)}
@@ -222,97 +249,99 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
             </Transition>
           </div>
         </Combobox>
-        <div className="mt-6 relative">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Address
-          </label>
-          <div className="mt-1 flex rounded-md shadow-sm">
-            <div className="relative flex items-stretch flex-grow focus-within:z-10">
-              <input
-                type="email"
-                name="email"
-                id="email"
-                value={form.address}
-                onChange={handleChange('address', true)}
-                className="form-input focus:ring-purple-500 focus:border-purple-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300"
-                placeholder="Type choice here..."
-              />
-            </div>
-            <button
-              type="button"
-              onClick={generateRandomAlias}
-              className="-ml-px relative group inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+        <div className="relative">
+          <div className="mt-6 relative">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
             >
-              <LightningBoltIcon
-                className="h-5 w-5 text-gray-400 group-hover:text-gray-600"
-                aria-hidden="true"
-              />
-            </button>
+              Address
+            </label>
+            <div className="mt-1 flex rounded-md shadow-sm">
+              <div className="relative flex items-stretch flex-grow focus-within:z-10">
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  value={form.address}
+                  onChange={handleChange('address', true)}
+                  className="form-input focus:ring-purple-500 focus:border-purple-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300"
+                  placeholder="Type choice here..."
+                />
+              </div>
+              <button
+                type="button"
+                onClick={generateRandomAlias}
+                className="-ml-px relative group inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+              >
+                <LightningBoltIcon
+                  className="h-5 w-5 text-gray-400 group-hover:text-gray-600"
+                  aria-hidden="true"
+                />
+              </button>
+            </div>
+          </div>
+          <div className="text-xs flex flex-row mt-2 justify-end">
+            <label className="font-medium text-gray-900 pr-4">
+              Random Format:
+            </label>
+            <fieldset className="">
+              <legend className="sr-only">Random Format</legend>
+              <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-4">
+                <div className="flex items-center">
+                  <input
+                    id="word"
+                    name="random-format"
+                    type="radio"
+                    defaultChecked
+                    className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
+                    onChange={() => setRandomFormat(format[0])}
+                  />
+                  <label
+                    htmlFor="word"
+                    className="ml-2 block text-xs text-gray-700"
+                  >
+                    Word Association
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    id="letters"
+                    name="random-format"
+                    type="radio"
+                    className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
+                    onChange={() => setRandomFormat(format[1])}
+                  />
+                  <label
+                    htmlFor="letters"
+                    className="ml-2 block text-xs text-gray-700"
+                  >
+                    Shuffled Letters
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    id="word"
+                    name="random-format"
+                    type="radio"
+                    className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
+                    onChange={() => setRandomFormat(format[2])}
+                  />
+                  <label
+                    htmlFor="word"
+                    className="ml-2 block text-xs text-gray-700"
+                  >
+                    UID
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <div className="text-xs text-red-500 absolute -bottom-5 pl-2">
+            {errors?.address?.length > 0 && errors?.address}
           </div>
         </div>
-        <div className="text-xs flex flex-row mt-2 justify-end">
-          <label className="font-medium text-gray-900 pr-4">
-            Random Format:
-          </label>
-          <fieldset className="">
-            <legend className="sr-only">Random Format</legend>
-            <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-4">
-              <div className="flex items-center">
-                <input
-                  id="word"
-                  name="random-format"
-                  type="radio"
-                  defaultChecked
-                  className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
-                  onChange={() => setRandomFormat(format[0])}
-                />
-                <label
-                  htmlFor="word"
-                  className="ml-2 block text-xs text-gray-700"
-                >
-                  Word Association
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="letters"
-                  name="random-format"
-                  type="radio"
-                  className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
-                  onChange={() => setRandomFormat(format[1])}
-                />
-                <label
-                  htmlFor="letters"
-                  className="ml-2 block text-xs text-gray-700"
-                >
-                  Shuffled Letters
-                </label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="word"
-                  name="random-format"
-                  type="radio"
-                  defaultChecked
-                  className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
-                  onChange={() => setRandomFormat(format[2])}
-                />
-                <label
-                  htmlFor="word"
-                  className="ml-2 block text-xs text-gray-700"
-                >
-                  UID
-                </label>
-              </div>
-            </div>
-          </fieldset>
-        </div>
-        <div className="text-xs text-red-500 absolute -bottom-5 pl-2">
-          {errors?.address?.length > 0 && errors?.address}
-        </div>
+
         <div className="mt-6 relative">
           <Input
             label="Display Name"
@@ -320,20 +349,31 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
             value={form.displayName}
             placeholder={`${form.address}@${form.domain}`}
           />
+          <div className="text-xs text-red-500 absolute -bottom-5 pl-2">
+            {errors?.displayName?.length > 0 && errors?.displayName}
+          </div>
         </div>
-        <div className="text-xs text-red-500 absolute -bottom-5 pl-2">
-          {errors?.displayName?.length > 0 && errors?.displayName}
+        <div className="text-xs text-red-500 absolute -bottom-9 text-center w-full">
+          {error.length > 0 && error}
         </div>
       </form>
       <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-14">
         <div className="flex flex-row space-x-2">
-          <Button type="button" variant="outline" className="pt-2 pb-2">
+          <Button
+            type="button"
+            variant="outline"
+            className="pt-2 pb-2"
+            onClick={() => close(false, '', false)}
+          >
             Cancel
           </Button>
           <Button
             type="button"
             variant="secondary"
             className="pt-2 pb-2 whitespace-nowrap"
+            onClick={handleSubmit}
+            loading={loading}
+            loadingText="Registering Mailbox..."
           >
             Add Mailbox
           </Button>
