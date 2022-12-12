@@ -37,17 +37,10 @@ class MessageIngressService extends EventEmitter {
     channel.on('messageHandler:fileFetched', async m => {
       const { event, data, error } = m;
       if (!error) {
-        const email = transformEmail(data);
 
         if (data._id) {
           this.syncIds.push(data._id);
         }
-
-        MailService.save({
-          messages: [email],
-          type: 'Incoming',
-          async: false
-        });
       }
     });
 

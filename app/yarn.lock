@@ -188,7 +188,7 @@
 
 "@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#custom-domains":
   version "5.2.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#577a208cf118f11603f3af2b212ca66d97ec3b19"
+  resolved "https://github.com/Telios-org/telios-client-backend.git#10476707446cafeb1a5e3438c9f93affabe5dc02"
   dependencies:
     "@telios/client-sdk" "^7.0.7"
     "@telios/nebula" "^4.0.8"
@@ -232,9 +232,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "18.11.12"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.12.tgz#89e7f8aa8c88abf432f9bd594888144d7dba10aa"
-  integrity sha512-FgD3NtTAKvyMmD44T07zz2fEf+OKwutgBCEVM8GcvMGVGaDktiLNTDvPwC/LUe3PinMW+X6CuLOF2Ui1mAlSXg==
+  version "18.11.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.13.tgz#dff34f226ec1ac0432ae3b136ec5552bd3b9c0fe"
+  integrity sha512-IASpMGVcWpUsx5xBOrxMj7Bl8lqfuTY7FKAnPmu5cHkfQVWF8GulWS1jbRqA934qZL35xh5xN/+Xe/i26Bod4w==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -954,7 +954,7 @@ fast-bitfield@^1.2.2:
   dependencies:
     count-trailing-zeros "^1.0.1"
 
-fast-fifo@^1.0.0:
+fast-fifo@^1.0.0, fast-fifo@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/fast-fifo/-/fast-fifo-1.1.0.tgz#17d1a3646880b9891dfa0c54e69c5fef33cad779"
   integrity sha512-Kl29QoNbNvn4nhDsLYjyIAaIqaJB6rBx5p3sL9VjaefJ+eMFBWVZiaoguaoZfzEKr5RhAti0UgM8703akGPJ6g==
@@ -1211,7 +1211,7 @@ hyperbee@1.7.0:
     protocol-buffers-encodings "^1.1.0"
     streamx "^2.6.6"
 
-hyperbee@^2.1.2:
+hyperbee@^2.1.2, hyperbee@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/hyperbee/-/hyperbee-2.2.0.tgz#fb2a74152aca8bb773da3c07c47f55dc5b937487"
   integrity sha512-zup1IXxmdabvzRGe4bPWW868mLgvofl/aofK1IKka7TOajMGrQdMzCoWJfeXu7+n/PyIVt58totuVGhmOpsXAw==
@@ -2191,7 +2191,7 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-queue-tick@^1.0.0:
+queue-tick@^1.0.0, queue-tick@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/queue-tick/-/queue-tick-1.0.1.tgz#f6f07ac82c1fd60f82e098b417a80e52f1f4c142"
   integrity sha512-kJt5qhMxoszgU/62PLP1CJytzd2NKetjSRnyuj31fDd3Rlcz3fzlFdFLD1SItunPwyqEOkca6GbV612BWfaBag==
@@ -2614,12 +2614,12 @@ stopwords@^0.0.9:
   integrity sha512-2OF7/9f5buXrBB8De5ZAC9+g5nIw9SRx9ZsL3Qpz6znSfPEihOmaMnwJxXehynZ9AfRNroHIKEIcsEmRywVXVQ==
 
 streamx@^2.1.0, streamx@^2.10.0, streamx@^2.10.2, streamx@^2.10.3, streamx@^2.12.4, streamx@^2.6.0, streamx@^2.6.6, streamx@^2.7.1:
-  version "2.12.5"
-  resolved "https://registry.yarnpkg.com/streamx/-/streamx-2.12.5.tgz#485d6b6bf74df6f94bc1cc262e67392ed6862dc0"
-  integrity sha512-Y+nkFw57Z5JHT3zLlqFm3GccOy2FeYdUrrqita6Dd8kr/8enPn9GKa8IYf3/DmEKfZl/E2sWoSKUnd4qhonrgg==
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/streamx/-/streamx-2.13.0.tgz#590ad191bf326d76175e1d223ecad3b240256d46"
+  integrity sha512-9jD4uoX0juNSIcv4PazT+97FpM4Mww3cp7PM23HRTLANhgb7K7n1mB45guH/kT5F4enl04kApOM3EeoUXSPfvw==
   dependencies:
-    fast-fifo "^1.0.0"
-    queue-tick "^1.0.0"
+    fast-fifo "^1.1.0"
+    queue-tick "^1.0.1"
 
 string_decoder@^1.1.1:
   version "1.3.0"
