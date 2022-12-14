@@ -1,8 +1,8 @@
 import {
   FETCH_MAIL_DATA_SUCCESS,
-  CREATE_LOCAL_MAILBOX_SUCCESS,
   GET_MAILBOXES_REQUEST_SUCCESS
 } from '../../actions/mail';
+import { REGISTER_MAILBOX_SUCCESS } from '../../actions/domains/domains';
 import { UPDATE_PROFILE_SUCCESS } from '../../actions/account/account';
 import { MailType, MailAction } from '../types';
 import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
@@ -17,7 +17,7 @@ export default function mailboxes(
   action: MailAction
 ) {
   switch (action.type) {
-    case CREATE_LOCAL_MAILBOX_SUCCESS:
+    case REGISTER_MAILBOX_SUCCESS:
       return {
         byId: {
           ...state.byId,

@@ -155,10 +155,10 @@ export const registerMailboxRequest = () => {
 };
 
 export const REGISTER_MAILBOX_SUCCESS = 'DOMAIN::REGISTER_MAILBOX_SUCCESS';
-export const registerMailboxSuccess = payload => {
+export const registerMailboxSuccess = mailbox => {
   return {
     type: REGISTER_MAILBOX_SUCCESS,
-    payload
+    mailbox
   };
 };
 
@@ -187,10 +187,100 @@ export const registerMailbox = (payload: {
       console.log(result);
     } catch (error) {
       dispatch(registerMailboxFailure(error));
+      return { status: error.message, success: false };
+    }
+
+    dispatch(registerMailboxSuccess(result.mailbox));
+
+    return { status: 'registered', success: true };
+  };
+};
+
+/*
+ * Deleting Mailbox governed under a certain domain
+ */
+export const DELETE_MAILBOX_REQUEST = 'DOMAIN::DELETE_MAILBOX_REQUEST';
+export const deleteMailboxRequest = () => {
+  return {
+    type: DELETE_MAILBOX_REQUEST
+  };
+};
+
+export const DELETE_MAILBOX_SUCCESS = 'DOMAIN::DELETE_MAILBOX_SUCCESS';
+export const deleteMailboxSuccess = payload => {
+  return {
+    type: DELETE_MAILBOX_SUCCESS,
+    payload
+  };
+};
+
+export const DELETE_MAILBOX_FAILURE = 'DOMAIN::DELETE_MAILBOX_FAILURE';
+export const deleteMailboxFailure = (error: Error) => {
+  return {
+    type: DELETE_MAILBOX_FAILURE,
+    error
+  };
+};
+
+export const deleteMailbox = payload => {
+  return async (dispatch: Dispatch) => {
+    dispatch(deleteMailboxRequest());
+    let result;
+
+    try {
+      result = await DomainService.deleteMailbox(payload);
+      console.log(result);
+    } catch (error) {
+      dispatch(deleteMailboxFailure(error));
       return error;
     }
 
-    dispatch(registerMailboxSuccess(result));
+    dispatch(deleteMailboxSuccess(result));
+
+    return result;
+  };
+};
+
+/*
+ * Update a mailbox under a given domain
+ */
+export const UPDATE_MAILBOX_REQUEST = 'DOMAIN::UPDATE_MAILBOX_REQUEST';
+export const updateMailboxRequest = () => {
+  return {
+    type: UPDATE_MAILBOX_REQUEST
+  };
+};
+
+export const UPDATE_MAILBOX_SUCCESS = 'DOMAIN::UPDATE_MAILBOX_SUCCESS';
+export const updateMailboxSuccess = payload => {
+  return {
+    type: UPDATE_MAILBOX_SUCCESS,
+    payload
+  };
+};
+
+export const UPDATE_MAILBOX_FAILURE = 'DOMAIN::UPDATE_MAILBOX_FAILURE';
+export const updateMailboxFailure = (error: Error) => {
+  return {
+    type: UPDATE_MAILBOX_FAILURE,
+    error
+  };
+};
+
+export const updateMailbox = payload => {
+  return async (dispatch: Dispatch) => {
+    dispatch(updateMailboxRequest());
+    let result;
+
+    try {
+      result = await DomainService.updateMailbox(payload);
+      console.log(result);
+    } catch (error) {
+      dispatch(updateMailboxFailure(error));
+      return error;
+    }
+
+    dispatch(updateMailboxSuccess(result));
 
     return result;
   };

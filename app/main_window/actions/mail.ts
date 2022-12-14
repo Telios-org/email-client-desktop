@@ -59,36 +59,6 @@ export const mailboxRegistrationFailure = (error: string) => {
   };
 };
 
-// ASYNC CREATE MAILBOXES IN LOCAL ENCRYPTED DB
-export const CREATE_LOCAL_MAILBOX = 'MAILPAGE::CREATE_LOCAL_MAILBOX';
-export const createLocalMailbox = () => {
-  return {
-    type: CREATE_LOCAL_MAILBOX
-  };
-};
-
-export const CREATE_LOCAL_MAILBOX_SUCCESS =
-  'MAILPAGE::CREATE_LOCAL_MAILBOX_SUCCESS';
-export const createLocalMailboxSuccess = (
-  mailbox: MailboxType,
-  folders: FolderType[]
-) => {
-  return {
-    type: CREATE_LOCAL_MAILBOX_SUCCESS,
-    mailbox,
-    folders
-  };
-};
-
-export const CREATE_LOCAL_MAILBOX_FAILURE =
-  'MAILPAGE::CREATE_LOCAL_MAILBOX_FAILURE';
-export const createLocalMailboxFailure = (error: Error) => {
-  return {
-    type: CREATE_LOCAL_MAILBOX_FAILURE,
-    error: error.message
-  };
-};
-
 export const registerMailbox = (address: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { client } = getState();

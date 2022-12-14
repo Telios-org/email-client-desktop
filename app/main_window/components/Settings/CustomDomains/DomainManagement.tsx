@@ -30,29 +30,29 @@ import { formatDateDisplay } from '../../../../utils/helpers/date';
 
 const { clipboard } = require('electron');
 
-const mailboxes = [
-  {
-    address: 'rollitup@lightitup.com',
-    domain: 'lightitup.com',
-    description: 'When you know you know',
-    displayName: '',
-    createdDate: '2022-01-27T01:57:27.605Z'
-  },
-  {
-    address: 'rocket@tothemoon.io',
-    domain: 'tothemoon.io',
-    description: 'For the loon shots',
-    displayName: 'Rocket Man',
-    createdDate: '2022-01-27T01:57:27.605Z'
-  },
-  {
-    address: 'tesla@tothemoon.io',
-    domain: 'tothemoon.io',
-    description: 'Tesla Fan Boy Account',
-    displayName: 'Elon Musk',
-    createdDate: '2022-01-27T01:57:27.605Z'
-  }
-];
+// const mailboxes = [
+//   {
+//     address: 'rollitup@lightitup.com',
+//     domain: 'lightitup.com',
+//     description: 'When you know you know',
+//     displayName: '',
+//     createdDate: '2022-01-27T01:57:27.605Z'
+//   },
+//   {
+//     address: 'rocket@tothemoon.io',
+//     domain: 'tothemoon.io',
+//     description: 'For the loon shots',
+//     displayName: 'Rocket Man',
+//     createdDate: '2022-01-27T01:57:27.605Z'
+//   },
+//   {
+//     address: 'tesla@tothemoon.io',
+//     domain: 'tothemoon.io',
+//     description: 'Tesla Fan Boy Account',
+//     displayName: 'Elon Musk',
+//     createdDate: '2022-01-27T01:57:27.605Z'
+//   }
+// ];
 
 // const domains = [
 //   {
@@ -120,6 +120,8 @@ const DomainManagement = (props: Props) => {
   } = props;
   const dispatch = useDispatch();
   const domains = useSelector(selectAllDomains);
+  const mailboxes = useSelector(state => state.mail.mailboxes)
+  console.log(mailboxes);
   const [loading, setLoader] = useState(false);
 
   const deleteDomain = (domain: string) => {
@@ -184,17 +186,14 @@ const DomainManagement = (props: Props) => {
           </div>
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+        <div className="text-2xs text-coolGray-400">Address:</div>
+
           <div className="text-xs font-semibold">
             <span className="text-purple-600">
               {mailbox.address.split('@')[0]}
             </span>
-            {`@${mailbox.domain}`}
+            {`@${mailbox.domainKey}`}
           </div>
-          {mailbox.description?.length > 0 && (
-            <div className="text-2xs text-coolGray-400">
-              {mailbox?.description}
-            </div>
-          )}
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
@@ -450,8 +449,8 @@ const DomainManagement = (props: Props) => {
                                 </div>
                               </th>
                             </tr>
-                            {mailboxes
-                              .filter(f => f.domain === dm.name)
+                            {mailboxes.allIds.map(m => mailboxes.byId[m])
+                              .filter(f => f.domainKey === dm.name)
                               .sort(sortingHat('en', 'alias'))
                               .map((mailbox, mailboxIdx) => (
                                 <MailboxRow
