@@ -1211,7 +1211,7 @@ hyperbee@1.7.0:
     protocol-buffers-encodings "^1.1.0"
     streamx "^2.6.6"
 
-hyperbee@^2.1.2:
+hyperbee@^2.1.2, hyperbee@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/hyperbee/-/hyperbee-2.2.0.tgz#fb2a74152aca8bb773da3c07c47f55dc5b937487"
   integrity sha512-zup1IXxmdabvzRGe4bPWW868mLgvofl/aofK1IKka7TOajMGrQdMzCoWJfeXu7+n/PyIVt58totuVGhmOpsXAw==

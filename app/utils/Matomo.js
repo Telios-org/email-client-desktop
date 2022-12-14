@@ -28,60 +28,60 @@ class Matomo {
   }
 
   heartBeat(interval) {
-    const payload = {
-      ...this.defaultData,
-      ping: 1
-    };
+    // const payload = {
+    //   ...this.defaultData,
+    //   ping: 1
+    // };
 
-    setInterval(async () => {
-      try {
-        const options = {
-          ...this.options,
-          headers: {
-            'Authorization': `Bearer ${this._refreshToken()}`,
-            'Content-Type': 'application/json'
-          },
-          data: payload
-        };
+    // setInterval(async () => {
+    //   try {
+    //     const options = {
+    //       ...this.options,
+    //       headers: {
+    //         'Authorization': `Bearer ${this._refreshToken()}`,
+    //         'Content-Type': 'application/json'
+    //       },
+    //       data: payload
+    //     };
 
-        await axios(options);
-      } catch (err) {
-        throw err;
-      }
-    }, interval);
+    //     await axios(options);
+    //   } catch (err) {
+    //     throw err;
+    //   }
+    // }, interval);
   }
 
   async event(data) {
-    const payload = {
-      ...this.defaultData,
-      ...data
-    };
+    // const payload = {
+    //   ...this.defaultData,
+    //   ...data
+    // };
 
-    const options = {
-      ...this.options,
-      headers: {
-        'Authorization': `Bearer ${this._refreshToken()}`,
-        'Content-Type': 'application/json'
-      },
-      data: payload
-    };
+    // const options = {
+    //   ...this.options,
+    //   headers: {
+    //     'Authorization': `Bearer ${this._refreshToken()}`,
+    //     'Content-Type': 'application/json'
+    //   },
+    //   data: payload
+    // };
 
-    try {
-      await axios(options);
-    } catch (err) {
-      throw err;
-    }
+    // try {
+    //   await axios(options);
+    // } catch (err) {
+    //   throw err;
+    // }
   }
 
   _refreshToken() {
-    const payload = {
-      account_key: this.account.secretBoxPubKey,
-      device_signing_key: this.account.deviceSigningPubKey,
-      device_id: this.account.deviceId,
-      sig: this.account.serverSig
-    }
+    // const payload = {
+    //   account_key: this.account.secretBoxPubKey,
+    //   device_signing_key: this.account.deviceSigningPubKey,
+    //   device_id: this.account.deviceId,
+    //   sig: this.account.serverSig
+    // }
 
-    return Account.createAuthToken(payload, this.account.deviceSigningPrivKey);
+    // return Account.createAuthToken(payload, this.account.deviceSigningPrivKey);
   }
 }
 
