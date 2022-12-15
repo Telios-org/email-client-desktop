@@ -128,10 +128,11 @@
     uuid "^8.2.0"
 
 "@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate":
-  version "3.0.5"
-  resolved "git+https://github.com/Telios-org/nebula-migrate#b82ac7a4cb0c79d6e6817debeee1ad552bd912a3"
+  version "3.0.6"
+  resolved "git+https://github.com/Telios-org/nebula-migrate#749dc0316eded944e46be60c52291bc5cff66fa7"
   dependencies:
     "@telios/nebula-old" "git+https://github.com/Telios-org/nebula#v3.4.14"
+    luxon "^3.1.1"
 
 "@telios/nebula-old@git+https://github.com/Telios-org/nebula#v3.4.14":
   version "3.4.14"
@@ -188,7 +189,7 @@
 
 "@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#custom-domains":
   version "5.2.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#10476707446cafeb1a5e3438c9f93affabe5dc02"
+  resolved "https://github.com/Telios-org/telios-client-backend.git#094a5426ed40f79d5f2e9da235311eb1187b5d3a"
   dependencies:
     "@telios/client-sdk" "^7.0.7"
     "@telios/nebula" "^4.0.8"
@@ -232,9 +233,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "18.11.13"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.13.tgz#dff34f226ec1ac0432ae3b136ec5552bd3b9c0fe"
-  integrity sha512-IASpMGVcWpUsx5xBOrxMj7Bl8lqfuTY7FKAnPmu5cHkfQVWF8GulWS1jbRqA934qZL35xh5xN/+Xe/i26Bod4w==
+  version "18.11.15"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.15.tgz#de0e1fbd2b22b962d45971431e2ae696643d3f5d"
+  integrity sha512-VkhBbVo2+2oozlkdHXLrb3zjsRkpdnaU2bXmX8Wgle3PUi569eLRaHGlgETQHR7lLL1w7GiG3h9SnePhxNDecw==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -1756,6 +1757,11 @@ luxon@^2.3.1:
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-2.5.0.tgz#098090f67d690b247e83c090267a60b1aa8ea96c"
   integrity sha512-IDkEPB80Rb6gCAU+FEib0t4FeJ4uVOuX1CQ9GsvU3O+JAGIgu0J7sf1OarXKaKDygTZIoJyU6YdZzTFRu+YR0A==
 
+luxon@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.1.1.tgz#b492c645b2474fb86f3bd3283213846b99c32c1e"
+  integrity sha512-Ah6DloGmvseB/pX1cAmjbFvyU/pKuwQMQqz7d0yvuDlVYLTs2WeDHQMpC8tGjm1da+BriHROW/OEIT/KfYg6xw==
+
 mailparser@^2.8.1:
   version "2.8.1"
   resolved "https://registry.yarnpkg.com/mailparser/-/mailparser-2.8.1.tgz#a95b062e49dcb39051018962504a1a79646c7195"
@@ -1914,9 +1920,9 @@ nanoresource@^1.3.0:
     inherits "^2.0.4"
 
 napi-macros@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/napi-macros/-/napi-macros-2.1.0.tgz#d0a8bd90b65be19dd37e425386a005c694f7039d"
-  integrity sha512-wJugWHfxRnVhV26BpJl2vyLHOXPrNBUyYJA5CTYcgbRcqHXAEJqStqpKOfBJyd0eb1VMbjdNvoeBWucpbdDrTw==
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/napi-macros/-/napi-macros-2.1.1.tgz#2405c71a375ce1325ee5fb37e767dddc71c3cf9d"
+  integrity sha512-Q5w6SrLzogp1bg1wn2WlFCrRLn2eckE20aNk2J8fK5i9+I6P7tc3Z4rkDAZ+abRzdbFDOemCTgoopSAkRfsa4g==
 
 napi-macros@~2.0.0:
   version "2.0.0"
@@ -2008,12 +2014,11 @@ noise-handshake@^2.1.0:
     sodium-universal "^3.0.4"
 
 noise-handshake@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/noise-handshake/-/noise-handshake-3.0.0.tgz#cce40781a4da7c650d62e02d0164f5fb4fd71844"
-  integrity sha512-/EQq+TbCZpOFDg0bD3jtxKYqwgSBCFU1tfGxUzHHy94kBKMwVY8GHNxtWR+gekwkhXCu7TyBXqNPY3qdaxe+fQ==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/noise-handshake/-/noise-handshake-3.0.1.tgz#e74a66e6f6bb40462335697d4a673dafc9e4c44e"
+  integrity sha512-H5rHzYaCNTwCgCHUu2tJgkdKE9lpqyXVVxzGC9mRQrL+/uE1pgP7kUk21LVgEycmJqoPm0ltCzhZzo8EguD8pg==
   dependencies:
     b4a "^1.1.0"
-    hmac-blake2b "^2.0.0"
     nanoassert "^2.0.0"
     sodium-universal "^3.0.4"
 

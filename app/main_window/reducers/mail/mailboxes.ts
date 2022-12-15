@@ -46,7 +46,7 @@ export default function mailboxes(
           ...state.byId,
           [action.payload.mailboxId]: {
             ...state.byId[action.payload.mailboxId],
-            name: action.payload.displayName
+            displayName: action.payload.displayName
           }
         },
         allIds: [...state.allIds]

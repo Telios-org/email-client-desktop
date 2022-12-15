@@ -16,7 +16,7 @@ export const recipientTransform = (
   action: string
 ) => {
   const fromArr = email.fromJSON ? JSON.parse(email.fromJSON) : [];
-  
+
   const toArr = email.toJSON ? JSON.parse(email.toJSON) : [];
   const toCC = email.ccJSON ? JSON.parse(email.ccJSON) : [];
   const toBCC = email.bccJSON ? JSON.parse(email.bccJSON) : [];
@@ -217,8 +217,9 @@ export const assembleFromDataSet = (
         return {
           address: `${ns ? `${ns}+` : ''}${aliases.byId[id].name}@${nsDomain ||
             mainDomain}`,
-          name: `${ns ? `${ns}+` : ''}${aliases.byId[id].name}@${nsDomain ||
-            mainDomain}`
+          displayName: `${ns ? `${ns}+` : ''}${
+            aliases.byId[id].name
+          }@${nsDomain || mainDomain}`
         };
       })
       .sort(sortingHat('en', 'address'));
@@ -226,7 +227,7 @@ export const assembleFromDataSet = (
     const arr = [
       {
         address: mailbox.address,
-        name: mailbox.name ? mailbox.name : mailbox.address
+        name: mailbox.displayName ? mailbox.displayName : mailbox.address
       },
       ...newArr
     ];

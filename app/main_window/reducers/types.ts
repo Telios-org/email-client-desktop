@@ -209,7 +209,7 @@ export type MailboxType = {
   id: number | null;
   mailboxId: any;
   address: string;
-  name: string;
+  displayName: string;
   isPrimary?: boolean;
   folders: number[];
 };

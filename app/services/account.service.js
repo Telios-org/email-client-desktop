@@ -366,9 +366,18 @@ class AccountService extends EventEmitter {
           .filter(dirent => dirent.isDirectory())
           .map(dirent => dirent.name);
 
-      return getDirectories(
-        `${app.getPath('userData')}/Accounts/${primary}/Subs`
+      // First Getting all the domain directories
+      const domains = getDirectories(
+        `${app.getPath('userData')}/Accounts/${primary}/Domains`
       );
+
+      return domains
+        .map(dm =>
+          getDirectories(
+            `${app.getPath('userData')}/Accounts/${primary}/Domains/${dm}`
+          )
+        )
+        .flat(1);
     } catch (error) {
       console.log(error);
       return [];

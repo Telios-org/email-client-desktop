@@ -155,7 +155,7 @@ const Composer = (props: Props) => {
     const from = draft?.from ?? [
       {
         address: owner.address,
-        name: owner.name ? owner.name : owner.address
+        name: owner.displayName ? owner.displayName : owner.address
       }
     ];
 

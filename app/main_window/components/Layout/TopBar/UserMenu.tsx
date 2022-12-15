@@ -65,35 +65,30 @@ const UserMenu = (props: Props) => {
   const [switcherData, setSwitcherData] = useState([]);
 
   useEffect(() => {
-    if (mailbox?.name?.length > 0) {
-      setDisplayAddress(mailbox.name);
+    if (mailbox?.displayName?.length > 0) {
+      setDisplayAddress(mailbox.displayName);
     } else if (mailbox?.address?.length > 0) {
       setDisplayAddress(mailbox.address);
     }
-  }, [mailbox]);
+  }, [mailbox?.displayName, mailbox?.address]);
 
   useEffect(() => {
-    let acctType = account.type || 'PRIMARY';
-    if (account?.accountId === '63728e6e3bdeae38fabe6889') {
-      acctType = 'SUB';
-    }
+    const acctType = account.type || 'PRIMARY';
     let switcher = [];
     if (acctType.toUpperCase() === 'PRIMARY' && mailboxes && mailbox?.address) {
       const onDrive = AccountService.getSub(mailbox.address);
       switcher = mailboxes.allIds
         .map(m => {
-          const {
-            address,
-            password = account.password,
-            name,
-            avatar = account.avatar,
-            type = 'PRIMARY'
-          } = mailboxes.byId[m];
+          const { address, password, displayName, avatar, type } = mailboxes.byId[m];
+          let avtr = null;
+          if (type === 'PRIMARY') {
+            avtr = account?.avatar;
+          }
           return {
             address,
             password,
-            name,
-            avatar,
+            displayName,
+            avatar: avtr,
             type
           };
         })
@@ -102,13 +97,6 @@ const UserMenu = (props: Props) => {
             (onDrive.includes(m.address) && m.type === 'SUB') ||
             m.type === 'PRIMARY'
         );
-      // TEMP ADDIN
-      switcher.push({
-        address: 'theotheraccount@dev.telios.io',
-        password: 'let me in 123456',
-        name: 'The Other Account',
-        type: 'SUB'
-      });
       // END
       setSwitcherData(switcher);
       console.log('SETTING DRIVE', switcher);
@@ -134,6 +122,7 @@ const UserMenu = (props: Props) => {
 
   const onSwitch = async mbox => {
     openModal();
+    console.log(mbox)
     await AccountService.logout(false, false);
     await LoginService.initAccount(mbox.password, mbox.address);
     ipcRenderer.send('RENDERER::accountSwitch');
@@ -231,11 +220,11 @@ const UserMenu = (props: Props) => {
 
                         <div className="pl-3 flex flex-col overflow-hidden max-w-[175px]">
                           <div className="text-sm leading-5 font-semibold overflow-ellipsis overflow-x-hidden">
-                            {mailbox?.name?.length > 0
-                              ? mailbox?.name
+                            {mailbox?.displayName?.length > 0
+                              ? mailbox?.displayName
                               : mailbox?.address}
                           </div>
-                          {mailbox?.name?.length > 0 && (
+                          {mailbox?.displayName?.length > 0 && (
                             <div className="text-xs leading-5 font-normal text-gray-500 overflow-ellipsis overflow-x-hidden">
                               {mailbox?.address}
                             </div>
@@ -292,14 +281,14 @@ const UserMenu = (props: Props) => {
                                         }}
                                       >
                                         <span className="text-sm font-medium leading-none text-white uppercase">
-                                          {m?.name.substring(0, 1)}
+                                          {m?.displayName.substring(0, 1)}
                                         </span>
                                       </div>
                                     )}
                                   </div>
                                   <div className="pl-3 flex flex-col overflow-hidden max-w-[200px]">
                                     <div className="text-xs leading-4 flex justify-between font-semibold overflow-ellipsis overflow-x-hidden whitespace-nowrap">
-                                      {m?.name || m?.address}
+                                      {m?.displayName || m?.address}
                                     </div>
                                     <div className="text-xs leading-4 flex justify-between font-normal text-gray-500 overflow-ellipsis overflow-x-hidden whitespace-nowrap">
                                       {m?.address}

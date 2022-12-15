@@ -173,7 +173,7 @@ const DomainManagement = (props: Props) => {
         )}
       >
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 pl-6 text-sm text-gray-500">
-          {formatDateDisplay(mailbox.createdDate)}
+          {formatDateDisplay(mailbox.createdAt)}
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-sm text-gray-700">
           <div className="text-xs font-semibold">
@@ -195,7 +195,6 @@ const DomainManagement = (props: Props) => {
             {`@${mailbox.domainKey}`}
           </div>
         </td>
-        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
         <td className="border-b border-gray-200 relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium w-[70px]">
@@ -238,7 +237,7 @@ const DomainManagement = (props: Props) => {
 
   return (
     <>
-      <div className="flex justify-between w-full">
+      <div className="flex justify-between w-full min-w-fit">
         <div className="flex flex-row">
           <Button
             type="button"
@@ -281,7 +280,7 @@ const DomainManagement = (props: Props) => {
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8 h-full">
           <div className="min-w-full py-2 align-middle md:px-6 lg:px-8 h-full flex flex-col">
             <div className="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg h-full">
-              <div className="bg-white absolute w-full h-full overflow-y-scroll overflow-hidden rounded-b-lg shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+              <div className="bg-white absolute w-full h-full overflow-scroll rounded-b-lg shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
                 <table className="w-full border-separate ">
                   <thead className="bg-white">
                     <tr>
@@ -291,10 +290,6 @@ const DomainManagement = (props: Props) => {
                       >
                         Domain
                       </th>
-                      <th
-                        scope="col"
-                        className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
-                      />
                       <th
                         scope="col"
                         className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
@@ -376,7 +371,7 @@ const DomainManagement = (props: Props) => {
                               className="border-t  border-gray-200"
                             >
                               <th
-                                colSpan={4}
+                                colSpan={3}
                                 scope="colgroup"
                                 className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-left text-sm font-semibold text-gray-500"
                               >

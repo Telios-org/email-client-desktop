@@ -25,7 +25,7 @@ const SettingsSection = (props: Props) => {
     <section aria-labelledby="account-details-heading" className={className}>
       <div
         className={clsx(
-          'flex flex-col xl:grid xl:grid-cols-3 xl:gap-6',
+          'flex flex-col xl:grid xl:grid-cols-4 xl:gap-6',
           gridClassName
         )}
       >
@@ -43,7 +43,7 @@ const SettingsSection = (props: Props) => {
         <div
           className={clsx(
             border ? 'border border-gray-300' : '',
-            'mt-5 xl:mt-0 rounded-md overflow-hidden xl:col-span-2 flex-grow'
+            'mt-5 xl:mt-0 rounded-md overflow-hidden xl:col-span-3 flex-grow'
           )}
         >
           {children}

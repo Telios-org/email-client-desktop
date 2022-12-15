@@ -74,8 +74,8 @@ const GeneralPanel = () => {
   useEffect(() => {
     if (mailbox?.address?.length > 0) {
       setDisplayAddress(mailbox.address);
-    } else if (mailbox?.name?.length > 0) {
-      setDisplayAddress(mailbox.name);
+    } else if (mailbox?.displayName?.length > 0) {
+      setDisplayAddress(mailbox.displayName);
     }
   }, [mailbox]);
 
