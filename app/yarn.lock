@@ -37,9 +37,9 @@
     timeout-refresh "^2.0.0"
 
 "@hyperswarm/secret-stream@^6.0.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@hyperswarm/secret-stream/-/secret-stream-6.1.0.tgz#e99e6d449a0b1a571c42730841642da3356ea4da"
-  integrity sha512-6GjmdrYxZgJYGi8Ji7AZoqmmwQXSR9ByERkMPatcC5FMYgx9n5lDkwgKRK7faPQHpgtwjg2oLCrFveyGRLHV5g==
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@hyperswarm/secret-stream/-/secret-stream-6.1.1.tgz#bb1ba3f10e4513c6a14cf1d1f9b186533fdbe224"
+  integrity sha512-xkdE6PfUT1bzBNp9oZU4hHGHb/zDgHte5kJju1qLWxr8k4NJJkVxa6jTPAcOipxIbXt4uT0fedVFT/iFg+R/MQ==
   dependencies:
     b4a "^1.1.0"
     hypercore-crypto "^3.3.0"
@@ -47,7 +47,7 @@
     noise-handshake "^3.0.0"
     sodium-secretstream "^1.0.0"
     sodium-universal "^3.0.4"
-    streamx "^2.10.2"
+    streamx "^2.13.0"
     timeout-refresh "^2.0.0"
 
 "@leichtgewicht/ip-codec@^2.0.1":
@@ -105,10 +105,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^7.0.7":
-  version "7.0.7"
-  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-7.0.7.tgz#2c1e1ee2e905fa3cb42e929d1a4cc318943cdaf6"
-  integrity sha512-Obak+6ZprPC/oJRQbcYW3NTGyi6sOtOBFWFSY9VUItZqrX1LDY9O247S5Z0k7q+yjhYw9iSJpy3GDhe6y46Svg==
+"@telios/client-sdk@^8.0.0":
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-8.0.0.tgz#d9358dc4796c91bdeaa52742cd387678e3cef8fc"
+  integrity sha512-vcMztM1+8U7JnhTf4YkxbW+CNDcNFIt2rJhMBJipBlPs5TFaWxkmIIuFrpLuu6PeMwmyAhrXA4vVDqUo2AGq4g==
   dependencies:
     "@telios/nebula" "^4.0.4"
     async "^3.2.0"
@@ -189,9 +189,9 @@
 
 "@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#custom-domains":
   version "5.2.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#094a5426ed40f79d5f2e9da235311eb1187b5d3a"
+  resolved "https://github.com/Telios-org/telios-client-backend.git#a7a2eca39feb944223d4a036d3877fbdc87892e1"
   dependencies:
-    "@telios/client-sdk" "^7.0.7"
+    "@telios/client-sdk" "^8.0.0"
     "@telios/nebula" "^4.0.8"
     "@telios/nebula-migrate" "git+https://github.com/Telios-org/nebula-migrate"
     blakejs "^1.2.1"
@@ -2618,7 +2618,7 @@ stopwords@^0.0.9:
   resolved "https://registry.yarnpkg.com/stopwords/-/stopwords-0.0.9.tgz#d2ceb30c778b3b12896d476a0ca5e9946141b5e3"
   integrity sha512-2OF7/9f5buXrBB8De5ZAC9+g5nIw9SRx9ZsL3Qpz6znSfPEihOmaMnwJxXehynZ9AfRNroHIKEIcsEmRywVXVQ==
 
-streamx@^2.1.0, streamx@^2.10.0, streamx@^2.10.2, streamx@^2.10.3, streamx@^2.12.4, streamx@^2.6.0, streamx@^2.6.6, streamx@^2.7.1:
+streamx@^2.1.0, streamx@^2.10.0, streamx@^2.10.2, streamx@^2.10.3, streamx@^2.12.4, streamx@^2.13.0, streamx@^2.6.0, streamx@^2.6.6, streamx@^2.7.1:
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/streamx/-/streamx-2.13.0.tgz#590ad191bf326d76175e1d223ecad3b240256d46"
   integrity sha512-9jD4uoX0juNSIcv4PazT+97FpM4Mww3cp7PM23HRTLANhgb7K7n1mB45guH/kT5F4enl04kApOM3EeoUXSPfvw==
