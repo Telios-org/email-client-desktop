@@ -172,7 +172,7 @@ const DomainManagement = (props: Props) => {
           'border-t'
         )}
       >
-        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 pl-6 text-sm text-gray-500">
+        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 pl-6 text-xs text-gray-500 ">
           {formatDateDisplay(mailbox.createdAt)}
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-sm text-gray-700">
@@ -186,8 +186,6 @@ const DomainManagement = (props: Props) => {
           </div>
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-        <div className="text-2xs text-coolGray-400">Address:</div>
-
           <div className="text-xs font-semibold">
             <span className="text-purple-600">
               {mailbox.address.split('@')[0]}

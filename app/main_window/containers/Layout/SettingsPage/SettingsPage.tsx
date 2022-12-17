@@ -2,7 +2,15 @@
 import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tab } from '@headlessui/react';
-import { Filter, Wallet, Password, Setting, ShieldDone, Scan, Work } from 'react-iconly';
+import {
+  Filter,
+  Wallet,
+  Password,
+  Setting,
+  ShieldDone,
+  Scan,
+  Work
+} from 'react-iconly';
 import { DeviceMobileIcon } from '@heroicons/react/outline';
 import BrowserView, { removeViews } from 'react-electron-browser-view';
 import { setTimeout } from 'timers';
@@ -20,11 +28,36 @@ import useCollectionListeners from '../../../../utils/hooks/useCollectionListene
 const electron = require('electron');
 
 const tabs = [
-  { name: 'General', component: GeneralPanel, icon: Setting }, // { name: 'Notifications', panel: GeneralPanel },
-  { name: 'Plan & Billing', component: BillingPayments, icon: Wallet },
-  { name: 'Security', component: SecurityPanel, icon: ShieldDone },
-  { name: 'Devices', component: DevicesPanel, icon: Scan },
-  { name: 'Custom Domains', component: CustomDomains, icon: Work }
+  {
+    name: 'General',
+    component: GeneralPanel,
+    icon: Setting,
+    typeRestriction: null
+  }, // { name: 'Notifications', panel: GeneralPanel },
+  {
+    name: 'Plan & Billing',
+    component: BillingPayments,
+    icon: Wallet,
+    typeRestriction: 'PRIMARY'
+  },
+  {
+    name: 'Security',
+    component: SecurityPanel,
+    icon: ShieldDone,
+    typeRestriction: null
+  },
+  {
+    name: 'Devices',
+    component: DevicesPanel,
+    icon: Scan,
+    typeRestriction: null
+  },
+  {
+    name: 'Custom Domains',
+    component: CustomDomains,
+    icon: Work,
+    typeRestriction: 'PRIMARY'
+  }
   // { name: 'Billing', panel: GeneralPanel }
 ];
 
@@ -37,6 +70,7 @@ const SettingsPage = () => {
   const dispatch = useDispatch();
   const [showOverlay, setShowOverlay] = useState(false);
   const [browserURL, setBrowserURL] = useState('');
+  const account = useSelector(state => state.account);
 
   useEffect(() => {
     // Retrieving the Updated Account Stats from Telios Server
@@ -131,39 +165,45 @@ const SettingsPage = () => {
                 </p>
               </div>
               <Tab.List className="flex flex-col space-y-1 mt-1 mx-6">
-                {tabs.map(tab => (
-                  <Tab as={Fragment} key={`list_${tab.name}`}>
-                    {({ selected }) => (
-                      <button
-                        type="button"
-                        className={classNames(
-                          selected
-                            ? 'bg-purple-50 text-purple-500 font-medium border border-purple-200 border-l-0'
-                            : 'text-gray-600 hover:text-gray-700 hover:font-medium',
-                          'group px-3 py-1.5 flex items-center text-sm outline-none relative rounded'
-                        )}
-                      >
-                        <span
-                          className={classNames(
-                            selected ? 'bg-purple-500' : 'bg-transparent',
-                            'absolute w-0.5 h-full rounded-l-lg left-0'
-                          )}
-                        />
-                        <tab.icon
-                          set="broken"
-                          size="medium"
+                {tabs
+                  .filter(
+                    f =>
+                      f.typeRestriction === account.type ||
+                      f.typeRestriction === null
+                  )
+                  .map(tab => (
+                    <Tab as={Fragment} key={`list_${tab.name}`}>
+                      {({ selected }) => (
+                        <button
+                          type="button"
                           className={classNames(
                             selected
-                              ? 'text-inherit'
-                              : 'text-gray-400 group-hover:text-gray-600',
-                            'flex-shrink-0 ml-1 mb-0.5 mr-2 h-5 w-5'
+                              ? 'bg-purple-50 text-purple-500 font-medium border border-purple-200 border-l-0'
+                              : 'text-gray-600 hover:text-gray-700 hover:font-medium',
+                            'group px-3 py-1.5 flex items-center text-sm outline-none relative rounded'
                           )}
-                        />
-                        {tab.name}
-                      </button>
-                    )}
-                  </Tab>
-                ))}
+                        >
+                          <span
+                            className={classNames(
+                              selected ? 'bg-purple-500' : 'bg-transparent',
+                              'absolute w-0.5 h-full rounded-l-lg left-0'
+                            )}
+                          />
+                          <tab.icon
+                            set="broken"
+                            size="medium"
+                            className={classNames(
+                              selected
+                                ? 'text-inherit'
+                                : 'text-gray-400 group-hover:text-gray-600',
+                              'flex-shrink-0 ml-1 mb-0.5 mr-2 h-5 w-5'
+                            )}
+                          />
+                          {tab.name}
+                        </button>
+                      )}
+                    </Tab>
+                  ))}
               </Tab.List>
             </nav>
           </div>
