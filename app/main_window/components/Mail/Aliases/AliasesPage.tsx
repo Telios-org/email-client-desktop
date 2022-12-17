@@ -32,7 +32,7 @@ const AliasesPage = () => {
   const [saveSucceeded, setSaveSucceeded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const activeMailbox = useSelector(selectActiveMailbox);
-  const mailDomain = activeMailbox.domainKey
+  const mailDomain = activeMailbox?.domainKey
 
   const callToaster = (isSuccess: boolean, message: string) => {
     if (isSuccess) {

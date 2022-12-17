@@ -64,7 +64,7 @@ const AliasManagement = (props: Props) => {
   const aliases = useSelector(state => state.mail.aliases);
   const namespaces = useSelector(selectAllNamespaces);
   const activeMailbox = useSelector(selectActiveMailbox);
-  const mailDomain = activeMailbox.domainKey;
+  const mailDomain = activeMailbox?.domainKey;
 
   const [quickLoader, setQuickLoader] = useState(false);
 
