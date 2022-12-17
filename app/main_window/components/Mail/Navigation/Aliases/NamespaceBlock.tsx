@@ -70,7 +70,7 @@ export default function NamespaceBlock(props: Props) {
   const dispatch = useDispatch();
 
   const activeMailbox = useSelector(selectActiveMailbox);
-  const mailDomain = activeMailbox.domainKey;
+  const mailDomain = activeMailbox?.domainKey;
 
   const { handleAlias, handleSelectAction } = props;
 
