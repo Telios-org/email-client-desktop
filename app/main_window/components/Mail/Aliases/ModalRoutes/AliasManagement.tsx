@@ -12,7 +12,10 @@ import { Switch, Menu, Transition } from '@headlessui/react';
 
 // SELECTORS
 import { Edit, Delete, Paper } from 'react-iconly';
-import { selectAllNamespaces } from '../../../../selectors/mail';
+import {
+  selectAllNamespaces,
+  selectActiveMailbox
+} from '../../../../selectors/mail';
 
 // ACTION CREATORS
 import {
@@ -30,7 +33,7 @@ const envAPI = require('../../../../../env_api.json');
 
 const params = window.location.search.replace('?', '');
 const env = params.split('=')[1];
-const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
+// const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
 
 const classNames = (...classes) => {
   return classes.filter(Boolean).join(' ');
@@ -60,6 +63,8 @@ const AliasManagement = (props: Props) => {
   const dispatch = useDispatch();
   const aliases = useSelector(state => state.mail.aliases);
   const namespaces = useSelector(selectAllNamespaces);
+  const activeMailbox = useSelector(selectActiveMailbox);
+  const mailDomain = activeMailbox.domainKey;
 
   const [quickLoader, setQuickLoader] = useState(false);
 
@@ -195,8 +200,7 @@ const AliasManagement = (props: Props) => {
                     `${alias.ns ? `${alias.ns}+` : ''}${alias.alias}@${
                       alias.domain
                     }`
-                  )
-                }
+                  )}
               />
               <span className="bg-gray-900 opacity-70 text-white absolute right-5 -top-1 px-2 py-1 text-xs rounded hidden group-focus:block">
                 Copied!
@@ -212,8 +216,7 @@ const AliasManagement = (props: Props) => {
               onClick={() =>
                 triggerEditAlias(
                   `${alias.ns ? `${alias.ns}#` : ''}${alias.alias}`
-                )
-              }
+                )}
             />
             <span className="mx-1" />
             <Delete
@@ -224,8 +227,7 @@ const AliasManagement = (props: Props) => {
               onClick={() =>
                 triggerDeleteAlias(
                   `${alias.ns ? `${alias.ns}#` : ''}${alias.alias}`
-                )
-              }
+                )}
             />
           </div>
         </td>
@@ -478,9 +480,11 @@ const AliasManagement = (props: Props) => {
               </div>
             </div>
             <div className="text-xs text-gray-400 pl-2 pt-3">
-              <b>Note:</b> The + separator is interchangeable with - or # in
+              <b>Note:</b>
+{' '}
+The + separator is interchangeable with - or # in
               case a website doesn't accept certain characters
-            </div>
+</div>
           </div>
         </div>
       </div>

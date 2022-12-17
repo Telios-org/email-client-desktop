@@ -1,5 +1,5 @@
 import React, { useState, Fragment, forwardRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // EXTERNAL LIBRARIES
 import { XIcon } from '@heroicons/react/outline';
@@ -15,12 +15,13 @@ import AliasDelete from './ModalRoutes/AliasDelete';
 
 // ACTION CREATORS
 import { setActivePage } from '../../../actions/global';
+import { selectActiveMailbox } from '../../../selectors/mail';
 
 const envAPI = require('../../../../env_api.json');
 
 const params = window.location.search.replace('?', '');
 const env = params.split('=')[1];
-const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
+// const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
 
 const AliasesPage = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,8 @@ const AliasesPage = () => {
   const [notifMessage, setNotifMessage] = useState('');
   const [saveSucceeded, setSaveSucceeded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const activeMailbox = useSelector(selectActiveMailbox);
+  const mailDomain = activeMailbox.domainKey
 
   const callToaster = (isSuccess: boolean, message: string) => {
     if (isSuccess) {

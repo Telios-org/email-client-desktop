@@ -25,7 +25,9 @@ import useForm from '../../../../../utils/hooks/useForm';
 import { validateString } from '../../../../../utils/helpers/regex';
 
 // SELECTORS
-import { selectAllNamespaces } from '../../../../selectors/mail';
+import {
+  selectAllNamespaces
+} from '../../../../selectors/mail';
 
 // REDUX ACTION
 import { registerAlias } from '../../../../actions/mailbox/aliases';
@@ -98,6 +100,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
       setSubmitError('');
       setLoader(true);
 
+      console.log(data, domain);
       const res = await dispatch(
         registerAlias(
           type === 'namespace' ? namespace.toLowerCase() : null, // if it's a non namespace alias we keep this null
@@ -230,7 +233,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                       the
 {' '}
                       <span className="font-medium">
-                        namespace+alias@telios.io
+                        {`namespace+alias@${domain}`}
                       </span>
 {' '}
                       structure.
@@ -367,8 +370,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                                 active
                                   ? 'bg-sky-500 text-white'
                                   : 'text-gray-900'
-                              }`
-                            }
+                              }`}
                             style={{ cursor: 'pointer' }}
                             value={ns}
                           >
@@ -448,7 +450,8 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                                     ? 'bg-sky-500 text-white'
                                     : 'text-gray-900',
                                   'cursor-default select-none relative py-2 pl-8 pr-4'
-                                )}
+                                )
+                              }
                               style={{ cursor: 'pointer' }}
                               value={fmt}
                             >

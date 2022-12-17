@@ -175,6 +175,18 @@ const useForm = options => {
     }
   }, [data]);
 
+  // useEffect(() => {
+  //   if (
+  //     JSON.stringify(options?.initialValues || {}) !==
+  //     JSON.stringify(initialData)
+  //   ) {
+  //     setInitial(options?.initialValues || {});
+  //     setData(options?.initialValues || {});
+  //     setIsDirty(false);
+  //     setErrors({});
+  //   }
+  // }, [options.initialValues]);
+
   const handleSubmit = async e => {
     e.preventDefault();
     await runValidations();

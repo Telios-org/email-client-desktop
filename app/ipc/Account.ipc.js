@@ -109,11 +109,16 @@ module.exports = windowManager => {
   ipcMain.handle(
     'ACCOUNT_SERVICE::account:login:status',
     async (event, payload) => {
-      const loginWindow = windowManager.getWindow('loginWindow');
-      loginWindow.webContents.send(
-        'ACCOUNT_IPC::account:login:status',
-        payload
-      );
+      try {
+        const loginWindow = windowManager.getWindow('loginWindow');
+        loginWindow.webContents.send(
+          'ACCOUNT_IPC::account:login:status',
+          payload
+        );
+      } catch (error) {
+        // If the window doesn't exist it'll error out.
+        console.log(error);
+      }
     }
   );
 };

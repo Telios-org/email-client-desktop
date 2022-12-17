@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import i18n from '../../../../i18n/i18n';
 
 import MessageIngress from '../../../../services/messageIngress.service';
@@ -25,7 +25,7 @@ const SyncNotification = (props: Props) => {
 
   useEffect(() => {
     MessageIngress.on('MESSAGE_INGRESS_SERVICE::messageSyncStarted', t => {
-      if(win) {
+      if (win) {
         win.setProgressBar(0);
       }
 
@@ -39,7 +39,7 @@ const SyncNotification = (props: Props) => {
       setLoaded(data.index);
       setTotal(data.total);
 
-      if(win && data.total > 0) {
+      if (win && data.total > 0) {
         win.setProgressBar(data.index / data.total);
       }
 
@@ -49,7 +49,7 @@ const SyncNotification = (props: Props) => {
       }
 
       if (data.done) {
-        if(win) {
+        if (win) {
           win.setProgressBar(-1);
         }
 
@@ -66,6 +66,18 @@ const SyncNotification = (props: Props) => {
       setIsLoading(false);
     };
   }, []);
+
+  // This is to reset the sync if we switch account
+  const account = useSelector(state => state.account);
+  useEffect(() => {
+    if (account.accountId) {
+      if (win) {
+        win.setProgressBar(-1);
+      }
+      inProgress(false);
+      setIsLoading(false);
+    }
+  }, [account?.accountId]);
 
   return (
     <div

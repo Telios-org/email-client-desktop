@@ -46,6 +46,7 @@ import {
   selectAllAliasesById,
   aliasFolderIndex,
   selectAllNamespaces,
+  selectActiveMailbox,
   currentMessageList
 } from '../../../../selectors/mail';
 
@@ -58,7 +59,7 @@ const envAPI = require('../../../../../env_api.json');
 
 const params = window.location.search.replace('?', '');
 const env = params.split('=')[1];
-const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
+// const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
 
 type Props = {
   handleAlias: () => void;
@@ -67,6 +68,9 @@ type Props = {
 
 export default function NamespaceBlock(props: Props) {
   const dispatch = useDispatch();
+
+  const activeMailbox = useSelector(selectActiveMailbox);
+  const mailDomain = activeMailbox.domainKey;
 
   const { handleAlias, handleSelectAction } = props;
 

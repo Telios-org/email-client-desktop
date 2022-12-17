@@ -26,6 +26,7 @@ const { dock } = app;
 
 export default function MainWindow() {
   const dispatch = useDispatch();
+  const accountData = useSelector(state => state.account);
 
   const active = useSelector(
     (state: StateType) => state.globalState.activePage
@@ -65,6 +66,12 @@ export default function MainWindow() {
   const handleSelect = activeKey => {
     dispatch(setActivePage(activeKey));
   };
+
+  useEffect(() => {
+    if (accountData.accountId && active !== 'mail') {
+      dispatch(setActivePage('mail'));
+    }
+  }, [accountData?.accountId]);
 
   return (
     <div className="h-screen overflow-hidden w-full flex flex-col">

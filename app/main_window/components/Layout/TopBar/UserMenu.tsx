@@ -103,7 +103,7 @@ const UserMenu = (props: Props) => {
       sessionStorage.setItem('AccountSwitcherData', JSON.stringify(switcher));
     } else {
       const rawData = sessionStorage.getItem('AccountSwitcherData') || '[]';
-      console.log('Pulling Session data', rawData);
+      // console.log('Pulling Session data', rawData);
       setSwitcherData(JSON.parse(rawData));
     }
   }, [account, mailboxes, mailbox?.address]);
@@ -176,7 +176,7 @@ const UserMenu = (props: Props) => {
                 {...attributes.popper}
               >
                 <Transition
-                  show={open}
+                  show={open && !isOpen}
                   enter="transition ease-out duration-100"
                   enterFrom="transform opacity-0 scale-95"
                   enterTo="transform opacity-100 scale-100"
