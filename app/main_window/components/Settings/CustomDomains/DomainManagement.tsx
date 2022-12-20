@@ -120,7 +120,7 @@ const DomainManagement = (props: Props) => {
   } = props;
   const dispatch = useDispatch();
   const domains = useSelector(selectAllDomains);
-  const mailboxes = useSelector(state => state.mail.mailboxes)
+  const mailboxes = useSelector(state => state.mail.mailboxes);
   console.log(mailboxes);
   const [loading, setLoader] = useState(false);
 
@@ -269,6 +269,7 @@ const DomainManagement = (props: Props) => {
             onClick={() => openModalRoute('mailboxRegistration')}
             variant="secondary"
             className="pt-2 pb-2 text-sm font-medium"
+            disabled={domains?.length === 0}
           >
             Add Mailbox
           </Button>
@@ -442,7 +443,8 @@ const DomainManagement = (props: Props) => {
                                 </div>
                               </th>
                             </tr>
-                            {mailboxes.allIds.map(m => mailboxes.byId[m])
+                            {mailboxes.allIds
+                              .map(m => mailboxes.byId[m])
                               .filter(f => f.domainKey === dm.name)
                               .sort(sortingHat('en', 'alias'))
                               .map((mailbox, mailboxIdx) => (
