@@ -210,21 +210,27 @@ const SettingsPage = () => {
           <main className="ml-8 pr-8 py-8 flex-1 relative overflow-y-scroll h-full">
             <div className="px-4 sm:px-0 h-full">
               <Tab.Panels className="h-full">
-                {tabs.map(tab => {
-                  const tabProps = {};
+                {tabs
+                  .filter(
+                    f =>
+                      f.typeRestriction === account.type ||
+                      f.typeRestriction === null
+                  )
+                  .map(tab => {
+                    const tabProps = {};
 
-                  if (tab.name === 'Plan & Billing') {
-                    tabProps.handleOverlay = handleOverlay;
-                  }
-                  return (
-                    <Tab.Panel
-                      key={`panel_${tab.name}`}
-                      className="outline-none h-full"
-                    >
-                      <tab.component {...tabProps} />
-                    </Tab.Panel>
-                  );
-                })}
+                    if (tab.name === 'Plan & Billing') {
+                      tabProps.handleOverlay = handleOverlay;
+                    }
+                    return (
+                      <Tab.Panel
+                        key={`panel_${tab.name}`}
+                        className="outline-none h-full"
+                      >
+                        <tab.component {...tabProps} />
+                      </Tab.Panel>
+                    );
+                  })}
                 {/* <div
                 style={{ height: '64rem' }}
                 className="border-2 border-dashed border-gray-300 rounded-lg"
