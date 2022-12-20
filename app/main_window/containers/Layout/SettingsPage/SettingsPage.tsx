@@ -154,7 +154,7 @@ const SettingsPage = () => {
       )}
       <div className="w-full h-full flex flex-row max-w-screen-2xl">
         <Tab.Group vertical>
-          <div className="w-72 min-w-72 bg-white border-r border-gray-200">
+          <div className="w-60 min-w-60 bg-white border-r border-gray-200">
             <nav aria-label="Sidebar" className="sticky">
               <div className="px-6 pt-6 pb-4">
                 <h2 className="text-lg font-medium text-gray-900 leading-6">
