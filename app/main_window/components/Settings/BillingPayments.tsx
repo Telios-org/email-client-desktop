@@ -44,6 +44,7 @@ type Props = {
 
 const BillingPayments = (props: Props) => {
   const dispatch = useDispatch();
+  const account = useSelector(state => state.account)
   const stats = useSelector(selectAccountStats);
 
   const { handleOverlay } = props;
@@ -149,10 +150,9 @@ const BillingPayments = (props: Props) => {
     const {
       data: { plans }
     } = await axios(options);
-    console.log('RETRIEVE PLANS', plans, stats.plan.toLowerCase());
     setPricingData(plans);
 
-    setCurrentPlan(plans.filter(p => p.id === stats.plan.toLowerCase())[0]);
+    setCurrentPlan(plans.filter(p => p.id === account.plan.toLowerCase())[0]);
     return plans;
   };
 
@@ -162,7 +162,7 @@ const BillingPayments = (props: Props) => {
 
   useEffect(() => {
     setCurrentPlan(
-      pricingData.filter(p => p.id === stats.plan.toLowerCase())[0]
+      pricingData.filter(p => p.id === account.plan.toLowerCase())[0]
     );
   }, [stats]);
 
@@ -242,7 +242,7 @@ const BillingPayments = (props: Props) => {
   if (showPricing) {
     return (
       <PlanComparison
-        currentPlan={stats.plan}
+        currentPlan={account.plan}
         hide={togglePriceCompare}
         pricingData={pricingData}
         onStripeOpen={openStripe}
@@ -324,7 +324,7 @@ const BillingPayments = (props: Props) => {
               <a
                 href=""
                 className={classNames(
-                  stats.plan === 'FREE'
+                  account.plan === 'FREE'
                     ? 'text-gray-200 pointer-events-none'
                     : 'text-gray-500',
                   'text-sm font-medium underline flex items-center focus:outline-none'
@@ -337,15 +337,15 @@ const BillingPayments = (props: Props) => {
                   type="button"
                   onClick={togglePriceCompare}
                   className={classNames(
-                    stats.plan !== 'FREE'
+                    account.plan !== 'FREE'
                       ? 'bg-white focus:ring-gray-400 hover:bg-blue-gray-50 mr-3'
                       : 'bg-gradient-to-bl from-green-600 to-green-500 hover:to-green-600 focus:ring-green-500 text-white',
                     'py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
                   )}
                 >
-                  {stats.plan !== 'FREE' ? 'Compare Plans' : 'Upgrade Plan'}
+                  {account.plan !== 'FREE' ? 'Compare Plans' : 'Upgrade Plan'}
                 </button>
-                {stats.plan !== 'FREE' && (
+                {account.plan !== 'FREE' && (
                   <button
                     type="button"
                     onClick={() => openStripe('portal', null)}

@@ -189,9 +189,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
   useEffect(() => {
     if (domain && domain.length > 0) {
       const getData = async () => {
-        console.log(domain);
         const res = await Domain.getByName(domain);
-        console.log('GET DATA', domain);
         bulkChange({
           domain,
           vcode: res.dns?.vcode,

@@ -269,7 +269,7 @@ const DomainManagement = (props: Props) => {
             onClick={() => openModalRoute('mailboxRegistration')}
             variant="secondary"
             className="pt-2 pb-2 text-sm font-medium"
-            disabled={domains?.length === 0}
+            // disabled={domains.allIds.some(dm => !domains.byId[dm].active)}
           >
             Add Mailbox
           </Button>
@@ -318,7 +318,7 @@ const DomainManagement = (props: Props) => {
                     </tr>
                   </thead>
                   <tbody className="">
-                    {domains.length === 0 && (
+                    {domains.allIds.length === 0 && (
                       <tr className="">
                         <th colSpan={4} scope="colgroup ">
                           <div className="text-center absolute flex flex-col w-full pt-10">
@@ -328,14 +328,26 @@ const DomainManagement = (props: Props) => {
                                 aria-hidden="true"
                               />
                             </div>
-                            <h3 className="mt-1 text-sm font-medium text-gray-900">
+                            <h3 className="mt-1 text-sm font-medium text-gray-800">
                               No Custom Domain
                             </h3>
-                            <p className="-mt-1 text-sm text-gray-500">
+                            <p className="-mt-1 text-sm text-gray-400 font-medium">
                               Get started by creating a new domain.
                             </p>
-                            <div className="mt-6">
-                              <button
+                            <div className="mt-6 w-fit self-center">
+                            <Button
+                                type="button"
+                                onClick={() => openModalRoute('domainRegistration')}
+                                variant="primary"
+                                className="pt-2 pb-2 text-sm font-medium bg-white inline-flex items-center"
+                              >
+                                <PlusIcon
+                                  className="-ml-1 mr-2 h-5 w-5"
+                                  aria-hidden="true"
+                                />
+                                <span className="whitespace-nowrap">Add First Custom Domain</span>
+                              </Button>
+                              {/* <button
                                 type="button"
                                 onClick={() => {}}
                                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
@@ -345,7 +357,7 @@ const DomainManagement = (props: Props) => {
                                   aria-hidden="true"
                                 />
                                 Add First Custom Domain
-                              </button>
+                              </button> */}
                             </div>
                           </div>
                         </th>

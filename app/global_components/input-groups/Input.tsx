@@ -95,7 +95,7 @@ const Input = (props: Props) => {
         </label>
       )}
       <div className="relative mt-1">
-        <div className="relative flex rounded-md shadow-sm focus-within:ring-1 focus-within:ring-violet-500 focus-within:border-violet-500">
+        <div className="relative flex rounded-md shadow-sm appearance-none focus-within:ring-1 focus:outline-none focus-within:ring-violet-500 focus-within:border-violet-500 border border-gray-300 ">
           {icon === 'email' &&
             (((isValid === undefined || value.length === 0) && !showLoader) ||
               activityPosition === 'right') && (
@@ -169,21 +169,21 @@ const Input = (props: Props) => {
             disabled={disabled}
             className={clsx(
               disabled && 'bg-gray-200 font-medium text-gray-500',
-              addonPosition === 'left' && 'rounded-none rounded-r-md',
-              addonPosition === 'right' && 'rounded-none rounded-l-md',
+              addonPosition === 'left' && 'rounded-none rounded-r-md border-l',
+              addonPosition === 'right' && 'rounded-none rounded-l-md border-r',
               !addonPosition && 'rounded-md',
               ((isValid !== undefined && activityPosition === 'left') ||
                 icon !== 'none' ||
                 (showLoader && activityPosition === 'left')) &&
                 'pl-10',
-              `appearance-none block w-full px-3 py-2 border border-gray-300 
+              `appearance-none block w-full px-3 py-2 border-gray-300 
           placeholder-gray-400 focus:outline-none
            sm:text-sm`,
               className
             )}
           />
           {addonPosition === 'right' && (
-            <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+            <span className="inline-flex items-center px-3 rounded-r-md border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
               {addonLabel}
             </span>
           )}

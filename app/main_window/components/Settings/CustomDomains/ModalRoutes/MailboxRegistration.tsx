@@ -20,10 +20,11 @@ import {
   SelectorIcon,
   CheckCircleIcon
 } from '@heroicons/react/solid';
+import clsx from 'clsx';
 
 // INTERNAL LIBRAIRIES
 import useForm from '../../../../../utils/hooks/useForm';
-import { Input } from '../../../../../global_components/input-groups';
+import { Input, Password } from '../../../../../global_components/input-groups';
 
 // INTERNAL COMPONENT
 import { Button } from '../../../../../global_components/button';
@@ -33,8 +34,11 @@ import { registerMailbox } from '../../../../actions/domains/domains';
 
 // HELPER
 import generateRandomString from '../../../../../utils/helpers/generators';
+import passwordStrengthClass from '../../../../../utils/helpers/security';
 
-import { validateString } from '../../../../../utils/helpers/regex';
+import { externalEmailRE } from '../../../../../utils/helpers/regex';
+
+const zxcvbn = require('zxcvbn');
 
 type Props = {
   close: (isSuccess: boolean, message: string, show?: boolean) => void;
@@ -45,6 +49,8 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
   const dispatch = useDispatch();
   const domains = useSelector(state => state.domains.allIds);
   const [searchDomains, setSearchDomains] = useState('');
+  const [validationLoader, setValidationLoader] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [mailbox, setMailbox] = useState('');
   const [loading, setLoader] = useState(false);
   const [error, setError] = useState({
@@ -71,7 +77,12 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
       domain: domains[0],
       address: '',
       displayName: '',
-      recoveryEmail: ''
+      recoveryEmail: '',
+      password: '',
+      passwordStrength: {
+        score: 0,
+        crackTime: ''
+      }
     },
     validations: {
       address: {
@@ -85,6 +96,22 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
           value: /^$|^([A-Za-zÀ-ÖØ-öø-ÿ0-9\.\-\/]+\s)*[A-Za-zÀ-ÖØ-öø-ÿ0-9\.\-\/]+$/, // empty ^$ or string
           message: 'No special characters allowed except for . - / allowed.'
         }
+      },
+      recoveryEmail: {
+        required: {
+          value: true,
+          message: 'Recovery email must be provided'
+        },
+        pattern: {
+          value: externalEmailRE,
+          message: 'Invalid email address'
+        }
+      },
+      password: {
+        required: {
+          value: true,
+          message: 'Password must be provided'
+        }
       }
     },
     onSubmit: async data => {
@@ -94,7 +121,8 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
         email,
         displayName: data.displayName.length > 0 ? data.displayName : email,
         domain: data.domain,
-        recoveryEmail: 'submailbox@poopooland.com',
+        recoveryEmail: data.recoveryEmail,
+        password: data.password,
         deviceType: 'DESKTOP'
       };
       setError({
@@ -139,6 +167,35 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
     generateRandomString('random', randomFormat.value, cb);
   };
 
+  const onEmailChange = e => {
+    setValidationLoader(true);
+    handleChange(
+      'recoveryEmail',
+      true,
+      value => value.toLowerCase(),
+      () => {
+        setValidationLoader(false);
+      }
+    )(e);
+  };
+
+  const togglePasswordView = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const onPasswordChange = async e => {
+    const password = e.target.value;
+    const result = zxcvbn(password);
+    await bulkChange({
+      password,
+      passwordStrength: {
+        score: result.score,
+        crackTime:
+          result.crack_times_display.offline_slow_hashing_1e4_per_second
+      }
+    });
+  };
+
   return (
     <Dialog.Panel
       ref={ref}
@@ -157,8 +214,9 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
       <div className="px-6">
         <div className="text-sm">
           <p className="text-sm text-center font-bold bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded max-w-md mx-auto">
-            <span className="text-purple-600">{form.address}</span>@
-            <span>{form.domain}</span>
+            <span className="text-purple-600">{form.address}</span>
+@
+<span>{form.domain}</span>
           </p>
         </div>
         <div className="flex flex-col pl-7 my-4">
@@ -182,7 +240,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
             Domain
           </Combobox.Label>
           <div className="relative mt-1">
-            <div className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-2 pr-10 text-left transition duration-150 ease-in-out focus-within:border-purple-500 focus-within:outline-none focus-within:ring-1 focus-within:ring-purple-500 sm:text-sm sm:leading-5">
+            <div className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-2 pr-10 text-left transition duration-150 ease-in-out focus-within:border-violet-500 focus-within:outline-none focus-within:ring-1 focus-within:ring-violet-500 sm:text-sm sm:leading-5">
               <Combobox.Input
                 className="form-input border-none p-0 focus:ring-0 text-sm pl-1"
                 displayValue={ns => ns}
@@ -214,8 +272,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
                       className={({ active }) =>
                         `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
                           active ? 'bg-sky-500 text-white' : 'text-gray-900'
-                        }`
-                      }
+                        }`}
                       style={{ cursor: 'pointer' }}
                       value={dm}
                     >
@@ -265,14 +322,14 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
                   id="email"
                   value={form.address}
                   onChange={handleChange('address', true)}
-                  className="form-input focus:ring-purple-500 focus:border-purple-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300"
+                  className="form-input focus:ring-violet-500 focus:border-violet-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300"
                   placeholder="Type choice here..."
                 />
               </div>
               <button
                 type="button"
                 onClick={generateRandomAlias}
-                className="-ml-px relative group inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
+                className="-ml-px relative group inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
               >
                 <LightningBoltIcon
                   className="h-5 w-5 text-gray-400 group-hover:text-gray-600"
@@ -341,6 +398,43 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
             {errors?.address?.length > 0 && errors?.address}
           </div>
         </div>
+        <div className="mt-6 relative">
+          <Password
+            label="Password"
+            id="password"
+            name="password"
+            autoComplete="password"
+            required
+            onChange={onPasswordChange}
+            error={errors.password}
+            show={showPassword}
+            value={form.password}
+            onVisibilityToggle={togglePasswordView}
+          />
+        </div>
+        <div className="mt-6 relative">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-slate-700"
+          >
+            Time to Crack Password
+          </label>
+          <div
+            className={clsx(
+              `mt-1 items-center justify-center appearance-none block w-full px-3 py-2 rounded-md shadow-sm font-medium sm:text-sm`,
+              passwordStrengthClass(form.password, form.passwordStrength.score)
+            )}
+          >
+            <span className="self-center justify-center flex capitalize tracking-wider">
+              {form.password.length > 0
+                ? form.passwordStrength.crackTime
+                : 'No Password'}
+            </span>
+          </div>
+          {/* <div className="mt-1 text-xs text-neutral-500 text-center">
+                Note: Your password should be 14 characters or more.
+                </div> */}
+        </div>
 
         <div className="mt-6 relative">
           <Input
@@ -348,11 +442,26 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
             onChange={handleChange('displayName', true)}
             value={form.displayName}
             placeholder={`${form.address}@${form.domain}`}
+            error={errors.displayName}
           />
-          <div className="text-xs text-red-500 absolute -bottom-5 pl-2">
-            {errors?.displayName?.length > 0 && errors?.displayName}
-          </div>
         </div>
+        <div className="mt-6 relative">
+          <Input
+            id="recoveryEmail"
+            name="recoveryEmail"
+            label="recovery Email"
+            icon="email"
+            value={form.recoveryEmail}
+            error={errors.recoveryEmail}
+            onChange={onEmailChange}
+            activityPosition="right"
+            isValid={
+              errors.recoveryEmail === '' || errors.recoveryEmail === undefined
+            }
+            showLoader={validationLoader}
+          />
+        </div>
+
         <div className="text-xs text-red-500 absolute -bottom-9 text-center w-full">
           {error.length > 0 && error}
         </div>

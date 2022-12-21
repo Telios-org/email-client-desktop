@@ -76,7 +76,7 @@ const UserMenu = (props: Props) => {
     const acctType = account.type || 'PRIMARY';
     let switcher = [];
     if (acctType.toUpperCase() === 'PRIMARY' && mailboxes && mailbox?.address) {
-      const onDrive = AccountService.getSub(mailbox.address);
+      const onDrive = LoginService.getAccounts(mailbox.address);
       switcher = mailboxes.allIds
         .map(m => {
           const { address, password, displayName, avatar, type } = mailboxes.byId[m];
@@ -188,7 +188,7 @@ const UserMenu = (props: Props) => {
                 >
                   <Menu.Items
                     static
-                    className="w-64 bg-white border border-gray-200 divide-y divide-gray-200 rounded-md shadow-lg outline-none"
+                    className="w-72 bg-white border border-gray-200 divide-y divide-gray-200 rounded-md shadow-lg outline-none"
                   >
                     <div className="px-4 py-4 flex flex-col">
                       <div className="flex flex-row items-center">
@@ -218,7 +218,7 @@ const UserMenu = (props: Props) => {
                           )}
                         </div>
 
-                        <div className="pl-3 flex flex-col overflow-hidden max-w-[175px]">
+                        <div className="pl-3 flex flex-col overflow-hidden max-w-[215px]">
                           <div className="text-sm leading-5 font-semibold overflow-ellipsis overflow-x-hidden">
                             {mailbox?.displayName?.length > 0
                               ? mailbox?.displayName
@@ -243,7 +243,7 @@ const UserMenu = (props: Props) => {
                         </div>
                       </Menu.Item>
                     </div>
-                    {switcherData.length > 0 && (
+                    {switcherData.filter(m => m.address !== mailbox?.address).length > 0 && (
                       <div className="py-1 max-h-[300px] overflow-y-scroll">
                         {switcherData
                           .filter(m => m.address !== mailbox?.address)
