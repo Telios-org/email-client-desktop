@@ -97,7 +97,7 @@ export const selectIndexForMessageId = createSelector(
   selectAllMessages,
   (_, id: string) => id,
   (messages, id) => {
-    return messages.allIds.indexOf(id);
+    return messages?.allIds.indexOf(id);
   }
 );
 
@@ -140,7 +140,7 @@ export const aliasFolderIndex = createSelector([selectAllFolders], folders => {
   // if (folders.byId['0']?.name !== 'Alias') {
   //   console.error('Alias folder does not have id=0');
   // }
-  return folders.allIds.indexOf(0);
+  return folders?.allIds.indexOf(0);
 });
 
 export const searchFiltered = (state: StateType) =>

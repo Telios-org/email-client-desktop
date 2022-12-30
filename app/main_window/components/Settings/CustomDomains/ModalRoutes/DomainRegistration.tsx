@@ -86,7 +86,6 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
         custom: {
           isValid: async (value, data) => {
             const res = await Domain.isAvailable(value);
-            console.log(res);
             if (res === true) {
               return true;
             }
@@ -102,7 +101,6 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
     onSubmit: async data => {
       setLoader(true);
       const res = await dispatch(addCustomDomain(data.domain));
-      console.log(res);
       setLoader(false);
       if (res?.dns?.vcode) {
         bulkChange({
@@ -151,7 +149,6 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
       let dns;
       try {
         dns = await Domain.verifyDNS(form.domain);
-        console.log(dns);
       } catch (error) {
         console.log(error);
         setErrors({

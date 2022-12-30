@@ -79,7 +79,14 @@ const UserMenu = (props: Props) => {
       const onDrive = LoginService.getAccounts(mailbox.address);
       switcher = mailboxes.allIds
         .map(m => {
-          const { address, password, displayName, avatar, type } = mailboxes.byId[m];
+          const {
+            address,
+            mnemonic,
+            password,
+            displayName,
+            avatar,
+            type
+          } = mailboxes.byId[m];
           let avtr = null;
           if (type === 'PRIMARY') {
             avtr = account?.avatar;
@@ -87,6 +94,7 @@ const UserMenu = (props: Props) => {
           return {
             address,
             password,
+            mnemonic,
             displayName,
             avatar: avtr,
             type
@@ -99,7 +107,7 @@ const UserMenu = (props: Props) => {
         );
       // END
       setSwitcherData(switcher);
-      console.log('SETTING DRIVE', switcher);
+      // console.log('SETTING DRIVE', switcher);
       sessionStorage.setItem('AccountSwitcherData', JSON.stringify(switcher));
     } else {
       const rawData = sessionStorage.getItem('AccountSwitcherData') || '[]';
@@ -122,9 +130,13 @@ const UserMenu = (props: Props) => {
 
   const onSwitch = async mbox => {
     openModal();
-    console.log(mbox)
     await AccountService.logout(false, false);
-    await LoginService.initAccount(mbox.password, mbox.address);
+    if (mbox.mnemonic) {
+      await LoginService.initAccount(null, mbox.address, mbox.mnemonic);
+    } else {
+      await LoginService.initAccount(mbox.password, mbox.address);
+    }
+    await LoginService.initAccount(mbox.password, mbox.address, mbox.mnemonic);
     ipcRenderer.send('RENDERER::accountSwitch');
     setTimeout(() => {
       closeModal();
@@ -243,7 +255,8 @@ const UserMenu = (props: Props) => {
                         </div>
                       </Menu.Item>
                     </div>
-                    {switcherData.filter(m => m.address !== mailbox?.address).length > 0 && (
+                    {switcherData.filter(m => m.address !== mailbox?.address)
+                      .length > 0 && (
                       <div className="py-1 max-h-[300px] overflow-y-scroll">
                         {switcherData
                           .filter(m => m.address !== mailbox?.address)

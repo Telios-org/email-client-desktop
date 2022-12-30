@@ -9,7 +9,7 @@ import {
   LightningBoltIcon,
   GlobeIcon
 } from '@heroicons/react/outline';
-import { Edit, Delete, Paper } from 'react-iconly';
+import { Edit, Delete, Paper, InfoCircle } from 'react-iconly';
 // ICONSET ICONS
 import { BsArrowRepeat } from 'react-icons/bs';
 
@@ -121,7 +121,6 @@ const DomainManagement = (props: Props) => {
   const dispatch = useDispatch();
   const domains = useSelector(selectAllDomains);
   const mailboxes = useSelector(state => state.mail.mailboxes);
-  console.log(mailboxes);
   const [loading, setLoader] = useState(false);
 
   const deleteDomain = (domain: string) => {
@@ -129,9 +128,19 @@ const DomainManagement = (props: Props) => {
     openModalRoute('domainDelete');
   };
 
+  const deleteMailbox = (mailbox: any) => {
+    mailboxSelection(mailbox);
+    openModalRoute('mailboxDelete');
+  };
+
   const editDomain = (domain: string) => {
     domainSelection(domain);
     openModalRoute('editDomainRegistration');
+  };
+
+  const infoMailbox = (mailbox: any) => {
+    mailboxSelection(mailbox);
+    openModalRoute('infoMailbox');
   };
 
   const getDomainLabel = (active, status) => {
@@ -158,7 +167,6 @@ const DomainManagement = (props: Props) => {
 
   useEffect(() => {
     dispatch(fetchAllDomains());
-    console.log(domains);
   }, []);
 
   const MailboxRow = (innerProps: MailboxProps) => {
@@ -172,25 +180,22 @@ const DomainManagement = (props: Props) => {
           'border-t'
         )}
       >
-        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 pl-6 text-xs text-gray-500 ">
+        <td className="border-b border-gray-200 whitespace-nowrap pl-10 py-4 text-xs text-gray-500 ">
           {formatDateDisplay(mailbox.createdAt)}
         </td>
-        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-sm text-gray-400">
           <div className="text-xs font-semibold">
-            <div className="text-2xs text-coolGray-400">Display Name:</div>
-            <div>
-              {mailbox.displayName.length > 0
-                ? mailbox.displayName
-                : mailbox.address}
+            <div className="text-xs text-coolGray-700">
+              {mailbox.displayName.length > 0 &&
+                mailbox.displayName !== mailbox.address &&
+                mailbox.displayName}
             </div>
-          </div>
-        </td>
-        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-          <div className="text-xs font-semibold">
-            <span className="text-purple-600">
-              {mailbox.address.split('@')[0]}
-            </span>
-            {`@${mailbox.domainKey}`}
+            <div className="text-xs font-semibold">
+              <span className="text-purple-600">
+                {mailbox.address.split('@')[0]}
+              </span>
+              {`@${mailbox.domainKey}`}
+            </div>
           </div>
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
@@ -212,12 +217,12 @@ const DomainManagement = (props: Props) => {
             </button>
 
             <span className="mx-1" />
-            <Edit
+            <InfoCircle
               set="broken"
               size="small"
               className="hover:text-blue-500"
               style={{ cursor: 'pointer' }}
-              onClick={() => {}}
+              onClick={() => infoMailbox(mailbox)}
             />
             <span className="mx-1" />
             <Delete
@@ -225,7 +230,7 @@ const DomainManagement = (props: Props) => {
               size="small"
               className="hover:text-red-500"
               style={{ cursor: 'pointer' }}
-              onClick={() => {}}
+              onClick={() => deleteMailbox(mailbox)}
             />
           </div>
         </td>
@@ -296,10 +301,6 @@ const DomainManagement = (props: Props) => {
                       <th
                         scope="col"
                         className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
-                      />
-                      <th
-                        scope="col"
-                        className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
                       >
                         Status
                       </th>
@@ -320,7 +321,7 @@ const DomainManagement = (props: Props) => {
                   <tbody className="">
                     {domains.allIds.length === 0 && (
                       <tr className="">
-                        <th colSpan={4} scope="colgroup ">
+                        <th colSpan={3} scope="colgroup ">
                           <div className="text-center absolute flex flex-col w-full pt-10">
                             <div className="flex self-center text-gray-400">
                               <GlobeIcon
@@ -335,9 +336,10 @@ const DomainManagement = (props: Props) => {
                               Get started by creating a new domain.
                             </p>
                             <div className="mt-6 w-fit self-center">
-                            <Button
+                              <Button
                                 type="button"
-                                onClick={() => openModalRoute('domainRegistration')}
+                                onClick={() =>
+                                  openModalRoute('domainRegistration')}
                                 variant="primary"
                                 className="pt-2 pb-2 text-sm font-medium bg-white inline-flex items-center"
                               >
@@ -345,7 +347,9 @@ const DomainManagement = (props: Props) => {
                                   className="-ml-1 mr-2 h-5 w-5"
                                   aria-hidden="true"
                                 />
-                                <span className="whitespace-nowrap">Add First Custom Domain</span>
+                                <span className="whitespace-nowrap">
+                                  Add First Custom Domain
+                                </span>
                               </Button>
                               {/* <button
                                 type="button"
@@ -382,7 +386,7 @@ const DomainManagement = (props: Props) => {
                               className="border-t  border-gray-200"
                             >
                               <th
-                                colSpan={3}
+                                colSpan={2}
                                 scope="colgroup"
                                 className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-left text-sm font-semibold text-gray-500"
                               >

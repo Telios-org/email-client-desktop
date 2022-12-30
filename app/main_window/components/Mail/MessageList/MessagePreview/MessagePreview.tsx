@@ -76,7 +76,7 @@ export default function MessagePreview(props: Props) {
   } = message;
   const activeMessageId = useSelector(activeMsgId);
   const isActive =
-    emailId === activeMessageId || selected.items.indexOf(message.emailId) > -1;
+    emailId === activeMessageId || selected?.items?.indexOf(message.emailId) > -1;
 
   const [{ opacity }, drag, preview] = useDrag({
     item: { emailId, unread, folderId, type: 'message', aliasId },
@@ -123,7 +123,7 @@ export default function MessagePreview(props: Props) {
   const wasToggleInSelectionGroupKeyUsed = (
     event: MouseEvent | KeyboardEvent
   ) => {
-    const isUsingWindows = navigator.platform.indexOf('Win') >= 0;
+    const isUsingWindows = navigator?.platform?.indexOf('Win') >= 0;
     return isUsingWindows ? event.ctrlKey : event.metaKey;
   };
 

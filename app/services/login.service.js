@@ -24,11 +24,10 @@ class LoginService {
     });
   }
 
-  static initAccount(password, email) {
-    console.log(password,email);
+  static initAccount(password = null, email, mnemonic = null) {
     return new Promise((resolve, reject) => {
       ipcRenderer
-        .invoke('LOGIN_SERVICE::initAccount', { password, email })
+        .invoke('LOGIN_SERVICE::initAccount', { password, email, mnemonic })
         .then(data => {
           return resolve(data);
         })

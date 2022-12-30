@@ -39,7 +39,7 @@ class Channel extends EventEmitter {
 
     this.process.stderr.on('data', data => {
       // if(isDev) {
-      console.log(data.toString())
+      // console.log(data.toString())
       //console.error(data.toString());
       // }
     });

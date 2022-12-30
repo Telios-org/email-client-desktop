@@ -35,7 +35,6 @@ class AccountService extends EventEmitter {
     });
 
     ipcRenderer.on('ACCOUNT_IPC::initAcct', (evt, data) => {
-      console.log('RECEIVED DATA', data);
       AccountService.initAccount(data)
         .then(account => {
           MessageIngressService.initMessageListener();
@@ -198,11 +197,21 @@ class AccountService extends EventEmitter {
   }
 
   static initAccount(params) {
-    const { email, password } = params;
+    const { email, password, mnemonic } = params;
+
+    const payload = {
+      email
+    };
+
+    if (password) {
+      payload.password = password;
+    } else if (mnemonic) {
+      payload.passphrase = mnemonic;
+    }
 
     channel.send({
       event: 'account:login',
-      payload: { password, email }
+      payload
     });
 
     return new Promise((resolve, reject) => {
@@ -244,6 +253,26 @@ class AccountService extends EventEmitter {
 
     return new Promise((resolve, reject) => {
       channel.once('account:resetPassword:callback', m => {
+        const { error, data } = m;
+        const _data = { ...data };
+
+        if (error) return reject(error);
+
+        return resolve(_data);
+      });
+    });
+  }
+
+  static updateAccountPassword(payload) {
+    const { email, newPass } = payload;
+
+    channel.send({
+      event: 'account:updatePassword',
+      payload: { email, newPass }
+    });
+
+    return new Promise((resolve, reject) => {
+      channel.once('account:updatePassword:callback', m => {
         const { error, data } = m;
         const _data = { ...data };
 
@@ -389,7 +418,6 @@ class AccountService extends EventEmitter {
 
     return new Promise((resolve, reject) => {
       channel.once('account:logout:callback', m => {
-        console.log('LOGOUT CALLBACK');
         const { error } = m;
 
         if (error) return reject(error);

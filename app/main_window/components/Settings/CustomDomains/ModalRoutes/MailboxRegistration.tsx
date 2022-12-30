@@ -130,7 +130,6 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
         msg: ''
       });
       setLoader(true);
-      console.log(payload);
       const res = await dispatch(registerMailbox({ ...payload }));
       if (res.success) {
         close(true, 'Mailbox created!');

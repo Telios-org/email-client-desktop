@@ -120,8 +120,6 @@ const SettingsPage = () => {
               // devtools
               className="min-w-[1000px]"
               onDomReady={e => {
-                console.log('DOMREADY', e);
-
                 e.sender.insertCSS(
                   '.App.App--multiItem, .App.App--singleItem{ position: absolute !important; top: 50% !important; transform: translate(0%, -50%) !important;}'
                 );

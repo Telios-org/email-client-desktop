@@ -71,7 +71,7 @@ const peopleHeaderParser = (
         : from.arr[0]?.address,
     address: from.arr[0]?.address,
     hasName: !!from.arr[0]?.name, // will simplify UI code to know if name and address are the same.
-    inNetwork: from.arr[0]?.address.indexOf('telios.io') > -1,
+    inNetwork: from.arr[0]?.address?.indexOf('telios.io') > -1,
     avatarInitials: ''
   };
 

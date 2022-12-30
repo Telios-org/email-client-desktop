@@ -777,7 +777,7 @@ export const loadMailboxes = () => async (
     // console.log('MAILBOXES', mailboxes);
     // console.log('activeMailboxIndex', activeMailboxIndex);
 
-    activeMailboxId = mailboxes[activeMailboxIndex].mailboxId;
+    activeMailboxId = mailboxes[activeMailboxIndex || 0].mailboxId;
 
     // console.log('activeMailboxId', activeMailboxId);
 
@@ -865,10 +865,10 @@ export const selectSearch = (
 
     const isAlias = payload.aliasId !== null && payload.name !== 'Trash';
     if (isAlias) {
-      const aliasIndex = aliasAllIds.indexOf(payload.aliasId);
+      const aliasIndex = aliasAllIds ? aliasAllIds.indexOf(payload.aliasId) : 0;
       await dispatch(aliasSelection(aliasIndex, payload.messages));
     } else {
-      const folderIndex = foldersAllIds.indexOf(payload.folderId);
+      const folderIndex = foldersAllIds ? foldersAllIds.indexOf(payload.folderId) : 0;
       await dispatch(folderSelection(folderIndex, payload.messages));
     }
 

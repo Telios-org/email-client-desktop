@@ -40,7 +40,7 @@ export const updateFolderCount = (id: number, amount: number) => {
       }
     }
 
-    if (exceptions.indexOf(id) === -1) {
+    if (exceptions && exceptions.indexOf(id) === -1) {
       dispatch(updateCount(id, change));
     }
   };

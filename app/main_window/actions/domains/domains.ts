@@ -34,10 +34,7 @@ export const addCustomDomain = (domain: string) => {
     dispatch(addDomainRequest());
     let result;
     try {
-      console.log(domain);
       result = await DomainService.register(domain);
-
-      console.log(result);
     } catch (error) {
       dispatch(addDomainFailure(error));
       return error;
@@ -132,7 +129,6 @@ export const deleteDomain = domain => {
 
     try {
       result = await DomainService.delete(domain);
-      console.log(result);
     } catch (error) {
       dispatch(deleteFailure(error));
       return error;
@@ -184,7 +180,6 @@ export const registerMailbox = (payload: {
 
     try {
       result = await DomainService.registerMailbox(payload);
-      console.log(result);
     } catch (error) {
       dispatch(registerMailboxFailure(error));
       return { status: error.message, success: false };
@@ -229,7 +224,6 @@ export const deleteMailbox = payload => {
 
     try {
       result = await DomainService.deleteMailbox(payload);
-      console.log(result);
     } catch (error) {
       dispatch(deleteMailboxFailure(error));
       return error;
@@ -274,7 +268,6 @@ export const updateMailbox = payload => {
 
     try {
       result = await DomainService.updateMailbox(payload);
-      console.log(result);
     } catch (error) {
       dispatch(updateMailboxFailure(error));
       return error;

@@ -73,15 +73,6 @@ const AliasEdit = forwardRef((props: Props, ref) => {
       setSubmitError('');
       setLoader(true);
 
-      console.log({
-        namespaceName: namespace,
-        domain,
-        address: alias,
-        description,
-        fwdAddresses: fwd,
-        disabled: a.disabled
-      });
-
       const res = await dispatch(
         updateAlias({
           namespaceName: namespace,

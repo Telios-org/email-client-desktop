@@ -290,7 +290,7 @@ export default function MessageList(props: Props) {
       isLoading = true;
 
       return new Promise((resolve, reject) => {
-        console.log(startIndex, stopIndex)
+        // console.log(startIndex, stopIndex)
         if(searchFilter) return resolve();
         if (aliasId) {
           setLastStartIndex(messages.allIds.length)

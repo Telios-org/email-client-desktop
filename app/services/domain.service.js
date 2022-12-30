@@ -90,7 +90,6 @@ class DomainService {
   }
 
   static async registerMailbox(payload) {
-    console.log('REGISTERING MAILBOX', payload);
     channel.send({ event: 'domain:registerMailbox', payload });
     return new Promise((resolve, reject) => {
       channel.once('domain:registerMailbox:callback', m => {
@@ -115,15 +114,15 @@ class DomainService {
   }
 
   static async updateMailbox(payload) {
-    channel.send({ event: 'domain:updateMailbox', payload });
-    return new Promise((resolve, reject) => {
-      channel.once('domain:updateMailbox:callback', m => {
-        const { error, data } = m;
-        if (error) return reject(error);
+    // channel.send({ event: 'domain:updateMailbox', payload });
+    // return new Promise((resolve, reject) => {
+    //   channel.once('domain:updateMailbox:callback', m => {
+    //     const { error, data } = m;
+    //     if (error) return reject(error);
 
-        return resolve(data);
-      });
-    });
+    //     return resolve(data);
+    //   });
+    // });
   }
 }
 

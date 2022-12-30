@@ -29,7 +29,7 @@ const teliosSDK = new ClientSDK({
 const mailbox = teliosSDK.Mailbox;
 
 const isValidEmail = (email: string) => {
-  if (email.indexOf(`@${defaultDomain}`) > -1) {
+  if (email && email.indexOf(`@${defaultDomain}`) > -1) {
     return { isValid: validateTeliosEmail(email), account_key: null };
   }
   return { isValid: !!validateEmail(email), account_key: null };
@@ -171,7 +171,7 @@ class RecipientsInput extends Component {
         if (item.value in mailboxes) {
           testResult = true;
           acctKey = mailboxes[item.value].account_key;
-        } else if (item.value.indexOf(`@${defaultDomain}`) > -1) {
+        } else if (item && item.value && item.value.indexOf(`@${defaultDomain}`) > -1) {
           testResult = false;
         }
 

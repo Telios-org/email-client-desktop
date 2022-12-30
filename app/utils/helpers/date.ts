@@ -32,6 +32,11 @@ export const formatFullDate = date => {
   return received.toFormat('dd LLL yyyy');
 };
 
+export const formatFullDateTime = date => {
+  const received = DateTime.fromISO(date, { zone: 'utc' }).toLocal();
+  return received.toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS);
+};
+
 export const formatTimeOnly = date => {
   const received = DateTime.fromISO(date, { zone: 'utc' }).toLocal();
   return received.toFormat('t');

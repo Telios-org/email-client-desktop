@@ -120,15 +120,15 @@ export const registerAlias = (
     dispatch(startAliasRegistration(`${namespaceName}#${address}@${domain}`));
     let alias;
     try {
-      console.log(
-        'ALIAS DATA::',
-        namespaceName,
-        domain,
-        address,
-        description,
-        fwdAddresses,
-        disabled
-      );
+      // console.log(
+      //   'ALIAS DATA::',
+      //   namespaceName,
+      //   domain,
+      //   address,
+      //   description,
+      //   fwdAddresses,
+      //   disabled
+      // );
       alias = await Mail.registerAliasAddress({
         namespaceName,
         domain,
@@ -239,7 +239,7 @@ export const updateAlias = (payload: {
       //   return { status: 'already-updateed', success: false };
       // }
       return {
-        status: 'issue-updateing',
+        status: 'issue-updating',
         success: false,
         message: error.message
       };

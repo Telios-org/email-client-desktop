@@ -189,7 +189,7 @@
 
 "@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#custom-domains":
   version "5.2.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#cf17884935edc76e9c0e8172f28942872eb388de"
+  resolved "https://github.com/Telios-org/telios-client-backend.git#59be746d0156f535f799e7d55a426cba4e31f889"
   dependencies:
     "@telios/client-sdk" "^8.0.0"
     "@telios/nebula" "^4.0.8"
@@ -233,9 +233,9 @@
     "@types/node" "*"
 
 "@types/node@*":
-  version "18.11.17"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.17.tgz#5c009e1d9c38f4a2a9d45c0b0c493fe6cdb4bcb5"
-  integrity sha512-HJSUJmni4BeDHhfzn6nF0sVmd1SMezP7/4F0Lq+aXzmp2xm9O7WXrUtHW/CHlYVtZUbByEvWidHqRtcJXGF2Ng==
+  version "18.11.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.18.tgz#8dfb97f0da23c2293e554c5a50d61ef134d7697f"
+  integrity sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -340,7 +340,7 @@ autobase@1.0.0-alpha.6:
 
 "autobase@git+https://github.com/hypercore-protocol/autobase.git":
   version "1.0.0-alpha.8"
-  resolved "git+https://github.com/hypercore-protocol/autobase.git#18adf5045122ae7ef7a51861e82a6a98bc8034c8"
+  resolved "git+https://github.com/hypercore-protocol/autobase.git#1c3833d27e4c3f810351f266033a9b7f70a1245d"
   dependencies:
     b4a "^1.3.1"
     codecs "^3.0.0"
@@ -1005,12 +1005,13 @@ follow-redirects@^1.14.0:
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
 
 fs-native-extensions@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/fs-native-extensions/-/fs-native-extensions-1.1.0.tgz#b95ddae49ceb545b84761b9b7d379e88f93adf88"
-  integrity sha512-9gLlh5J2EJIoyb5F+UMcVo9Nd1XZo1ha48gqhrYybsl3ve1zcyLZ5irL5f4DAoOWRQobs5nkNdlGhwgI21K+eg==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/fs-native-extensions/-/fs-native-extensions-1.2.0.tgz#1d623a0e692e9255b78c0f69b93bc146131b8cf9"
+  integrity sha512-SIHH84fx7NLGfvRDkaLrfAnsCljwEAjCLy+CfR0r27wcrhed0xpqzP3o8kVCADlX3316BgiUGVx+yuI5EhgV5w==
   dependencies:
     napi-macros "^2.0.0"
     node-gyp-build "^4.2.3"
+    uv-errors "^1.0.1"
 
 fs.realpath@^1.0.0:
   version "1.0.0"
@@ -1758,9 +1759,9 @@ luxon@^2.3.1:
   integrity sha512-IDkEPB80Rb6gCAU+FEib0t4FeJ4uVOuX1CQ9GsvU3O+JAGIgu0J7sf1OarXKaKDygTZIoJyU6YdZzTFRu+YR0A==
 
 luxon@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.1.1.tgz#b492c645b2474fb86f3bd3283213846b99c32c1e"
-  integrity sha512-Ah6DloGmvseB/pX1cAmjbFvyU/pKuwQMQqz7d0yvuDlVYLTs2WeDHQMpC8tGjm1da+BriHROW/OEIT/KfYg6xw==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.2.0.tgz#7962c5dafcd3623e70e222882be49b381e7a8718"
+  integrity sha512-Namj3XqoJjFekq/JHQEaaAv4zyE/fyyDBrMEBnIL2s/X54SC8W5Ea0uej1TRXUArWec8OojsAVsGBYhNRjpMVw==
 
 mailparser@^2.8.1:
   version "2.8.1"
@@ -1920,9 +1921,9 @@ nanoresource@^1.3.0:
     inherits "^2.0.4"
 
 napi-macros@^2.0.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/napi-macros/-/napi-macros-2.1.1.tgz#2405c71a375ce1325ee5fb37e767dddc71c3cf9d"
-  integrity sha512-Q5w6SrLzogp1bg1wn2WlFCrRLn2eckE20aNk2J8fK5i9+I6P7tc3Z4rkDAZ+abRzdbFDOemCTgoopSAkRfsa4g==
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/napi-macros/-/napi-macros-2.2.2.tgz#817fef20c3e0e40a963fbf7b37d1600bd0201044"
+  integrity sha512-hmEVtAGYzVQpCKdbQea4skABsdXW4RUh5t5mJ2zzqowJS2OyXZTU1KhDVFhx+NlWZ4ap9mqR9TcDO3LTTttd+g==
 
 napi-macros@~2.0.0:
   version "2.0.0"
@@ -2397,9 +2398,9 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.2, safe-buffer@^5.2.0, 
   integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
 
 safe-stable-stringify@^2.2.0:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-2.4.1.tgz#34694bd8a30575b7f94792aa51527551bd733d61"
-  integrity sha512-dVHE6bMtS/bnL2mwualjc6IxEv1F+OCUpA46pKUj6F8uDbUM0jCCulPqRNPSnWwGNKx5etqMjZYdXtrm5KJZGA==
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-2.4.2.tgz#ec7b037768098bf65310d1d64370de0dc02353aa"
+  integrity sha512-gMxvPJYhP0O9n2pvcfYfIuYgbledAOJFcqRThtPRmjscaipiwcwPPKLytpVzMkG2HAN87Qmo2d4PtGiri1dSLA==
 
 "safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0":
   version "2.1.2"
@@ -2773,6 +2774,11 @@ uuid@^8.2.0, uuid@^8.3.0, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
+uv-errors@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/uv-errors/-/uv-errors-1.0.1.tgz#9070777ddfe2eb01ee8a78bcfaeb9eead2b5fd41"
+  integrity sha512-7aN1LGdPZPfpaoECdV2QvnZhCyRR3TFdBC4cHqoqEUAGuhGjouCssfBqum3jZkOlNK8Iq9mj+CwL6Ml1XrPH+Q==
 
 varint@5.0.0:
   version "5.0.0"
