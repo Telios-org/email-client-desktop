@@ -30,11 +30,11 @@ const MailboxDelete = forwardRef((props: Props, ref) => {
 
   const handleDeleteMailbox = async () => {
     setLoader(true);
-    const res = await dispatch(deleteMailbox({ address: mailbox.address }));
+    const res = await dispatch(deleteMailbox({ address: mailbox.address, id: mailbox._id }));
     setLoader(false);
 
-    if (res.error) {
-      close(true, res?.error?.message);
+    if (!res.success) {
+      close(false, res?.status);
     } else {
       close(true, 'Mailbox Deleted!');
     }

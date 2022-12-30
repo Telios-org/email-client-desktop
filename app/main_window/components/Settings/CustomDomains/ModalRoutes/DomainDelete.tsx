@@ -34,8 +34,8 @@ const DomainDelete = forwardRef((props: Props, ref) => {
     const res = await dispatch(deleteDomain(domain));
     setLoader(false);
 
-    if (res.error) {
-      close(true, res?.error?.message);
+    if (!res.success) {
+      close(false, res?.status);
     } else {
       close(true, 'Domain Deleted!');
     }

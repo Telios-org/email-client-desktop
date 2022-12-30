@@ -131,12 +131,12 @@ export const deleteDomain = domain => {
       result = await DomainService.delete(domain);
     } catch (error) {
       dispatch(deleteFailure(error));
-      return error;
+      return { status: error.message, success: false };
     }
 
     dispatch(deleteSuccess({ id: domain }));
 
-    return result;
+    return { status: 'deleted', success: true };
   };
 };
 
@@ -223,15 +223,15 @@ export const deleteMailbox = payload => {
     let result;
 
     try {
-      result = await DomainService.deleteMailbox(payload);
+      result = await DomainService.deleteMailbox({ address: payload.address });
     } catch (error) {
       dispatch(deleteMailboxFailure(error));
-      return error;
+      return { status: error.message, success: false };
     }
 
-    dispatch(deleteMailboxSuccess(result));
+    dispatch(deleteMailboxSuccess(payload));
 
-    return result;
+    return { status: 'deleted', success: true };
   };
 };
 

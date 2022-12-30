@@ -207,7 +207,7 @@ const CustomDomains = () => {
         setShow={setShowNotification}
         success={saveSucceeded}
         successMsg={notifMessage}
-        errorMsg="Something went wrong!"
+        errorMsg={notifMessage}
       />
     </>
   );

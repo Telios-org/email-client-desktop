@@ -136,7 +136,7 @@ const UserMenu = (props: Props) => {
     } else {
       await LoginService.initAccount(mbox.password, mbox.address);
     }
-    await LoginService.initAccount(mbox.password, mbox.address, mbox.mnemonic);
+
     ipcRenderer.send('RENDERER::accountSwitch');
     setTimeout(() => {
       closeModal();

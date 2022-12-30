@@ -2,7 +2,10 @@ import {
   FETCH_MAIL_DATA_SUCCESS,
   GET_MAILBOXES_REQUEST_SUCCESS
 } from '../../actions/mail';
-import { REGISTER_MAILBOX_SUCCESS } from '../../actions/domains/domains';
+import {
+  REGISTER_MAILBOX_SUCCESS,
+  DELETE_MAILBOX_SUCCESS
+} from '../../actions/domains/domains';
 import { UPDATE_PROFILE_SUCCESS } from '../../actions/account/account';
 import { MailType, MailAction } from '../types';
 import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
@@ -16,6 +19,7 @@ export default function mailboxes(
   state: MailType = initialState,
   action: MailAction
 ) {
+  let newState;
   switch (action.type) {
     case REGISTER_MAILBOX_SUCCESS:
       return {
@@ -25,6 +29,15 @@ export default function mailboxes(
         },
         allIds: [...state.allIds, ...idFromArrayDict([action.mailbox])]
       };
+
+    case DELETE_MAILBOX_SUCCESS:
+      newState = {
+        byId: { ...state.byId },
+        allIds: state.allIds.filter(aid => aid !== action.payload.id),
+      };
+      delete newState.byId[action.payload.id];
+      return newState;
+
     case FETCH_MAIL_DATA_SUCCESS: {
       const newMailboxesObj = arrayToObject(action.mailboxes);
 
