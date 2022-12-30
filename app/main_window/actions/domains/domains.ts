@@ -167,7 +167,7 @@ export const registerMailboxFailure = (error: Error) => {
 };
 
 export const registerMailbox = (payload: {
-  type: 'SUB' | 'CLAIMED';
+  type: 'SUB' | 'CLAIMABLE';
   email: string;
   displayName: string;
   domain: string;

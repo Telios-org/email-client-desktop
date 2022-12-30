@@ -52,11 +52,13 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
   const [validationLoader, setValidationLoader] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [mailbox, setMailbox] = useState('');
+  const [step, setStep] = useState('intro');
+  const [type, setType] = useState('SUB');
   const [loading, setLoader] = useState(false);
-  const [error, setError] = useState({
-    showError: false,
-    msg: ''
-  });
+  const [error, setError] = useState('');
+
+  const [isBusinessUser, setIsBusinessUser] = useState(false);
+  const [readyToSubmit, setReadyToSubmit] = useState(false);
 
   const format = [
     { label: '3 Word String', value: 'words' },
@@ -98,8 +100,13 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
         }
       },
       recoveryEmail: {
-        required: {
-          value: true,
+        custom: {
+          isValid: (value, data) => {
+            if (type === 'CLAIMABLE') {
+              return value && value.length > 0;
+            }
+            return true;
+          },
           message: 'Recovery email must be provided'
         },
         pattern: {
@@ -111,13 +118,19 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
         required: {
           value: true,
           message: 'Password must be provided'
+        },
+        custom: {
+          isValid: (value, data) => {
+            return value.length >= 14 && data.passwordStrength.score > 3;
+          },
+          message: 'Password too weak. You need at least 14 characters.'
         }
       }
     },
     onSubmit: async data => {
       const email = `${data.address}@${data.domain}`;
       const payload = {
-        type: 'SUB',
+        type,
         email,
         displayName: data.displayName.length > 0 ? data.displayName : email,
         domain: data.domain,
@@ -125,19 +138,13 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
         password: data.password,
         deviceType: 'DESKTOP'
       };
-      setError({
-        showError: false,
-        msg: ''
-      });
+      setError('');
       setLoader(true);
       const res = await dispatch(registerMailbox({ ...payload }));
       if (res.success) {
         close(true, 'Mailbox created!');
       } else {
-        setError({
-          showError: true,
-          msg: res.message
-        });
+        setError(res.status);
       }
       setLoader(false);
     }
@@ -159,10 +166,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
     const cb = (rstr: string) => {
       manualChange('address', rstr);
     };
-    setError({
-      showError: false,
-      msg: ''
-    });
+    setError('');
     generateRandomString('random', randomFormat.value, cb);
   };
 
@@ -195,6 +199,56 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
     });
   };
 
+  useEffect(() => {
+    const fn = async () => {
+      await bulkChange({
+        domain: domains[0],
+        address: '',
+        displayName: '',
+        recoveryEmail: '',
+        password: '',
+        passwordStrength: {
+          score: 0,
+          crackTime: ''
+        }
+      });
+      setError('');
+    };
+    fn();
+  }, [type, step]);
+
+  useEffect(() => {
+    const fn = async () => {
+      if (type === 'SUB') {
+        if (
+          form.address.length > 0 &&
+          !errors.address &&
+          form.password.length > 0 &&
+          !errors.password
+        ) {
+          setReadyToSubmit(true);
+        } else {
+          setReadyToSubmit(false);
+        }
+      } else if (type === 'CLAIMABLE') {
+        if (
+          form.address.length > 0 &&
+          !errors.address &&
+          form.password.length > 0 &&
+          !errors.password &&
+          form.recoveryEmail.length > 0 &&
+          !errors.recoveryEmail
+        ) {
+          setReadyToSubmit(true);
+        } else {
+          setReadyToSubmit(false);
+        }
+      }
+    };
+
+    fn();
+  }, [form.address, form.recoveryEmail, form.password, errors]);
+
   return (
     <Dialog.Panel
       ref={ref}
@@ -208,285 +262,428 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
           className="w-5 h-5 text-purple-500 mr-2"
           aria-hidden="true"
         />
-        Add New Mailbox
+        New Mailbox - 
+{' '}
+{step === 'intro' ? 'Type' : 'Registration'}
       </Dialog.Title>
-      <div className="px-6">
-        <div className="text-sm">
-          <p className="text-sm text-center font-bold bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded max-w-md mx-auto">
-            <span className="text-purple-600">{form.address}</span>
+      {step === 'intro' && (
+        <>
+          <div className="max-w-md m-auto mb-10">
+            <div className="grid grid-cols-1 gap-y-2">
+              <div
+                className={clsx(
+                  'relative bg-white border rounded-lg shadow-sm p-4 flex cursor-pointer focus:outline-none',
+                  type === 'SUB'
+                    ? 'border-2 border-purple-500'
+                    : 'hover:border-gray-300'
+                )}
+                aria-hidden="true"
+                onClick={() => setType('SUB')}
+                style={{ cursor: 'pointer' }}
+              >
+                <span className="flex-1 flex">
+                  <span className="flex flex-col">
+                    <span
+                      id="project-type-1-label"
+                      className="block text-sm font-medium text-gray-900"
+                    >
+                      Sub-Account
+                    </span>
+                    <span
+                      id="project-type-1-description-0"
+                      className="mt-1 flex items-center text-sm text-gray-500"
+                    >
+                      Add a mailbox under your domain for your own use.
+                    </span>
+                  </span>
+                </span>
+                {type === 'SUB' && (
+                  <CheckCircleIcon className="h-5 w-5 text-purple-600 absolute right-3 top-3" />
+                )}
+              </div>
+
+              <div
+                className={clsx(
+                  'relative bg-white border rounded-lg shadow-sm p-4 flex cursor-pointer focus:outline-none',
+                  type === 'CLAIMABLE'
+                    ? 'border-2 border-purple-500'
+                    : 'hover:border-gray-300',
+                  !isBusinessUser ? 'border-gray-200 hover:border-gray-200' : ''
+                )}
+                aria-hidden="true"
+                onClick={() => isBusinessUser && setType('CLAIMABLE')}
+                style={{
+                  cursor: !isBusinessUser ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <span className="flex-1 flex">
+                  <span className="flex flex-col">
+                    <span
+                      id="project-type-0-label"
+                      className={clsx(
+                        'block text-sm font-medium ',
+                        !isBusinessUser ? 'text-gray-400' : 'text-gray-900'
+                      )}
+                    >
+                      User Account
+                    </span>
+                    <span
+                      id="project-type-0-description-0"
+                      className={clsx(
+                        'mt-1 text-sm flex flex-col',
+                        !isBusinessUser ? 'text-gray-400' : 'text-gray-500'
+                      )}
+                    >
+                      <div>
+                        <span>
+                          Add a mailbox under your domain for use by someone
+                          else.
+                        </span>
+                      </div>
+                      {!isBusinessUser && (
+                        <div className="mt-2">
+                          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-400 rounded font-medium">
+                            Business Plan Feature
+                          </span>
+                        </div>
+                      )}
+                    </span>
+                  </span>
+                </span>
+                {type === 'CLAIMABLE' && (
+                  <CheckCircleIcon className="h-5 w-5 text-purple-600 absolute right-3 top-3" />
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-4">
+            <div className="flex flex-row space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="pt-2 pb-2"
+                onClick={() => close(false, '', false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                className="pt-2 pb-2 whitespace-nowrap"
+                onClick={() => setStep('setup')}
+                loading={loading}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+      {step !== 'intro' && (
+        <>
+          <div className="px-6">
+            <div className="text-sm">
+              <p className="text-sm text-center font-bold bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded max-w-md mx-auto">
+                <span className="text-purple-600">{form.address}</span>
 @
 <span>{form.domain}</span>
-          </p>
-        </div>
-        <div className="flex flex-col pl-7 my-4">
-          <span className="text-sm font-normal">
-            This will create a brand new mailbox. You can switch between
-            mailboxes by clicking on your profile, in the top right corner of
-            the app.
-          </span>
-          {/* <span >
-            Optionally, you can add forwarding addresses below to have email
-            sent to this alias forwarded to additional email addresses
-          </span> */}
-        </div>
-      </div>
-      <form className="max-w-md m-auto relative">
-        <Combobox
-          value={form.domain}
-          onChange={val => manualChange('domain', val)}
-        >
-          <Combobox.Label className="block text-sm font-medium text-gray-700">
-            Domain
-          </Combobox.Label>
-          <div className="relative mt-1">
-            <div className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-2 pr-10 text-left transition duration-150 ease-in-out focus-within:border-violet-500 focus-within:outline-none focus-within:ring-1 focus-within:ring-violet-500 sm:text-sm sm:leading-5">
-              <Combobox.Input
-                className="form-input border-none p-0 focus:ring-0 text-sm pl-1"
-                displayValue={ns => ns}
-                onChange={event => setSearchDomains(event.target.value)}
-              />
-              <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <SelectorIcon
-                  className="h-5 w-5 text-gray-400"
-                  aria-hidden="true"
-                />
-              </Combobox.Button>
+              </p>
             </div>
-            <Transition
-              as={Fragment}
-              leave="transition ease-in duration-100"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-              afterLeave={() => setSearchDomains('')}
-            >
-              <Combobox.Options className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                {filteredDomains.length === 0 && searchDomains !== '' ? (
-                  <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
-                    Nothing found.
-                  </div>
-                ) : (
-                  filteredDomains.map(dm => (
-                    <Combobox.Option
-                      key={dm}
-                      className={({ active }) =>
-                        `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                          active ? 'bg-sky-500 text-white' : 'text-gray-900'
-                        }`}
-                      style={{ cursor: 'pointer' }}
-                      value={dm}
-                    >
-                      {({ selected, active }) => (
-                        <>
-                          <span
-                            className={`block truncate ${
-                              selected ? 'font-medium' : 'font-normal'
-                            }`}
-                          >
-                            {dm}
-                          </span>
-                          {selected ? (
-                            <span
-                              className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                active ? 'text-white' : 'text-sky-600'
-                              }`}
-                            >
-                              <CheckIcon
-                                className="h-5 w-5"
-                                aria-hidden="true"
-                              />
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Combobox.Option>
-                  ))
-                )}
-              </Combobox.Options>
-            </Transition>
+            <div className="flex flex-col pl-7 my-4">
+              {type === 'SUB' && (
+                <span className="text-sm font-normal">
+                  This will create a brand new mailbox. You can switch between
+                  mailboxes by clicking on your profile, in the top right corner
+                  of the app.
+                </span>
+              )}
+              {type === 'CLAIMABLE' && (
+                <span className="text-sm font-normal">
+                  This will create a brand new mailbox that a user will be able
+                  to claim via a claim code sent to their recovery email.
+                </span>
+              )}
+            </div>
           </div>
-        </Combobox>
-        <div className="relative">
-          <div className="mt-6 relative">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+          <form className="max-w-md m-auto relative">
+            <div className="mb-6 relative">
+              <Input
+                label="Mailbox Name"
+                onChange={handleChange('displayName', true)}
+                value={form.displayName}
+                placeholder="Type here..."
+                error={errors.displayName}
+              />
+            </div>
+            <Combobox
+              value={form.domain}
+              onChange={val => manualChange('domain', val)}
             >
-              Address
-            </label>
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <div className="relative flex items-stretch flex-grow focus-within:z-10">
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={form.address}
-                  onChange={handleChange('address', true)}
-                  className="form-input focus:ring-violet-500 focus:border-violet-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300"
-                  placeholder="Type choice here..."
+              <Combobox.Label className="block text-sm font-medium text-gray-700">
+                Domain
+              </Combobox.Label>
+              <div className="relative mt-1">
+                <div className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-2 pr-10 text-left transition duration-150 ease-in-out focus-within:border-violet-500 focus-within:outline-none focus-within:ring-1 focus-within:ring-violet-500 sm:text-sm sm:leading-5">
+                  <Combobox.Input
+                    className="form-input border-none p-0 focus:ring-0 text-sm pl-1"
+                    displayValue={ns => ns}
+                    onChange={event => setSearchDomains(event.target.value)}
+                  />
+                  <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                    <SelectorIcon
+                      className="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </Combobox.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                  afterLeave={() => setSearchDomains('')}
+                >
+                  <Combobox.Options className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    {filteredDomains.length === 0 && searchDomains !== '' ? (
+                      <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                        Nothing found.
+                      </div>
+                    ) : (
+                      filteredDomains.map(dm => (
+                        <Combobox.Option
+                          key={dm}
+                          className={({ active }) =>
+                            `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                              active ? 'bg-sky-500 text-white' : 'text-gray-900'
+                            }`
+                          }
+                          style={{ cursor: 'pointer' }}
+                          value={dm}
+                        >
+                          {({ selected, active }) => (
+                            <>
+                              <span
+                                className={`block truncate ${
+                                  selected ? 'font-medium' : 'font-normal'
+                                }`}
+                              >
+                                {dm}
+                              </span>
+                              {selected ? (
+                                <span
+                                  className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                    active ? 'text-white' : 'text-sky-600'
+                                  }`}
+                                >
+                                  <CheckIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </Combobox.Option>
+                      ))
+                    )}
+                  </Combobox.Options>
+                </Transition>
+              </div>
+            </Combobox>
+            <div className="relative">
+              <div className="mt-6 relative">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Address
+                </label>
+                <div className="mt-1 flex rounded-md shadow-sm">
+                  <div className="relative flex items-stretch flex-grow focus-within:z-10">
+                    <input
+                      type="email"
+                      name="email"
+                      id="email"
+                      value={form.address}
+                      onChange={handleChange('address', true)}
+                      className="form-input focus:ring-violet-500 focus:border-violet-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300"
+                      placeholder="Type choice here..."
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={generateRandomAlias}
+                    className="-ml-px relative group inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+                  >
+                    <LightningBoltIcon
+                      className="h-5 w-5 text-gray-400 group-hover:text-gray-600"
+                      aria-hidden="true"
+                    />
+                  </button>
+                </div>
+              </div>
+              <div className="text-xs flex flex-row mt-2 justify-end">
+                <label className="font-medium text-gray-900 pr-4">
+                  Random Format:
+                </label>
+                <fieldset className="">
+                  <legend className="sr-only">Random Format</legend>
+                  <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-4">
+                    <div className="flex items-center">
+                      <input
+                        id="word"
+                        name="random-format"
+                        type="radio"
+                        defaultChecked
+                        className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
+                        onChange={() => setRandomFormat(format[0])}
+                      />
+                      <label
+                        htmlFor="word"
+                        className="ml-2 block text-xs text-gray-700"
+                      >
+                        Word Association
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        id="letters"
+                        name="random-format"
+                        type="radio"
+                        className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
+                        onChange={() => setRandomFormat(format[1])}
+                      />
+                      <label
+                        htmlFor="letters"
+                        className="ml-2 block text-xs text-gray-700"
+                      >
+                        Shuffled Letters
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        id="word"
+                        name="random-format"
+                        type="radio"
+                        className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
+                        onChange={() => setRandomFormat(format[2])}
+                      />
+                      <label
+                        htmlFor="word"
+                        className="ml-2 block text-xs text-gray-700"
+                      >
+                        UID
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div className="text-xs text-red-500 absolute -bottom-5 pl-2">
+                {errors?.address?.length > 0 && errors?.address}
+              </div>
+            </div>
+            <div className="mt-6 relative">
+              <Password
+                label="Password"
+                id="password"
+                name="password"
+                autoComplete="password"
+                required
+                onChange={onPasswordChange}
+                error={errors.password}
+                show={showPassword}
+                value={form.password}
+                onVisibilityToggle={togglePasswordView}
+              />
+            </div>
+            <div className="mt-6 relative">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-slate-700"
+              >
+                Time to Crack Password
+              </label>
+              <div
+                className={clsx(
+                  `mt-1 items-center justify-center appearance-none block w-full px-3 py-2 rounded-md shadow-sm font-medium sm:text-sm`,
+                  passwordStrengthClass(
+                    form.password,
+                    form.passwordStrength.score
+                  )
+                )}
+              >
+                <span className="self-center justify-center flex capitalize tracking-wider">
+                  {form.password.length > 0
+                    ? form.passwordStrength.crackTime
+                    : 'No Password'}
+                </span>
+              </div>
+              {/* <div className="mt-1 text-xs text-neutral-500 text-center">
+                  Note: Your password should be 14 characters or more.
+                  </div> */}
+            </div>
+            {type === 'CLAIMABLE' && (
+              <div className="mt-6 relative">
+                <Input
+                  id="recoveryEmail"
+                  name="recoveryEmail"
+                  label="recovery Email"
+                  icon="email"
+                  value={form.recoveryEmail}
+                  error={errors.recoveryEmail}
+                  onChange={onEmailChange}
+                  activityPosition="right"
+                  isValid={
+                    errors.recoveryEmail === '' ||
+                    errors.recoveryEmail === undefined
+                  }
+                  showLoader={validationLoader}
                 />
               </div>
+            )}
+            <div className="text-xs text-red-500 absolute -bottom-9 text-center w-full">
+              {error.length > 0 && error}
+            </div>
+          </form>
+          <div className="flex justify-between py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-12">
+            <div className="flex flex-row items-center text-gray-400 hover:text-gray-700">
+              <ChevronLeftIcon
+                className="flex-shrink-0 h-4 w-4 "
+                aria-hidden="true"
+              />
               <button
                 type="button"
-                onClick={generateRandomAlias}
-                className="-ml-px relative group inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+                className="outline-none text-sm"
+                onClick={() => setStep('intro')}
               >
-                <LightningBoltIcon
-                  className="h-5 w-5 text-gray-400 group-hover:text-gray-600"
-                  aria-hidden="true"
-                />
+                Select Type
               </button>
             </div>
-          </div>
-          <div className="text-xs flex flex-row mt-2 justify-end">
-            <label className="font-medium text-gray-900 pr-4">
-              Random Format:
-            </label>
-            <fieldset className="">
-              <legend className="sr-only">Random Format</legend>
-              <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-4">
-                <div className="flex items-center">
-                  <input
-                    id="word"
-                    name="random-format"
-                    type="radio"
-                    defaultChecked
-                    className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
-                    onChange={() => setRandomFormat(format[0])}
-                  />
-                  <label
-                    htmlFor="word"
-                    className="ml-2 block text-xs text-gray-700"
-                  >
-                    Word Association
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    id="letters"
-                    name="random-format"
-                    type="radio"
-                    className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
-                    onChange={() => setRandomFormat(format[1])}
-                  />
-                  <label
-                    htmlFor="letters"
-                    className="ml-2 block text-xs text-gray-700"
-                  >
-                    Shuffled Letters
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    id="word"
-                    name="random-format"
-                    type="radio"
-                    className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
-                    onChange={() => setRandomFormat(format[2])}
-                  />
-                  <label
-                    htmlFor="word"
-                    className="ml-2 block text-xs text-gray-700"
-                  >
-                    UID
-                  </label>
-                </div>
-              </div>
-            </fieldset>
-          </div>
-          <div className="text-xs text-red-500 absolute -bottom-5 pl-2">
-            {errors?.address?.length > 0 && errors?.address}
-          </div>
-        </div>
-        <div className="mt-6 relative">
-          <Password
-            label="Password"
-            id="password"
-            name="password"
-            autoComplete="password"
-            required
-            onChange={onPasswordChange}
-            error={errors.password}
-            show={showPassword}
-            value={form.password}
-            onVisibilityToggle={togglePasswordView}
-          />
-        </div>
-        <div className="mt-6 relative">
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-slate-700"
-          >
-            Time to Crack Password
-          </label>
-          <div
-            className={clsx(
-              `mt-1 items-center justify-center appearance-none block w-full px-3 py-2 rounded-md shadow-sm font-medium sm:text-sm`,
-              passwordStrengthClass(form.password, form.passwordStrength.score)
-            )}
-          >
-            <span className="self-center justify-center flex capitalize tracking-wider">
-              {form.password.length > 0
-                ? form.passwordStrength.crackTime
-                : 'No Password'}
-            </span>
-          </div>
-          {/* <div className="mt-1 text-xs text-neutral-500 text-center">
-                Note: Your password should be 14 characters or more.
-                </div> */}
-        </div>
 
-        <div className="mt-6 relative">
-          <Input
-            label="Display Name"
-            onChange={handleChange('displayName', true)}
-            value={form.displayName}
-            placeholder={`${form.address}@${form.domain}`}
-            error={errors.displayName}
-          />
-        </div>
-        <div className="mt-6 relative">
-          <Input
-            id="recoveryEmail"
-            name="recoveryEmail"
-            label="recovery Email"
-            icon="email"
-            value={form.recoveryEmail}
-            error={errors.recoveryEmail}
-            onChange={onEmailChange}
-            activityPosition="right"
-            isValid={
-              errors.recoveryEmail === '' || errors.recoveryEmail === undefined
-            }
-            showLoader={validationLoader}
-          />
-        </div>
-
-        <div className="text-xs text-red-500 absolute -bottom-9 text-center w-full">
-          {error.length > 0 && error}
-        </div>
-      </form>
-      <div className="flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300 mt-14">
-        <div className="flex flex-row space-x-2">
-          <Button
-            type="button"
-            variant="outline"
-            className="pt-2 pb-2"
-            onClick={() => close(false, '', false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            className="pt-2 pb-2 whitespace-nowrap"
-            onClick={handleSubmit}
-            loading={loading}
-            loadingText="Registering Mailbox..."
-          >
-            Add Mailbox
-          </Button>
-        </div>
-      </div>
+            <div className="flex flex-row space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="pt-2 pb-2"
+                onClick={() => close(false, '', false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                className="pt-2 pb-2 whitespace-nowrap"
+                onClick={handleSubmit}
+                loading={loading}
+                loadingText="Registering Mailbox..."
+                disabled={!readyToSubmit}
+              >
+                Add Mailbox
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </Dialog.Panel>
   );
 });

@@ -171,7 +171,7 @@ const DomainManagement = (props: Props) => {
 
   const MailboxRow = (innerProps: MailboxProps) => {
     const { mailbox, mailboxIdx } = innerProps;
-
+    console.log(mailbox)
     return (
       <tr
         key={mailbox.address}
@@ -197,6 +197,9 @@ const DomainManagement = (props: Props) => {
               {`@${mailbox.domainKey}`}
             </div>
           </div>
+        </td>
+        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]">
+
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
@@ -301,6 +304,10 @@ const DomainManagement = (props: Props) => {
                       <th
                         scope="col"
                         className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
+                      />
+                      <th
+                        scope="col"
+                        className="sticky top-0 z-10 bg-white bg-opacity-80 border-b border-gray-200 px-3 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 backdrop-blur backdrop-filter"
                       >
                         Status
                       </th>
@@ -321,7 +328,7 @@ const DomainManagement = (props: Props) => {
                   <tbody className="">
                     {domains.allIds.length === 0 && (
                       <tr className="">
-                        <th colSpan={3} scope="colgroup ">
+                        <th colSpan={4} scope="colgroup ">
                           <div className="text-center absolute flex flex-col w-full pt-10">
                             <div className="flex self-center text-gray-400">
                               <GlobeIcon
@@ -386,7 +393,7 @@ const DomainManagement = (props: Props) => {
                               className="border-t  border-gray-200"
                             >
                               <th
-                                colSpan={2}
+                                colSpan={3}
                                 scope="colgroup"
                                 className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-left text-sm font-semibold text-gray-500"
                               >

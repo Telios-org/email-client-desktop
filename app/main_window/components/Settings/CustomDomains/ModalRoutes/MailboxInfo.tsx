@@ -102,7 +102,7 @@ const MailboxDelete = forwardRef((props: Props, ref) => {
               <div className="odd:font-bold odd:text-gray-500 odd:text-right odd:whitespace-nowrap even:max-w-[275px]">
                 {mailbox.type === 'SUB' ? 'Sub-Account' : 'Claimable'}
               </div>
-              {mailbox.type === 'CLAIMED' && (
+              {mailbox.type === 'CLAIMABLE' && (
                 <>
                   <div className="odd:font-bold odd:text-gray-500 odd:text-right odd:whitespace-nowrap even:max-w-[275px]">
                     Recovery Email:
@@ -144,7 +144,7 @@ const MailboxDelete = forwardRef((props: Props, ref) => {
                   ? redactString(mailbox.driveEncryptionKey)
                   : mailbox.driveEncryptionKey}
               </div>
-              {mailbox.type === 'CLAIMED' && (
+              {mailbox.type === 'CLAIMABLE' && (
                 <>
                   <div className="odd:font-bold odd:text-gray-500 odd:text-right odd:whitespace-nowrap even:max-w-[275px]">
                     Passphrase:

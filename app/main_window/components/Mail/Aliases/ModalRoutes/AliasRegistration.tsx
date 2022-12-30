@@ -20,20 +20,18 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/solid';
 
+import clsx from 'clsx';
 // INTERNAL LIBRAIRIES
 import useForm from '../../../../../utils/hooks/useForm';
 import { validateString } from '../../../../../utils/helpers/regex';
 
 // SELECTORS
-import {
-  selectAllNamespaces
-} from '../../../../selectors/mail';
+import { selectAllNamespaces } from '../../../../selectors/mail';
 
 // REDUX ACTION
 import { registerAlias } from '../../../../actions/mailbox/aliases';
 
 // HELPER FUNCTIONS
-import classNames from '../../../../../utils/helpers/css';
 import generateRandomString from '../../../../../utils/helpers/generators';
 
 // INTERNAL COMPONENTS
@@ -54,7 +52,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
   const [loading, setLoader] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [step, setStep] = useState('intro');
-  const [type, setType] = useState('namespace');
+  const [type, setType] = useState('random');
 
   const format = [
     { label: '3 Word String', value: 'words' },
@@ -100,7 +98,6 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
       setSubmitError('');
       setLoader(true);
 
-      console.log(data, domain);
       const res = await dispatch(
         registerAlias(
           type === 'namespace' ? namespace.toLowerCase() : null, // if it's a non namespace alias we keep this null
@@ -207,27 +204,43 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
 
             <div className="grid grid-cols-1 gap-y-2">
               <div
-                className={classNames(
+                className={clsx(
                   'relative bg-white border rounded-lg shadow-sm p-4 flex cursor-pointer focus:outline-none',
                   type === 'namespace'
                     ? 'border-2 border-purple-500'
-                    : 'hover:border-gray-300'
+                    : 'hover:border-gray-300',
+                  namespaces.allIds.length === 0
+                    ? 'border-gray-200 hover:border-gray-200'
+                    : ''
                 )}
                 aria-hidden="true"
                 onClick={() => setType('namespace')}
-                style={{ cursor: 'pointer' }}
+                style={{
+                  cursor:
+                    namespaces.allIds.length === 0 ? 'not-allowed' : 'pointer'
+                }}
               >
                 <span className="flex-1 flex">
                   <span className="flex flex-col">
                     <span
                       id="project-type-0-label"
-                      className="block text-sm font-medium text-gray-900"
+                      className={clsx(
+                        'block text-sm font-medium ',
+                        namespaces.allIds.length === 0
+                          ? 'text-gray-300'
+                          : 'text-gray-900'
+                      )}
                     >
                       Namespace
                     </span>
                     <span
                       id="project-type-0-description-0"
-                      className="mt-1 text-sm text-gray-500"
+                      className={clsx(
+                        'mt-1 text-sm ',
+                        namespaces.allIds.length === 0
+                          ? 'text-gray-300'
+                          : 'text-gray-500'
+                      )}
                     >
                       Custom aliases prefixed with your namespace, it follows
                       the
@@ -245,7 +258,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                 )}
               </div>
               <div
-                className={classNames(
+                className={clsx(
                   'relative bg-white border rounded-lg shadow-sm p-4 flex cursor-pointer focus:outline-none',
                   type === 'random'
                     ? 'border-2 border-purple-500'
@@ -445,7 +458,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                             <Listbox.Option
                               key={fmt.value}
                               className={({ active }) =>
-                                classNames(
+                                clsx(
                                   active
                                     ? 'bg-sky-500 text-white'
                                     : 'text-gray-900',
@@ -458,7 +471,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                               {({ selected, active }) => (
                                 <>
                                   <span
-                                    className={classNames(
+                                    className={clsx(
                                       fmt.value === randomFormat.value
                                         ? 'font-semibold'
                                         : 'font-normal',
@@ -470,7 +483,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
 
                                   {fmt.value === randomFormat.value ? (
                                     <span
-                                      className={classNames(
+                                      className={clsx(
                                         active ? 'text-white' : 'text-sky-600',
                                         'absolute inset-y-0 left-0 flex items-center pl-1.5'
                                       )}
@@ -663,7 +676,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                             value={queryFwd}
                             style={{ cursor: 'pointer' }}
                             className={({ active }) => {
-                              return classNames(
+                              return clsx(
                                 'relative cursor-default select-none py-2 pl-3 pr-9 focus:outline-none',
                                 active
                                   ? 'bg-sky-500 text-white'
@@ -682,7 +695,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                           value={fwd}
                           style={{ cursor: 'pointer' }}
                           className={({ active }) => {
-                            return classNames(
+                            return clsx(
                               'relative cursor-default select-none py-2 pl-3 pr-9 focus:outline-none',
                               active ? 'bg-sky-500 text-white' : 'text-gray-900'
                             );
@@ -691,7 +704,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                           {({ active, selected }) => (
                             <>
                               <span
-                                className={classNames(
+                                className={clsx(
                                   'block truncate',
                                   selected ? 'font-semibold' : 'font-normal'
                                 )}
@@ -700,7 +713,7 @@ const AliasRegistration = forwardRef((props: Props, ref) => {
                               </span>
                               {selected && (
                                 <span
-                                  className={classNames(
+                                  className={clsx(
                                     'absolute inset-y-0 right-0 flex items-center pr-4',
                                     active ? 'text-white' : 'text-sky-500'
                                   )}
