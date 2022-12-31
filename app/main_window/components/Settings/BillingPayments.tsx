@@ -150,6 +150,7 @@ const BillingPayments = (props: Props) => {
     const {
       data: { plans }
     } = await axios(options);
+    console.log(plans);
     setPricingData(plans);
 
     setCurrentPlan(plans.filter(p => p.id === account.plan.toLowerCase())[0]);
@@ -164,7 +165,7 @@ const BillingPayments = (props: Props) => {
     setCurrentPlan(
       pricingData.filter(p => p.id === account.plan.toLowerCase())[0]
     );
-  }, [stats]);
+  }, [account.plan]);
 
   const togglePriceCompare = () => {
     setShowPricing(!showPricing);

@@ -2,14 +2,25 @@ import { Dispatch as ReduxDispatch, Store as ReduxStore, Action } from 'redux';
 
 export type AccountType = {
   accountId: number;
+  plan: string;
   uid: string;
+  type: string;
   driveEncryptionKey: string;
+  driveSyncingPublicKey: string;
   secretBoxPubKey: string;
   secretBoxPrivKey: string;
-  deviceSigningPubKey: string;
-  deviceSigningPrivKey: string;
-  serverSig: string;
-  deviceId: string;
+  signingPubKey: string;
+  signingPrivKey: string;
+  deviceInfo: {
+    keyPair: {
+      publicKey: string;
+      secretKey: string;
+    };
+    deviceId: string;
+    deviceType: string;
+    serverSig: string;
+    driveVersion: string;
+  };
   displayName: string;
   avatar: any;
   stats: AccountStats;

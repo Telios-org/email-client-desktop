@@ -386,31 +386,24 @@ class AccountService extends EventEmitter {
     });
   }
 
-  static getSub(primary) {
-    // Fetch any accounts under the tutelage/administration of this captain account
-    try {
-      const getDirectories = source =>
-        fs
-          .readdirSync(source, { withFileTypes: true })
-          .filter(dirent => dirent.isDirectory())
-          .map(dirent => dirent.name);
+  static updateAccountPlan(payload) {
+    const { accountId, plan } = payload;
 
-      // First Getting all the domain directories
-      const domains = getDirectories(
-        `${app.getPath('userData')}/Accounts/${primary}/Domains`
-      );
+    channel.send({
+      event: 'account:updatePlan',
+      payload: { accountId, plan }
+    });
 
-      return domains
-        .map(dm =>
-          getDirectories(
-            `${app.getPath('userData')}/Accounts/${primary}/Domains/${dm}`
-          )
-        )
-        .flat(1);
-    } catch (error) {
-      console.log(error);
-      return [];
-    }
+    return new Promise((resolve, reject) => {
+      channel.once('account:updatePlan:callback', m => {
+        const { error, data } = m;
+        const _data = { ...data };
+
+        if (error) return reject(error);
+
+        return resolve(_data);
+      });
+    });
   }
 
   static logout(returnToLogin = true, killChannel = true) {

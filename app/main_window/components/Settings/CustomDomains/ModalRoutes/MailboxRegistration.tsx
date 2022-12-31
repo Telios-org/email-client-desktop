@@ -48,6 +48,9 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
   const { close } = props;
   const dispatch = useDispatch();
   const domains = useSelector(state => state.domains.allIds);
+  const isBusinessUser = useSelector(
+    state => state.account.plan === 'BUSINESS'
+  );
   const [searchDomains, setSearchDomains] = useState('');
   const [validationLoader, setValidationLoader] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -57,7 +60,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
   const [loading, setLoader] = useState(false);
   const [error, setError] = useState('');
 
-  const [isBusinessUser, setIsBusinessUser] = useState(false);
+  // const [isBusinessUser, setIsBusinessUser] = useState(false);
   const [readyToSubmit, setReadyToSubmit] = useState(false);
 
   const format = [
@@ -384,9 +387,8 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
           <div className="px-6">
             <div className="text-sm">
               <p className="text-sm text-center font-bold bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded max-w-md mx-auto">
-                <span className="text-purple-600">{form.address}</span>
-@
-<span>{form.domain}</span>
+                <span className="text-purple-600">{form.address}</span>@
+                <span>{form.domain}</span>
               </p>
             </div>
             <div className="flex flex-col pl-7 my-4">
@@ -455,8 +457,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
                           className={({ active }) =>
                             `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
                               active ? 'bg-sky-500 text-white' : 'text-gray-900'
-                            }`
-                          }
+                            }`}
                           style={{ cursor: 'pointer' }}
                           value={dm}
                         >

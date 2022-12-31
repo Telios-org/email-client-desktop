@@ -100,7 +100,7 @@ const MailboxDelete = forwardRef((props: Props, ref) => {
                 Type:
               </div>
               <div className="odd:font-bold odd:text-gray-500 odd:text-right odd:whitespace-nowrap even:max-w-[275px]">
-                {mailbox.type === 'SUB' ? 'Sub-Account' : 'Claimable'}
+                {mailbox.type === 'SUB' ? 'Sub-Account' : 'Business'}
               </div>
               {mailbox.type === 'CLAIMABLE' && (
                 <>

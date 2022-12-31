@@ -23,7 +23,7 @@ const PlanComparison = (props: Props) => {
 
   useEffect(() => {
     setCurrentPricing(
-      pricingData.filter(p => p.id === currentPlan.toLowerCase())[0]
+      pricingData.filter(p => p.id === currentPlan?.toLowerCase())[0]
     );
     // console.log(
     //   'CURRENT PRICING',
@@ -139,10 +139,10 @@ const PlanComparison = (props: Props) => {
         </>
       )}
       <h3>Subscription Plans</h3>
-      <div className="mt-2 xl:grid xl:grid-cols-12 space-y-2 xl:space-y-0 xl:space-x-2 flex-col-reverse flex ">
+      <div className="mt-2 xl:grid xl:grid-cols-12 space-y-2 xl:space-x-2 flex-col-reverse flex ">
         {subscriptions.map(plan => (
           <div
-            className="flex-1 xl:col-span-3 border border-gray-300 bg-white rounded-md overflow-hidden flex xl:flex-col first:mt-2 xl:first:mt-0"
+            className="flex-1 xl:col-span-3 first:mt-2 border border-gray-300 bg-white rounded-md overflow-hidden flex xl:flex-col xl:first:ml-2"
             key={plan.name}
           >
             <div className="flex-1 bg-white px-8 py-6 border-r xl:border-b xl:border-r-0">
@@ -181,7 +181,7 @@ const PlanComparison = (props: Props) => {
                 </ul>
               </div>
             </div>
-            <div className="xl:w-full text-center bg-gray-50 flex-shrink-0 flex flex-col justify-center p-4 xl:self-center min-w-[240px] xl:min-h-[165px]">
+            <div className="xl:w-full text-center bg-gray-50 flex-shrink-0 flex flex-col justify-center p-4 xl:self-center min-w-[275px] xl:min-h-[165px]">
               <div className="mt-4 flex items-center justify-center text-2xl font-extrabold text-gray-900">
                 {plan.price && plan.price !== 0  && (
                   <>

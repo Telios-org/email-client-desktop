@@ -3,7 +3,8 @@ import { AccountType, AccountAction } from './types';
 import {
   LOAD_ACCOUNT_DATA,
   UPDATE_PROFILE_SUCCESS,
-  RETRIEVE_STATS_SUCCESS
+  RETRIEVE_STATS_SUCCESS,
+  UPDATE_PLAN_SUCCESS
 } from '../actions/account/account';
 
 const initialState: AccountType = {
@@ -12,12 +13,23 @@ const initialState: AccountType = {
   driveEncryptionKey: '',
   secretBoxPubKey: '',
   secretBoxPrivKey: '',
-  deviceSigningPubKey: '',
-  deviceSigningPrivKey: '',
-  serverSig: '',
-  deviceId: '',
+  driveSyncingPublicKey: '',
+  signingPubKey: '',
+  signingPrivKey: '',
+  deviceInfo: {
+    keyPair: {
+      publicKey: '',
+      secretKey: ''
+    },
+    deviceId: '',
+    deviceType: '',
+    serverSig: '',
+    driveVersion: ''
+  },
   displayName: '',
   avatar: null,
+  type: 'PRIMARY',
+  plan: 'FREE',
   stats: {
     plan: 'FREE',
     dailyEmailUsed: 0,
@@ -73,6 +85,11 @@ const account = (state: AccountType = initialState, action: AccountAction) => {
         ...state,
         avatar: action.payload.avatar,
         displayName: action.payload.displayName
+      };
+    case UPDATE_PLAN_SUCCESS:
+      return {
+        ...state,
+        plan: action.payload.plan
       };
     default:
       return state;

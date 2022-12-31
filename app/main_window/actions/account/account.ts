@@ -83,6 +83,59 @@ export const updateProfile = (
 };
 
 /*
+ * Updating the reference to user's plan on the Account collection. Purely acts as reference for when account is offline, does not give tangible permission to extra features.
+ */
+export const UPDATE_PLAN_REQUEST = 'ACCOUNT::UPDATE_PLAN_REQUEST';
+export const updatePlanRequest = () => {
+  return {
+    type: UPDATE_PLAN_REQUEST
+  };
+};
+
+export const UPDATE_PLAN_SUCCESS = 'ACCOUNT::UPDATE_PLAN_SUCCESS';
+export const updatePlanSuccess = (payload: {
+  accountId: string;
+  plan: string;
+}) => {
+  return {
+    type: UPDATE_PLAN_SUCCESS,
+    payload
+  };
+};
+
+export const UPDATE_PLAN_FAILURE = 'ACCOUNT::UPDATE_PLAN_FAILURE';
+export const updatePlanFailure = (error: Error) => {
+  return {
+    type: UPDATE_PLAN_FAILURE,
+    error
+  };
+};
+
+export const updatePlan = (payload: { accountId: string; plan: string }) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(updatePlanRequest());
+    let result;
+
+    try {
+      console.log('PAYLOAD', payload)
+      result = await AccountService.updateAccountPlan(payload);
+    } catch (error) {
+      dispatch(updatePlanFailure(error));
+      return {
+        status: 'issue-retrieving',
+        success: false,
+        message: error.message
+      };
+    }
+
+    dispatch(updatePlanSuccess(payload));
+
+    return { status: 'updated', success: true };
+  };
+};
+
+
+/*
  *  This action is to retrieve the Account stats from the server and store them locally for use in the Settings Page.
  */
 export const RETRIEVE_STATS_REQUEST = 'ACCOUNT::RETRIEVE_STATS_REQUEST';
@@ -108,14 +161,44 @@ export const retrieveStatsFailure = (error: Error) => {
   };
 };
 
-export const retrieveStats = () => {
-  return (dispatch: Dispatch) => {
-    dispatch(retrieveStatsRequest());
+// export const retrieveStats = () => {
+//   return (dispatch: Dispatch) => {
+//     dispatch(retrieveStatsRequest());
 
-    AccountService.retrieveStats().then(result => {
-      dispatch(retrieveStatsSuccess(result));
-      return result;
-    });
+//     AccountService.retrieveStats().then(result => {
+//       console.log()
+//       dispatch(retrieveStatsSuccess(result));
+//       return result;
+//     });
+//   };
+// };
+
+export const retrieveStats = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch(retrieveStatsRequest());
+    let result;
+    const {
+      account: { accountId, plan }
+    } = getState();
+    try {
+      result = await AccountService.retrieveStats();
+      console.log(result, accountId, plan);
+      if (plan !== result.plan) {
+        dispatch(updatePlan({ accountId, plan: result.plan }));
+      };
+
+    } catch (error) {
+      dispatch(retrieveStatsFailure(error));
+      return {
+        status: 'issue-retrieving',
+        success: false,
+        message: error.message
+      };
+    }
+
+    dispatch(retrieveStatsSuccess(result));
+
+    return { status: 'retrieved', success: true };
   };
 };
 

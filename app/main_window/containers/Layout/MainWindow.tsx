@@ -49,7 +49,7 @@ export default function MainWindow() {
       'ACCOUNT_SERVICE::accountData',
       ({ account: accountData, email, password }) => {
         // Storing the Account Data in the redux store from Login
-        dispatch(loadAccountData({ ...accountData, email, password }));
+        dispatch(loadAccountData({ ...accountData }));
       }
     );
 

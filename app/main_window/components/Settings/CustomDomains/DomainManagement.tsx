@@ -198,8 +198,8 @@ const DomainManagement = (props: Props) => {
             </div>
           </div>
         </td>
-        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]">
-
+        <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px] text-xs">
+          {mailbox.type === 'SUB' ? 'Sub-Account' : 'Business'}
         </td>
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
         <td className="border-b border-gray-200 whitespace-nowrap px-3 py-4 text-center w-[70px]" />
