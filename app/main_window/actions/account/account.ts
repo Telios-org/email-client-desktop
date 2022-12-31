@@ -117,7 +117,6 @@ export const updatePlan = (payload: { accountId: string; plan: string }) => {
     let result;
 
     try {
-      console.log('PAYLOAD', payload)
       result = await AccountService.updateAccountPlan(payload);
     } catch (error) {
       dispatch(updatePlanFailure(error));
@@ -182,7 +181,6 @@ export const retrieveStats = () => {
     } = getState();
     try {
       result = await AccountService.retrieveStats();
-      console.log(result, accountId, plan);
       if (plan !== result.plan) {
         dispatch(updatePlan({ accountId, plan: result.plan }));
       };

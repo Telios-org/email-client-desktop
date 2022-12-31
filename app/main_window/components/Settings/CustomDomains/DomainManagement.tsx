@@ -171,7 +171,6 @@ const DomainManagement = (props: Props) => {
 
   const MailboxRow = (innerProps: MailboxProps) => {
     const { mailbox, mailboxIdx } = innerProps;
-    console.log(mailbox)
     return (
       <tr
         key={mailbox.address}
