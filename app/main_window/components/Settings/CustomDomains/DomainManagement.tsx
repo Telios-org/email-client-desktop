@@ -326,7 +326,7 @@ const DomainManagement = (props: Props) => {
                   </thead>
                   <tbody className="">
                     {domains.allIds.length === 0 && (
-                      <tr className="">
+                      <tr key="no-domain-key" className="">
                         <th colSpan={4} scope="colgroup ">
                           <div className="text-center absolute flex flex-col w-full pt-10">
                             <div className="flex self-center text-gray-400">

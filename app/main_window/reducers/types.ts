@@ -46,6 +46,9 @@ export type AccountStats = {
   maxAliasAddresses: number;
   maxGBCloudStorage: number;
   maxGBBandwidth: number;
+  maxDomains: number;
+  domainUsed: number;
+  hasClaimableMailboxes: boolean;
 };
 
 export type ContactType = {
