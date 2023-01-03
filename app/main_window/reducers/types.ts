@@ -11,6 +11,7 @@ export type AccountType = {
   secretBoxPrivKey: string;
   signingPubKey: string;
   signingPrivKey: string;
+  mnemonic: string;
   deviceInfo: {
     keyPair: {
       publicKey: string;

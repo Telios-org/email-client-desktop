@@ -162,6 +162,7 @@ class AccountService extends EventEmitter {
           mnemonic,
           deviceId,
           sig,
+          type,
           accountId
         } = data;
 
@@ -176,15 +177,29 @@ class AccountService extends EventEmitter {
 
           resolve({
             accountId,
+            plan: 'FREE',
             uid,
+            type,
             secretBoxPubKey: secretBoxKeypair.publicKey,
             secretBoxPrivKey: secretBoxKeypair.privateKey,
-            secretBoxSeedKey: secretBoxKeypair.seedKey,
             mnemonic,
-            deviceSigningPubKey: signingKeypair.publicKey,
-            deviceSigningPrivKey: signingKeypair.privateKey,
-            deviceId,
-            serverSig: sig,
+            deviceInfo: {
+              driveVersion:
+                (data.deviceInfo && data.deviceInfo.driveVersion) || '2.0',
+              deviceType:
+                (data.deviceInfo && data.deviceInfo.deviceType) || 'DESKTOP',
+              keyPair: {
+                publicKey: signingKeypair.publicKey,
+                privateKey: signingKeypair.privateKey
+              },
+              deviceId,
+              serverSig: sig
+            },
+            driveSyncingPublicKey:
+              data.signedAcct && data.signedAcct.device_drive_key,
+            driveEncryptionKey: null,
+            signingPrivKey: signingKeypair.privateKey,
+            signingPubKey: signingKeypair.publicKey,
             displayName: null,
             avatar: null
           });
