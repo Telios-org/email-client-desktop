@@ -276,7 +276,10 @@ const DomainManagement = (props: Props) => {
             onClick={() => openModalRoute('mailboxRegistration')}
             variant="secondary"
             className="pt-2 pb-2 text-sm font-medium"
-            // disabled={domains.allIds.some(dm => !domains.byId[dm].active)}
+            disabled={
+              !domains.allIds.some(dm => domains.byId[dm].active) ||
+              domains.allIds.length === 0
+            }
           >
             Add Mailbox
           </Button>
@@ -345,7 +348,8 @@ const DomainManagement = (props: Props) => {
                               <Button
                                 type="button"
                                 onClick={() =>
-                                  openModalRoute('domainRegistration')}
+                                  openModalRoute('domainRegistration')
+                                }
                                 variant="primary"
                                 className="pt-2 pb-2 text-sm font-medium bg-white inline-flex items-center"
                               >
