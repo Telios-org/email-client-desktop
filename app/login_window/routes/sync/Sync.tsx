@@ -28,6 +28,7 @@ const Sync = () => {
         const { driveKey, email } = data;
         navigate('./masterpassword', {
           state: {
+            type,
             driveKey,
             email
           }
@@ -85,6 +86,14 @@ const Sync = () => {
               <p className="text-base pt-2 text-gray-500">
                 Add your Telios account to this device by using the sync code
                 sent to your recovery email.
+              </p>
+            </>
+          )}
+          {type && type === 'claim' && (
+            <>
+              <p className="text-base pt-2 text-gray-500">
+                Claim your Telios Business account by using the sync code
+                in the email invitation sent by your organization admin.
               </p>
             </>
           )}

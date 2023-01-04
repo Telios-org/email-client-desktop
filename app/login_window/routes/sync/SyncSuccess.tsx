@@ -10,6 +10,7 @@ import Loader from '../../../global_components/Loader';
 
 const { ipcRenderer } = require('electron');
 const LoginService = require('../../../services/login.service');
+const AccountService = require('../../../services/account.service');
 
 const SyncSuccess = () => {
   const navigate = useNavigate();
@@ -20,9 +21,13 @@ const SyncSuccess = () => {
   const syncData: {
     email: string;
     password: string;
+    newPassword: string;
+    type: string;
   } = location.state as {
     email: string;
     password: string;
+    newPassword: string;
+    type: string;
   };
 
   const goToInbox = async () => {
@@ -32,6 +37,14 @@ const SyncSuccess = () => {
       syncData.password,
       syncData.email
     );
+
+    if (syncData.type === 'claim') {
+      await AccountService.updateAccountPassword({
+        email: syncData.email,
+        newPass: syncData.newPassword
+      });
+    }
+
     ipcRenderer.send('showMainWindow', account);
   };
 

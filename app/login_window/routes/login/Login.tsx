@@ -137,8 +137,8 @@ const Login = () => {
       {
         id: 'a1',
         label: 'New Account',
-        description: 'Create an email and start your privacy journey.',
-        route: '/registration'
+        description: 'Create or claim an email and start your privacy journey.',
+        route: '/neworclaim'
       },
       {
         id: 'a2',
@@ -264,7 +264,7 @@ const Login = () => {
       <div className="flex flex-row space-x-2 mt-2">
         <NavButton
           variant="outline"
-          to="/registration"
+          to="/neworclaim"
           className="flex flex-row justify-center text-sm whitespace-nowrap items-center"
         >
           <PlusIcon className="h-5 w-5 mr-2" />

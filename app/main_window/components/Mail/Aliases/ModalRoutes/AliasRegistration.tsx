@@ -32,7 +32,7 @@ import { selectAllNamespaces } from '../../../../selectors/mail';
 import { registerAlias } from '../../../../actions/mailbox/aliases';
 
 // HELPER FUNCTIONS
-import generateRandomString from '../../../../../utils/helpers/generators';
+import { generateRandomString } from '../../../../../utils/helpers/generators';
 
 // INTERNAL COMPONENTS
 import { Button } from '../../../../../global_components/button';

@@ -33,7 +33,7 @@ import { Button } from '../../../../../global_components/button';
 import { registerMailbox } from '../../../../actions/domains/domains';
 
 // HELPER
-import generateRandomString from '../../../../../utils/helpers/generators';
+import { generateRandomPassword } from '../../../../../utils/helpers/generators';
 import passwordStrengthClass from '../../../../../utils/helpers/security';
 
 import { externalEmailRE } from '../../../../../utils/helpers/regex';
@@ -48,12 +48,12 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
   const { close } = props;
   const dispatch = useDispatch();
   const domains = useSelector(state => state.domains.allIds);
+  const mailboxes = useSelector(state => state.mail.mailboxes);
   const isBusinessUser = useSelector(
     state => state.account.plan === 'BUSINESS'
   );
   const [searchDomains, setSearchDomains] = useState('');
   const [validationLoader, setValidationLoader] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [mailbox, setMailbox] = useState('');
   const [step, setStep] = useState('intro');
   const [type, setType] = useState('SUB');
@@ -62,13 +62,6 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
 
   // const [isBusinessUser, setIsBusinessUser] = useState(false);
   const [readyToSubmit, setReadyToSubmit] = useState(false);
-
-  const format = [
-    { label: '3 Word String', value: 'words' },
-    { label: 'Alphanumeric', value: 'letters' },
-    { label: 'UID', value: 'uid' }
-  ];
-  const [randomFormat, setRandomFormat] = useState(format[0]);
 
   const {
     handleChange,
@@ -94,6 +87,18 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
         pattern: {
           value: /^\w+([\.-]?\w+)*$/g, // empty ^$ or string
           message: 'No special characters allowed except for . allowed.'
+        },
+        custom: {
+          isValid: (value, data) => {
+            const found = mailboxes.allIds.some(
+              mb => mailboxes.byId[mb].address === `${value}@${data.domain}`
+            );
+            if (found) {
+              return false;
+            }
+            return true;
+          },
+          message: 'Email already exist on this domain.'
         }
       },
       displayName: {
@@ -165,12 +170,20 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
           )
           .sort();
 
-  const generateRandomAlias = () => {
-    const cb = (rstr: string) => {
-      manualChange('address', rstr);
+  const generatePassword = () => {
+    const cb = async (password: string) => {
+      const result = zxcvbn(password);
+      await bulkChange({
+        password,
+        passwordStrength: {
+          score: result.score,
+          crackTime:
+            result.crack_times_display.offline_slow_hashing_1e4_per_second
+        }
+      });
     };
     setError('');
-    generateRandomString('random', randomFormat.value, cb);
+    generateRandomPassword(14, cb);
   };
 
   const onEmailChange = e => {
@@ -183,10 +196,6 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
         setValidationLoader(false);
       }
     )(e);
-  };
-
-  const togglePasswordView = () => {
-    setShowPassword(!showPassword);
   };
 
   const onPasswordChange = async e => {
@@ -265,9 +274,9 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
           className="w-5 h-5 text-purple-500 mr-2"
           aria-hidden="true"
         />
-        New Mailbox - 
-{' '}
-{step === 'intro' ? 'Type' : 'Registration'}
+        {step === 'intro' && 'New Mailbox - Type'}
+        {step !== 'intro' && type === 'CLAIMABLE' && ' New Business Mailbox'}
+        {step !== 'intro' && type === 'SUB' && ' New Mailbox Registration'}
       </Dialog.Title>
       {step === 'intro' && (
         <>
@@ -328,7 +337,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
                         !isBusinessUser ? 'text-gray-400' : 'text-gray-900'
                       )}
                     >
-                      User Account
+                      Business Account
                     </span>
                     <span
                       id="project-type-0-description-0"
@@ -385,12 +394,19 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
       {step !== 'intro' && (
         <>
           <div className="px-6">
-            <div className="text-sm">
+            {/* <div className="text-sm mt-6">
               <p className="text-sm text-center font-bold bg-coolGray-100 shadow-sm border border-coolGray-200 py-2 my-3 rounded max-w-md mx-auto">
-                <span className="text-purple-600">{form.address}</span>@
-                <span>{form.domain}</span>
+                {form.address.length > 0 && (
+                  <span className="text-purple-600">{form.address}</span>
+                )}
+                {form.address.length === 0 && (
+                  <span className="text-gray-300">address</span>
+                )}
+                @ 
+{' '}
+<span>{form.domain}</span>
               </p>
-            </div>
+            </div> */}
             <div className="flex flex-col pl-7 my-4">
               {type === 'SUB' && (
                 <span className="text-sm font-normal">
@@ -410,7 +426,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
           <form className="max-w-md m-auto relative">
             <div className="mb-6 relative">
               <Input
-                label="Mailbox Name"
+                label={type === 'SUB' ? 'Mailbox Name' : 'Full Name'}
                 onChange={handleChange('displayName', true)}
                 value={form.displayName}
                 placeholder="Type here..."
@@ -491,29 +507,46 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
                 </Transition>
               </div>
             </Combobox>
+            <div className="my-6 relative">
+              <Input
+                id="address"
+                name="address"
+                label="email"
+                icon="email"
+                value={form.address}
+                error={errors.address}
+                onChange={handleChange('address', true)}
+                addonPosition="right"
+                addonLabel={`@${form.domain}`}
+                className="text-right"
+                isValid={errors.address === '' || errors.address === undefined}
+                showLoader={validationLoader}
+              />
+            </div>
+
             <div className="relative">
-              <div className="mt-6 relative">
+              <div className="my-6 relative">
                 <label
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Address
+                  Password
                 </label>
                 <div className="mt-1 flex rounded-md shadow-sm">
                   <div className="relative flex items-stretch flex-grow focus-within:z-10">
                     <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      value={form.address}
-                      onChange={handleChange('address', true)}
+                      type="text"
+                      name="password"
+                      id="password"
+                      value={form.password}
+                      onChange={onPasswordChange}
                       className="form-input focus:ring-violet-500 focus:border-violet-500 block w-full rounded-none rounded-l-md sm:text-sm border-gray-300"
-                      placeholder="Type choice here..."
+                      placeholder="Type password here..."
                     />
                   </div>
                   <button
                     type="button"
-                    onClick={generateRandomAlias}
+                    onClick={generatePassword}
                     className="-ml-px relative group inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
                   >
                     <LightningBoltIcon
@@ -523,79 +556,10 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
                   </button>
                 </div>
               </div>
-              <div className="text-xs flex flex-row mt-2 justify-end">
-                <label className="font-medium text-gray-900 pr-4">
-                  Random Format:
-                </label>
-                <fieldset className="">
-                  <legend className="sr-only">Random Format</legend>
-                  <div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-4">
-                    <div className="flex items-center">
-                      <input
-                        id="word"
-                        name="random-format"
-                        type="radio"
-                        defaultChecked
-                        className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
-                        onChange={() => setRandomFormat(format[0])}
-                      />
-                      <label
-                        htmlFor="word"
-                        className="ml-2 block text-xs text-gray-700"
-                      >
-                        Word Association
-                      </label>
-                    </div>
-                    <div className="flex items-center">
-                      <input
-                        id="letters"
-                        name="random-format"
-                        type="radio"
-                        className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
-                        onChange={() => setRandomFormat(format[1])}
-                      />
-                      <label
-                        htmlFor="letters"
-                        className="ml-2 block text-xs text-gray-700"
-                      >
-                        Shuffled Letters
-                      </label>
-                    </div>
-                    <div className="flex items-center">
-                      <input
-                        id="word"
-                        name="random-format"
-                        type="radio"
-                        className="form-radio focus:ring-sky-500 h-4 w-4 text-sky-500 border-gray-300"
-                        onChange={() => setRandomFormat(format[2])}
-                      />
-                      <label
-                        htmlFor="word"
-                        className="ml-2 block text-xs text-gray-700"
-                      >
-                        UID
-                      </label>
-                    </div>
-                  </div>
-                </fieldset>
-              </div>
+
               <div className="text-xs text-red-500 absolute -bottom-5 pl-2">
-                {errors?.address?.length > 0 && errors?.address}
+                {errors?.password?.length > 0 && errors?.password}
               </div>
-            </div>
-            <div className="mt-6 relative">
-              <Password
-                label="Password"
-                id="password"
-                name="password"
-                autoComplete="password"
-                required
-                onChange={onPasswordChange}
-                error={errors.password}
-                show={showPassword}
-                value={form.password}
-                onVisibilityToggle={togglePasswordView}
-              />
             </div>
             <div className="mt-6 relative">
               <label
@@ -628,7 +592,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
                 <Input
                   id="recoveryEmail"
                   name="recoveryEmail"
-                  label="recovery Email"
+                  label="Invitation Email"
                   icon="email"
                   value={form.recoveryEmail}
                   error={errors.recoveryEmail}
@@ -679,7 +643,7 @@ const MailboxRegistration = forwardRef((props: Props, ref) => {
                 loadingText="Registering Mailbox..."
                 disabled={!readyToSubmit}
               >
-                Add Mailbox
+                {type === 'SUB' ? 'Add Mailbox' : 'Send Invitation'}
               </Button>
             </div>
           </div>

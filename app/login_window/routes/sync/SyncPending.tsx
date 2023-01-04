@@ -18,17 +18,23 @@ const SyncPending = () => {
     driveKey: string;
     email: string;
     password: string;
+    newPassword: string;
+    type: string;
   } = location.state as {
     driveKey: string;
     email: string;
     password: string;
+    newPassword: string;
+    type: string;
   };
 
   const onSyncSuccess = () => {
     navigate('../syncsuccess', {
       state: {
         email: syncData.email,
-        password: syncData.password
+        password: syncData.password,
+        type: syncData.type,
+        newPassword: syncData.newPassword
       }
     });
   };

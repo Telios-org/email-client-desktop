@@ -16,6 +16,7 @@ import SyncOrRecovery from '../sync_or_recovery/SyncOrRecovery';
 import NetworkCarousel from './NetworkCarousel';
 import StepByStep from '../registration/StepByStep';
 import SideLayout from './SideLayout';
+import NewOrClaim from '../new_or_claim/NewOrClaim';
 
 const LoginWindow = () => {
   return (
@@ -39,6 +40,7 @@ const LoginWindow = () => {
           <Route path="/forgotpassword/*" element={<ForgotPasswordRoutes />} />
           <Route path="/recovery/*" element={<RecoveryRoutes />} />
           <Route path="/syncorrecovery" element={<SyncOrRecovery />} />
+          <Route path="/neworclaim" element={<NewOrClaim />} />
         </Routes>
       </div>
     </div>

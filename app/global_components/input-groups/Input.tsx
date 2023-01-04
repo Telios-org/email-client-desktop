@@ -95,7 +95,7 @@ const Input = (props: Props) => {
         </label>
       )}
       <div className="relative mt-1">
-        <div className="relative flex rounded-md shadow-sm appearance-none focus-within:ring-1 focus:outline-none focus-within:ring-violet-500 focus-within:border-violet-500 border border-gray-300 ">
+        <div className="h-[40px] relative flex rounded-md shadow-sm appearance-none focus-within:ring-1 focus:outline-none focus-within:ring-violet-500 focus-within:border-violet-500 border border-gray-300 ">
           {icon === 'email' &&
             (((isValid === undefined || value.length === 0) && !showLoader) ||
               activityPosition === 'right') && (

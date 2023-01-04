@@ -26,7 +26,7 @@ import {
 // UTILS
 import { formatDateDisplay } from '../../../../../utils/helpers/date';
 import sortingHat from '../../../../../utils/helpers/sort';
-import generateRandomString from '../../../../../utils/helpers/generators';
+import { generateRandomString } from '../../../../../utils/helpers/generators';
 
 const { clipboard } = require('electron');
 const envAPI = require('../../../../../env_api.json');

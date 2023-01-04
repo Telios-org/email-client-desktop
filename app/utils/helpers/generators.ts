@@ -61,4 +61,20 @@ const generateRandomString = (
   callback(rand);
 };
 
-export default generateRandomString;
+const generateRandomPassword = (
+  passwordLength: number,
+  callback: (rstr: string) => {}
+) => {
+  const characters =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=;:/?';
+  let password = '';
+
+  for (let i = 0; i < passwordLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    password += characters[randomIndex];
+  }
+
+  callback(password);
+};
+
+export { generateRandomString, generateRandomPassword };
