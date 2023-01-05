@@ -212,7 +212,7 @@ class AccountService extends EventEmitter {
   }
 
   static initAccount(params) {
-    const { email, password, mnemonic } = params;
+    const { email, password, mnemonic, newPass } = params;
 
     const payload = {
       email
@@ -230,11 +230,15 @@ class AccountService extends EventEmitter {
     });
 
     return new Promise((resolve, reject) => {
-      channel.once('account:login:callback', m => {
+      channel.once('account:login:callback', async m => {
         const { error, data } = m;
         const _data = { ...data };
 
         if (error) return reject(error);
+
+        if (newPass) {
+          await this.updateAccountPassword({ email, newPass });
+        }
 
         return resolve(_data);
       });
@@ -278,7 +282,7 @@ class AccountService extends EventEmitter {
     });
   }
 
-  static updateAccountPassword(payload) {
+  static async updateAccountPassword(payload) {
     const { email, newPass } = payload;
 
     channel.send({

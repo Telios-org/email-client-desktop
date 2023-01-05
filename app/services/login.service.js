@@ -24,10 +24,15 @@ class LoginService {
     });
   }
 
-  static initAccount(password = null, email, mnemonic = null) {
+  static initAccount(password = null, email, mnemonic = null, newPass = null) {
     return new Promise((resolve, reject) => {
       ipcRenderer
-        .invoke('LOGIN_SERVICE::initAccount', { password, email, mnemonic })
+        .invoke('LOGIN_SERVICE::initAccount', {
+          password,
+          email,
+          mnemonic,
+          newPass
+        })
         .then(data => {
           return resolve(data);
         })
@@ -67,7 +72,9 @@ class LoginService {
         .readdirSync(source, { withFileTypes: true })
         .some(file => file.name === 'recovery' || file.name === 'vault');
 
-    return getDirectories(`${app.getPath('userData')}/Accounts/${account}/Drive/Files`);
+    return getDirectories(
+      `${app.getPath('userData')}/Accounts/${account}/Drive/Files`
+    );
   }
 
   // Perform account initialization

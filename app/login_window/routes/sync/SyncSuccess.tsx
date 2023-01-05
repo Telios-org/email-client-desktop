@@ -33,16 +33,20 @@ const SyncSuccess = () => {
   const goToInbox = async () => {
     setLoading(true);
 
-    const account = await LoginService.initAccount(
-      syncData.password,
-      syncData.email
-    );
+    let account;
 
     if (syncData.type === 'claim') {
-      await AccountService.updateAccountPassword({
-        email: syncData.email,
-        newPass: syncData.newPassword
-      });
+      account = await LoginService.initAccount(
+        syncData.password,
+        syncData.email,
+        null,
+        syncData.newPassword
+      );
+    } else {
+      account = await LoginService.initAccount(
+        syncData.password,
+        syncData.email
+      );
     }
 
     ipcRenderer.send('showMainWindow', account);
