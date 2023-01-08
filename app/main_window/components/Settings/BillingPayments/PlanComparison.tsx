@@ -25,12 +25,12 @@ const PlanComparison = (props: Props) => {
     setCurrentPricing(
       pricingData.filter(p => p.id === currentPlan?.toLowerCase())[0]
     );
-    // console.log(
-    //   'CURRENT PRICING',
-    //   currentPlan.toLowerCase(),
-    //   currentPricing,
-    //   pricingData
-    // );
+    console.log(
+      'CURRENT PRICING',
+      currentPlan.toLowerCase(),
+      currentPricing,
+      pricingData
+    );
   }, [currentPlan, pricingData]);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const PlanComparison = (props: Props) => {
   return (
     <section
       aria-labelledby="account-user-plan"
-      className="space-y-6 xl:space-y-4 select-none"
+      className="space-y-6 xl:space-y-4 select-none mb-12"
     >
       <div className="flex flex-row items-center text-gray-400 hover:text-gray-700">
         <ChevronLeftIcon
@@ -187,7 +187,7 @@ const PlanComparison = (props: Props) => {
             </div>
             <div className="xl:w-full text-center bg-gray-50 flex-shrink-0 flex flex-col justify-center p-4 xl:self-center min-w-[275px] xl:min-h-[165px]">
               <div className="mt-4 flex items-center justify-center text-2xl font-extrabold text-gray-900">
-                {plan.price && plan.price !== 0 && (
+                {plan?.price !== 0 && (
                   <>
                     <span>{`$${plan?.price?.monthly}`}</span>
                     <div className="ml-4 flex flex-col items-start">
@@ -200,7 +200,7 @@ const PlanComparison = (props: Props) => {
                     </div>
                   </>
                 )}
-                {plan.price === 0 || (!plan.price && <span>FREE</span>)}
+                {plan.id === 'free' && <span>FREE</span>}
               </div>
               {plan.order > currentPricing?.order && plan.id !== 'free' && (
                 <div className="mt-6 relative">
