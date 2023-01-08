@@ -92,9 +92,6 @@ const MailboxDelete = forwardRef((props: Props, ref) => {
             Mailbox Information
           </Dialog.Title>
           <div className="mt-2 text-gray-500">
-            <p className="py-2 text-sm pl-2">
-              Below are some basic information about your domain mailbox.
-            </p>
             <div
               className="inline-grid grid-cols-[repeat(2,auto)] auto-cols-auto gap-2 pl-2 text-sm"
               style={{ gridTemplateColumns: 'auto 2px!important' }}

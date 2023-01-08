@@ -8,7 +8,8 @@ import {
   XIcon,
   HashtagIcon,
   DatabaseIcon,
-  UploadIcon
+  UploadIcon,
+  GlobeIcon
 } from '@heroicons/react/outline';
 
 import { values } from 'lodash';
@@ -337,7 +338,7 @@ const BillingPayments = (props: Props) => {
                     'text-sm font-medium underline flex items-center focus:outline-none'
                   )}
                 >
-                  Cancel Plan
+                  {/* Cancel Plan */}
                 </a>
                 <div>
                   <button
@@ -473,13 +474,22 @@ const BillingPayments = (props: Props) => {
                 </h4>
 
                 <p className="text-xs">
-                  {`Limit will reset on `}
-                  <span className="font-bold">
-                    {stats?.dailyEmailResetDate?.toLocaleString(
-                      DateTime.DATETIME_SHORT
-                    )}
-                  </span>
+                  Total amount of emails that can be sent daily from this
+                  account
                 </p>
+
+                {stats?.dailyEmailResetDate?.toLocaleString(
+                  DateTime.DATETIME_SHORT
+                ) !== 'Invalid DateTime' && (
+                  <p className="text-xs">
+                    {`Limit will reset on `}
+                    <span className="font-bold">
+                      {stats?.dailyEmailResetDate?.toLocaleString(
+                        DateTime.DATETIME_SHORT
+                      )}
+                    </span>
+                  </p>
+                )}
               </div>
             </div>
             <div className="bg-white py-6 px-7 text-sm">
@@ -708,7 +718,7 @@ const BillingPayments = (props: Props) => {
           {/* CUSTOM DOMAINS */}
           <div className="border border-gray-300 bg-white rounded-md overflow-hidden">
             <div className="bg-gray-50 py-4 px-7 flex flex-row relative border-gray-300 border-b">
-              <DatabaseIcon className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-500" />
+              <GlobeIcon className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-500" />
               <div>
                 <h4 className="text-sm leading-6 font-bold text-gray-900">
                   Domains
@@ -716,7 +726,7 @@ const BillingPayments = (props: Props) => {
 
                 <p className="text-xs">
                   Includes all of custom domains you have attached to your
-                  account.
+                  account
                 </p>
               </div>
             </div>

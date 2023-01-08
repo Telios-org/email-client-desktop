@@ -147,12 +147,12 @@ const DevicesPanel = () => {
     <>
       <SettingsSection
         header="Device Syncing"
-        description="If you want to add your account to another computer or mobile device."
+        description="Add your account to another computer or mobile device."
       >
         <div className="p-4 bg-white pb-8">
           <p className="pb-4">
             In order to sync your device use the QR code (mobile only) or
-            manually generate a sync code. Manual code are only valid for 10
+            manually generate a sync code. Generated codes are only valid for 10
             minutes.
           </p>
           <div className="flex flex-row mx-auto w-fit">

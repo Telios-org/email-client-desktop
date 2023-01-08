@@ -53,7 +53,7 @@ const PlanComparison = (props: Props) => {
           Account & Usage
         </button>
       </div>
-      {limitedOffer.length > 0 && (
+      {/* {limitedOffer.length > 0 && (
         <>
           <h3>Limited Time Offer</h3>
           <div className="grid grid-cols-12 space-y-2 mt-2 xl:mt-0">
@@ -137,7 +137,7 @@ const PlanComparison = (props: Props) => {
             ))}
           </div>
         </>
-      )}
+      )} */}
       <h3>Subscription Plans</h3>
       <div className="mt-2 xl:grid xl:grid-cols-12 space-y-2 xl:space-x-2 flex-col-reverse flex ">
         {subscriptions.map(plan => (
