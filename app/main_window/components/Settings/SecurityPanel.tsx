@@ -9,6 +9,8 @@ import SettingsSection from './shared/SettingsSection';
 import useForm from '../../../utils/hooks/useForm';
 
 import { Password } from '../../../global_components/input-groups';
+import { Button } from '../../../global_components/button';
+import Notification from '../../../global_components/Notification';
 
 // SELECTORS
 import { selectActiveMailbox } from '../../selectors/mail';
@@ -54,6 +56,22 @@ const SecurityPanel = () => {
   const [submitError, setSubmitError] = useState('');
   const togglePasswordView = () => {
     setShowPassword(!showPassword);
+  };
+
+  const [showNotification, setShowNotification] = useState(false);
+  const [notifMessage, setNotifMessage] = useState('');
+  const [saveSucceeded, setSaveSucceeded] = useState(true);
+
+  const callToaster = (isSuccess: boolean, message: string) => {
+    if (isSuccess) {
+      setSaveSucceeded(true);
+      setNotifMessage(message);
+      setShowNotification(true);
+    } else {
+      setSaveSucceeded(false);
+      setNotifMessage(message);
+      setShowNotification(true);
+    }
   };
 
   const {
@@ -119,15 +137,20 @@ const SecurityPanel = () => {
 
       const res = await dispatch(
         updateAccountPassword({
+          mailboxId: currentMailbox.mailboxId,
           email: currentMailbox.address,
           newPass: data.newPassword
         })
       );
       if (!res.success) {
         setSubmitError(res.message);
+        callToaster(false,'Something went wrong!')
+      }else{
+        callToaster(true, 'Password Updated.')
+        resetForm();
       }
       setLoader(false);
-
+      
     }
   });
 
@@ -152,6 +175,13 @@ const SecurityPanel = () => {
 
   return (
     <div className='space-y-6 select-none mb-10'>
+      <Notification
+        show={showNotification}
+        setShow={setShowNotification}
+        success={saveSucceeded}
+        successMsg={notifMessage}
+        errorMsg={notifMessage}
+      />
       <SettingsSection header="Password Change" description="The password that is the key to all of your encrypted data.">
         <form onSubmit={handleSubmit}>
           <div className="bg-white py-6 px-7 space-y-6">
@@ -229,13 +259,26 @@ const SecurityPanel = () => {
             >
               Cancel
             </button>
-            <button
+            <div>
+              <Button
+                type="submit"
+                variant="secondary"
+                className="py-2 px-4"
+                loading={loading}
+                loadingText="Updating..."
+                disabled={errors.newPasswordConfirm || data.newPasswordConfirm.length === 0 || errors.newPassword || data.newPassword.length === 0 || data.currentPassword.length === 0 || errors.currentPassword}
+              >
+                Update Password
+              </Button>
+            </div>
+            
+            {/* <button
               type="submit"
               disabled={errors.newPasswordConfirm || data.newPasswordConfirm.length === 0 || errors.newPassword || data.newPassword.length === 0 || data.currentPassword.length === 0 || errors.currentPassword}
               className="bg-gradient-to-bl from-purple-600 to-purple-500 disabled:from-gray-300 disabled:to-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-700"
             >
               Update Password
-            </button>
+            </button> */}
             <div className="text-xs text-red-500 absolute left-7 text-center">
               {submitError.length > 0 && submitError}
             </div>
@@ -247,7 +290,7 @@ const SecurityPanel = () => {
           <div>
             <span className="block text-sm font-medium text-gray-700">Device Id</span>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium justify-between">
-              <div className="break-words flex-1 min-w-[40%]">{account?.deviceInfo?.deviceId}</div>
+              <div className="break-words break-all flex-1 min-w-[40%]">{account?.deviceInfo?.deviceId}</div>
 
               {/* COPY BUTTON */}
               <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.deviceInfo?.deviceId)} className="relative flex flex-col items-center group outline-none">
@@ -270,7 +313,7 @@ const SecurityPanel = () => {
           <div>
             <span className="block text-sm font-medium text-gray-700">Signing Public Key</span>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium justify-between">
-              <div className="break-words flex-1 min-w-[40%]">{account?.deviceInfo?.keyPair?.publicKey}</div>
+              <div className="break-words break-all flex-1 min-w-[40%]">{account?.deviceInfo?.keyPair?.publicKey}</div>
               {/* COPY BUTTON */}
               <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.deviceInfo?.keyPair?.publicKey)} className="relative flex flex-col items-center group outline-none">
                 <Paper
@@ -311,7 +354,7 @@ const SecurityPanel = () => {
               )}
             </div>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium justify-between">
-              <div className={`break-words flex-1 min-w-[40%] ${hideSigningKey? "text-gray-300" : ""}`}>{hideSigningKey ? redactString(account?.deviceInfo?.keyPair?.secretKey) : account?.deviceInfo?.keyPair?.secretKey }</div>
+              <div className={`break-words break-all flex-1 min-w-[40%] ${hideSigningKey? "text-gray-300" : ""}`}>{hideSigningKey ? redactString(account?.deviceInfo?.keyPair?.secretKey) : account?.deviceInfo?.keyPair?.secretKey }</div>
               {/* COPY BUTTON */}
               <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.deviceInfo?.keyPair?.secretKey)} className="relative flex flex-col items-center group outline-none">
                 <Paper
@@ -336,7 +379,7 @@ const SecurityPanel = () => {
           <div>
             <span className="block text-sm font-medium text-gray-700">Secret Box Public Key</span>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium">
-              <div className="break-words flex-1 min-w-[40%]">{account?.secretBoxPubKey}</div>
+              <div className="break-words break-all flex-1 min-w-[40%]">{account?.secretBoxPubKey}</div>
               {/* COPY BUTTON */}
               <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.secretBoxPubKey)} className="relative flex flex-col items-center group outline-none">
                 <Paper
@@ -377,7 +420,7 @@ const SecurityPanel = () => {
               )}
             </div>
             <div className="mt-2 flex flex-row w-full border border-gray-300 bg-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none sm:text-sm font-medium">
-              <div className={`break-words flex-1 min-w-[40%] ${hideSecretKey? "text-gray-300" : ""}`}>{hideSecretKey ? redactString(account?.secretBoxPrivKey) : account?.secretBoxPrivKey }</div>
+              <div className={`break-words break-all flex-1 min-w-[40%] ${hideSecretKey? "text-gray-300" : ""}`}>{hideSecretKey ? redactString(account?.secretBoxPrivKey) : account?.secretBoxPrivKey }</div>
               {/* COPY BUTTON */}
               <button type="button" onMouseLeave={resetCopy} onClick={() => handleCopy(account?.secretBoxPrivKey)} className="relative flex flex-col items-center group outline-none">
                 <Paper

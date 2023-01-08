@@ -278,3 +278,51 @@ export const updateMailbox = payload => {
     return result;
   };
 };
+
+/*
+ * Resend invitation to a claimable mailbox.
+ */
+export const RESEND_MAILBOX_INVITE_REQUEST =
+  'DOMAIN::RESEND_MAILBOX_INVITE_REQUEST';
+export const resendMailboxInviteRequest = () => {
+  return {
+    type: RESEND_MAILBOX_INVITE_REQUEST
+  };
+};
+
+export const RESEND_MAILBOX_INVITE_SUCCESS =
+  'DOMAIN::RESEND_MAILBOX_INVITE_SUCCESS';
+export const resendMailboxInviteSuccess = () => {
+  return {
+    type: RESEND_MAILBOX_INVITE_SUCCESS
+  };
+};
+
+export const RESEND_MAILBOX_INVITE_FAILURE =
+  'DOMAIN::RESEND_MAILBOX_INVITE_FAILURE';
+export const resendMailboxInviteFailure = (error: Error) => {
+  return {
+    type: RESEND_MAILBOX_INVITE_FAILURE,
+    error
+  };
+};
+
+export const resendMailboxInvite = (payload: {
+  addr: string;
+  password: string;
+  inviteEmail: string;
+}) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(resendMailboxInviteRequest());
+    try {
+      await DomainService.resendMailboxInvitation(payload);
+    } catch (error) {
+      dispatch(resendMailboxInviteFailure(error));
+      return { status: error.message, success: false };
+    }
+
+    dispatch(resendMailboxInviteSuccess());
+
+    return { status: 'invitation-sent', success: true };
+  };
+};

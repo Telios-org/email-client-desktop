@@ -5,11 +5,15 @@ import React, {
   forwardRef,
   Fragment
 } from 'react';
+import { useDispatch } from 'react-redux';
+
+// ACTION
 
 // EXTERNAL LIBRARIES
 import { Dialog } from '@headlessui/react';
 import { InformationCircleIcon } from '@heroicons/react/outline';
 import { Show, Hide, Paper } from 'react-iconly';
+import { resendMailboxInvite } from '../../../../actions/domains/domains';
 
 // HELPER
 import {
@@ -31,6 +35,7 @@ type Props = {
 };
 
 const MailboxDelete = forwardRef((props: Props, ref) => {
+  const dispatch = useDispatch();
   const { close, mailbox } = props;
   const [hideSecretKey, setHideSecretKey] = useState(true);
 
@@ -48,6 +53,22 @@ const MailboxDelete = forwardRef((props: Props, ref) => {
     });
     if (mailbox) {
       fs.writeFileSync(filePath, mailbox?.mnemonic, 'utf-8'); // eslint-disable-line
+    }
+  };
+
+  const resendClaimableInvite = async () => {
+    const result = await dispatch(
+      resendMailboxInvite({
+        addr: mailbox.address,
+        password: mailbox.password,
+        inviteEmail: mailbox.recoveryEmail
+      })
+    );
+
+    if (result.success) {
+      close(true, 'Invitation Sent!');
+    } else {
+      close(false, 'Something went wrong!');
     }
   };
 
@@ -76,7 +97,7 @@ const MailboxDelete = forwardRef((props: Props, ref) => {
             </p>
             <div
               className="inline-grid grid-cols-[repeat(2,auto)] auto-cols-auto gap-2 pl-2 text-sm"
-              style={{ gridTemplateColumns: 'auto 2px!important;' }}
+              style={{ gridTemplateColumns: 'auto 2px!important' }}
             >
               <div className="odd:font-bold odd:text-gray-500 odd:text-right odd:whitespace-nowrap even:max-w-[275px]">
                 Creation Date:
@@ -105,10 +126,23 @@ const MailboxDelete = forwardRef((props: Props, ref) => {
               {mailbox.type === 'CLAIMABLE' && (
                 <>
                   <div className="odd:font-bold odd:text-gray-500 odd:text-right odd:whitespace-nowrap even:max-w-[275px]">
-                    Recovery Email:
+                    Invitation Email:
                   </div>
                   <div className="odd:font-bold odd:text-gray-500 odd:text-right odd:whitespace-nowrap even:max-w-[275px]">
                     {mailbox.recoveryEmail}
+{' '}
+                    <span className="text-xs">
+                      {' '}
+                      -
+{' '}
+                      <a
+                        onClick={resendClaimableInvite}
+                        style={{ cursor: 'pointer' }}
+                        className="text-xs"
+                      >
+                        resend
+                      </a>
+                    </span>
                   </div>
                 </>
               )}
@@ -150,7 +184,11 @@ const MailboxDelete = forwardRef((props: Props, ref) => {
                     Passphrase:
                   </div>
                   <div className="odd:font-bold odd:text-gray-500 odd:text-right odd:whitespace-nowrap even:max-w-[275px]">
-                    <a onClick={saveKey} style={{ cursor: 'pointer' }} className="text-xs">
+                    <a
+                      onClick={saveKey}
+                      style={{ cursor: 'pointer' }}
+                      className="text-xs"
+                    >
                       Click to Download
                     </a>
                   </div>

@@ -6,7 +6,10 @@ import {
   REGISTER_MAILBOX_SUCCESS,
   DELETE_MAILBOX_SUCCESS
 } from '../../actions/domains/domains';
-import { UPDATE_PROFILE_SUCCESS } from '../../actions/account/account';
+import {
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PASSWORD_SUCCESS
+} from '../../actions/account/account';
 import { MailType, MailAction } from '../types';
 import { arrayToObject, idFromArrayDict } from '../../../utils/reducer.util';
 
@@ -33,7 +36,7 @@ export default function mailboxes(
     case DELETE_MAILBOX_SUCCESS:
       newState = {
         byId: { ...state.byId },
-        allIds: state.allIds.filter(aid => aid !== action.payload.id),
+        allIds: state.allIds.filter(aid => aid !== action.payload.id)
       };
       delete newState.byId[action.payload.id];
       return newState;
@@ -60,6 +63,19 @@ export default function mailboxes(
           [action.payload.mailboxId]: {
             ...state.byId[action.payload.mailboxId],
             displayName: action.payload.displayName
+          }
+        },
+        allIds: [...state.allIds]
+      };
+    }
+
+    case UPDATE_PASSWORD_SUCCESS: {
+      return {
+        byId: {
+          ...state.byId,
+          [action.payload.mailboxId]: {
+            ...state.byId[action.payload.mailboxId],
+            password: action.payload.newPass
           }
         },
         allIds: [...state.allIds]

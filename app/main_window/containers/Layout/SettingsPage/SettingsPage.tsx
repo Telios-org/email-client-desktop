@@ -9,7 +9,8 @@ import {
   Setting,
   ShieldDone,
   Scan,
-  Work
+  Work,
+  Chart
 } from 'react-iconly';
 import { ExclamationIcon } from '@heroicons/react/outline';
 import BrowserView, { removeViews } from 'react-electron-browser-view';
@@ -43,6 +44,13 @@ const tabs = [
     component: BillingPayments,
     icon: Wallet,
     typeRestriction: 'PRIMARY'
+  },
+  {
+    id:'billing',
+    name: 'Usage',
+    component: BillingPayments,
+    icon: Chart,
+    typeRestriction: 'CLAIMABLE'
   },
   {
     id:'security',

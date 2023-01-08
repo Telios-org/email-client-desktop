@@ -101,6 +101,18 @@ class DomainService {
     });
   }
 
+  static async resendMailboxInvitation(payload) {
+    channel.send({ event: 'domain:resendMailboxInvite', payload });
+    return new Promise((resolve, reject) => {
+      channel.once('domain:resendMailboxInvite:callback', m => {
+        const { error, data } = m;
+        if (error) return reject(error);
+
+        return resolve(data);
+      });
+    });
+  }
+
   static async deleteMailbox(payload) {
     channel.send({ event: 'domain:deleteMailbox', payload });
     return new Promise((resolve, reject) => {

@@ -54,7 +54,7 @@ const BillingPayments = (props: Props) => {
     aliasPct: '',
     storagePct: '',
     dailyTrafficPct: '',
-    domainsPct: '',
+    domainsPct: ''
   });
 
   const [showPricing, setShowPricing] = useState(false);
@@ -256,193 +256,197 @@ const BillingPayments = (props: Props) => {
 
   return (
     <div className="space-y-6 mb-10">
-      <section
-        aria-labelledby="account-user-plan"
-        className="xl:grid xl:grid-cols-3 xl:gap-6"
-      >
-        <div className="xl:col-span-1">
-          <h3
-            id="payment-details-heading"
-            className="text-lg leading-6 font-medium text-gray-900"
-          >
-            Current Plan
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Lists your current subscription with Telios and allows you to manage
-            your billing preferences
-          </p>
-        </div>
-        <div className="mt-5 xl:mt-0 border border-gray-300 bg-white rounded-md overflow-hidden xl:col-span-2">
-          <div className="py-6 px-7 flex flex-row relative border-gray-300 border-b justify-between">
-            <div className="flex flex-row">
-              <img
-                className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-900"
-                src={teliosLogo}
-                alt="Telios Logo"
-              />
-              <div>
-                <h4 className="text-sm leading-6 font-bold text-gray-900">
-                  {`${
-                    currentPlan && currentPlan.name ? currentPlan.name : 'Basic'
-                  } ${
-                    currentPlan && currentPlan?.type === 'appsumo'
-                      ? ''
-                      : 'Privacy Plan'
-                  }`}
-                </h4>
+      {account.type === 'PRIMARY' && (
+        <section
+          aria-labelledby="account-user-plan"
+          className="xl:grid xl:grid-cols-3 xl:gap-6"
+        >
+          <div className="xl:col-span-1">
+            <h3
+              id="payment-details-heading"
+              className="text-lg leading-6 font-medium text-gray-900"
+            >
+              Current Plan
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Lists your current subscription with Telios and allows you to
+              manage your billing preferences
+            </p>
+          </div>
+          <div className="mt-5 xl:mt-0 border border-gray-300 bg-white rounded-md overflow-hidden xl:col-span-2">
+            <div className="py-6 px-7 flex flex-row relative border-gray-300 border-b justify-between">
+              <div className="flex flex-row">
+                <img
+                  className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-900"
+                  src={teliosLogo}
+                  alt="Telios Logo"
+                />
+                <div>
+                  <h4 className="text-sm leading-6 font-bold text-gray-900">
+                    {`${
+                      currentPlan && currentPlan.name
+                        ? currentPlan.name
+                        : 'Basic'
+                    } ${
+                      currentPlan && currentPlan?.type === 'appsumo'
+                        ? ''
+                        : 'Privacy Plan'
+                    }`}
+                  </h4>
 
-                <p className="text-xs">
-                  {currentPlan?.type !== 'subscription'
-                    ? 'Limited Time Offer'
-                    : currentPlan?.description}
-                </p>
+                  <p className="text-xs">
+                    {currentPlan?.type !== 'subscription'
+                      ? 'Limited Time Offer'
+                      : currentPlan?.description}
+                  </p>
+                </div>
+              </div>
+              <div className="leading-6 font-bold text-lg text-gray-900 flex items-center">
+                {currentPlan !== undefined &&
+                  currentPlan.price !== 0 &&
+                  currentPlan.price.monthly !== undefined && (
+                    <>
+                      <span className="uppercase text-2xl">{`$${currentPlan?.price?.monthly}`}</span>
+                      <div className="ml-4 flex flex-col items-start">
+                        <span className="text-sm font-bold text-gray-500">
+                          / mo
+                        </span>
+                      </div>
+                    </>
+                  )}
+                {currentPlan !== undefined &&
+                  currentPlan.price === 0 &&
+                  !(
+                    currentPlan?.type === 'limited' ||
+                    currentPlan?.type === 'appsumo'
+                  ) && <span>FREE</span>}
+                {(currentPlan?.type === 'limited' ||
+                  currentPlan?.type === 'appsumo') && (
+                  <span>LIFETIME MEMBER</span>
+                )}
               </div>
             </div>
-            <div className="leading-6 font-bold text-lg text-gray-900 flex items-center">
-              {currentPlan !== undefined &&
-                currentPlan.price !== 0 &&
-                currentPlan.price.monthly !== undefined && (
-                  <>
-                    <span className="uppercase text-2xl">{`$${currentPlan?.price?.monthly}`}</span>
-                    <div className="ml-4 flex flex-col items-start">
-                      <span className="text-sm font-bold text-gray-500">
-                        / mo
-                      </span>
-                    </div>
-                  </>
-                )}
-              {currentPlan !== undefined &&
-                currentPlan.price === 0 &&
-                !(
-                  currentPlan?.type === 'limited' ||
-                  currentPlan?.type === 'appsumo'
-                ) && <span>FREE</span>}
-              {(currentPlan?.type === 'limited' ||
-                currentPlan?.type === 'appsumo') && (
-                <span>LIFETIME MEMBER</span>
-              )}
-            </div>
-          </div>
-          {currentPlan?.type !== 'appsumo' && (
-            <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
-              <a
-                href=""
-                className={classNames(
-                  account.plan === 'FREE'
-                    ? 'text-gray-200 pointer-events-none'
-                    : 'text-gray-500',
-                  'text-sm font-medium underline flex items-center focus:outline-none'
-                )}
-              >
-                Cancel Plan
-              </a>
-              <div>
-                <button
-                  type="button"
-                  onClick={togglePriceCompare}
+            {currentPlan?.type !== 'appsumo' && (
+              <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
+                <a
+                  href=""
                   className={classNames(
-                    account.plan !== 'FREE'
-                      ? 'bg-white focus:ring-gray-400 hover:bg-blue-gray-50 mr-3'
-                      : 'bg-gradient-to-bl from-green-600 to-green-500 hover:to-green-600 focus:ring-green-500 text-white',
-                    'py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
+                    account.plan === 'FREE'
+                      ? 'text-gray-200 pointer-events-none'
+                      : 'text-gray-500',
+                    'text-sm font-medium underline flex items-center focus:outline-none'
                   )}
                 >
-                  {account.plan !== 'FREE' ? 'Compare Plans' : 'Upgrade Plan'}
-                </button>
-                {account.plan !== 'FREE' && (
+                  Cancel Plan
+                </a>
+                <div>
                   <button
                     type="button"
-                    onClick={() => openStripe('portal', null)}
-                    className="bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                  >
-                    Manage Plan
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-          {currentPlan?.id === 'appsumot1' && (
-            <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
-              <a
-                href="https://appsumo.com/products/telios/"
-                className="text-gray-500 text-sm font-medium underline flex items-center focus:outline-none"
-              >
-                Upgrade Tier
-              </a>
-              <div>
-                {/* <button
-                  type="button"
-                  onClick={togglePriceCompare}
-                  className={classNames(
-                    stats.plan !== 'FREE'
-                      ? 'bg-white focus:ring-gray-400 hover:bg-blue-gray-50 mr-3'
-                      : 'bg-gradient-to-bl from-green-600 to-green-500 hover:to-green-600 focus:ring-green-500 text-white',
-                    'py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
-                  )}
-                >
-                  {stats.plan !== 'FREE' ? 'Compare Plans' : 'Upgrade Plan'}
-                </button> */}
-                <form onSubmit={handleSubmit} className="flex flex-row">
-                  <div className="relative rounded-md shadow-sm">
-                    <InputField
-                      id="code"
-                      placeholder="AppSumo Code"
-                      className="-mt-2 mr-2"
-                      value={data.code || ''}
-                      onChange={handleCodeChange}
-                      error={errors.code}
-                      type="text"
-                    />
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      {appSumoCode && appSumoCode !== null && (
-                        <CheckIcon
-                          className="h-5 w-5 text-green-500"
-                          aria-hidden="true"
-                        />
-                      )}
-                      {!appSumoCode && appSumoCode !== null && (
-                        <XIcon
-                          className="h-5 w-5 text-red-500"
-                          aria-hidden="true"
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    type="submit"
-                    style={{ 'min-width': '112px' }}
-                    className="bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                  >
-                    {upgradeLoader && (
-                      <svg
-                        className="animate-spin h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
+                    onClick={togglePriceCompare}
+                    className={classNames(
+                      account.plan !== 'FREE'
+                        ? 'bg-white focus:ring-gray-400 hover:bg-blue-gray-50 mr-3'
+                        : 'bg-gradient-to-bl from-green-600 to-green-500 hover:to-green-600 focus:ring-green-500 text-white',
+                      'py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
                     )}
-                    {!upgradeLoader && `Stack Code`}
+                  >
+                    {account.plan !== 'FREE' ? 'Compare Plans' : 'Upgrade Plan'}
                   </button>
-                </form>
+                  {account.plan !== 'FREE' && (
+                    <button
+                      type="button"
+                      onClick={() => openStripe('portal', null)}
+                      className="bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    >
+                      Manage Plan
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      </section>
+            )}
+            {currentPlan?.id === 'appsumot1' && (
+              <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
+                <a
+                  href="https://appsumo.com/products/telios/"
+                  className="text-gray-500 text-sm font-medium underline flex items-center focus:outline-none"
+                >
+                  Upgrade Tier
+                </a>
+                <div>
+                  {/* <button
+                    type="button"
+                    onClick={togglePriceCompare}
+                    className={classNames(
+                      stats.plan !== 'FREE'
+                        ? 'bg-white focus:ring-gray-400 hover:bg-blue-gray-50 mr-3'
+                        : 'bg-gradient-to-bl from-green-600 to-green-500 hover:to-green-600 focus:ring-green-500 text-white',
+                      'py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 disabled:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
+                    )}
+                  >
+                    {stats.plan !== 'FREE' ? 'Compare Plans' : 'Upgrade Plan'}
+                  </button> */}
+                  <form onSubmit={handleSubmit} className="flex flex-row">
+                    <div className="relative rounded-md shadow-sm">
+                      <InputField
+                        id="code"
+                        placeholder="AppSumo Code"
+                        className="-mt-2 mr-2"
+                        value={data.code || ''}
+                        onChange={handleCodeChange}
+                        error={errors.code}
+                        type="text"
+                      />
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        {appSumoCode && appSumoCode !== null && (
+                          <CheckIcon
+                            className="h-5 w-5 text-green-500"
+                            aria-hidden="true"
+                          />
+                        )}
+                        {!appSumoCode && appSumoCode !== null && (
+                          <XIcon
+                            className="h-5 w-5 text-red-500"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      type="submit"
+                      style={{ 'min-width': '112px' }}
+                      className="bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    >
+                      {upgradeLoader && (
+                        <svg
+                          className="animate-spin h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                      )}
+                      {!upgradeLoader && `Stack Code`}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
       <section
         aria-labelledby="account-usage"
         className="xl:grid xl:grid-cols-3 xl:gap-6"
@@ -520,7 +524,8 @@ const BillingPayments = (props: Props) => {
                   </div>
                 </div>
                 {stats?.maxOutgoingEmails !== 0 &&
-                  currentPlan?.type !== 'appsumo' && (
+                  currentPlan?.type !== 'appsumo' &&
+                  account.type === 'PRIMARY' && (
                     <div className="flex justify-end items-center">
                       <button
                         type="button"
@@ -532,7 +537,8 @@ const BillingPayments = (props: Props) => {
                     </div>
                   )}
                 {stats?.maxOutgoingEmails !== 0 &&
-                  currentPlan?.id === 'appsumot1' && (
+                  currentPlan?.id === 'appsumot1' &&
+                  account.type === 'PRIMARY' && (
                     <div className="flex justify-end items-center">
                       <a
                         href="https://appsumo.com/products/telios/"
@@ -603,7 +609,8 @@ const BillingPayments = (props: Props) => {
                     </div>
                   </div>
                   {currentPlan?.maxAliasNames !== 0 &&
-                    currentPlan?.type !== 'appsumo' && (
+                    currentPlan?.type !== 'appsumo' &&
+                    account.type === 'PRIMARY' && (
                       <div className="flex justify-end items-center">
                         <button
                           type="button"
@@ -615,7 +622,8 @@ const BillingPayments = (props: Props) => {
                       </div>
                     )}
                   {currentPlan?.maxAliasNames !== 0 &&
-                    currentPlan?.id === 'appsumot1' && (
+                    currentPlan?.id === 'appsumot1' &&
+                    account.type === 'PRIMARY' && (
                       <div className="flex justify-end items-center">
                         <a
                           href="https://appsumo.com/products/telios/"
@@ -668,7 +676,8 @@ const BillingPayments = (props: Props) => {
                     </div>
                   </div>
                   {stats.maxAliasAddresses !== 0 &&
-                    currentPlan?.type !== 'appsumo' && (
+                    currentPlan?.type !== 'appsumo' &&
+                    account.type === 'PRIMARY' && (
                       <div className="flex justify-end items-center">
                         <button
                           type="button"
@@ -680,7 +689,8 @@ const BillingPayments = (props: Props) => {
                       </div>
                     )}
                   {stats.maxAliasAddresses !== 0 &&
-                    currentPlan?.id === 'appsumot1' && (
+                    currentPlan?.id === 'appsumot1' &&
+                    account.type === 'PRIMARY' && (
                       <div className="flex justify-end items-center">
                         <a
                           href="https://appsumo.com/products/telios/"
@@ -727,7 +737,7 @@ const BillingPayments = (props: Props) => {
                       <>
                         {` of `}
                         <span className="font-bold">
-                          {currentPlan?.maxDomains || "#N/A"}
+                          {currentPlan?.maxDomains || '#N/A'}
                         </span>
                         {` included`}
                       </>
@@ -750,7 +760,8 @@ const BillingPayments = (props: Props) => {
                   </div>
                 </div>
                 {currentPlan?.maxDomains !== 10 &&
-                  currentPlan?.type !== 'appsumo' && (
+                  currentPlan?.type !== 'appsumo' &&
+                  account.type === 'PRIMARY' && (
                     <div className="flex justify-end items-center">
                       <button
                         type="button"
@@ -822,7 +833,8 @@ const BillingPayments = (props: Props) => {
                   </div>
                 </div>
                 {currentPlan?.maxGBCloudStorage !== 1000 &&
-                  currentPlan?.type !== 'appsumo' && (
+                  currentPlan?.type !== 'appsumo' &&
+                  account.type === 'PRIMARY' && (
                     <div className="flex justify-end items-center">
                       <button
                         type="button"
@@ -834,7 +846,8 @@ const BillingPayments = (props: Props) => {
                     </div>
                   )}
                 {currentPlan?.maxGBCloudStorage !== 1000 &&
-                  currentPlan?.id === 'appsumot1' && (
+                  currentPlan?.id === 'appsumot1' &&
+                  account.type === 'PRIMARY' && (
                     <div className="flex justify-end items-center">
                       <a
                         href="https://appsumo.com/products/telios/"

@@ -133,7 +133,6 @@ export const updatePlan = (payload: { accountId: string; plan: string }) => {
   };
 };
 
-
 /*
  *  This action is to retrieve the Account stats from the server and store them locally for use in the Settings Page.
  */
@@ -183,8 +182,7 @@ export const retrieveStats = () => {
       result = await AccountService.retrieveStats();
       if (plan !== result.plan) {
         dispatch(updatePlan({ accountId, plan: result.plan }));
-      };
-
+      }
     } catch (error) {
       dispatch(retrieveStatsFailure(error));
       return {
@@ -232,13 +230,16 @@ export const updateAccountPasswordFailure = (error: Error) => {
 export const updateAccountPassword = (payload: {
   email: string;
   newPass: string;
+  mailboxId: string;
 }) => {
   return async (dispatch: Dispatch) => {
     dispatch(updateAccountPasswordRequest(payload));
-    let result;
 
     try {
-      const results = await AccountService.updateAccountPassword(payload);
+      await AccountService.updateAccountPassword({
+        email: payload.email,
+        newPass: payload.newPass
+      });
     } catch (error) {
       dispatch(updateAccountPasswordFailure(error));
       return {
@@ -250,6 +251,6 @@ export const updateAccountPassword = (payload: {
 
     dispatch(updateAccountPasswordSuccess(payload));
 
-    return { status: 'updateed', success: true };
+    return { status: 'updated', success: true };
   };
 };

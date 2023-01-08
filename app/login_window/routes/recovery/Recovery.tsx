@@ -59,11 +59,15 @@ const Recovery = () => {
           value: true,
           message: 'Required field.'
         },
+        pattern: {
+          value: externalEmailRE,
+          message: 'Invalid email address'
+        },
         custom: {
           isValid: async (value, data) => {
-            const val = `${value}@${mailDomain}`;
-            const mailboxes = await mailbox.getMailboxPubKeys([val]);
-            if (mailboxes[val]) {
+            // const val = `${value}@${mailDomain}`;
+            const mailboxes = await mailbox.getMailboxPubKeys([value]);
+            if (mailboxes[value]) {
               return true;
             }
             return false;
@@ -159,9 +163,7 @@ const Recovery = () => {
               value={data.accountEmail}
               error={errors.accountEmail}
               onChange={handleAccountChange}
-              addonPosition="right"
-              addonLabel={`@${mailDomain}`}
-              className="text-right"
+              activityPosition="right"
               isValid={
                 errors.accountEmail === '' || errors.accountEmail === undefined
               }
