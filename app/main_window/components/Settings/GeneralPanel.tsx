@@ -83,7 +83,7 @@ const GeneralPanel = () => {
     <div className="space-y-6">
       <SettingsSection
         header="Profile"
-        description="This information may be displayed publicly so be careful what youshare."
+        description="This information may be displayed publicly so be careful what you share."
       >
         <form onSubmit={handleSubmit}>
           <div className="bg-white py-6 px-7">

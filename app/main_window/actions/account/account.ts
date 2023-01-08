@@ -250,6 +250,6 @@ export const updateAccountPassword = (payload: {
 
     dispatch(updateAccountPasswordSuccess(payload));
 
-    return { status: 'updateed', success: true };
+    return { status: 'updated', success: true };
   };
 };
