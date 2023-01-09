@@ -102,6 +102,10 @@ const SetNewPassword = () => {
       score: result.score,
       crackTime: result.crack_times_display.offline_slow_hashing_1e4_per_second
     });
+
+    if (data.confirmPassword && data.confirmPassword.length > 0) {
+      runValidations(['confirmPassword']);
+    }
   }, [data.password]);
 
   return (
