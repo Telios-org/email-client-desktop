@@ -126,7 +126,7 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@telios/client-sdk@^8.0.0", "@telios/client-sdk@^8.1.2":
+"@telios/client-sdk@^8.1.2":
   version "8.1.2"
   resolved "https://registry.yarnpkg.com/@telios/client-sdk/-/client-sdk-8.1.2.tgz#ca9400048870d367a015075e82a675dd99b6531c"
   integrity sha512-ZNXl7jNSvQwHgD2KPsdyWQm+wyTM1cRFe52VPgyYmF+uiVc7GE7YuGIjGDPALIaEJFR/2sktfrJ4tV+V5ciblQ==
@@ -148,9 +148,9 @@
     rimraf "^3.0.2"
     uuid "^8.2.0"
 
-"@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate":
+"@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate.git":
   version "3.0.6"
-  resolved "git+https://github.com/Telios-org/nebula-migrate#749dc0316eded944e46be60c52291bc5cff66fa7"
+  resolved "git+https://github.com/Telios-org/nebula-migrate.git#de58a5cc0d330ac8b555e01e0599348facd609f9"
   dependencies:
     "@telios/nebula-old" "git+https://github.com/Telios-org/nebula#v3.4.14"
     luxon "^3.1.1"
@@ -208,9 +208,9 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@git+https://github.com/Telios-org/nebula":
-  version "4.0.10"
-  resolved "git+https://github.com/Telios-org/nebula#7e9f4b4cff6f1eff171de71ca4b80dbb3cdd61a0"
+"@telios/nebula@git+https://github.com/Telios-org/nebula.git":
+  version "4.0.11"
+  resolved "git+https://github.com/Telios-org/nebula.git#5d633a77358fbedb6a18723b98871bbffc7a77ef"
   dependencies:
     autobase "https://github.com/hypercore-protocol/autobase"
     bip39 "^3.0.4"
@@ -235,9 +235,10 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/telios-client-backend@https://github.com/Telios-org/telios-client-backend.git#custom-domains":
-  version "5.2.1"
-  resolved "https://github.com/Telios-org/telios-client-backend.git#0f669b2e3b4b7b0971bcee7fc8e6c570dec9327a"
+"@telios/telios-client-backend@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@telios/telios-client-backend/-/telios-client-backend-6.0.0.tgz#124606eaa62afdf456c40e4661a1b9f08647146a"
+  integrity sha512-i0rZiLxHNs8JyzrsyF+SjhM0Ux1S78AxLmfbQuAUJ+olOCheCIDWEyJNEDmfIe45kgKSHYvZUAYBVfwxcRusrA==
   dependencies:
     "@telios/client-sdk" "^8.1.2"
     "@telios/nebula" "git+https://github.com/Telios-org/nebula"
