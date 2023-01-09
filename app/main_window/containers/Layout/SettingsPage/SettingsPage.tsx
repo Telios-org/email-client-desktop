@@ -32,42 +32,42 @@ const electron = require('electron');
 
 const tabs = [
   {
-    id:'general',
+    id: 'general',
     name: 'General',
     component: GeneralPanel,
     icon: Setting,
     typeRestriction: null
   }, // { name: 'Notifications', panel: GeneralPanel },
   {
-    id:'billing',
+    id: 'billing',
     name: 'Plan & Billing',
     component: BillingPayments,
     icon: Wallet,
     typeRestriction: 'PRIMARY'
   },
   {
-    id:'billing',
+    id: 'billing',
     name: 'Usage',
     component: BillingPayments,
     icon: Chart,
     typeRestriction: 'CLAIMABLE'
   },
   {
-    id:'security',
+    id: 'security',
     name: 'Security',
     component: SecurityPanel,
     icon: ShieldDone,
     typeRestriction: null
   },
   {
-    id:'devices',
+    id: 'devices',
     name: 'Devices',
     component: DevicesPanel,
     icon: Scan,
     typeRestriction: null
   },
   {
-    id:'domains',
+    id: 'domains',
     name: 'Custom Domains',
     component: CustomDomains,
     icon: Work,
@@ -85,11 +85,14 @@ const SettingsPage = () => {
   const dispatch = useDispatch();
   const [showOverlay, setShowOverlay] = useState(false);
   const [browserURL, setBrowserURL] = useState('');
-  const account = useSelector(state => state.account);
+  const account = useSelector(state => {
+    return state.account;
+  });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
     // Retrieving the Updated Account Stats from Telios Server
+    console.log('ACCOUNT STORE', account);
     dispatch(retrieveStats());
   }, []);
 
@@ -109,7 +112,7 @@ const SettingsPage = () => {
       return object.id === 'billing';
     });
     setSelectedIndex(index);
-  }
+  };
 
   return (
     <div className="relative h-full w-full">
@@ -233,7 +236,10 @@ const SettingsPage = () => {
             </nav>
           </div>
           <div className="relative flex-1">
-            {tabs[selectedIndex].id === 'domains' &&
+            {tabs.filter(
+              f =>
+                f.typeRestriction === account.type || f.typeRestriction === null
+            )[selectedIndex].id === 'domains' &&
               ![
                 'PREMIUM',
                 'ULTIMATE',

@@ -715,75 +715,77 @@ const BillingPayments = (props: Props) => {
           </div>
 {' '}
           {/* CUSTOM DOMAINS */}
-          <div className="border border-gray-300 bg-white rounded-md overflow-hidden">
-            <div className="bg-gray-50 py-4 px-7 flex flex-row relative border-gray-300 border-b">
-              <GlobeIcon className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-500" />
-              <div>
-                <h4 className="text-sm leading-6 font-bold text-gray-900">
-                  Domains
-                </h4>
+          {currentPlan?.maxDomains > 0 && (
+            <div className="border border-gray-300 bg-white rounded-md overflow-hidden">
+              <div className="bg-gray-50 py-4 px-7 flex flex-row relative border-gray-300 border-b">
+                <GlobeIcon className="w-10 h-10 mr-3 top-[0.1rem] relative text-sky-500" />
+                <div>
+                  <h4 className="text-sm leading-6 font-bold text-gray-900">
+                    Domains
+                  </h4>
 
-                <p className="text-xs">
-                  Includes all of custom domains you have attached to your
-                  account
-                </p>
+                  <p className="text-xs">
+                    Includes all of custom domains you have attached to your
+                    account
+                  </p>
+                </div>
+              </div>
+              <div className="bg-white py-6 px-7 text-sm">
+                {/* CUSTOM DOMAINS */}
+                <li
+                  className={`relative text-gray-600 pl-[3.25rem] ${styles.featureSvgLast} flex flex-row justify-between space-x-6`}
+                >
+                  <div className="flex-grow">
+                    <div className="flex flex-row justify-between">
+                      <span className="text-sm leading-6 font-bold">
+                        Verified Domains
+                      </span>
+                      <span className="text-sm">
+                        <span className="text-purple-500 font-bold">
+                          {stats.domainUsed}
+                        </span>
+                        <>
+                          {` of `}
+                          <span className="font-bold">
+                            {currentPlan?.maxDomains || '#N/A'}
+                          </span>
+                          {` included`}
+                        </>
+                      </span>
+                    </div>
+
+                    <div className="relative pt-1">
+                      <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
+                        <div
+                          style={{
+                            width: pctValues.domainsPct
+                          }}
+                          className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
+                            pctValues.domainsPct === '100%'
+                              ? 'bg-red-500'
+                              : 'bg-blueGray-400'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  {currentPlan?.maxDomains !== 10 &&
+                    currentPlan?.type !== 'appsumo' &&
+                    account.type === 'PRIMARY' && (
+                      <div className="flex justify-end items-center">
+                        <button
+                          type="button"
+                          onClick={togglePriceCompare}
+                          className="h-fit bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
+                        >
+                          Add More
+                        </button>
+                      </div>
+                    )}
+                </li>
               </div>
             </div>
-            <div className="bg-white py-6 px-7 text-sm">
-              {/* CUSTOM DOMAINS */}
-              <li
-                className={`relative text-gray-600 pl-[3.25rem] ${styles.featureSvgLast} flex flex-row justify-between space-x-6`}
-              >
-                <div className="flex-grow">
-                  <div className="flex flex-row justify-between">
-                    <span className="text-sm leading-6 font-bold">
-                      Verified Domains
-                    </span>
-                    <span className="text-sm">
-                      <span className="text-purple-500 font-bold">
-                        {stats.domainUsed}
-                      </span>
-                      <>
-                        {` of `}
-                        <span className="font-bold">
-                          {currentPlan?.maxDomains || '#N/A'}
-                        </span>
-                        {` included`}
-                      </>
-                    </span>
-                  </div>
-
-                  <div className="relative pt-1">
-                    <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blueGray-200">
-                      <div
-                        style={{
-                          width: pctValues.domainsPct
-                        }}
-                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${
-                          pctValues.domainsPct === '100%'
-                            ? 'bg-red-500'
-                            : 'bg-blueGray-400'
-                        }`}
-                      />
-                    </div>
-                  </div>
-                </div>
-                {currentPlan?.maxDomains !== 10 &&
-                  currentPlan?.type !== 'appsumo' &&
-                  account.type === 'PRIMARY' && (
-                    <div className="flex justify-end items-center">
-                      <button
-                        type="button"
-                        onClick={togglePriceCompare}
-                        className="h-fit bg-gradient-to-bl from-green-600 to-green-500 disabled:bg-gray-300 border border-transparent rounded-md shadow-sm py-1 px-4 inline-flex justify-center text-xs font-medium text-white hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600"
-                      >
-                        Add More
-                      </button>
-                    </div>
-                  )}
-              </li>
-            </div>
-          </div>
+          )}
           {/* STORAGE */}
           <div className="border border-gray-300 bg-white rounded-md overflow-hidden">
             <div className="bg-gray-50 py-4 px-7 flex flex-row relative border-gray-300 border-b">

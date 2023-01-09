@@ -148,9 +148,9 @@
     rimraf "^3.0.2"
     uuid "^8.2.0"
 
-"@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate":
+"@telios/nebula-migrate@git+https://github.com/Telios-org/nebula-migrate.git":
   version "3.0.6"
-  resolved "git+https://github.com/Telios-org/nebula-migrate#de58a5cc0d330ac8b555e01e0599348facd609f9"
+  resolved "git+https://github.com/Telios-org/nebula-migrate.git#de58a5cc0d330ac8b555e01e0599348facd609f9"
   dependencies:
     "@telios/nebula-old" "git+https://github.com/Telios-org/nebula#v3.4.14"
     luxon "^3.1.1"
@@ -208,9 +208,9 @@
     stopwords "^0.0.9"
     uuid "^8.2.0"
 
-"@telios/nebula@git+https://github.com/Telios-org/nebula":
+"@telios/nebula@git+https://github.com/Telios-org/nebula.git":
   version "4.0.11"
-  resolved "git+https://github.com/Telios-org/nebula#5d633a77358fbedb6a18723b98871bbffc7a77ef"
+  resolved "git+https://github.com/Telios-org/nebula.git#5d633a77358fbedb6a18723b98871bbffc7a77ef"
   dependencies:
     autobase "https://github.com/hypercore-protocol/autobase"
     bip39 "^3.0.4"
@@ -387,8 +387,21 @@ autobase@1.0.0-alpha.6:
     safety-catch "^1.0.1"
     streamx "^2.10.0"
 
+"autobase@git+https://github.com/hypercore-protocol/autobase.git":
+  version "1.0.0-alpha.8"
+  resolved "git+https://github.com/hypercore-protocol/autobase.git#1c3833d27e4c3f810351f266033a9b7f70a1245d"
+  dependencies:
+    b4a "^1.3.1"
+    codecs "^3.0.0"
+    compact-encoding "^2.0.0"
+    debounceify "^1.0.0"
+    mutexify "^1.4.0"
+    safety-catch "^1.0.1"
+    streamx "^2.10.0"
+
 "autobase@https://github.com/hypercore-protocol/autobase":
   version "1.0.0-alpha.8"
+  uid "1c3833d27e4c3f810351f266033a9b7f70a1245d"
   resolved "https://github.com/hypercore-protocol/autobase#1c3833d27e4c3f810351f266033a9b7f70a1245d"
   dependencies:
     b4a "^1.3.1"
