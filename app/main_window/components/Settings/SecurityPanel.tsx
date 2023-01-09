@@ -16,14 +16,17 @@ import Notification from '../../../global_components/Notification';
 import { selectActiveMailbox } from '../../selectors/mail';
 
 // ACTION CREATORS
-import { updateAccountPassword } from '../../actions/account/account';
+import { updateAccountPassword, createNewPassphrase } from '../../actions/account/account';
 
 // HELPERS
 import passwordStrengthClass from '../../../utils/helpers/security';
 
-const zxcvbn = require('zxcvbn');
+const { ipcRenderer, remote, clipboard } = require('electron');
 
-const { clipboard } = require('electron');
+const { dialog } = remote;
+const fs = require('fs');
+
+const zxcvbn = require('zxcvbn');
 
 const SecurityPanel = () => {
   const dispatch = useDispatch();
@@ -51,11 +54,18 @@ const SecurityPanel = () => {
 
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordVerification, setShowPasswordVerification] = useState(false);
+  const [passwordVerification, setPasswordVerification] = useState('');
   const currentMailbox = useSelector(selectActiveMailbox);
   const [loading, setLoader] = useState(false);
+  const [generatorLoading, setGeneratorLoader] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const togglePasswordView = () => {
     setShowPassword(!showPassword);
+  };
+
+  const togglePasswordVerificationView = () => {
+    setShowPasswordVerification(!showPasswordVerification);
   };
 
   const [showNotification, setShowNotification] = useState(false);
@@ -172,6 +182,30 @@ const SecurityPanel = () => {
     );
   };
 
+  const onPasswordVerification = async e => {
+    const password = e.target.value;
+    setPasswordVerification(password)
+  }
+
+  const downloadPassphrase = async () => {
+    // Specify the name of the file to be saved
+    const { filePath } = await dialog.showSaveDialog({
+      title: 'Save Passphrase',
+      defaultPath: `${currentMailbox.address}-passphrase.txt`,
+      filters: [{ name: 'Text file', extensions: ['txt'] }]
+    });
+    fs.writeFileSync(filePath, account?.mnemonic, 'utf-8');
+     // eslint-disable-line
+     setPasswordVerification('')
+  };
+
+  const generateNewPassphrase = async () => {
+    setGeneratorLoader(true)
+    await dispatch(createNewPassphrase())
+    callToaster(true, "New Passphrase Created!")
+    setGeneratorLoader(false)
+  }
+
 
   return (
     <div className='space-y-6 select-none mb-10'>
@@ -183,8 +217,14 @@ const SecurityPanel = () => {
         errorMsg={notifMessage}
       />
       <SettingsSection header="Password Change" description="The password that is the key to all of your encrypted data.">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="relative">
+          {!account.mnemonic && (
+          <div className='bg-black/30 z-40 backdrop-grayscale absolute w-full h-full flex justify-center'>
+            <span className="text-white uppercase text-xl self-center max-w-sm text-center font-semibold">Generate a new passphrase first (below) to make use of this feature.</span>
+          </div>
+          )}
           <div className="bg-white py-6 px-7 space-y-6">
+            
             <div className="grid grid-cols-4 gap-6">
               <Password
                 label="Current Password"
@@ -271,19 +311,65 @@ const SecurityPanel = () => {
                 Update Password
               </Button>
             </div>
-            
-            {/* <button
-              type="submit"
-              disabled={errors.newPasswordConfirm || data.newPasswordConfirm.length === 0 || errors.newPassword || data.newPassword.length === 0 || data.currentPassword.length === 0 || errors.currentPassword}
-              className="bg-gradient-to-bl from-purple-600 to-purple-500 disabled:from-gray-300 disabled:to-gray-300 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-700"
-            >
-              Update Password
-            </button> */}
             <div className="text-xs text-red-500 absolute left-7 text-center">
               {submitError.length > 0 && submitError}
             </div>
           </div>
         </form>
+      </SettingsSection>
+      <SettingsSection header="Recovery Passphrase" description="Mnemonic to be used for recovery in case you forget your password. This file should be printed and kept in a safe place. Verify your password to download your passphrase.">
+        <div>
+          <div className="bg-white py-6 px-7 space-y-6">
+            <div className="grid grid-cols-4 gap-6">
+              <Password
+                label="Password Verification"
+                id="currentPassword"
+                name="currentPassword"
+                className="col-span-2"
+                autoComplete="current-password"
+                required
+                onChange={onPasswordVerification}
+                show={showPasswordVerification}
+                value={passwordVerification}
+                error=""
+                onVisibilityToggle={togglePasswordVerificationView}
+              />
+              <div className="col-span-2" />
+       
+            </div>
+          </div>
+          <div className="relative flex justify-end py-3 bg-gray-50 text-right px-6 border-t border-gray-300">
+            {account.mnemonic && (
+              <div>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="py-2 px-4"
+                  onClick={downloadPassphrase}
+                  disabled={currentMailbox.password !== passwordVerification}
+                >
+                  Download
+                </Button>
+              </div>
+            )}
+            {!account.mnemonic && (
+              <div>
+                <Button
+                  type="submit"
+                  variant="secondary"
+                  className="py-2 px-4"
+                  onClick={generateNewPassphrase}
+                  loading={generatorLoading}
+                  loadingText="Generating..."
+                  disabled={currentMailbox.password !== passwordVerification}
+                >
+                  Generate New Passphrase
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+          
       </SettingsSection>
       <SettingsSection header="Device Signature" description="The key pair used to sign your communication over the network, thus ensuring that your traffic is safe and authenticated.">
         <div className="bg-white py-6 px-7 space-y-6">

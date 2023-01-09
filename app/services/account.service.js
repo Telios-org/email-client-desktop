@@ -405,6 +405,22 @@ class AccountService extends EventEmitter {
     });
   }
 
+  static async createNewPassphrase() {
+    channel.send({
+      event: 'account:createNewPassphrase'
+    });
+
+    return new Promise((resolve, reject) => {
+      channel.once('account:createNewPassphrase:callback', m => {
+        const { data, error } = m;
+
+        if (error) return reject(error);
+
+        return resolve(data.mnemonic);
+      });
+    });
+  }
+
   static updateAccountPlan(payload) {
     const { accountId, plan } = payload;
 

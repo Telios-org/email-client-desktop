@@ -4,7 +4,8 @@ import {
   LOAD_ACCOUNT_DATA,
   UPDATE_PROFILE_SUCCESS,
   RETRIEVE_STATS_SUCCESS,
-  UPDATE_PLAN_SUCCESS
+  UPDATE_PLAN_SUCCESS,
+  CREATE_NEW_PASSPHRASE_SUCCESS
 } from '../actions/account/account';
 
 const initialState: AccountType = {
@@ -90,6 +91,11 @@ const account = (state: AccountType = initialState, action: AccountAction) => {
       return {
         ...state,
         plan: action.payload.plan
+      };
+    case CREATE_NEW_PASSPHRASE_SUCCESS:
+      return {
+        ...state,
+        mnemonic: action.payload.mnemonic
       };
     default:
       return state;

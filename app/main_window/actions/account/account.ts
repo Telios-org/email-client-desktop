@@ -254,3 +254,54 @@ export const updateAccountPassword = (payload: {
     return { status: 'updated', success: true };
   };
 };
+
+/*
+ * Regenerate a New Passphrase for the account.
+ */
+export const CREATE_NEW_PASSPHRASE_REQUEST =
+  'ACCOUNT::CREATE_NEW_PASSPHRASE_REQUEST';
+export const createNewPassphraseRequest = () => {
+  return {
+    type: CREATE_NEW_PASSPHRASE_REQUEST
+  };
+};
+
+export const CREATE_NEW_PASSPHRASE_SUCCESS =
+  'ACCOUNT::CREATE_NEW_PASSPHRASE_SUCCESS';
+export const createNewPassphraseSuccess = (payload: { mnemonic: string }) => {
+  return {
+    type: CREATE_NEW_PASSPHRASE_SUCCESS,
+    payload
+  };
+};
+
+export const CREATE_NEW_PASSPHRASE_FAILURE =
+  'ACCOUNT::CREATE_NEW_PASSPHRASE_FAILURE';
+export const createNewPassphraseFailure = (error: Error) => {
+  return {
+    type: CREATE_NEW_PASSPHRASE_FAILURE,
+    error
+  };
+};
+
+export const createNewPassphrase = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(createNewPassphraseRequest());
+    let mnemonic;
+
+    try {
+      mnemonic = await AccountService.createNewPassphrase();
+    } catch (error) {
+      dispatch(createNewPassphraseFailure(error));
+      return {
+        status: 'issue-updating',
+        success: false,
+        message: error.message
+      };
+    }
+
+    dispatch(createNewPassphraseSuccess({ mnemonic }));
+
+    return { status: 'updated', success: true, data: { mnemonic } };
+  };
+};
