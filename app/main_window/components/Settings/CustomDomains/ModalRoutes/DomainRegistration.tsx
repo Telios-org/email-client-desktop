@@ -170,7 +170,7 @@ const DomainRegistration = forwardRef((props: Props, ref) => {
       });
     } else {
       setErrors({
-        vcode: 'Ownership Not verified. It may take some time.'
+        vcode: 'Unable to verify ownership. It can sometimes take DNS records 24 to 48 hours to update.'
       });
     }
     setLoader(false);
