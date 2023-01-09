@@ -145,35 +145,35 @@ const UserMenu = (props: Props) => {
 
   return (
     <>
-      <Menu as="div" className="relative">
+      <Menu as="div" className="relative  select-none">
         {({ open }) => (
           <>
             <div
               ref={setTargetElement}
-              className="rounded-full shadow border border-gray-400/70 z-50 relative"
+              className="rounded-full shadow border border-gray-400/70 z-50 relative select-none"
               style={{ cursor: 'pointer' }}
             >
               <Menu.Button
-                className={`max-w-xs flex items-center rounded-full text-sm focus:outline-none relative${
+                className={`max-w-xs flex items-center rounded-full text-sm focus:outline-none select-none relative${
                   open ? 'ring-2 ring-offset-2 ring-blue-300' : ''
                 } `}
               >
-                <span className="sr-only">Open user menu</span>
+                <span className="sr-only select-none">Open user menu</span>
                 {hasAvatar && (
                   <img
-                    className="h-7 w-7 rounded-full"
+                    className="h-7 w-7 rounded-full select-none"
                     src={account.avatar}
                     alt=""
                   />
                 )}
                 {!hasAvatar && (
                   <span
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-full"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full select-none"
                     style={{
                       backgroundColor: stringToHslColor(displayAddress, 50, 50)
                     }}
                   >
-                    <span className="text-sm font-medium leading-none text-white uppercase">
+                    <span className="text-sm font-medium leading-none text-white uppercase select-none">
                       {displayAddress.substring(0, 1)}
                     </span>
                   </span>
@@ -207,14 +207,14 @@ const UserMenu = (props: Props) => {
                         <div className="border border-gray-300 rounded-full">
                           {hasAvatar && (
                             <img
-                              className="h-9 w-9 rounded-full"
+                              className="h-9 w-9 rounded-full select-none"
                               src={account.avatar}
                               alt=""
                             />
                           )}
                           {!hasAvatar && (
                             <div
-                              className="inline-flex h-9 w-9 rounded-full items-center justify-center"
+                              className="inline-flex h-9 w-9 rounded-full items-center justify-center select-none"
                               style={{
                                 backgroundColor: stringToHslColor(
                                   displayAddress,
@@ -231,13 +231,13 @@ const UserMenu = (props: Props) => {
                         </div>
 
                         <div className="pl-3 flex flex-col overflow-hidden max-w-[215px]">
-                          <div className="text-sm leading-5 font-semibold overflow-ellipsis overflow-x-hidden">
+                          <div className="text-sm leading-5 font-semibold overflow-ellipsis overflow-x-hidden select-none">
                             {mailbox?.displayName?.length > 0
                               ? mailbox?.displayName
                               : mailbox?.address}
                           </div>
                           {mailbox?.displayName?.length > 0 && (
-                            <div className="text-xs leading-5 font-normal text-gray-500 overflow-ellipsis overflow-x-hidden">
+                            <div className="text-xs leading-5 font-normal text-gray-500 overflow-ellipsis select-none overflow-x-hidden">
                               {mailbox?.address}
                             </div>
                           )}
@@ -245,11 +245,11 @@ const UserMenu = (props: Props) => {
                       </div>
                       <Menu.Item>
                         <div
-                          className="w-full pt-3 text-center"
+                          className="w-full pt-3 text-center select-none"
                           style={{ cursor: 'pointer' }}
                           onClick={() => onSelect('settings')}
                         >
-                          <div className="text-xs rounded border border-gray-300 py-1 text-gray-500 hover:bg-gray-100">
+                          <div className="text-xs rounded border border-gray-300 py-1 text-gray-500 hover:bg-gray-100 select-none">
                             Account Settings
                           </div>
                         </div>
@@ -257,7 +257,7 @@ const UserMenu = (props: Props) => {
                     </div>
                     {switcherData.filter(m => m.address !== mailbox?.address)
                       .length > 0 && (
-                      <div className="py-1 max-h-[300px] overflow-y-scroll">
+                      <div className="py-1 max-h-[300px] overflow-y-scroll select-none">
                         {switcherData
                           .filter(m => m.address !== mailbox?.address)
                           .map(m => (
@@ -274,7 +274,7 @@ const UserMenu = (props: Props) => {
                                       : 'text-gray-700'
                                   } flex flex-row items-center w-full px-4 py-2 text-sm leading-5 text-left`}
                                 >
-                                  <div className="border border-gray-300 rounded-full">
+                                  <div className="border border-gray-300 rounded-full select-none">
                                     {m.avatar && (
                                       <img
                                         className="h-7 w-7 rounded-full"
@@ -326,7 +326,7 @@ const UserMenu = (props: Props) => {
                               active
                                 ? 'bg-gray-100 text-gray-900'
                                 : 'text-gray-700'
-                            } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline font-normal`}
+                            } flex select-none items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline font-normal`}
                           >
                             <span>Release Notes</span>
                           </a>
@@ -343,7 +343,7 @@ const UserMenu = (props: Props) => {
                               active
                                 ? 'bg-gray-100 text-gray-900'
                                 : 'text-gray-700'
-                            } flex items-center justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline font-normal`}
+                            } flex items-center select-none justify-between w-full px-4 py-2 text-sm leading-5 text-left hover:no-underline font-normal`}
                           >
                             <span>Support</span>
                           </a>
@@ -358,7 +358,7 @@ const UserMenu = (props: Props) => {
                             style={{ cursor: 'pointer' }}
                             className={`${
                               active ? 'text-red-500' : 'text-gray-700'
-                            } flex w-full px-4 py-2 text-sm leading-5 text-left items-center font-medium`}
+                            } flex w-full px-4 py-2 text-sm select-none leading-5 text-left items-center font-medium`}
                           >
                             <Logout
                               set="broken"
@@ -369,7 +369,7 @@ const UserMenu = (props: Props) => {
                           </div>
                         )}
                       </Menu.Item>
-                      <div className="text-xs px-4 text-gray-400 pb-2 pt-1 w-full flex flex-row justify-center items-center font-medium">
+                      <div className="text-xs px-4 text-gray-400 pb-2 select-none pt-1 w-full flex flex-row justify-center items-center font-medium">
                         {`v${pkg.version}`}
 {' '}
                         <span className="h-1 w-1 rounded-full bg-gray-400 mx-2" />

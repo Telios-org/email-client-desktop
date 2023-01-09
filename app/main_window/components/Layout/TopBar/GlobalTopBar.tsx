@@ -5,7 +5,7 @@ import WindowControls from '../../../../global_components/WindowControls/WindowC
 import UserMenu from './UserMenu';
 import styles from './GlobalTopBar.css';
 
-type Props = {  
+type Props = {
   onSelect: (eventKey: string) => void;
 };
 
@@ -22,10 +22,10 @@ const GlobalTopBar = (props: Props) => {
       <div
         className={`grow-0 flex flex-row items-center h-full w-1/3 ${styles.avatar} ${styles.draggable} justify-end`}
       >
-        <div className='px-3'>
+        <div className='px-3 select-none' style={{ WebkitAppRegion: 'no-drag', display: 'block' }}>
           <UserMenu onSelect={onSelect} />
         </div>
-        
+
         <WindowControls />
       </div>
     </header>
