@@ -328,7 +328,8 @@ const BillingPayments = (props: Props) => {
             {currentPlan?.type !== 'appsumo' && (
               <div className="flex justify-between py-3 bg-gray-50 pl-8 pr-4">
                 <a
-                  href=""
+                  onClick={() => openStripe('portal', null)}
+                  style={{ cursor: 'pointer' }}
                   className={classNames(
                     account.plan === 'FREE'
                       ? 'text-gray-200 pointer-events-none'
@@ -336,7 +337,7 @@ const BillingPayments = (props: Props) => {
                     'text-sm font-medium underline flex items-center focus:outline-none'
                   )}
                 >
-                  {/* Cancel Plan */}
+                  {currentPlan?.type !== 'limited' && 'Cancel Plan'}
                 </a>
                 <div>
                   <button
