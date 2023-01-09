@@ -1,7 +1,7 @@
 {
   "name": "Telios",
   "productName": "Telios",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "An offline-capabale e2e encrypted email service that uses a peer-to-peer network for sending and receiving emails.",
   "main": "./main.prod.js",
   "author": {
