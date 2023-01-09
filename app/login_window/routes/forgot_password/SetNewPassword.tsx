@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import clsx from 'clsx';
 
-
 // INTERNAL HOOKS
 import useForm from '../../../utils/hooks/useForm';
 
@@ -82,13 +81,14 @@ const SetNewPassword = () => {
         newPass: data.password
       })
         .then(data => {
+          setLoading(false);
           navigate('../resetsuccess');
           return data;
         })
         .catch(error => {
+          setLoading(false);
           navigate('../resetfailure', { state: { error } });
         });
-      setLoading(false);
     }
   });
 
@@ -173,7 +173,11 @@ const SetNewPassword = () => {
                 </div> */}
             </div>
           </div>
-          <Button type="submit" loading={loading}>
+          <Button
+            type="submit"
+            loading={loading}
+            loadingText="Updating Password..."
+          >
             Change Password
           </Button>
         </form>
