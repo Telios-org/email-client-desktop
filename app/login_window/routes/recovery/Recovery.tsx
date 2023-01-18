@@ -87,7 +87,7 @@ const Recovery = () => {
       }
     },
     onSubmit: async data => {
-      const email = `${data.accountEmail.toLowerCase()}@${mailDomain}`;
+      const email = `${data.accountEmail.toLowerCase()}`;
       // console.log(email);
       setLoading(true);
 
