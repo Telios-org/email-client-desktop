@@ -21,7 +21,6 @@ const envAPI = require('../../../../env_api.json');
 
 const params = window.location.search.replace('?', '');
 const env = params.split('=')[1];
-// const mailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
 
 const AliasesPage = () => {
   const dispatch = useDispatch();
@@ -32,7 +31,13 @@ const AliasesPage = () => {
   const [saveSucceeded, setSaveSucceeded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const activeMailbox = useSelector(selectActiveMailbox);
-  const mailDomain = activeMailbox?.domainKey
+  let mailDomain = activeMailbox?.domainKey;
+  const teliosMailDomain = env === 'production' ? envAPI.prodMail : envAPI.devMail;
+
+  if(mailDomain === 'telios.io' && mailDomain !== teliosMailDomain) {
+    mailDomain = teliosMailDomain;
+  }
+  
 
   const callToaster = (isSuccess: boolean, message: string) => {
     if (isSuccess) {

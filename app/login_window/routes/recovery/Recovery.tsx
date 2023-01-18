@@ -65,7 +65,6 @@ const Recovery = () => {
         },
         custom: {
           isValid: async (value, data) => {
-            // const val = `${value}@${mailDomain}`;
             const mailboxes = await mailbox.getMailboxPubKeys([value]);
             if (mailboxes[value]) {
               return true;
@@ -87,8 +86,8 @@ const Recovery = () => {
       }
     },
     onSubmit: async data => {
-      const email = `${data.accountEmail.toLowerCase()}@${mailDomain}`;
-      // console.log(email);
+      const email = `${data.accountEmail.toLowerCase()}`;
+      
       setLoading(true);
 
       AccountService.recoverAccount({
