@@ -15,8 +15,8 @@
   },
   "license": "CC-BY-NC-4.0",
   "dependencies": {
-    "@telios/client-sdk": "^8.1.2",
-    "@telios/telios-client-backend": "^6.0.1",
+    "@telios/client-sdk": "^8.1.3",
+    "@telios/telios-client-backend": "^6.0.2",
     "@types/prismjs": "^1.16.1",
     "del": "^6.0.0",
     "file-type": "^16.1.0",
