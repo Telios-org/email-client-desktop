@@ -3,9 +3,11 @@ import { useSelector } from 'react-redux';
 
 // EXTERNAL LIBRAIRIES
 import { WifiIcon } from '@heroicons/react/solid';
+import { QuestionMarkCircleIcon } from '@heroicons/react/outline';
 
 // COMPOMENT IMPORT../TopBar/UserMenu
 import NavIcon from './NavIcon';
+import SupportMenu from './SupportMenu';
 
 // ELECTRON LIBRAIRIES
 const { ipcRenderer } = require('electron');
@@ -29,7 +31,8 @@ const NavStack = (props: Props) => {
           <NavIcon active={active} eventKey="mail" onClick={onSelect} />
           <NavIcon active={active} eventKey="contacts" onClick={onSelect} />
         </nav>
-        <div className="relative flex-shrink-0 flex pb-5 items-center justify-center">
+        <div className="relative flex-shrink-0 flex flex-col pb-5 items-center justify-center">
+          <SupportMenu />
           {onlineStatus === 'online' && (
             <WifiIcon className="h-5 w-5 text-purple-400" />  
           )}

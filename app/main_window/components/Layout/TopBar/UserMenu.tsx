@@ -6,16 +6,15 @@ import { usePopper } from 'react-popper';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import { Portal } from 'react-portal';
 import { Logout, Setting, User } from 'react-iconly';
-import { BigHead } from '@bigheads/core';
+// import { BigHead } from '@bigheads/core';
 
 // INTERNAL COMPONENTS
-import UserBubble from '../Navigation/CustomSVG/UserBubble';
+// import UserBubble from '../Navigation/CustomSVG/UserBubble';
 import stringToHslColor from '../../../../utils/avatar.util';
 import Loader from '../../../../global_components/Loader';
 
 // STATE SELECTORS
 import { selectActiveMailbox } from '../../../selectors/mail';
-import mail from '../../../reducers/mail';
 
 const { ipcRenderer } = require('electron');
 const pkg = require('../../../../package.json');
@@ -314,7 +313,7 @@ const UserMenu = (props: Props) => {
                       </div>
                     )}
 
-                    <div className="py-1">
+                    {/* <div className="py-1">
                       <Menu.Item>
                         {({ active }) => (
                           <a
@@ -349,7 +348,7 @@ const UserMenu = (props: Props) => {
                           </a>
                         )}
                       </Menu.Item>
-                    </div>
+                    </div> */}
 
                     <div className="py-1">
                       <Menu.Item onClick={onSignout}>
