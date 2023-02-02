@@ -17,12 +17,13 @@ type Form = {
   ) => (e) => void;
   runValidations: (subset: string[]) => Promise<any>;
   data: {
-    recoveryEmail: '';
-    password: '';
-    confirmPassword: '';
-    email: '';
-    terms: false;
-    marketing: false;
+    recoveryEmail: string;
+    password: string;
+    confirmPassword: string;
+    email: string;
+    terms: boolean;
+    marketing: boolean;
+    newsletter: boolean;
   };
   errors: any;
   mailDomain: string;

@@ -12,12 +12,13 @@ type Form = {
   handleChange: (e) => void;
   runValidations: (subset: string[]) => boolean;
   data: {
-    recoveryEmail: '';
-    password: '';
-    confirmPassword: '';
-    email: '';
-    terms: false;
-    marketing: false;
+    recoveryEmail: string;
+    password: string;
+    confirmPassword: string;
+    email: string;
+    terms: boolean;
+    marketing: boolean;
+    newsletter: boolean;
   };
   errors: any;
 };

@@ -5,6 +5,8 @@ import { useNavigate, useOutletContext } from 'react-router';
 import { Button, BackButton, Close } from '../../../global_components/button';
 import IntroHeader from '../../window_components/IntroHeader';
 import { Input } from '../../../global_components/input-groups';
+import { Checkbox } from '../../../global_components/checkboxes';
+
 
 type Form = {
   handleChange: (
@@ -16,12 +18,13 @@ type Form = {
   runValidations: (subset: string[]) => Promise<any>;
   handleSubmit: (e) => void;
   data: {
-    recoveryEmail: '';
-    password: '';
-    confirmPassword: '';
-    email: '';
-    terms: false;
-    marketing: false;
+    recoveryEmail: string;
+    password: string;
+    confirmPassword: string;
+    email: string;
+    terms: boolean;
+    marketing: boolean;
+    newsletter: boolean;
   };
   errors: any;
   mailDomain: string;
@@ -78,20 +81,35 @@ const RecoveryEmail = () => {
           onSubmit={onSubmit}
           className="mt-8 space-y-4 flex-1 flex flex-col justify-between pb-8"
         >
-          <Input
-            id="recoveryEmail"
-            name="recoveryEmail"
-            label="recovery Email"
-            icon="email"
-            value={data.recoveryEmail}
-            error={errors.recoveryEmail}
-            onChange={onEmailChange}
-            activityPosition="right"
-            isValid={
-              errors.recoveryEmail === '' || errors.recoveryEmail === undefined
-            }
-            showLoader={validationLoader}
-          />
+          <div className='space-y-8'>
+            <Input
+              id="recoveryEmail"
+              name="recoveryEmail"
+              label="recovery Email"
+              icon="email"
+              value={data.recoveryEmail}
+              error={errors.recoveryEmail}
+              onChange={onEmailChange}
+              activityPosition="right"
+              isValid={
+                errors.recoveryEmail === '' ||
+                errors.recoveryEmail === undefined
+              }
+              showLoader={validationLoader}
+            />
+            <Checkbox
+              className="ml-1"
+              id="terms"
+              name="terms"
+              value={data.newsletter}
+              defaultValue={data.newsletter}
+              error={errors.newsletter}
+              label="Product Updates - "
+              description="I want to receive the Telios Newsletter to my recovery address."
+              onChange={handleChange('newsletter')}
+             />
+          </div>
+
           <Button
             type="submit"
             loading={loading}

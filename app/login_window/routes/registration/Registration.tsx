@@ -60,7 +60,8 @@ const Registration = () => {
       },
       email: '',
       terms: false,
-      marketing: false
+      marketing: false,
+      newsletter: true
     },
     validationDebounce: 500,
     validations: {
@@ -139,7 +140,8 @@ const Registration = () => {
         const account = await Login.createAccount({
           password: data.password,
           email,
-          recoveryEmail: data.recoveryEmail.toLowerCase()
+          recoveryEmail: data.recoveryEmail.toLowerCase(),
+          newsletter: data.newsletter
         });
 
         // console.log(account);

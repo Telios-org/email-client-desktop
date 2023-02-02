@@ -24,12 +24,13 @@ type Form = {
   manualChange: (key: string, value: any) => void;
   runValidations: (subset: string[]) => Promise<any>;
   data: {
-    recoveryEmail: '';
-    password: '';
-    confirmPassword: '';
-    email: '';
-    terms: false;
-    marketing: false;
+    recoveryEmail: string;
+    password: string;
+    confirmPassword: string;
+    email: string;
+    terms: boolean;
+    marketing: boolean;
+    newsletter: boolean;
     passwordStrength: {
       score: number;
       crackTime: string;
