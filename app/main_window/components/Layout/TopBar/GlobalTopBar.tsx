@@ -3,6 +3,7 @@ import { MailboxType } from '../../../reducers/types';
 import Search from './Search';
 import WindowControls from '../../../../global_components/WindowControls/WindowControls';
 import UserMenu from './UserMenu';
+import SupportMenu from '../Navigation/SupportMenu';
 import styles from './GlobalTopBar.css';
 
 type Props = {
@@ -22,7 +23,11 @@ const GlobalTopBar = (props: Props) => {
       <div
         className={`grow-0 flex flex-row items-center h-full w-1/3 ${styles.avatar} ${styles.draggable} justify-end`}
       >
-        <div className='px-3 select-none' style={{ WebkitAppRegion: 'no-drag', display: 'block' }}>
+        <div
+          className="px-3 select-none flex flex-row items-center space-x-2"
+          style={{ WebkitAppRegion: 'no-drag', display: 'block' }}
+        >
+          <SupportMenu />
           <UserMenu onSelect={onSelect} />
         </div>
 

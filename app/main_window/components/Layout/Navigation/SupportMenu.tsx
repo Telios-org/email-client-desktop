@@ -13,7 +13,7 @@ import { QuestionMarkCircleIcon } from '@heroicons/react/outline';
 // STATE SELECTORS
 import { selectActiveMailbox } from '../../../selectors/mail';
 
-const UserMenu = (props: Props) => {
+const SupportMenu = (props: Props) => {
   // Loading Modal State
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => {
@@ -28,12 +28,12 @@ const UserMenu = (props: Props) => {
   const [targetElement, setTargetElement] = React.useState(null);
   const [popperElement, setPopperElement] = React.useState(null);
   const { styles, attributes } = usePopper(targetElement, popperElement, {
-    placement: 'right-end',
+    placement: 'bottom-start',
     modifiers: [
       {
         name: 'offset',
         options: {
-          offset: [0, 15]
+          offset: [0, 5]
         }
       }
     ]
@@ -41,20 +41,20 @@ const UserMenu = (props: Props) => {
 
   return (
     <>
-      <Menu as="div" className="relative  select-none mb-3">
+      <Menu as="div" className="relative  select-none">
         {({ open }) => (
           <>
             <div
               ref={setTargetElement}
-              className="rounded-full shadow border border-gray-400/70 z-50 relative select-none"
+              className="rounded-full shadow z-50 relative select-none"
               style={{ cursor: 'pointer' }}
             >
               <Menu.Button
                 className={`max-w-xs flex items-center rounded-full text-sm focus:outline-none select-none relative${
-                  open ? 'ring-2 ring-offset-2 ring-blue-300' : ''
+                  open ? 'ring-2 ring-offset-2 ring-white' : ''
                 } `}
               >
-                <QuestionMarkCircleIcon className="h-5 w-5 text-gray-400" />
+                <QuestionMarkCircleIcon className="h-5 w-5 text-white" />
               </Menu.Button>
             </div>
             <Portal>
@@ -126,4 +126,4 @@ const UserMenu = (props: Props) => {
   );
 };
 
-export default UserMenu;
+export default SupportMenu;
